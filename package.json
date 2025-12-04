@@ -9,7 +9,7 @@
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-		"api-client:generate": "openapi-ts",
+		"api-client:generate": "openapi-ts"
     },
     "dependencies": {
         "@hey-api/nuxt": "^0.2.1",
