@@ -1,377 +1,238 @@
 <script setup lang="ts">
-useSeoMeta({
-  title: 'LeiOS Repository Hub',
-  ogTitle: 'LeiOS Repository Hub',
-  description: 'Das zentrale Portal für das LeiOS-Repository mit Entwickler-Tools, Release-Management und Community-Support.'
-})
 
-const features = [
-  {
-    icon: 'i-lucide-code-2',
-    title: 'Repository Explorer',
-    description: 'Durchsuchen Sie alle Dateien und Verzeichnisse des LeiOS-Projekts mit einer intuitiven Benutzeroberfläche'
-  },
-  {
-    icon: 'i-lucide-users',
-    title: 'Benutzer Management',
-    description: 'Verwalten Sie Benutzer und deren Rollen im Repository'
-  },
-  {
-    icon: 'i-lucide-package',
-    title: 'Release Management',
-    description: 'Erstellen, bearbeiten und veröffentlichen Sie Releases mit Assets'
-  },
-  {
-    icon: 'i-lucide-bar-chart-2',
-    title: 'Statistiken & Analytics',
-    description: 'Überwachen Sie Repository-Statistiken und Sprachen-Verteilung'
-  },
-  {
-    icon: 'i-lucide-git-branch',
-    title: 'Branch Management',
-    description: 'Verwalten Sie Branches und Merge-Requests'
-  },
-  {
-    icon: 'i-lucide-shield',
-    title: 'Zugriffskontrolle',
-    description: 'Rolle-basierte Zugriffskontrolle für Sicherheit und Verwaltung'
-  }
-]
 
-const stats = [
-  { label: 'Dateien', value: '156+' },
-  { label: 'Mitwirkende', value: '12+' },
-  { label: 'Branches', value: '8+' },
-  { label: 'Releases', value: '5+' }
-]
 </script>
 
 <template>
-  <div class="repo-home">
-    <!-- Hero Section -->
-    <section class="hero">
-      <UContainer>
-        <div class="hero-content">
-          <h1 class="hero-title">LeiOS Repository Hub</h1>
-          <p class="hero-subtitle">
-            Erkunden Sie das LeiOS-Projekt, verwalten Sie Releases und arbeiten Sie mit dem Team zusammen
-          </p>
-          <div class="hero-actions">
-            <UButton
-              size="lg"
-              to="/explorer"
-              color="primary"
-              variant="soft"
-              icon="i-lucide-code-2"
-            >
-              Repository erkunden
-            </UButton>
-            <UButton
-              size="lg"
-              to="/dashboard"
-              color="neutral"
-              variant="ghost"
-              icon="i-lucide-layout-dashboard"
-            >
-              Zum Dashboard
-            </UButton>
-          </div>
-        </div>
-      </UContainer>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="stats-section">
-      <UContainer>
-        <div class="stats-grid">
-          <div v-for="stat in stats" :key="stat.label" class="stat-box">
-            <div class="stat-value">{{ stat.value }}</div>
-            <div class="stat-label">{{ stat.label }}</div>
-          </div>
-        </div>
-      </UContainer>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-      <UContainer>
-        <div class="section-header">
-          <h2 class="section-title">Features</h2>
-          <p class="section-description">
-            Alles was Sie zur Verwaltung des LeiOS-Repositories brauchen
-          </p>
-        </div>
-        <div class="features-grid">
-          <div v-for="feature in features" :key="feature.title" class="feature-card">
-            <div class="feature-icon">
-              <UIcon :name="feature.icon" />
+    <div class="space-y-0">
+        <!-- Hero Section -->
+        <section class="relative flex min-h-[90vh] items-center overflow-hidden bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(56,189,248,0.15),transparent)]">
+            <div class="pointer-events-none absolute inset-0 overflow-hidden">
+                <div class="absolute h-96 w-96 rounded-full bg-sky-500/10 blur-3xl" style="top:25%;left:25%"></div>
+                <div class="absolute h-96 w-96 rounded-full bg-sky-400/5 blur-3xl" style="bottom:25%;right:25%"></div>
             </div>
-            <h3 class="feature-title">{{ feature.title }}</h3>
-            <p class="feature-description">{{ feature.description }}</p>
-          </div>
-        </div>
-      </UContainer>
-    </section>
 
-    <!-- CTA Section -->
-    <section class="cta">
-      <UContainer>
-        <div class="cta-content">
-          <h2 class="cta-title">Bereit zu beginnen?</h2>
-          <p class="cta-description">
-            Melden Sie sich an und erkunden Sie alle Features des LeiOS Repository Hubs
-          </p>
-          <UButton
-            size="lg"
-            to="/explorer"
-            color="primary"
-            variant="soft"
-            icon="i-lucide-arrow-right"
-          >
-            Jetzt beginnen
-          </UButton>
-        </div>
-      </UContainer>
-    </section>
-  </div>
+            <UContainer class="relative z-10">
+                <div class="mx-auto max-w-4xl text-center">
+                    <UBadge color="primary" variant="soft" size="xl" class="mb-6 inline-flex items-center gap-1">
+                        <UIcon name="i-lucide-sparkles" />
+                        Debian-based Linux Distribution
+                    </UBadge>
+
+                    <h1 class="mb-6 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-7xl">
+                        Linux, <span class="bg-linear-to-tr from-sky-400 to-sky-200 bg-clip-text text-transparent">Refined</span>
+                    </h1>
+
+                    <p class="mx-auto mb-8 max-w-2xl leading-[1.6] text-lg text-slate-400 sm:text-xl lg:text-2xl">
+                        A Debian-based OS focused on stability, performance, and an exceptional out-of-box experience.
+                        Built for developers. Designed for everyone.
+                    </p>
+
+                    <div class="mb-12 flex flex-col justify-center gap-4 sm:flex-row">
+                        <UButton to="#download" size="xl" color="primary" class="px-8">
+                            <template #leading>
+                                <UIcon name="i-lucide-download" />
+                            </template>
+                            Download LeiOS
+                        </UButton>
+                        <UButton to="https://github.com/LeiOS-project" target="_blank" size="xl" color="neutral" variant="outline" class="px-8">
+                            <template #leading>
+                                <UIcon name="i-lucide-github" />
+                            </template>
+                            View on GitHub
+                        </UButton>
+                    </div>
+
+                    <div class="mx-auto grid max-w-xl w-max grid-cols-2 gap-8 text-center md:max-w-3xl md:grid-cols-4">
+                        <div v-for="stat in stats" :key="stat.label" class="space-y-1">
+                            <div class="text-2xl font-bold text-sky-400 md:text-3xl">{{ stat.value }}</div>
+                            <div class="text-sm text-slate-500">{{ stat.label }}</div>
+                        </div>
+                    </div>
+                </div>
+            </UContainer>
+
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-slate-500">
+                <UIcon name="i-lucide-chevron-down" class="text-xl" />
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="bg-slate-950/50 py-24">
+            <UContainer>
+                <header class="mb-12 text-center">
+                    <UBadge color="primary" variant="soft" size="xl" class="mb-3">Features</UBadge>
+                    <h2 class="mb-3 text-3xl font-bold sm:text-4xl lg:text-5xl">Why Choose LeiOS?</h2>
+                    <p class="mx-auto max-w-3xl text-lg text-slate-400">
+                        Every aspect of LeiOS is designed with care to provide you the best Linux experience.
+                    </p>
+                </header>
+
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                    <UCard
+                        v-for="feature in features"
+                        :key="feature.title"
+                        class="border-slate-800 bg-slate-900/50 transition duration-300 hover:-translate-y-1 hover:border-sky-400/50"
+                    >
+                        <div class="space-y-3 p-2">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-sky-500/10">
+                                <UIcon :name="feature.icon" class="text-xl text-sky-400" />
+                            </div>
+                            <h3 class="text-lg font-semibold">{{ feature.title }}</h3>
+                            <p class="text-slate-400 leading-relaxed">{{ feature.description }}</p>
+                        </div>
+                    </UCard>
+                </div>
+            </UContainer>
+        </section>
+
+        <!-- Download Section -->
+        <section id="download" class="relative py-24">
+            <div class="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-sky-500/5 to-transparent"></div>
+
+            <UContainer class="relative z-10">
+                <header class="mb-12 text-center">
+                    <UBadge color="primary" variant="soft" size="xl" class="mb-3">Download</UBadge>
+                    <h2 class="mb-3 text-3xl font-bold sm:text-4xl lg:text-5xl">Get Started with LeiOS</h2>
+                    <p class="mx-auto max-w-3xl text-lg text-slate-400">
+                        Download the latest version and experience Linux the way it should be.
+                    </p>
+                </header>
+
+                <div class="mx-auto max-w-3xl space-y-6">
+                    <UCard class="border-slate-800 bg-slate-900/80">
+                        <div class="space-y-6 p-6 text-center">
+                            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-sky-500/10">
+                                <UIcon name="i-lucide-download" class="text-4xl text-sky-400" />
+                            </div>
+                            <h3 class="text-xl font-bold">LeiOS Latest</h3>
+                            <p class="text-slate-400">Based on Debian Stable • 64-bit (x86_64)</p>
+
+                            <div class="flex flex-col justify-center gap-4 sm:flex-row">
+                                <UButton size="lg" color="primary" class="px-8" disabled>
+                                    <template #leading>
+                                        <UIcon name="i-lucide-download" />
+                                    </template>
+                                    Download ISO (Coming Soon)
+                                </UButton>
+                            </div>
+
+                            <p class="text-sm text-slate-500">
+                                Check our
+                                <NuxtLink to="https://blog.leicraftmc.de/tag/leios/" target="_blank" class="text-sky-400 hover:underline">
+                                    blog
+                                </NuxtLink>
+                                for release announcements and updates.
+                            </p>
+                        </div>
+                    </UCard>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <UCard
+                            v-for="link in sourceLinks"
+                            :key="link.title"
+                            class="border-slate-800 bg-slate-900/50 transition hover:border-sky-400/50"
+                        >
+                            <NuxtLink :to="link.to" target="_blank" class="flex items-center gap-4 p-4 text-slate-100 no-underline">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-800">
+                                    <UIcon :name="link.icon" class="text-lg text-sky-400" />
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="font-semibold">{{ link.title }}</h4>
+                                    <p class="truncate text-sm text-slate-400">{{ link.subtitle }}</p>
+                                </div>
+                                <UIcon name="i-lucide-external-link" class="text-slate-500" />
+                            </NuxtLink>
+                        </UCard>
+                    </div>
+                </div>
+            </UContainer>
+        </section>
+
+        <!-- Community Section -->
+        <section id="community" class="bg-slate-950/50 py-24">
+            <UContainer>
+                <header class="mb-12 text-center">
+                    <UBadge color="primary" variant="soft" size="xl" class="mb-3">Community</UBadge>
+                    <h2 class="mb-3 text-3xl font-bold sm:text-4xl lg:text-5xl">Join the Community</h2>
+                    <p class="mx-auto max-w-3xl text-lg text-slate-400">
+                        Connect with other LeiOS users, get help, and contribute to the project.
+                    </p>
+                </header>
+
+                <div class="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
+                    <UCard
+                        v-for="card in communityCards"
+                        :key="card.title"
+                        :class="[
+                            'border-slate-800 bg-slate-900/80 transition duration-300 hover:-translate-y-1',
+                            card.color === 'indigo' ? 'hover:border-indigo-400/50' : '',
+                            card.color === 'orange' ? 'hover:border-orange-400/50' : '',
+                            card.color === 'green' ? 'hover:border-green-400/50' : ''
+                        ]"
+                    >
+                        <NuxtLink :to="card.to" target="_blank" class="block space-y-4 p-4 text-center no-underline">
+                            <div
+                                :class="[
+                                    'mx-auto flex h-16 w-16 items-center justify-center rounded-xl',
+                                    card.color === 'indigo' ? 'bg-indigo-400/10' : '',
+                                    card.color === 'orange' ? 'bg-orange-400/10' : '',
+                                    card.color === 'green' ? 'bg-green-400/10' : ''
+                                ]"
+                            >
+                                <UIcon
+                                    :name="card.icon"
+                                    :class="[
+                                        'text-3xl',
+                                        card.color === 'indigo' ? 'text-indigo-400' : '',
+                                        card.color === 'orange' ? 'text-orange-400' : '',
+                                        card.color === 'green' ? 'text-green-400' : ''
+                                    ]"
+                                />
+                            </div>
+                            <h3 class="text-lg font-semibold">{{ card.title }}</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">{{ card.description }}</p>
+                            <UButton color="neutral" variant="soft" size="sm" class="pointer-events-none">
+                                {{ card.buttonText }}
+                                <template #trailing>
+                                    <UIcon name="i-lucide-external-link" class="text-sm" />
+                                </template>
+                            </UButton>
+                        </NuxtLink>
+                    </UCard>
+                </div>
+            </UContainer>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="relative overflow-hidden py-28 ">
+            <div class="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-sky-500/5 to-transparent"></div>
+
+            <UContainer class="relative z-10">
+                <div class="mx-auto max-w-3xl text-center">
+                    <h2 class="mb-6 text-3xl font-bold sm:text-4xl lg:text-5xl">
+                        Ready to Try <span class="bg-linear-to-tr from-sky-400 to-sky-200 bg-clip-text text-transparent">LeiOS</span>?
+                    </h2>
+                    <p class="mb-8 text-lg text-slate-400">
+                        Experience a Linux distribution that just works. Stable, fast, and designed with you in mind.
+                    </p>
+                    <div class="flex flex-col justify-center gap-4 sm:flex-row">
+                        <UButton to="#download" size="xl" color="primary" class="px-8">
+                            <template #leading>
+                                <UIcon name="i-lucide-download" />
+                            </template>
+                            Download Now
+                        </UButton>
+                        <UButton to="https://discord.gg/8YC5BXjCc5" target="_blank" size="xl" color="neutral" variant="outline" class="px-8">
+                            <template #leading>
+                                <UIcon name="i-lucide-message-circle" />
+                            </template>
+                            Join Discord
+                        </UButton>
+                    </div>
+                </div>
+            </UContainer>
+        </section>
+    </div>
 </template>
 
-<style scoped>
-.repo-home {
-  background-color: rgb(2 6 23);
-  color: rgb(241 245 249);
-}
-
-/* Hero Section */
-.hero {
-  padding: 4rem 1rem;
-  background: linear-gradient(
-    135deg,
-    rgb(15 23 42) 0%,
-    rgb(2 6 23) 100%
-  );
-  border-bottom: 1px solid rgb(30 41 59);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgb(59 130 246) 0%, transparent 70%);
-  opacity: 0.1;
-  pointer-events: none;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.hero-title {
-  font-size: 3rem;
-  font-weight: 800;
-  margin: 0 0 1rem 0;
-  background: linear-gradient(
-    135deg,
-    rgb(241 245 249) 0%,
-    rgb(148 163 184) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-subtitle {
-  font-size: 1.125rem;
-  color: rgb(148 163 184);
-  margin: 0 0 2rem 0;
-  line-height: 1.6;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* Stats Section */
-.stats-section {
-  padding: 3rem 1rem;
-  background-color: rgb(15 23 42);
-  border-bottom: 1px solid rgb(30 41 59);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1.5rem;
-}
-
-.stat-box {
-  text-align: center;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%);
-  border: 1px solid rgb(30 41 59);
-  border-radius: 0.5rem;
-  transition: border-color 0.2s;
-}
-
-.stat-box:hover {
-  border-color: rgb(59 130 246);
-}
-
-.stat-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: rgb(59 130 246);
-  margin-bottom: 0.5rem;
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  color: rgb(148 163 184);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* Features Section */
-.features {
-  padding: 4rem 1rem;
-  background-color: rgb(2 6 23);
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.section-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0 0 1rem 0;
-  color: rgb(241 245 249);
-}
-
-.section-description {
-  font-size: 1rem;
-  color: rgb(148 163 184);
-  margin: 0;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-.feature-card {
-  padding: 2rem;
-  background: linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%);
-  border: 1px solid rgb(30 41 59);
-  border-radius: 0.5rem;
-  transition: all 0.2s;
-  text-align: center;
-}
-
-.feature-card:hover {
-  border-color: rgb(59 130 246);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
-}
-
-.feature-icon {
-  width: 3rem;
-  height: 3rem;
-  margin: 0 auto 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgb(59 130 246);
-  border-radius: 0.5rem;
-  color: white;
-}
-
-.feature-icon :deep(svg) {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-.feature-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin: 0 0 0.75rem 0;
-  color: rgb(241 245 249);
-}
-
-.feature-description {
-  font-size: 0.875rem;
-  color: rgb(148 163 184);
-  margin: 0;
-  line-height: 1.6;
-}
-
-/* CTA Section */
-.cta {
-  padding: 4rem 1rem;
-  background: linear-gradient(
-    135deg,
-    rgb(30 41 59) 0%,
-    rgb(15 23 42) 100%
-  );
-  border-top: 1px solid rgb(30 41 59);
-  text-align: center;
-}
-
-.cta-content {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.cta-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0 0 1rem 0;
-  color: rgb(241 245 249);
-}
-
-.cta-description {
-  font-size: 1rem;
-  color: rgb(148 163 184);
-  margin: 0 0 2rem 0;
-  line-height: 1.6;
-}
-
-@media (max-width: 768px) {
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .cta-title {
-    font-size: 1.5rem;
-  }
-}
-</style>
