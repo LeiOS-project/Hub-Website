@@ -1,14 +1,5 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
-    <UMain >
+    <UMain>
         <slot />
     </UMain>
 </template>
-
-<style scoped>
-
-
-</style>

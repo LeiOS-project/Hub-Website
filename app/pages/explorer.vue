@@ -119,10 +119,7 @@ const mockStats: RepoStats = {
 const loadRepository = async () => {
   loading.value = true
   try {
-    // Hier würde die echte API-Integration stattfinden
-    // const response = await useAPI(api => api.repository.list())
-    
-    // Für Demo: Mock-Daten verwenden
+    // Mock-Daten verwenden
     items.value = mockItems
     repoStats.value = mockStats
   } catch (error) {
@@ -138,10 +135,6 @@ const loadFileContent = async (item: RepositoryItem) => {
 
   contentLoading.value = true
   try {
-    // Hier würde die echte API-Integration stattfinden
-    // const response = await useAPI(api => api.repository.getFile(item.path))
-    
-    // Mock-Daten
     currentFile.value = {
       name: item.name,
       type: item.type,

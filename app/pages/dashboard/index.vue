@@ -119,10 +119,6 @@ const mockReleases: Release[] = [
 const loadDashboardData = async () => {
   loading.value = true
   try {
-    // Hier würde die echte API-Integration stattfinden
-    // const usersResponse = await useAPI(api => api.admin.getUsers())
-    // const releasesResponse = await useAPI(api => api.admin.getReleases())
-    
     // Mock-Daten verwenden
     users.value = mockUsers
     releases.value = mockReleases
@@ -146,14 +142,12 @@ const loadDashboardData = async () => {
 // User-Aktionen
 const handleEditUser = (user: User) => {
   // Modal oder Navigation zum Bearbeitungsformular
-  console.log('Edit user:', user)
 }
 
 const handleDeleteUser = async (userId: string) => {
   // Bestätigung und Löschung
   if (confirm('Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?')) {
     try {
-      // await useAPI(api => api.admin.deleteUser(userId))
       users.value = users.value.filter(u => u.id !== userId)
     } catch (error) {
       console.error('Fehler beim Löschen des Benutzers:', error)
@@ -163,18 +157,16 @@ const handleDeleteUser = async (userId: string) => {
 
 const handlePromoteUser = async (userId: string) => {
   // Benutzer-Rolle erhöhen
-  console.log('Promote user:', userId)
 }
 
 // Release-Aktionen
 const handleEditRelease = (release: Release) => {
-  console.log('Edit release:', release)
+  // Modal oder Navigation zum Bearbeitungsformular
 }
 
 const handleDeleteRelease = async (releaseId: string) => {
   if (confirm('Sind Sie sicher, dass Sie dieses Release löschen möchten?')) {
     try {
-      // await useAPI(api => api.admin.deleteRelease(releaseId))
       releases.value = releases.value.filter(r => r.id !== releaseId)
     } catch (error) {
       console.error('Fehler beim Löschen des Releases:', error)
@@ -184,7 +176,6 @@ const handleDeleteRelease = async (releaseId: string) => {
 
 const handlePublishRelease = async (releaseId: string) => {
   try {
-    // await useAPI(api => api.admin.publishRelease(releaseId))
     const release = releases.value.find(r => r.id === releaseId)
     if (release) {
       release.published = true
