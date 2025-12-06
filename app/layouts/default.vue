@@ -15,7 +15,7 @@ import Header from '~/components/layout/Header.vue';
         </UMain>
 
         <!-- Footer -->
-        <!-- <Footer /> -->
+        <Footer />
     </div>
 </template>
 
