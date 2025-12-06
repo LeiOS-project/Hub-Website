@@ -4,6 +4,250 @@ export type ClientOptions = {
     baseURL: 'http://localhost:4000' | 'https://api.repo.leios.dev' | (string & {});
 };
 
+export type GetPublicPackagesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/public/packages';
+};
+
+export type GetPublicPackagesResponses = {
+    /**
+     * Packages retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Packages retrieved successfully';
+        data: Array<{
+            name: string;
+            owner_user_id: number;
+            description: string;
+            homepage_url: string;
+        }>;
+    };
+};
+
+export type GetPublicPackagesResponse = GetPublicPackagesResponses[keyof GetPublicPackagesResponses];
+
+export type GetPublicPackagesPackageNameData = {
+    body?: never;
+    path: {
+        packageName: string;
+    };
+    query?: {
+        repo?: 'leios-archive' | 'leios-testing' | 'leios-stable';
+    };
+    url: '/public/packages/{packageName}';
+};
+
+export type GetPublicPackagesPackageNameErrors = {
+    /**
+     * Package not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Package not found';
+    };
+};
+
+export type GetPublicPackagesPackageNameError = GetPublicPackagesPackageNameErrors[keyof GetPublicPackagesPackageNameErrors];
+
+export type GetPublicPackagesPackageNameResponses = {
+    /**
+     * Package retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Package retrieved successfully';
+        data: {
+            package: {
+                name: string;
+                owner_user_id: number;
+                description: string;
+                homepage_url: string;
+            };
+            releases: {
+                'leios-archive': {
+                    [key: string]: {
+                        amd64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                        arm64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                    };
+                };
+                'leios-testing': {
+                    [key: string]: {
+                        amd64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                        arm64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                    };
+                };
+                'leios-stable': {
+                    [key: string]: {
+                        amd64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                        arm64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+};
+
+export type GetPublicPackagesPackageNameResponse = GetPublicPackagesPackageNameResponses[keyof GetPublicPackagesPackageNameResponses];
+
+export type GetPublicPackagesPackageNameReleasesData = {
+    body?: never;
+    path: {
+        packageName: string;
+    };
+    query?: {
+        repo?: 'leios-archive' | 'leios-testing' | 'leios-stable';
+    };
+    url: '/public/packages/{packageName}/releases';
+};
+
+export type GetPublicPackagesPackageNameReleasesErrors = {
+    /**
+     * Package not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Package not found';
+    };
+};
+
+export type GetPublicPackagesPackageNameReleasesError = GetPublicPackagesPackageNameReleasesErrors[keyof GetPublicPackagesPackageNameReleasesErrors];
+
+export type GetPublicPackagesPackageNameReleasesResponses = {
+    /**
+     * Package releases retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Package releases retrieved successfully';
+        data: {
+            'leios-archive': {
+                [key: string]: {
+                    amd64?: {
+                        name: string;
+                        key: string;
+                        version: string;
+                        leios_patch?: number;
+                        architecture: 'amd64' | 'arm64';
+                        maintainer: string;
+                        description: string;
+                    };
+                    arm64?: {
+                        name: string;
+                        key: string;
+                        version: string;
+                        leios_patch?: number;
+                        architecture: 'amd64' | 'arm64';
+                        maintainer: string;
+                        description: string;
+                    };
+                };
+            };
+            'leios-testing': {
+                [key: string]: {
+                    amd64?: {
+                        name: string;
+                        key: string;
+                        version: string;
+                        leios_patch?: number;
+                        architecture: 'amd64' | 'arm64';
+                        maintainer: string;
+                        description: string;
+                    };
+                    arm64?: {
+                        name: string;
+                        key: string;
+                        version: string;
+                        leios_patch?: number;
+                        architecture: 'amd64' | 'arm64';
+                        maintainer: string;
+                        description: string;
+                    };
+                };
+            };
+            'leios-stable': {
+                [key: string]: {
+                    amd64?: {
+                        name: string;
+                        key: string;
+                        version: string;
+                        leios_patch?: number;
+                        architecture: 'amd64' | 'arm64';
+                        maintainer: string;
+                        description: string;
+                    };
+                    arm64?: {
+                        name: string;
+                        key: string;
+                        version: string;
+                        leios_patch?: number;
+                        architecture: 'amd64' | 'arm64';
+                        maintainer: string;
+                        description: string;
+                    };
+                };
+            };
+        };
+    };
+};
+
+export type GetPublicPackagesPackageNameReleasesResponse = GetPublicPackagesPackageNameReleasesResponses[keyof GetPublicPackagesPackageNameReleasesResponses];
+
 export type PostAuthLoginData = {
     body?: {
         username: string;

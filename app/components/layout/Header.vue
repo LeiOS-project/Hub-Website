@@ -1,22 +1,35 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
+import { UserStore } from '~/utils/stores/userStore'
+
+const route = useRoute()
+const sessionCookie = useCookie<string | null>('session_token')
+const user = ref<any | null>(null)
+
+if (sessionCookie.value) {
+    user.value = await UserStore.use().catch(() => null)
+}
 
 const links = computed<NavigationMenuItem[]>(() => [
     {
-        label: 'Repository Explorer',
-        to: '/explorer'
+        label: 'Home',
+        to: '/'
     },
     {
         label: 'Dashboard',
-        to: '/dashboard',
-        children: [
-            { label: 'Übersicht', to: '/dashboard' },
-            { label: 'Benutzer', to: '/dashboard?tab=users' },
-            { label: 'Releases', to: '/dashboard?tab=releases' }
-        ]
+        to: '/dashboard'
     }
-]);
+])
 
+const isAuthenticated = computed(() => Boolean(sessionCookie.value))
+
+const profileLabel = computed(() => {
+    if (user.value?.display_name) return user.value.display_name
+    if (user.value?.username) return user.value.username
+    return 'Profile'
+})
+
+const redirectQuery = computed(() => encodeURIComponent(route.fullPath))
 </script>
 
 <template>
@@ -35,14 +48,19 @@ const links = computed<NavigationMenuItem[]>(() => [
 
         <template #right>
             <div class="flex items-center gap-2">
-                <UButton
-                    icon="i-lucide-user"
-                    to="/auth/profile"
-                    color="primary" 
-                    variant="soft" 
-                    class="font-medium hidden sm:inline-flex"
-                >
-                    Profil
+                <UButton v-if="isAuthenticated" icon="i-lucide-layout-dashboard" to="/dashboard" color="primary"
+                    variant="soft" class="font-medium hidden sm:inline-flex">
+                    Dashboard
+                </UButton>
+
+                <UButton v-if="isAuthenticated" icon="i-lucide-user" to="/auth/password-reset" color="neutral"
+                    variant="ghost" class="font-medium hidden sm:inline-flex">
+                    {{ profileLabel }}
+                </UButton>
+
+                <UButton v-else icon="i-lucide-log-in" :to="`/auth/login?url=${redirectQuery}`" color="primary"
+                    variant="solid" class="font-medium">
+                    Login
                 </UButton>
             </div>
         </template>
