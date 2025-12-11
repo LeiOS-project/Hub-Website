@@ -1,246 +1,126 @@
 # LeiOS Repository Hub
 
-Das zentrale Portal für das LeiOS-Repository mit Entwickler-Tools, Release-Management und Community-Support.
+Central control center for LeiOS packages: public explorer, developer workflows, and admin approvals.
 
 ## Features
 
-- 🔍 **Repository Explorer** - Durchsuchen Sie alle Dateien und Verzeichnisse mit intuitiver Benutzeroberfläche
-- 👥 **Benutzer Management** - Verwalten Sie Benutzer und deren Rollen im Repository
-- 📦 **Release Management** - Erstellen, bearbeiten und veröffentlichen Sie Releases mit Assets
-- 📊 **Statistiken & Analytics** - Überwachen Sie Repository-Statistiken und Sprachen-Verteilung
-- 🔐 **Zugriffskontrolle** - Rolle-basierte Zugriffskontrolle für Sicherheit und Verwaltung
-- 🎨 **Dark Theme** - Modernes Design mit dunklem Theme basierend auf Aurora-Farbpalette
+- 🔍 Public package explorer with search, repo filters (archive/testing/stable), and release tables
+- 🛠️ Developer workspace to create packages, upload amd64/arm64 releases, and request promotion to stable
+- 🛡️ Admin controls for approving/denying stable requests and managing users/roles
+- 🔐 Session-based authentication with automatic API client configuration
+- 🎨 Dark Nuxt UI theme using the Aurora-inspired palette
 
 ## Tech Stack
 
-- **Framework**: Nuxt 4
-- **UI**: @nuxt/ui
-- **Styling**: Tailwind CSS
-- **Language**: TypeScript
-- **Icons**: Lucide Icons
-- **Runtime**: Bun
+- Framework: Nuxt 4 (SSR)
+- UI: @nuxt/ui + Lucide icons
+- Styling: Tailwind CSS + custom tokens
+- Language: TypeScript
+- Runtime: Bun (Nitro bun preset)
+- API client: Generated via openapi-ts
 
-## Setup
+## Quick start
 
-### Abhängigkeiten installieren:
+1) Install dependencies
 
 ```bash
 bun install
 ```
 
-### Environment-Variablen
+2) Environment variables
 
-Kopieren Sie die `example.env` in `.env`:
+Copy `example.env` to `.env` and adjust as needed (PowerShell example):
 
-```bash
-cp example.env .env
+```powershell
+Copy-Item example.env .env
 ```
 
-## Entwicklung
+Key values:
 
-Starten Sie den Entwicklungsserver auf `http://localhost:12155`:
+- `REPO_API_URL` — API base URL (defaults to `http://localhost:12151`)
+- `USE_DEV_PROXY` — set to `true` to enable the dev proxy in `nuxt.config.ts`
+- `DEV_PROXY_TARGET` — proxy target when `USE_DEV_PROXY=true` (defaults to `https://api.repo.leios.dev`)
+
+3) Development server (default port `12153`)
 
 ```bash
 bun run dev
 ```
 
-## Production
-
-### Build
-
-```bash
-bun run build
-```
-
-### Starten
-
-```bash
-bun start
-```
-
-## Projekt-Struktur
-
-```
-app/
-├── api-client/           # Generierte API-Client-Code
-├── assets/
-│   └── css/
-│       └── main.css      # Globale Styles
-├── components/
-│   ├── dashboard/        # Admin-Dashboard Komponenten
-│   ├── layout/           # Layout-Komponenten
-│   └── repo/             # Repository-Komponenten
-├── composables/
-│   ├── useAPI.ts         # API-Interaktions-Composable
-│   ├── useAdmin.ts       # Admin-API Composable
-│   └── useRepository.ts  # Repository-API Composable
-├── layouts/
-│   ├── dashboard.vue     # Dashboard-Layout
-│   └── default.vue       # Standard-Layout
-├── middleware/
-│   ├── auth.global.ts    # Authentifizierungs-Middleware
-│   └── rewrites.global.ts
-├── pages/
-│   ├── index.vue         # Startseite
-│   ├── explorer.vue      # Repository-Explorer
-│   └── dashboard/
-│       └── index.vue     # Admin-Dashboard
-└── utils/
-    └── index.ts          # Utility-Funktionen
-```
-
-## Seiten
-
-### 🏠 Startseite (`/`)
-- Hero-Section mit Features
-- Statistiken-Übersicht
-- Call-to-Action Buttons
-
-### 🔍 Repository Explorer (`/explorer`)
-- Datei- und Ordner-Browser
-- Dateivorschau mit Syntax-Highlighting
-- Repository-Statistiken
-- Suche und Navigation
-
-### 📊 Admin Dashboard (`/dashboard`)
-- **Übersicht**: Quick Stats und letzte Aktivitäten
-- **Benutzer-Management**: Benutzer verwalten und Rollen ändern
-- **Release-Management**: Releases erstellen, bearbeiten und veröffentlichen
-
-## Komponenten
-
-### Repository-Komponenten
-
-#### `RepoExplorer.vue`
-Datei- und Ordner-Browser für das Repository
-- Props: `items`, `loading`, `selectedPath`
-- Events: `select`, `navigate`
-
-#### `FilePreview.vue`
-Vorschau und Download von Dateien
-- Props: `file`, `content`, `loading`
-- Syntax-Highlighting für Code-Dateien
-
-#### `RepoStats.vue`
-Statistiken und Metriken des Repositories
-- Props: `stats`, `loading`
-- Zeigt Sprachen-Verteilung und Metriken
-
-### Dashboard-Komponenten
-
-#### `UserManagement.vue`
-Verwaltung von Repository-Benutzern
-- Props: `users`, `loading`
-- Events: `edit`, `delete`, `promote`
-
-#### `ReleaseManagement.vue`
-Verwaltung von Releases und Assets
-- Props: `releases`, `loading`
-- Events: `edit`, `delete`, `publish`
-
-## Composables
-
-### `useAPI`
-Zentrale API-Interaktions-Composable mit Authentifizierung
-- Server-seitige Anfragen mit Session-Token
-- Client-seitige Authentifizierungs-Umleitung
-- Fehlerbehandlung
-
-```typescript
-const data = await useAPI(api => api.repository.list())
-```
-
-### `useRepository`
-Repository-spezifische API-Funktionen
-- `listItems(path)` - Repository-Elemente abrufen
-- `getFile(path)` - Dateiinhalt abrufen
-- `getStats()` - Statistiken abrufen
-- `search(query)` - Suche durchführen
-
-### `useAdmin`
-Admin-spezifische API-Funktionen
-- Benutzer-Management
-- Release-Management
-- Statistiken und Analysen
-
-## Authentifizierung
-
-Das System verwendet Cookie-basierte Authentifizierung:
-- Session-Token wird im Cookie gespeichert
-- Middleware überprüft Authentifizierung für geschützte Seiten
-- Rolle-basierte Zugriffskontrolle für Admin-Features
-
-## Styling
-
-### Farbpalette (Aurora)
-- Primär: `rgb(59 130 246)` (Blau)
-- Sekundär: `rgb(205 74 230)` (Lila)
-- Hintergrund: `rgb(2 6 23)` (Dunkelblau)
-- Flächen: `rgb(15 23 42)` (Dunkelblau-Grau)
-- Text: `rgb(241 245 249)` (Hell)
-
-### CSS-Variablen
-```css
---surface-1: #05070d
---surface-2: #0b0f1c
---surface-3: #11182b
---surface-border: rgba(255, 255, 255, 0.08)
---text-primary: #f5f7ff
---text-muted: #9aa6c4
-```
-
-## API-Integration
-
-Die App verwendet einen generierten API-Client basierend auf OpenAPI-Spezifikation:
+4) Generate the typed API client from the OpenAPI spec
 
 ```bash
 bun run api-client:generate
 ```
 
-Dieser Befehl generiert die Dateien in `app/api-client/`.
+5) Production build & start
 
-## Utility-Funktionen
-
-- `formatFileSize(bytes)` - Formatiert Dateigröße
-- `formatDate(date)` - Formatiert Datum
-- `formatDateTime(date)` - Formatiert Datum und Zeit
-- `getLanguageIcon(filename)` - Icon basierend auf Dateityp
-- `getLanguageFromExt(filename)` - Programmiersprache erkennen
-- `copyToClipboard(text)` - Text in Zwischenablage kopieren
-- `hasAdminAccess(role)` - Admin-Zugriff prüfen
-
-## Entwickler-Tipps
-
-### SEO Meta Tags
-Alle Seiten sollten `useSeoMeta` verwenden:
-```typescript
-useSeoMeta({
-  title: 'Seiten-Titel',
-  ogTitle: 'Open Graph Titel',
-  description: 'Seiten-Beschreibung'
-})
+```bash
+bun run build
+bun start
 ```
 
-### Page Metadata
-Nutzen Sie `definePageMeta` für Layout-Definition:
-```typescript
-definePageMeta({
-  layout: 'dashboard'
-})
+## Project structure
+
+```
+app/
+├── api-client/              # Generated SDK (openapi-ts)
+├── app.config.ts            # Nuxt app config
+├── assets/css/main.css      # Global styles & theme tokens
+├── components/
+│   ├── img/                 # Brand assets (LeiOS icon/logo)
+│   └── layout/              # Header & footer
+├── composables/
+│   ├── updateAPIClient.ts   # Sets API base URL + auth header
+│   ├── useAPI.ts            # Wrapper that injects session token & redirects to login
+│   └── useRepository.ts     # Placeholder helpers for repository calls
+├── layouts/default.vue      # Site shell
+├── middleware/
+│   ├── auth.global.ts       # Redirects unauthenticated users
+│   └── rewrites.global.ts   # Rewrites support
+├── pages/
+│   ├── index.vue            # Landing page
+│   ├── auth/
+│   │   ├── login.vue        # Session login
+│   │   └── password-reset.vue
+│   ├── dashboard/index.vue  # Developer/Admin dashboard
+│   └── explorer/
+│       ├── index.vue        # Public package list
+│       └── [packageName].vue  # Package detail & releases
+└── utils/
+    ├── index.ts             # Utilities (formatting, helpers)
+    └── stores/userStore.ts  # Session store
 ```
 
-### Icons
-Icons von Lucide sind verfügbar:
-```vue
-<UIcon name="i-lucide-code" />
-```
+## Key pages & flows
 
-## Lizenz
+- `/` Landing: highlights roles, CTA to explorer/login, Nuxt UI hero.
+- `/explorer`: public package list with search, refresh, and links to package detail.
+- `/explorer/:packageName`: repo filter (all/archive/testing/stable) plus releases table per arch.
+- `/dashboard`: tabbed developer/admin workspace.
+  - Developer: create packages, upload releases, view releases & stable requests.
+  - Admin: review/approve/deny stable requests, create users, manage roles.
+- `/auth/login`: sets `session_token` cookie and redirects to dashboard or a requested URL.
+- `/auth/password-reset`: change password for the signed-in user; unauthenticated users are prompted to log in.
 
-GPL License - siehe LICENSE Datei für Details
+## Authentication & API client
+
+- Session token is stored in the `session_token` cookie.
+- `useAPI` injects the token into the generated client; when missing (client-side) it redirects to `/auth/login` unless `disableAuthRedirect` is true.
+- `updateAPIClient` sets the base URL from `runtimeConfig.public.apiUrl` and attaches `Authorization: Bearer <token>` when present.
+- Dev proxy can be toggled via `USE_DEV_PROXY=true` to forward `/api/proxy` to `DEV_PROXY_TARGET` during local development.
+
+## Styling
+
+- Dark-forward UI using @nuxt/ui components and the Aurora-inspired palette defined in `assets/css/main.css`.
+- Tailwind utilities layered with custom CSS variables (`--surface-*`, `--text-*`) for consistent surfaces and text contrast.
+
+## License
+
+GPL License — see `LICENSE` for details.
 
 ## Support
 
-- 📧 Email: support@leios.dev
-- 💬 Discord: https://discord.gg/8YC5BXjCc5
-- 🐙 GitHub: https://github.com/LeiOS-project
+- Email: support@leios.dev
+- Discord: https://discord.gg/8YC5BXjCc5
+- GitHub: https://github.com/LeiOS-project

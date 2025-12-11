@@ -40,5 +40,11 @@ export default defineNuxtConfig({
 			]
 
 		}
+	},
+
+	routeRules: {
+		"/dashboard/**": { ssr: false },
+		"/auth/**": { ssr: false },
+		"/**": { ssr: true }
 	}
 });
