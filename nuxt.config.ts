@@ -36,7 +36,7 @@ export default defineNuxtConfig({
 	vite: {
 		server: {
 			allowedHosts: [
-				"nowip-app-test.tun.is-on.net"
+				"leios-hub-website-test.tun.is-on.net"
 			]
 
 		}

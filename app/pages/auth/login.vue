@@ -10,7 +10,7 @@ definePageMeta({
 });
 
 useSeoMeta({
-    title: 'Login | NowIP',
+    title: 'Login | LeiOS Hub',
     description: 'Login to your account'
 });
 
