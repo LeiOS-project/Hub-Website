@@ -633,6 +633,115 @@ export type PutAccountPasswordResponses = {
 
 export type PutAccountPasswordResponse = PutAccountPasswordResponses[keyof PutAccountPasswordResponses];
 
+export type GetAccountApikeysData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/account/apikeys';
+};
+
+export type GetAccountApikeysResponses = {
+    /**
+     * API keys retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'API keys retrieved successfully';
+        data: Array<{
+            id: string;
+            description: string;
+            expires_at: number | null;
+        }>;
+    };
+};
+
+export type GetAccountApikeysResponse = GetAccountApikeysResponses[keyof GetAccountApikeysResponses];
+
+export type PostAccountApikeysData = {
+    body?: {
+        description: string;
+        expires_at: '7d' | '30d' | '90d' | '180d' | '365d' | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/account/apikeys';
+};
+
+export type PostAccountApikeysErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+};
+
+export type PostAccountApikeysError = PostAccountApikeysErrors[keyof PostAccountApikeysErrors];
+
+export type PostAccountApikeysResponses = {
+    /**
+     * API key created successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'API key created successfully';
+        data: {
+            id: string;
+            token: string;
+        };
+    };
+};
+
+export type PostAccountApikeysResponse = PostAccountApikeysResponses[keyof PostAccountApikeysResponses];
+
+export type DeleteAccountApikeysApiKeyIdData = {
+    body?: never;
+    path: {
+        apiKeyID: string;
+    };
+    query?: never;
+    url: '/account/apikeys/{apiKeyID}';
+};
+
+export type DeleteAccountApikeysApiKeyIdErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * API key not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'API key not found';
+    };
+};
+
+export type DeleteAccountApikeysApiKeyIdError = DeleteAccountApikeysApiKeyIdErrors[keyof DeleteAccountApikeysApiKeyIdErrors];
+
+export type DeleteAccountApikeysApiKeyIdResponses = {
+    /**
+     * API key deleted successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'API key deleted successfully';
+        data: null;
+    };
+};
+
+export type DeleteAccountApikeysApiKeyIdResponse = DeleteAccountApikeysApiKeyIdResponses[keyof DeleteAccountApikeysApiKeyIdResponses];
+
 export type GetDevPackagesData = {
     body?: never;
     path?: never;

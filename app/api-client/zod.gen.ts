@@ -411,6 +411,76 @@ export const zPutAccountPasswordResponse = z.object({
     data: z.null()
 });
 
+export const zGetAccountApikeysData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+/**
+ * API keys retrieved successfully
+ */
+export const zGetAccountApikeysResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('API keys retrieved successfully'),
+    data: z.array(z.object({
+        id: z.string(),
+        description: z.string(),
+        expires_at: z.union([
+            z.int().gte(-9007199254740991).lte(9007199254740991),
+            z.null()
+        ])
+    }))
+});
+
+export const zPostAccountApikeysData = z.object({
+    body: z.optional(z.object({
+        description: z.string(),
+        expires_at: z.union([
+            z.literal('7d'),
+            z.literal('30d'),
+            z.literal('90d'),
+            z.literal('180d'),
+            z.literal('365d'),
+            z.null()
+        ])
+    })),
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+/**
+ * API key created successfully
+ */
+export const zPostAccountApikeysResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('API key created successfully'),
+    data: z.object({
+        id: z.string(),
+        token: z.string()
+    })
+});
+
+export const zDeleteAccountApikeysApiKeyIdData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        apiKeyID: z.string()
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * API key deleted successfully
+ */
+export const zDeleteAccountApikeysApiKeyIdResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('API key deleted successfully'),
+    data: z.null()
+});
+
 export const zGetDevPackagesData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
