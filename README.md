@@ -60,55 +60,6 @@ bun run build
 bun start
 ```
 
-## Project structure
-
-```
-app/
-├── api-client/              # Generated SDK (openapi-ts)
-├── app.config.ts            # Nuxt app config
-├── assets/css/main.css      # Global styles & theme tokens
-├── components/
-│   ├── img/                 # Brand assets (LeiOS icon/logo)
-│   └── layout/              # Header & footer
-├── composables/
-│   ├── updateAPIClient.ts   # Sets API base URL + auth header
-│   ├── useAPI.ts            # Wrapper that injects session token & redirects to login
-│   └── useRepository.ts     # Placeholder helpers for repository calls
-├── layouts/default.vue      # Site shell
-├── middleware/
-│   ├── auth.global.ts       # Redirects unauthenticated users
-│   └── rewrites.global.ts   # Rewrites support
-├── pages/
-│   ├── index.vue            # Landing page
-│   ├── auth/
-│   │   ├── login.vue        # Session login
-│   │   └── password-reset.vue
-│   ├── dashboard/index.vue  # Developer/Admin dashboard
-│   └── explorer/
-│       ├── index.vue        # Public package list
-│       └── [packageName].vue  # Package detail & releases
-└── utils/
-    ├── index.ts             # Utilities (formatting, helpers)
-    └── stores/userStore.ts  # Session store
-```
-
-## Key pages & flows
-
-- `/` Landing: highlights roles, CTA to explorer/login, Nuxt UI hero.
-- `/explorer`: public package list with search, refresh, and links to package detail.
-- `/explorer/:packageName`: repo filter (all/archive/testing/stable) plus releases table per arch.
-- `/dashboard`: tabbed developer/admin workspace.
-  - Developer: create packages, upload releases, view releases & stable requests.
-  - Admin: review/approve/deny stable requests, create users, manage roles.
-- `/auth/login`: sets `session_token` cookie and redirects to dashboard or a requested URL.
-- `/auth/password-reset`: change password for the signed-in user; unauthenticated users are prompted to log in.
-
-## Authentication & API client
-
-- Session token is stored in the `session_token` cookie.
-- `useAPI` injects the token into the generated client; when missing (client-side) it redirects to `/auth/login` unless `disableAuthRedirect` is true.
-- `updateAPIClient` sets the base URL from `runtimeConfig.public.apiUrl` and attaches `Authorization: Bearer <token>` when present.
-- Dev proxy can be toggled via `USE_DEV_PROXY=true` to forward `/api/proxy` to `DEV_PROXY_TARGET` during local development.
 
 ## Styling
 
