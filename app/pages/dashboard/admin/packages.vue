@@ -1,132 +1,185 @@
 <script setup lang="ts">
-import type { TableColumn } from '#ui/types'
-import type { GetAdminPackagesResponses } from '@/api-client/types.gen'
-import * as z from 'zod'
-import type { FormSubmitEvent } from '@nuxt/ui'
-import { UserStore } from '~/utils/stores/userStore'
+import type { DropdownMenuItem, TableColumn } from "#ui/types";
+import type { GetAdminPackagesResponses } from "@/api-client/types.gen";
+import * as z from "zod";
+import type { FormSubmitEvent } from "@nuxt/ui";
+import { UserStore } from "~/utils/stores/userStore";
 
-type AdminPackage = GetAdminPackagesResponses[200]['data'][number]
+type AdminPackage = GetAdminPackagesResponses[200]["data"][number];
 
 definePageMeta({
-    layout: 'dashboard'
-})
+    layout: "dashboard",
+});
 
 useSeoMeta({
-    title: 'All Packages | LeiOS Hub',
-    description: 'Manage all packages'
-})
+    title: "All Packages | LeiOS Hub",
+    description: "Manage all packages",
+});
 
-const toast = useToast()
+const toast = useToast();
 
 // Check admin access
-const currentUser = await UserStore.use().catch(() => null)
-if (!currentUser || currentUser.role !== 'admin') {
-    navigateTo('/dashboard')
+const currentUser = await UserStore.use().catch(() => null);
+if (!currentUser || currentUser.role !== "admin") {
+    navigateTo("/dashboard");
 }
 
 const packageColumns: TableColumn<AdminPackage>[] = [
-    { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'owner_user_id', header: 'Owner ID' },
-    { accessorKey: 'description', header: 'Description' },
-    { id: 'stable', header: 'Stable' },
-    { id: 'testing', header: 'Testing' },
-    { id: 'actions', header: '', enableSorting: false, enableHiding: false }
-]
+    { accessorKey: "id", header: "ID" },
+    { accessorKey: "name", header: "Name" },
+    { accessorKey: "owner_user_id", header: "Owner ID" },
+    { accessorKey: "description", header: "Description" },
+    { id: "stable", header: "Stable" },
+    { id: "testing", header: "Testing" },
+    { id: "actions", header: "", enableSorting: false, enableHiding: false },
+];
 
-const { data: packages, pending: loading, refresh } = await useAsyncData<AdminPackage[]>(
-    'admin-packages-list',
-    async () => {
-        const res = await useAPI((api) => api.getAdminPackages({}))
-        if (!res.success) {
-            toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
-            return []
-        }
-        return res.data
+const {
+    data: packages,
+    pending: loading,
+    refresh,
+} = await useAsyncData<AdminPackage[]>("admin-packages-list", async () => {
+    const res = await useAPI((api) => api.getAdminPackages({}));
+    if (!res.success) {
+        toast.add({
+            title: "Failed to load packages",
+            description: res.message,
+            color: "error",
+        });
+        return [];
     }
-)
+    return res.data;
+});
 
-const showCreateModal = ref(false)
-const showEditModal = ref(false)
-const showDeleteModal = ref(false)
-const deleting = ref(false)
-const selectedPackage = ref<AdminPackage | null>(null)
-const packageToDelete = ref<AdminPackage | null>(null)
+function getAdminPackageRowActions(row: {
+    original: AdminPackage;
+}): DropdownMenuItem[][] {
+    return [
+        [
+            {
+                label: "Edit",
+                icon: "i-lucide-pencil",
+                onSelect: () => openEdit(row.original),
+            },
+            {
+                label: "View Releases",
+                icon: "i-lucide-list",
+                to: `/dashboard/admin/packages/${row.original.name}`,
+            },
+        ],
+        [
+            {
+                label: "Delete",
+                icon: "i-lucide-trash-2",
+                color: "error",
+                onSelect: () => openDelete(row.original),
+            },
+        ],
+    ];
+}
+
+const showCreateModal = ref(false);
+const showEditModal = ref(false);
+const showDeleteModal = ref(false);
+const deleting = ref(false);
+const selectedPackage = ref<AdminPackage | null>(null);
+const packageToDelete = ref<AdminPackage | null>(null);
 
 const createSchema = z.object({
-    name: z.string().min(1, 'Name is required').regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
-    owner_user_id: z.number().min(1, 'Owner ID is required'),
-    description: z.string().min(1, 'Description is required'),
-    homepage_url: z.string().url('Must be a valid URL').or(z.literal(''))
-})
+    name: z
+        .string()
+        .min(1, "Name is required")
+        .regex(/^[a-z0-9-]+$/, "Only lowercase letters, numbers and hyphens"),
+    owner_user_id: z.number().min(1, "Owner ID is required"),
+    description: z.string().min(1, "Description is required"),
+    homepage_url: z.string().url("Must be a valid URL").or(z.literal("")),
+});
 
-type CreateSchema = z.output<typeof createSchema>
+type CreateSchema = z.output<typeof createSchema>;
 
 const editForm = reactive({
-    description: '',
-    homepage_url: ''
-})
+    description: "",
+    homepage_url: "",
+});
 
 async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
-    const res = await useAPI((api) => api.postAdminPackages({ body: event.data }))
+    const res = await useAPI((api) =>
+        api.postAdminPackages({ body: event.data })
+    );
     if (res.success) {
-        toast.add({ title: 'Package created', color: 'success' })
-        showCreateModal.value = false
-        await refresh()
+        toast.add({ title: "Package created", color: "success" });
+        showCreateModal.value = false;
+        await refresh();
     } else {
-        toast.add({ title: 'Create failed', description: res.message, color: 'error' })
+        toast.add({
+            title: "Create failed",
+            description: res.message,
+            color: "error",
+        });
     }
 }
 
 function openEdit(pkg: AdminPackage) {
-    selectedPackage.value = pkg
-    editForm.description = pkg.description
-    editForm.homepage_url = pkg.homepage_url
-    showEditModal.value = true
+    selectedPackage.value = pkg;
+    editForm.description = pkg.description;
+    editForm.homepage_url = pkg.homepage_url;
+    showEditModal.value = true;
 }
 
 function openDelete(pkg: AdminPackage) {
-    packageToDelete.value = pkg
-    showDeleteModal.value = true
+    packageToDelete.value = pkg;
+    showDeleteModal.value = true;
 }
 
 async function submitEdit() {
-    if (!selectedPackage.value) return
+    if (!selectedPackage.value) return;
 
-    const res = await useAPI((api) => api.putAdminPackagesPackageName({
-        path: { packageName: selectedPackage.value!.name },
-        body: {
-            description: editForm.description,
-            homepage_url: editForm.homepage_url
-        }
-    }))
+    const res = await useAPI((api) =>
+        api.putAdminPackagesPackageName({
+            path: { packageName: selectedPackage.value!.name },
+            body: {
+                description: editForm.description,
+                homepage_url: editForm.homepage_url,
+            },
+        })
+    );
 
     if (res.success) {
-        toast.add({ title: 'Package updated', color: 'success' })
-        showEditModal.value = false
-        await refresh()
+        toast.add({ title: "Package updated", color: "success" });
+        showEditModal.value = false;
+        await refresh();
     } else {
-        toast.add({ title: 'Update failed', description: res.message, color: 'error' })
+        toast.add({
+            title: "Update failed",
+            description: res.message,
+            color: "error",
+        });
     }
 }
 
 async function deletePackage() {
-    if (!packageToDelete.value) return
-    deleting.value = true
+    if (!packageToDelete.value) return;
+    deleting.value = true;
 
-    const res = await useAPI((api) => api.deleteAdminPackagesPackageName({
-        path: { packageName: packageToDelete.value!.name }
-    }))
+    const res = await useAPI((api) =>
+        api.deleteAdminPackagesPackageName({
+            path: { packageName: packageToDelete.value!.name },
+        })
+    );
 
-    deleting.value = false
+    deleting.value = false;
 
     if (res.success) {
-        toast.add({ title: 'Package deleted', color: 'success' })
-        showDeleteModal.value = false
-        packageToDelete.value = null
-        await refresh()
+        toast.add({ title: "Package deleted", color: "success" });
+        showDeleteModal.value = false;
+        packageToDelete.value = null;
+        await refresh();
     } else {
-        toast.add({ title: 'Delete failed', description: res.message, color: 'error' })
+        toast.add({
+            title: "Delete failed",
+            description: res.message,
+            color: "error",
+        });
     }
 }
 </script>
@@ -148,8 +201,14 @@ async function deletePackage() {
 
         <template #body>
             <div class="space-y-6">
-                <div v-if="loading" class="flex items-center justify-center py-12">
-                    <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
+                <div
+                    v-if="loading"
+                    class="flex items-center justify-center py-12"
+                >
+                    <UIcon
+                        name="i-lucide-loader-2"
+                        class="animate-spin text-3xl text-slate-400"
+                    />
                 </div>
 
                 <UTable
@@ -158,55 +217,88 @@ async function deletePackage() {
                     :columns="packageColumns"
                 >
                     <template #id-cell="{ row }">
-                        <span class="font-mono text-sm">#{{ row.original.id }}</span>
+                        <span class="font-mono text-sm"
+                            >#{{ row.original.id }}</span
+                        >
                     </template>
                     <template #name-cell="{ row }">
-                        <span class="font-medium text-sky-400">{{ row.original.name }}</span>
+                        <span class="font-medium text-sky-400">{{
+                            row.original.name
+                        }}</span>
                     </template>
                     <template #owner_user_id-cell="{ row }">
-                        <span class="font-mono text-sm text-slate-400">#{{ row.original.owner_user_id }}</span>
+                        <span class="font-mono text-sm text-slate-400"
+                            >#{{ row.original.owner_user_id }}</span
+                        >
                     </template>
                     <template #description-cell="{ row }">
                         <span class="text-slate-400 line-clamp-1 max-w-xs">
-                            {{ row.original.description || '—' }}
+                            {{ row.original.description || "—" }}
                         </span>
                     </template>
                     <template #stable-cell="{ row }">
                         <div class="flex gap-1">
-                            <UBadge v-if="row.original.latest_stable_release_amd64" color="success" variant="soft" size="sm">
+                            <UBadge
+                                v-if="row.original.latest_stable_release_amd64"
+                                color="success"
+                                variant="soft"
+                                size="sm"
+                            >
                                 amd64
                             </UBadge>
-                            <UBadge v-if="row.original.latest_stable_release_arm64" color="success" variant="soft" size="sm">
+                            <UBadge
+                                v-if="row.original.latest_stable_release_arm64"
+                                color="success"
+                                variant="soft"
+                                size="sm"
+                            >
                                 arm64
                             </UBadge>
-                            <span v-if="!row.original.latest_stable_release_amd64 && !row.original.latest_stable_release_arm64" class="text-slate-500">—</span>
+                            <span
+                                v-if="
+                                    !row.original.latest_stable_release_amd64 &&
+                                    !row.original.latest_stable_release_arm64
+                                "
+                                class="text-slate-500"
+                                >—</span
+                            >
                         </div>
                     </template>
                     <template #testing-cell="{ row }">
                         <div class="flex gap-1">
-                            <UBadge v-if="row.original.latest_testing_release_amd64" color="warning" variant="soft" size="sm">
+                            <UBadge
+                                v-if="row.original.latest_testing_release_amd64"
+                                color="warning"
+                                variant="soft"
+                                size="sm"
+                            >
                                 amd64
                             </UBadge>
-                            <UBadge v-if="row.original.latest_testing_release_arm64" color="warning" variant="soft" size="sm">
+                            <UBadge
+                                v-if="row.original.latest_testing_release_arm64"
+                                color="warning"
+                                variant="soft"
+                                size="sm"
+                            >
                                 arm64
                             </UBadge>
-                            <span v-if="!row.original.latest_testing_release_amd64 && !row.original.latest_testing_release_arm64" class="text-slate-500">—</span>
+                            <span
+                                v-if="
+                                    !row.original
+                                        .latest_testing_release_amd64 &&
+                                    !row.original.latest_testing_release_arm64
+                                "
+                                class="text-slate-500"
+                                >—</span
+                            >
                         </div>
                     </template>
                     <template #actions-cell="{ row }">
                         <UDropdownMenu
                             :ui="{
-			                    viewport: 'main-bg-color'
+                                viewport: 'main-bg-color',
                             }"
-                            :items="[
-                                [
-                                    { label: 'Edit', icon: 'i-lucide-pencil', click: () => openEdit(row.original) },
-                                    { label: 'View Releases', icon: 'i-lucide-list', to: `/dashboard/admin/packages/${row.original.name}` }
-                                ],
-                                [
-                                    { label: 'Delete', icon: 'i-lucide-trash-2', color: 'error', click: () => openDelete(row.original) }
-                                ]
-                            ]"
+                            :items="getAdminPackageRowActions(row)"
                         >
                             <UButton
                                 icon="i-lucide-more-horizontal"
@@ -266,11 +358,7 @@ async function deletePackage() {
                     variant="ghost"
                     @click="showCreateModal = false"
                 />
-                <UButton
-                    type="submit"
-                    label="Create"
-                    color="primary"
-                />
+                <UButton type="submit" label="Create" color="primary" />
             </div>
         </UForm>
     </DashboardModal>
@@ -297,11 +385,7 @@ async function deletePackage() {
                     variant="ghost"
                     @click="showEditModal = false"
                 />
-                <UButton
-                    label="Save"
-                    color="primary"
-                    @click="submitEdit"
-                />
+                <UButton label="Save" color="primary" @click="submitEdit" />
             </div>
         </div>
     </DashboardModal>
@@ -310,7 +394,11 @@ async function deletePackage() {
     <DashboardModal
         v-model:open="showDeleteModal"
         title="Delete Package"
-        :description="packageToDelete ? `This will delete ${packageToDelete.name} and all releases.` : ''"
+        :description="
+            packageToDelete
+                ? `This will delete ${packageToDelete.name} and all releases.`
+                : ''
+        "
         icon="i-lucide-alert-triangle"
         icon-color="error"
     >
@@ -327,7 +415,10 @@ async function deletePackage() {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="showDeleteModal = false; packageToDelete = null"
+                    @click="
+                        showDeleteModal = false;
+                        packageToDelete = null;
+                    "
                 />
                 <UButton
                     label="Delete"
