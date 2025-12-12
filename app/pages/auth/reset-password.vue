@@ -128,14 +128,15 @@ async function onSubmit(payload: FormSubmitEvent<NewPasswordSchema>) {
         </UAuthForm>
     </template>
     <template v-else>
-        <div class="text-center text-sm">
-            Invalid or missing reset token.
-            <NuxtLink
-                to="/auth/forgot-password"
-                class="text-sky-400 hover:underline"
-            >
-                Request a new password reset
-            </NuxtLink>
+        <div class="text-center h-12 mb-4">
+            Invalid or missing reset token. Please check your reset link or
+            request a new password reset.
         </div>
+        <NuxtLink
+            to="/auth/forgot-password"
+            class="text-sky-400 hover:underline text-center"
+        >
+            Request a new password reset
+        </NuxtLink>
     </template>
 </template>
