@@ -7,7 +7,7 @@ definePageMeta({
 });
 
 useSeoMeta({
-    title: "Forgot Password | LeiOS Hub",
+    title: "Reset Password | LeiOS Hub",
     description: "Reset your password",
 });
 
@@ -105,7 +105,7 @@ async function onSubmit(payload: FormSubmitEvent<NewPasswordSchema>) {
     <template v-if="reset_token">
         <UAuthForm
             :schema="schema"
-            title="Forgot Password"
+            title="Reset Password"
             description="Reset your password by entering your email address below."
             icon="i-lucide-mail"
             :fields="fields"
