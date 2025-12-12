@@ -54,18 +54,19 @@ const redirectQuery = computed(() => encodeURIComponent(route.fullPath))
 
         <template #right>
             <div class="flex items-center gap-2">
-                <UButton v-if="isAuthenticated" icon="i-lucide-layout-dashboard" to="/dashboard" color="primary"
-                    variant="soft" class="font-medium hidden sm:inline-flex">
-                    Dashboard
-                </UButton>
-
-                <UButton v-if="isAuthenticated" icon="i-lucide-user" to="/auth/password-reset" color="neutral"
-                    variant="ghost" class="font-medium hidden sm:inline-flex">
-                    {{ profileLabel }}
-                </UButton>
+                <template v-if="isAuthenticated">
+                    <div class="hidden sm:flex items-center gap-1.5 text-white">
+                        <UIcon name="i-lucide-user" class="size-4" />
+                        <span class="text-sm">{{ profileLabel }}</span>
+                    </div>
+                    <UButton icon="i-lucide-layout-dashboard" to="/dashboard" color="primary"
+                        variant="soft" class="">
+                        Dashboard
+                    </UButton>
+                </template>
 
                 <UButton v-else icon="i-lucide-log-in" :to="`/auth/login?url=${redirectQuery}`" color="primary"
-                    variant="solid" class="font-medium">
+                    variant="solid" class="">
                     Login
                 </UButton>
             </div>
