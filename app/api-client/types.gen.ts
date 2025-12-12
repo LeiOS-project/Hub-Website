@@ -428,7 +428,7 @@ export type PostAuthResetPasswordResponse = PostAuthResetPasswordResponses[keyof
 
 export type PostAuthResetPasswordRequestData = {
     body?: {
-        username: string;
+        email: string;
     };
     path?: never;
     query?: never;
