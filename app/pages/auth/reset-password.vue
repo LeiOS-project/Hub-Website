@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import * as z from "zod";
 import type { FormSubmitEvent, AuthFormField, FormError } from "@nuxt/ui";
-import { UserStore } from "~/utils/stores/userStore";
-
-const isSignupEnabled = useRuntimeConfig().public.isSignupEnabled;
 
 definePageMeta({
     layout: 'auth'
@@ -12,15 +9,6 @@ definePageMeta({
 useSeoMeta({
     title: "Forgot Password | LeiOS Hub",
     description: "Reset your password",
-});
-
-definePageMeta({
-    layout: "auth",
-});
-
-useSeoMeta({
-    title: "Sign Up | NowIP",
-    description: "Create a new account",
 });
 
 const route = useRoute();
