@@ -15,7 +15,7 @@ useSeoMeta({
 });
 
 const route = useRoute();
-const redirectUrl = route.query.url || "/";
+const redirectUrl = route.query.url || "/dashboard";
 
 const toast = useToast();
 
