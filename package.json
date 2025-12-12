@@ -4,12 +4,12 @@
     "private": true,
     "scripts": {
         "build": "nuxt build",
-		"start": "bun run .output/server/index.mjs",
+        "start": "bun run .output/server/index.mjs",
         "dev": "nuxt dev --port 12153",
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-		"api-client:generate": "openapi-ts"
+        "api-client:generate": "openapi-ts"
     },
     "dependencies": {
         "@hey-api/nuxt": "^0.2.1",
@@ -23,5 +23,8 @@
     },
     "devDependencies": {
         "@iconify-json/lucide": "^1.2.77"
+    },
+    "patchedDependencies": {
+        "@hey-api/openapi-ts@0.88.0": "patches/@hey-api%2Fopenapi-ts@0.88.0.patch"
     }
 }

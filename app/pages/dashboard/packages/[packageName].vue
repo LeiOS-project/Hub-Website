@@ -85,7 +85,7 @@ async function handleUpload() {
         toast.add({ title: 'File required', description: 'Please select a file to upload.', color: 'warning' })
         return
     }
-
+    console.log(uploadForm.file instanceof Blob)
     const res = await useAPI((api) => api.postDevPackagesPackageNameReleasesVersionWithLeiosPatchArch({
         path: {
             packageName,
@@ -93,7 +93,7 @@ async function handleUpload() {
             arch: uploadForm.arch
         },
         body: {
-            file: uploadForm.file!
+            file: uploadForm.file as File
         }
     }))
 
@@ -338,97 +338,83 @@ function getStatusColor(status: StableRequest['status']) {
     </UDashboardPanel>
 
     <!-- Upload Modal -->
-    <UModal v-model:open="showUploadModal">
-        <template #content>
-            <UCard class="border-slate-800">
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <UIcon name="i-lucide-upload" class="text-sky-400" />
-                        <h3 class="text-lg font-semibold">Upload Release</h3>
-                    </div>
+    <DashboardModal
+        v-model:open="showUploadModal"
+        title="Upload Release"
+        icon="i-lucide-upload"
+    >
+        <div class="space-y-4">
+            <UFormField label="Version" required>
+                <UInput v-model="uploadForm.version" placeholder="1.0.0-leios1" />
+                <template #hint>
+                    Format: version-leiosN (e.g., 1.0.0-leios1)
                 </template>
+            </UFormField>
 
-                <div class="space-y-4">
-                    <UFormField label="Version" required>
-                        <UInput v-model="uploadForm.version" placeholder="1.0.0-leios1" />
-                        <template #hint>
-                            Format: version-leiosN (e.g., 1.0.0-leios1)
-                        </template>
-                    </UFormField>
+            <UFormField label="Architecture" required>
+                <USelect v-model="uploadForm.arch" :items="archOptions" />
+            </UFormField>
 
-                    <UFormField label="Architecture" required>
-                        <USelect v-model="uploadForm.arch" :options="archOptions" />
-                    </UFormField>
+            <UFormField label="Release File" required>
+                <UFileUpload
+                    v-model="uploadForm.file"
+                    accept=".deb"
+                    label="Select release file"
+                />
+            </UFormField>
 
-                    <UFormField label="Release File" required>
-                        <input
-                            type="file"
-                            accept=".deb,.tar.gz,.zip"
-                            class="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-sky-500/10 file:text-sky-400 hover:file:bg-sky-500/20"
-                            @change="handleFileChange"
-                        >
-                    </UFormField>
-
-                    <div class="flex justify-end gap-2 pt-4">
-                        <UButton
-                            label="Cancel"
-                            color="neutral"
-                            variant="ghost"
-                            @click="showUploadModal = false"
-                        />
-                        <UButton
-                            label="Upload"
-                            color="primary"
-                            @click="handleUpload"
-                        />
-                    </div>
-                </div>
-            </UCard>
-        </template>
-    </UModal>
+            <div class="flex justify-end gap-2 pt-4">
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="showUploadModal = false"
+                />
+                <UButton
+                    label="Upload"
+                    color="primary"
+                    @click="handleUpload"
+                />
+            </div>
+        </div>
+    </DashboardModal>
 
     <!-- Stable Request Modal -->
-    <UModal v-model:open="showStableModal">
-        <template #content>
-            <UCard class="border-slate-800">
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <UIcon name="i-lucide-git-pull-request" class="text-amber-400" />
-                        <h3 class="text-lg font-semibold">Request Stable Promotion</h3>
-                    </div>
-                </template>
+    <DashboardModal
+        v-model:open="showStableModal"
+        title="Request Stable Promotion"
+        icon="i-lucide-git-pull-request"
+        icon-color="amber"
+    >
+        <div class="space-y-4">
+            <UFormField label="Release" required>
+                <USelect
+                    v-model="stableForm.release_id"
+                    :items="(releases || []).map(r => ({ label: `${r.versionWithLeiosPatch} (${r.architecture})`, value: r.id }))"
+                    placeholder="Select a release"
+                />
+            </UFormField>
 
-                <div class="space-y-4">
-                    <UFormField label="Release" required>
-                        <USelect
-                            v-model="stableForm.release_id"
-                            :options="(releases || []).map(r => ({ label: `${r.versionWithLeiosPatch} (${r.architecture})`, value: r.id }))"
-                            placeholder="Select a release"
-                        />
-                    </UFormField>
+            <UAlert
+                icon="i-lucide-info"
+                color="info"
+                title="Note"
+                description="Once submitted, an admin will review your request. You'll be notified of the decision."
+            />
 
-                    <UAlert
-                        icon="i-lucide-info"
-                        color="info"
-                        title="Note"
-                        description="Once submitted, an admin will review your request. You'll be notified of the decision."
-                    />
-
-                    <div class="flex justify-end gap-2 pt-4">
-                        <UButton
-                            label="Cancel"
-                            color="neutral"
-                            variant="ghost"
-                            @click="showStableModal = false"
-                        />
-                        <UButton
-                            label="Submit Request"
-                            color="primary"
-                            @click="requestStable"
-                        />
-                    </div>
-                </div>
-            </UCard>
-        </template>
-    </UModal>
+            <div class="flex justify-end gap-2 pt-4">
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="showStableModal = false"
+                />
+                <UButton
+                    label="Submit Request"
+                    color="primary"
+                    @click="requestStable"
+                />
+            </div>
+        </div>
+    </DashboardModal>
 </template>

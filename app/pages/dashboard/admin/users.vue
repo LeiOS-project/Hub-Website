@@ -243,128 +243,108 @@ function getRoleColor(role: AdminUser['role']) {
     </UDashboardPanel>
 
     <!-- Create User Modal -->
-    <UModal v-model:open="showCreateModal">
-        <template #content>
-            <UCard class="border-slate-800">
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <UIcon name="i-lucide-user-plus" class="text-sky-400" />
-                        <h3 class="text-lg font-semibold">Create User</h3>
-                    </div>
-                </template>
+    <DashboardModal
+        v-model:open="showCreateModal"
+        title="Create User"
+        icon="i-lucide-user-plus"
+    >
+        <UForm :schema="createSchema" class="space-y-4" @submit="handleCreate">
+            <UFormField label="Username" name="username" required>
+                <UInput placeholder="johndoe" />
+            </UFormField>
 
-                <UForm :schema="createSchema" class="space-y-4" @submit="handleCreate">
-                    <UFormField label="Username" name="username" required>
-                        <UInput placeholder="johndoe" />
-                    </UFormField>
+            <UFormField label="Display Name" name="display_name" required>
+                <UInput placeholder="John Doe" />
+            </UFormField>
 
-                    <UFormField label="Display Name" name="display_name" required>
-                        <UInput placeholder="John Doe" />
-                    </UFormField>
+            <UFormField label="Email" name="email" required>
+                <UInput type="email" placeholder="john@example.com" />
+            </UFormField>
 
-                    <UFormField label="Email" name="email" required>
-                        <UInput type="email" placeholder="john@example.com" />
-                    </UFormField>
+            <UFormField label="Password" name="password" required>
+                <UInput type="password" placeholder="••••••••" />
+            </UFormField>
 
-                    <UFormField label="Password" name="password" required>
-                        <UInput type="password" placeholder="••••••••" />
-                    </UFormField>
+            <UFormField label="Role" name="role" required>
+                <USelect :items="roleOptions" placeholder="Select role" />
+            </UFormField>
 
-                    <UFormField label="Role" name="role" required>
-                        <USelect :options="roleOptions" placeholder="Select role" />
-                    </UFormField>
-
-                    <div class="flex justify-end gap-2 pt-4">
-                        <UButton
-                            label="Cancel"
-                            color="neutral"
-                            variant="ghost"
-                            @click="showCreateModal = false"
-                        />
-                        <UButton
-                            type="submit"
-                            label="Create"
-                            color="primary"
-                        />
-                    </div>
-                </UForm>
-            </UCard>
-        </template>
-    </UModal>
+            <div class="flex justify-end gap-2 pt-4">
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="showCreateModal = false"
+                />
+                <UButton
+                    type="submit"
+                    label="Create"
+                    color="primary"
+                />
+            </div>
+        </UForm>
+    </DashboardModal>
 
     <!-- Edit User Modal -->
-    <UModal v-model:open="showEditModal">
-        <template #content>
-            <UCard class="border-slate-800">
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <UIcon name="i-lucide-pencil" class="text-sky-400" />
-                        <h3 class="text-lg font-semibold">Edit User: {{ selectedUser?.username }}</h3>
-                    </div>
-                </template>
+    <DashboardModal
+        v-model:open="showEditModal"
+        :title="`Edit User: ${selectedUser?.username}`"
+        icon="i-lucide-pencil"
+    >
+        <div class="space-y-4">
+            <UFormField label="Display Name">
+                <UInput v-model="editForm.display_name" />
+            </UFormField>
 
-                <div class="space-y-4">
-                    <UFormField label="Display Name">
-                        <UInput v-model="editForm.display_name" />
-                    </UFormField>
+            <UFormField label="Email">
+                <UInput v-model="editForm.email" type="email" />
+            </UFormField>
 
-                    <UFormField label="Email">
-                        <UInput v-model="editForm.email" type="email" />
-                    </UFormField>
+            <UFormField label="Role">
+                <USelect v-model="editForm.role" :items="roleOptions" />
+            </UFormField>
 
-                    <UFormField label="Role">
-                        <USelect v-model="editForm.role" :options="roleOptions" />
-                    </UFormField>
-
-                    <div class="flex justify-end gap-2 pt-4">
-                        <UButton
-                            label="Cancel"
-                            color="neutral"
-                            variant="ghost"
-                            @click="showEditModal = false"
-                        />
-                        <UButton
-                            label="Save"
-                            color="primary"
-                            @click="submitEdit"
-                        />
-                    </div>
-                </div>
-            </UCard>
-        </template>
-    </UModal>
+            <div class="flex justify-end gap-2 pt-4">
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="showEditModal = false"
+                />
+                <UButton
+                    label="Save"
+                    color="primary"
+                    @click="submitEdit"
+                />
+            </div>
+        </div>
+    </DashboardModal>
 
     <!-- Password Modal -->
-    <UModal v-model:open="showPasswordModal">
-        <template #content>
-            <UCard class="border-slate-800">
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <UIcon name="i-lucide-key" class="text-amber-400" />
-                        <h3 class="text-lg font-semibold">Reset Password: {{ selectedUser?.username }}</h3>
-                    </div>
-                </template>
+    <DashboardModal
+        v-model:open="showPasswordModal"
+        :title="`Reset Password: ${selectedUser?.username}`"
+        icon="i-lucide-key"
+        icon-color="amber"
+    >
+        <div class="space-y-4">
+            <UFormField label="New Password">
+                <UInput v-model="passwordForm.password" type="password" placeholder="••••••••" />
+            </UFormField>
 
-                <div class="space-y-4">
-                    <UFormField label="New Password">
-                        <UInput v-model="passwordForm.password" type="password" placeholder="••••••••" />
-                    </UFormField>
-
-                    <div class="flex justify-end gap-2 pt-4">
-                        <UButton
-                            label="Cancel"
-                            color="neutral"
-                            variant="ghost"
-                            @click="showPasswordModal = false"
-                        />
-                        <UButton
-                            label="Update Password"
-                            color="primary"
-                            @click="submitPassword"
-                        />
-                    </div>
-                </div>
-            </UCard>
-        </template>
-    </UModal>
+            <div class="flex justify-end gap-2 pt-4">
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="showPasswordModal = false"
+                />
+                <UButton
+                    label="Update Password"
+                    color="primary"
+                    @click="submitPassword"
+                />
+            </div>
+        </div>
+    </DashboardModal>
 </template>

@@ -221,86 +221,72 @@ async function deletePackage(pkg: AdminPackage) {
     </UDashboardPanel>
 
     <!-- Create Package Modal -->
-    <UModal v-model:open="showCreateModal">
-        <template #content>
-            <UCard class="border-slate-800">
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <UIcon name="i-lucide-package-plus" class="text-sky-400" />
-                        <h3 class="text-lg font-semibold">Create Package</h3>
-                    </div>
-                </template>
+    <DashboardModal
+        v-model:open="showCreateModal"
+        title="Create Package"
+        icon="i-lucide-package-plus"
+    >
+        <UForm :schema="createSchema" class="space-y-4" @submit="handleCreate">
+            <UFormField label="Name" name="name" required>
+                <UInput placeholder="my-package" />
+            </UFormField>
 
-                <UForm :schema="createSchema" class="space-y-4" @submit="handleCreate">
-                    <UFormField label="Name" name="name" required>
-                        <UInput placeholder="my-package" />
-                    </UFormField>
+            <UFormField label="Owner User ID" name="owner_user_id" required>
+                <UInput type="number" placeholder="1" />
+            </UFormField>
 
-                    <UFormField label="Owner User ID" name="owner_user_id" required>
-                        <UInput type="number" placeholder="1" />
-                    </UFormField>
+            <UFormField label="Description" name="description" required>
+                <UTextarea placeholder="A brief description of the package" />
+            </UFormField>
 
-                    <UFormField label="Description" name="description" required>
-                        <UTextarea placeholder="A brief description of the package" />
-                    </UFormField>
+            <UFormField label="Homepage URL" name="homepage_url">
+                <UInput placeholder="https://github.com/..." />
+            </UFormField>
 
-                    <UFormField label="Homepage URL" name="homepage_url">
-                        <UInput placeholder="https://github.com/..." />
-                    </UFormField>
-
-                    <div class="flex justify-end gap-2 pt-4">
-                        <UButton
-                            label="Cancel"
-                            color="neutral"
-                            variant="ghost"
-                            @click="showCreateModal = false"
-                        />
-                        <UButton
-                            type="submit"
-                            label="Create"
-                            color="primary"
-                        />
-                    </div>
-                </UForm>
-            </UCard>
-        </template>
-    </UModal>
+            <div class="flex justify-end gap-2 pt-4">
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="showCreateModal = false"
+                />
+                <UButton
+                    type="submit"
+                    label="Create"
+                    color="primary"
+                />
+            </div>
+        </UForm>
+    </DashboardModal>
 
     <!-- Edit Package Modal -->
-    <UModal v-model:open="showEditModal">
-        <template #content>
-            <UCard class="border-slate-800">
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <UIcon name="i-lucide-pencil" class="text-sky-400" />
-                        <h3 class="text-lg font-semibold">Edit Package: {{ selectedPackage?.name }}</h3>
-                    </div>
-                </template>
+    <DashboardModal
+        v-model:open="showEditModal"
+        :title="`Edit Package: ${selectedPackage?.name}`"
+        icon="i-lucide-pencil"
+    >
+        <div class="space-y-4">
+            <UFormField label="Description">
+                <UTextarea v-model="editForm.description" />
+            </UFormField>
 
-                <div class="space-y-4">
-                    <UFormField label="Description">
-                        <UTextarea v-model="editForm.description" />
-                    </UFormField>
+            <UFormField label="Homepage URL">
+                <UInput v-model="editForm.homepage_url" />
+            </UFormField>
 
-                    <UFormField label="Homepage URL">
-                        <UInput v-model="editForm.homepage_url" />
-                    </UFormField>
-
-                    <div class="flex justify-end gap-2 pt-4">
-                        <UButton
-                            label="Cancel"
-                            color="neutral"
-                            variant="ghost"
-                            @click="showEditModal = false"
-                        />
-                        <UButton
-                            label="Save"
-                            color="primary"
-                            @click="submitEdit"
-                        />
-                    </div>
-                </div>
-            </UCard>
-        </template>
-    </UModal>
+            <div class="flex justify-end gap-2 pt-4">
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="showEditModal = false"
+                />
+                <UButton
+                    label="Save"
+                    color="primary"
+                    @click="submitEdit"
+                />
+            </div>
+        </div>
+    </DashboardModal>
 </template>

@@ -98,7 +98,7 @@ const releaseColumns: TableColumn<ReleaseRow>[] = [
                     <p class="text-slate-400">View public metadata and releases for this package.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <USelect v-model="repo" :options="repoOptions" class="w-48" />
+                    <USelect v-model="repo" :items="repoOptions" class="w-48" />
                     <UButton icon="i-lucide-refresh-cw" variant="ghost" :loading="pending" @click="() => refresh()">Refresh</UButton>
                 </div>
             </div>

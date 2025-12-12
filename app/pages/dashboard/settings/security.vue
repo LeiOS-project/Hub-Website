@@ -252,55 +252,49 @@ async function onDeleteAccount() {
 		</div>
 
 		<!-- Delete Confirmation Modal -->
-		<UModal v-model:open="deleteConfirmOpen">
-			<template #content>
-				<div class="p-6 space-y-4">
-					<div class="flex items-center gap-3">
-						<div class="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
-							<UIcon name="i-lucide-alert-triangle" class="w-6 h-6 text-red-400" />
-						</div>
-						<div>
-							<h3 class="text-lg font-semibold text-white">Delete Account</h3>
-							<p class="text-sm text-slate-400">This action is permanent</p>
-						</div>
-					</div>
-
-					<div class="p-4 rounded-lg bg-red-950/50 border border-red-900/50">
-						<p class="text-sm text-red-300">
-							<strong>Warning:</strong> All your data including packages, releases, and account information will be permanently deleted. This action cannot be reversed.
-						</p>
-					</div>
-
-					<div>
-						<label class="block text-sm font-medium text-slate-300 mb-2">
-							Type <span class="font-mono text-red-400">DELETE</span> to confirm
-						</label>
-						<UInput 
-							v-model="deleteConfirmText" 
-							type="text" 
-							placeholder="Type DELETE"
-							class="w-full"
-						/>
-					</div>
-
-					<div class="flex justify-end gap-3 pt-2">
-						<UButton 
-							label="Cancel" 
-							color="neutral" 
-							variant="ghost"
-							@click="deleteConfirmOpen = false; deleteConfirmText = ''"
-						/>
-						<UButton 
-							label="Delete Account" 
-							color="error"
-							:loading="deleteLoading"
-							:disabled="deleteConfirmText !== 'DELETE'"
-							icon="i-lucide-trash-2"
-							@click="onDeleteAccount"
-						/>
-					</div>
+		<DashboardModal
+			v-model:open="deleteConfirmOpen"
+			title="Delete Account"
+			description="This action is permanent"
+			icon="i-lucide-alert-triangle"
+			icon-color="error"
+		>
+			<div class="space-y-4">
+				<div class="p-4 rounded-lg bg-red-950/50 border border-red-900/50">
+					<p class="text-sm text-red-300">
+						<strong>Warning:</strong> All your data including packages, releases, and account information will be permanently deleted. This action cannot be reversed.
+					</p>
 				</div>
-			</template>
-		</UModal>
+
+				<div>
+					<label class="block text-sm font-medium text-slate-300 mb-2">
+						Type <span class="font-mono text-red-400">DELETE</span> to confirm
+					</label>
+					<UInput 
+						v-model="deleteConfirmText" 
+						type="text" 
+						placeholder="Type DELETE"
+						class="w-full"
+					/>
+				</div>
+
+				<div class="flex justify-end gap-3 pt-2">
+					<UButton 
+						label="Cancel" 
+						color="neutral" 
+						variant="ghost"
+						@click="deleteConfirmOpen = false; deleteConfirmText = ''"
+					/>
+					<UButton 
+						label="Delete Account" 
+						color="error"
+						:loading="deleteLoading"
+						:disabled="deleteConfirmText !== 'DELETE'"
+						icon="i-lucide-trash-2"
+						@click="onDeleteAccount"
+					/>
+				</div>
+			</div>
+		</DashboardModal>
 	</div>
 </template>

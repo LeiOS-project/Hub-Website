@@ -357,6 +357,10 @@ export const unwrapRefs = <T>(value: T): UnwrapRefs<T> => {
   if (value === null || typeof value !== 'object' || value instanceof Headers) {
     return (isRef(value) ? unref(value) : value) as UnwrapRefs<T>;
   }
+  
+  if (value instanceof Blob) {
+    return value as UnwrapRefs<T>;
+  }
 
   if (Array.isArray(value)) {
     return value.map((item) => unwrapRefs(item)) as UnwrapRefs<T>;

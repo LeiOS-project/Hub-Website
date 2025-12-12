@@ -3,6 +3,7 @@ import type { TableColumn } from '#ui/types'
 import type { GetDevPackagesResponses } from '@/api-client/types.gen'
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import { useAPI } from '@/composables/useAPI'
 
 type DevPackage = GetDevPackagesResponses[200]['data'][number]
 
@@ -41,16 +42,29 @@ const { data: packages, pending: loading, refresh } = await useAsyncData<DevPack
     }
 )
 
+
 const createSchema = z.object({
     name: z.string().min(1, 'Name is required').regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
     description: z.string().min(1, 'Description is required'),
-    homepage_url: z.string().url('Must be a valid URL').or(z.literal(''))
+    homepage_url: z.url('Must be a valid URL')
 })
 
-type CreateSchema = z.output<typeof createSchema>
+type CreateSchema = z.output<typeof createSchema>;
+    
+const createState = reactive<Partial<CreateSchema>>({
+    name: undefined,
+    description: undefined,
+    homepage_url: undefined
+});
 
 async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
-    const res = await useAPI((api) => api.postDevPackages({ body: event.data }))
+
+    toast.add({ title: 'Creating package...', icon: 'i-lucide-loader-2', color: 'neutral' })
+
+    const res = await useAPI((api) => api.postDevPackages({
+        body: event.data
+    }));
+    
     if (res.success) {
         toast.add({ title: 'Package created', color: 'success' })
         showCreateModal.value = false
@@ -173,44 +187,37 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
     </UDashboardPanel>
 
     <!-- Create Package Modal -->
-    <UModal v-model:open="showCreateModal">
-        <template #content>
-            <UCard class="border-slate-800">
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <UIcon name="i-lucide-package-plus" class="text-sky-400" />
-                        <h3 class="text-lg font-semibold">Create Package</h3>
-                    </div>
-                </template>
+    <DashboardModal
+        v-model:open="showCreateModal"
+        title="Create Package"
+        icon="i-lucide-package-plus"
+    >
+        <UForm :schema="createSchema" :state="createState" @submit="handleCreate" class="space-y-4" >
+            <UFormField label="Name" name="name" required>
+                <UInput v-model="createState.name" placeholder="my-package" />
+            </UFormField>
 
-                <UForm :schema="createSchema" class="space-y-4" @submit="handleCreate">
-                    <UFormField label="Name" name="name" required>
-                        <UInput placeholder="my-package" />
-                    </UFormField>
+            <UFormField label="Description" name="description" required>
+                <UTextarea v-model="createState.description" placeholder="A brief description of your package" />
+            </UFormField>
 
-                    <UFormField label="Description" name="description" required>
-                        <UTextarea placeholder="A brief description of your package" />
-                    </UFormField>
+            <UFormField label="Homepage URL" name="homepage_url" required class="w-full">
+                <UInput v-model="createState.homepage_url" placeholder="https://github.com/..." />
+            </UFormField>
 
-                    <UFormField label="Homepage URL" name="homepage_url">
-                        <UInput placeholder="https://github.com/..." />
-                    </UFormField>
-
-                    <div class="flex justify-end gap-2 pt-4">
-                        <UButton
-                            label="Cancel"
-                            color="neutral"
-                            variant="ghost"
-                            @click="showCreateModal = false"
-                        />
-                        <UButton
-                            type="submit"
-                            label="Create"
-                            color="primary"
-                        />
-                    </div>
-                </UForm>
-            </UCard>
-        </template>
-    </UModal>
+            <div class="flex justify-end gap-2 pt-4">
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="showCreateModal = false"
+                />
+                <UButton
+                    type="submit"
+                    label="Create"
+                    color="primary"
+                />
+            </div>
+        </UForm>
+    </DashboardModal>
 </template>

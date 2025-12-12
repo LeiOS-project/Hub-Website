@@ -216,56 +216,49 @@ function getStatusColor(status: StableRequest['status']) {
     </UDashboardPanel>
 
     <!-- Decision Modal -->
-    <UModal v-model:open="decisionModal">
-        <template #content>
-            <UCard class="border-slate-800">
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <UIcon name="i-lucide-git-pull-request" class="text-sky-400" />
-                        <h3 class="text-lg font-semibold">Review Request #{{ selectedRequest?.id }}</h3>
-                    </div>
-                </template>
+    <DashboardModal
+        v-model:open="decisionModal"
+        :title="`Review Request #${selectedRequest?.id}`"
+        icon="i-lucide-git-pull-request"
+    >
+        <div class="space-y-4">
+            <div class="flex gap-2">
+                <UButton
+                    label="Approve"
+                    icon="i-lucide-check"
+                    :color="decisionForm.status === 'approved' ? 'success' : 'neutral'"
+                    :variant="decisionForm.status === 'approved' ? 'solid' : 'outline'"
+                    @click="decisionForm.status = 'approved'"
+                />
+                <UButton
+                    label="Deny"
+                    icon="i-lucide-x"
+                    :color="decisionForm.status === 'denied' ? 'error' : 'neutral'"
+                    :variant="decisionForm.status === 'denied' ? 'solid' : 'outline'"
+                    @click="decisionForm.status = 'denied'"
+                />
+            </div>
 
-                <div class="space-y-4">
-                    <div class="flex gap-2">
-                        <UButton
-                            label="Approve"
-                            icon="i-lucide-check"
-                            :color="decisionForm.status === 'approved' ? 'success' : 'neutral'"
-                            :variant="decisionForm.status === 'approved' ? 'solid' : 'outline'"
-                            @click="decisionForm.status = 'approved'"
-                        />
-                        <UButton
-                            label="Deny"
-                            icon="i-lucide-x"
-                            :color="decisionForm.status === 'denied' ? 'error' : 'neutral'"
-                            :variant="decisionForm.status === 'denied' ? 'solid' : 'outline'"
-                            @click="decisionForm.status = 'denied'"
-                        />
-                    </div>
+            <UFormField label="Admin Note" :required="decisionForm.status === 'denied'">
+                <UTextarea
+                    v-model="decisionForm.admin_note"
+                    placeholder="Add a note for this decision..."
+                />
+            </UFormField>
 
-                    <UFormField label="Admin Note" :required="decisionForm.status === 'denied'">
-                        <UTextarea
-                            v-model="decisionForm.admin_note"
-                            placeholder="Add a note for this decision..."
-                        />
-                    </UFormField>
-
-                    <div class="flex justify-end gap-2 pt-4">
-                        <UButton
-                            label="Cancel"
-                            color="neutral"
-                            variant="ghost"
-                            @click="decisionModal = false"
-                        />
-                        <UButton
-                            :label="decisionForm.status === 'approved' ? 'Approve' : 'Deny'"
-                            :color="decisionForm.status === 'approved' ? 'success' : 'error'"
-                            @click="submitDecision"
-                        />
-                    </div>
-                </div>
-            </UCard>
-        </template>
-    </UModal>
+            <div class="flex justify-end gap-2 pt-4">
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="decisionModal = false"
+                />
+                <UButton
+                    :label="decisionForm.status === 'approved' ? 'Approve' : 'Deny'"
+                    :color="decisionForm.status === 'approved' ? 'success' : 'error'"
+                    @click="submitDecision"
+                />
+            </div>
+        </div>
+    </DashboardModal>
 </template>
