@@ -111,7 +111,7 @@ async function onSubmit(payload: FormSubmitEvent<NewPasswordSchema>) {
             :fields="fields"
             @submit="onSubmit"
             :submit="{
-                label: 'Send Reset Link',
+                label: 'Reset Password',
             }"
         >
             <template #footer>

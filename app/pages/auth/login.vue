@@ -15,7 +15,11 @@ useSeoMeta({
 });
 
 const route = useRoute();
-const redirectUrl = route.query.url || "/dashboard";
+let redirectUrl = route.query.url?.toString() || "/dashboard";
+if (redirectUrl.endsWith("/auth/login")) {
+    redirectUrl = "/dashboard";
+}
+
 
 const toast = useToast();
 
