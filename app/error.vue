@@ -1,17 +1,40 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
+import Header from '~/components/layout/Header.vue'
+import Footer from '~/components/layout/Footer.vue'
+
 
 const props = defineProps<{
     error: NuxtError
 }>()
+
 </script>
 
 <template>
-    <UApp>
-        <UHeader />
+    <div class="app-layout">
+        <!-- Navigation -->
+        <Header />
 
-        <UError :error="error" />
+        <!-- Main Content -->
+        <UMain class="main-content">
+            <UError :error="error" />
+        </UMain>
 
-        <UFooter />
-    </UApp>
+        <!-- Footer -->
+        <Footer />
+    </div>
 </template>
+
+<style scoped>
+.app-layout {
+    min-height: 100vh;
+    background-color: rgb(2 6 23);
+    color: rgb(241 245 249);
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+}
+</style>

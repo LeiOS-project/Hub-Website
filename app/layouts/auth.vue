@@ -11,8 +11,9 @@ import Footer from '~/components/layout/Footer.vue'
 
         <!-- Main Content -->
         <UMain class="main-content">
-            <div class="flex min-h-[calc(100vh-80px)] items-center justify-center p-4">
-                <UPageCard class="w-full max-w-md">
+            <div class="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-sky-500/5 to-transparent"></div>
+            <div class="flex min-h-[calc(100vh-80px)] items-center justify-center">
+                <UPageCard class="w-full max-w-md border-slate-800">
                     <slot />
                 </UPageCard>
             </div>
