@@ -2,6 +2,7 @@
 import type { NavigationMenuItem } from "@nuxt/ui";
 import UserMenu from "~/components/dashboard/UserMenu.vue";
 import LeiOSLogo from "~/components/img/LeiOSLogo.vue";
+import LeiOSIcon from "~/components/img/LeiOSIcon.vue";
 import { UserStore } from "~/utils/stores/userStore";
 
 const route = useRoute();
@@ -148,11 +149,7 @@ const profileLabel = computed(() => {
             <template #header="{ collapsed }">
                 <NuxtLink to="/" class="flex items-center gap-2">
                     <LeiOSLogo v-if="!collapsed" class="h-6 w-auto" />
-                    <UIcon
-                        v-else
-                        name="i-lucide-box"
-                        class="size-5 text-primary mx-auto"
-                    />
+                    <LeiOSIcon v-else class="h-8 w-8" />
                     <span v-if="!collapsed" class="text-lg font-semibold"
                         >/ Hub</span
                     >

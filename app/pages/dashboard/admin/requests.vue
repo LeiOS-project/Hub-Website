@@ -16,12 +16,6 @@ useSeoMeta({
 
 const toast = useToast()
 
-// Check admin access
-const user = await UserStore.use().catch(() => null)
-if (!user || user.role !== 'admin') {
-    navigateTo('/dashboard')
-}
-
 const requestColumns: TableColumn<StableRequest>[] = [
     { accessorKey: 'id', header: 'ID' },
     { accessorKey: 'package_id', header: 'Package ID' },
