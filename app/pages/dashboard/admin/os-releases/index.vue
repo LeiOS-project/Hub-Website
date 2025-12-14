@@ -6,8 +6,8 @@ definePageMeta({
 })
 
 useSeoMeta({
-    title: 'Settings | LeiOS Hub',
-    description: 'Manage your account settings'
+    title: 'OS Releases | LeiOS Hub',
+    description: 'Manage OS Releases on LeiOS Hub'
 })
 
 const links = [[{
@@ -26,19 +26,19 @@ const links = [[{
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar title="All Packages" icon="i-lucide-packages">
-                <template #right>
+            <UDashboardNavbar title="OS Releases" icon="i-lucide-rocket">
+                <!-- <template #right>
                     <UButton
                         label="New Package"
                         icon="i-lucide-plus"
                         color="primary"
                         @click="showCreateModal = true"
                     />
-                </template>
+                </template> -->
             </UDashboardNavbar>
         </template>
 
-        <template #body>
+        <!-- <template #body>
             <div class="space-y-6">
                 <div
                     v-if="loading"
@@ -164,7 +164,7 @@ const links = [[{
                     </template>
                 </UEmpty>
             </div>
-        </template>
+        </template> -->
     </UDashboardPanel>
 
     

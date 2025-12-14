@@ -64,7 +64,7 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             icon: "i-lucide-shield",
             type: "label",
             class: "mt-4 pt-4 border-t-2 border-default",
-            //   defaultOpen: route.path.startsWith("/dashboard/admin"),
+            // defaultOpen: route.path.startsWith("/dashboard/admin"),
             // children: [
             //     {
             //         label: "Stable Requests",
@@ -81,11 +81,6 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             // ],
         },
         {
-            label: "Stable Requests",
-            icon: "i-lucide-git-pull-request",
-            to: "/dashboard/admin/requests",
-        },
-        {
             label: "Users",
             icon: "i-lucide-users",
             to: "/dashboard/admin/users",
@@ -95,6 +90,21 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             icon: "i-lucide-package-search",
             to: "/dashboard/admin/packages",
         },
+        {
+            label: "Stable Requests",
+            icon: "i-lucide-git-pull-request",
+            to: "/dashboard/admin/requests",
+        },
+        {
+            label: "OS Releases",
+            icon: "i-lucide-rocket",
+            to: "/dashboard/admin/os-releases",
+        },
+        {
+            label: "Tasks",
+            icon: "i-lucide-list-checks",
+            to: "/dashboard/admin/tasks",
+        }
     ] : [];
 
     const footerItems: NavigationMenuItem[] = [
