@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
 import type { GetAdminOsReleasesResponses } from '~/api-client'
-import { h, resolveComponent } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
-import type { Row } from '@tanstack/vue-table'
 import { getPaginationRowModel } from '@tanstack/table-core'
 
 const toast = useToast()
