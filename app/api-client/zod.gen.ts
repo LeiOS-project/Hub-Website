@@ -780,7 +780,12 @@ export const zPostDevPackagesPackageNameStablePromotionRequestsResponse = z.obje
 export const zGetDevTasksData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
-    query: z.optional(z.never())
+    query: z.optional(z.object({
+        limit: z.optional(z.int().gte(1).lte(100)).default(10),
+        offset: z.optional(z.int().gte(0).lte(9007199254740991)).default(0),
+        order: z.optional(z.enum(['newest', 'oldest'])),
+        searchString: z.optional(z.string())
+    }))
 });
 
 /**
@@ -1567,7 +1572,12 @@ export const zPostAdminStablePromotionRequestsRequestIdDecideResponse = z.object
 export const zGetAdminTasksData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
-    query: z.optional(z.never())
+    query: z.optional(z.object({
+        limit: z.optional(z.int().gte(1).lte(100)).default(10),
+        offset: z.optional(z.int().gte(0).lte(9007199254740991)).default(0),
+        order: z.optional(z.enum(['newest', 'oldest'])),
+        searchString: z.optional(z.string())
+    }))
 });
 
 /**

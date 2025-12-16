@@ -1203,7 +1203,12 @@ export type PostDevPackagesPackageNameStablePromotionRequestsResponse = PostDevP
 export type GetDevTasksData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        limit?: number;
+        offset?: number;
+        order?: 'newest' | 'oldest';
+        searchString?: string;
+    };
     url: '/dev/tasks';
 };
 
@@ -2347,7 +2352,12 @@ export type PostAdminStablePromotionRequestsRequestIdDecideResponse = PostAdminS
 export type GetAdminTasksData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        limit?: number;
+        offset?: number;
+        order?: 'newest' | 'oldest';
+        searchString?: string;
+    };
     url: '/admin/tasks';
 };
 
