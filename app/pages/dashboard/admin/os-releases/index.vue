@@ -24,8 +24,8 @@ const { data: osReleases, pending: loading, refresh } = await useAsyncData<OSRel
             return []
         }
         // return res.data;
-        
-        for (let i = 0; i < 50; i++) {
+
+        for (let i = 0; i < 200; i++) {
             res.data.push({
                 id: i + 1,
                 version: `2025.12.${String(i).padStart(2, '0')}`,

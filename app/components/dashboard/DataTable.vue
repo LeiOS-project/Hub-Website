@@ -2,6 +2,7 @@
 import type { TableColumn } from '@nuxt/ui'
 import type { Row, ColumnFiltersState, FilterFn } from '@tanstack/vue-table'
 import { getPaginationRowModel } from '@tanstack/table-core'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
 // Cell slot props type (matches UTable's slot props)
 type CellSlotProps = {
@@ -78,7 +79,7 @@ const props = withDefaults(defineProps<Props>(), {
     emptyTitle: 'No data',
     emptyDescription: 'No items found.',
     emptyIcon: 'i-lucide-database'
-})
+});
 
 // Emits
 const emit = defineEmits<{
@@ -223,6 +224,9 @@ const pageSizeItems = computed(() =>
         value: size
     }))
 )
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller('sm');
 
 // Handle page size change
 function handlePageSizeChange(value: number) {
@@ -370,11 +374,11 @@ defineExpose({
         </template>
 
         <template v-if="!loading && data?.length && (showPagination || showPageSizeSelector)" #footer>
-            <div class="flex items-center justify-between gap-3">
-                <div class="flex items-center gap-3 text-sm text-muted">
+            <div class="flex items-center gap-3" :class="showPageSizeSelector && !isMobile ? 'justify-between' : 'justify-center'">
+                <div v-if="showPageSizeSelector && !isMobile" class="flex items-center gap-3 text-sm text-muted">
                     <slot name="footer-left">
+                        <!-- Hide page size selector on mobile -->
                         <USelect
-                            v-if="showPageSizeSelector"
                             :items="pageSizeItems"
                             size="md"
                             class="min-w-18"
@@ -384,13 +388,16 @@ defineExpose({
                     </slot>
                 </div>
 
-                <div class="flex items-center gap-1.5">
+                <div class="flex items-center">
                     <slot name="footer-right">
+                        <!-- Mobile Pagination (fewer siblings, show edges) -->
                         <UPagination
                             v-if="showPagination"
                             :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
                             :items-per-page="table?.tableApi?.getState().pagination.pageSize"
                             :total="table?.tableApi?.getFilteredRowModel().rows.length"
+                            :sibling-count="isMobile ? 0 : 2"
+                            :show-edges="true"
                             @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)"
                         />
                     </slot>
