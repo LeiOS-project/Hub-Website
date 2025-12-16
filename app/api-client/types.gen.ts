@@ -26,6 +26,7 @@ export type GetPublicPackagesResponses = {
             description: string;
             homepage_url: string;
             requires_patching: boolean;
+            created_at: number;
             latest_stable_release_amd64: string | null;
             latest_stable_release_arm64: string | null;
             latest_testing_release_amd64: string | null;
@@ -76,6 +77,7 @@ export type GetPublicPackagesPackageNameResponses = {
                 description: string;
                 homepage_url: string;
                 requires_patching: boolean;
+                created_at: number;
                 latest_stable_release_amd64: string | null;
                 latest_stable_release_arm64: string | null;
                 latest_testing_release_amd64: string | null;
@@ -298,6 +300,7 @@ export type PostAuthLoginResponses = {
         data: {
             user_id: number;
             user_role: 'admin' | 'developer' | 'user';
+            created_at: number;
             expires_at: number;
             token: string;
         };
@@ -337,6 +340,7 @@ export type GetAuthSessionResponses = {
         data: {
             user_id: number;
             user_role: 'admin' | 'developer' | 'user';
+            created_at: number;
             expires_at: number;
         };
     };
@@ -526,6 +530,7 @@ export type GetAccountResponses = {
         message: 'Account information retrieved successfully';
         data: {
             id: number;
+            created_at: number;
             username: string;
             display_name: string;
             email: string;
@@ -651,6 +656,7 @@ export type GetAccountApikeysResponses = {
         data: Array<{
             id: string;
             description: string;
+            created_at: number;
             expires_at: number | null;
         }>;
     };
@@ -764,6 +770,7 @@ export type GetDevPackagesResponses = {
             description: string;
             homepage_url: string;
             requires_patching: boolean;
+            created_at: number;
             latest_stable_release_amd64: string | null;
             latest_stable_release_arm64: string | null;
             latest_testing_release_amd64: string | null;
@@ -776,15 +783,10 @@ export type GetDevPackagesResponse = GetDevPackagesResponses[keyof GetDevPackage
 
 export type PostDevPackagesData = {
     body?: {
-        id?: number;
         name: string;
         description: string;
         homepage_url: string;
         requires_patching?: boolean;
-        latest_stable_release_amd64?: string | null;
-        latest_stable_release_arm64?: string | null;
-        latest_testing_release_amd64?: string | null;
-        latest_testing_release_arm64?: string | null;
     };
     path?: never;
     query?: never;
@@ -863,6 +865,7 @@ export type GetDevPackagesPackageNameResponses = {
             description: string;
             homepage_url: string;
             requires_patching: boolean;
+            created_at: number;
             latest_stable_release_amd64: string | null;
             latest_stable_release_arm64: string | null;
             latest_testing_release_amd64: string | null;
@@ -879,10 +882,6 @@ export type PutDevPackagesPackageNameData = {
         description?: string;
         homepage_url?: string;
         requires_patching?: boolean;
-        latest_stable_release_amd64?: string | null;
-        latest_stable_release_arm64?: string | null;
-        latest_testing_release_amd64?: string | null;
-        latest_testing_release_arm64?: string | null;
     };
     path: {
         packageName: string;
@@ -948,6 +947,7 @@ export type GetDevPackagesPackageNameReleasesResponses = {
             package_id: number;
             versionWithLeiosPatch: string;
             architecture: Array<'amd64' | 'arm64'>;
+            created_at: number;
         }>;
     };
 };
@@ -990,6 +990,7 @@ export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
             package_id: number;
             versionWithLeiosPatch: string;
             architecture: Array<'amd64' | 'arm64'>;
+            created_at: number;
         };
     };
 };
@@ -1121,18 +1122,21 @@ export type GetDevPackagesPackageNameStablePromotionRequestsResponses = {
             package_id: number;
             package_release_id: number;
             status: 'pending';
+            created_at: number;
             admin_note: null;
         } | {
             id: number;
             package_id: number;
             package_release_id: number;
             status: 'approved';
+            created_at: number;
             admin_note: string | null;
         } | {
             id: number;
             package_id: number;
             package_release_id: number;
             status: 'denied';
+            created_at: number;
             admin_note: string;
         }>;
     };
@@ -1343,6 +1347,7 @@ export type GetAdminUsersResponses = {
         message: 'Users retrieved successfully';
         data: Array<{
             id: number;
+            created_at: number;
             username: string;
             display_name: string;
             email: string;
@@ -1397,6 +1402,7 @@ export type PostAdminUsersResponses = {
         message: 'User created successfully';
         data: {
             id: number;
+            created_at: number;
             username: string;
             display_name: string;
             email: string;
@@ -1483,6 +1489,7 @@ export type GetAdminUsersUserIdResponses = {
         message: 'User retrieved successfully';
         data: {
             id: number;
+            created_at: number;
             username: string;
             display_name: string;
             email: string;
@@ -1546,6 +1553,7 @@ export type PutAdminUsersUserIdResponses = {
         message: 'User updated successfully';
         data: {
             id: number;
+            created_at: number;
             username: string;
             display_name: string;
             email: string;
@@ -1627,6 +1635,7 @@ export type GetAdminPackagesResponses = {
             description: string;
             homepage_url: string;
             requires_patching: boolean;
+            created_at: number;
             latest_stable_release_amd64: string | null;
             latest_stable_release_arm64: string | null;
             latest_testing_release_amd64: string | null;
@@ -1639,16 +1648,11 @@ export type GetAdminPackagesResponse = GetAdminPackagesResponses[keyof GetAdminP
 
 export type PostAdminPackagesData = {
     body?: {
-        id?: number;
         name: string;
         owner_user_id: number;
         description: string;
         homepage_url: string;
         requires_patching?: boolean;
-        latest_stable_release_amd64?: string | null;
-        latest_stable_release_arm64?: string | null;
-        latest_testing_release_amd64?: string | null;
-        latest_testing_release_arm64?: string | null;
     };
     path?: never;
     query?: never;
@@ -1763,6 +1767,7 @@ export type GetAdminPackagesPackageNameResponses = {
             description: string;
             homepage_url: string;
             requires_patching: boolean;
+            created_at: number;
             latest_stable_release_amd64: string | null;
             latest_stable_release_arm64: string | null;
             latest_testing_release_amd64: string | null;
@@ -1779,10 +1784,6 @@ export type PutAdminPackagesPackageNameData = {
         description?: string;
         homepage_url?: string;
         requires_patching?: boolean;
-        latest_stable_release_amd64?: string | null;
-        latest_stable_release_arm64?: string | null;
-        latest_testing_release_amd64?: string | null;
-        latest_testing_release_arm64?: string | null;
     };
     path: {
         packageName: string;
@@ -1848,6 +1849,7 @@ export type GetAdminPackagesPackageNameReleasesResponses = {
             package_id: number;
             versionWithLeiosPatch: string;
             architecture: Array<'amd64' | 'arm64'>;
+            created_at: number;
         }>;
     };
 };
@@ -1927,6 +1929,7 @@ export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = 
             package_id: number;
             versionWithLeiosPatch: string;
             architecture: Array<'amd64' | 'arm64'>;
+            created_at: number;
         };
     };
 };
@@ -2058,18 +2061,21 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsResponses = {
             package_id: number;
             package_release_id: number;
             status: 'pending';
+            created_at: number;
             admin_note: null;
         } | {
             id: number;
             package_id: number;
             package_release_id: number;
             status: 'approved';
+            created_at: number;
             admin_note: string | null;
         } | {
             id: number;
             package_id: number;
             package_release_id: number;
             status: 'denied';
+            created_at: number;
             admin_note: string;
         }>;
     };
@@ -2151,6 +2157,7 @@ export type GetAdminOsReleasesResponses = {
         data: Array<{
             id: number;
             version: string;
+            created_at: number;
             published_at: number;
         }>;
     };
@@ -2203,6 +2210,7 @@ export type GetAdminOsReleasesVersionResponses = {
         data: {
             id: number;
             version: string;
+            created_at: number;
             published_at: number;
         };
     };
@@ -2213,7 +2221,11 @@ export type GetAdminOsReleasesVersionResponse = GetAdminOsReleasesVersionRespons
 export type GetAdminStablePromotionRequestsData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        limit?: number;
+        offset?: number;
+        order?: 'newest' | 'oldest';
+    };
     url: '/admin/stable-promotion-requests';
 };
 
@@ -2230,6 +2242,7 @@ export type GetAdminStablePromotionRequestsResponses = {
             package_id: number;
             package_release_id: number;
             status: 'pending' | 'approved' | 'denied';
+            created_at: number;
             admin_note: string | null;
             package_name: string;
             package_release_version: string;
@@ -2274,6 +2287,7 @@ export type GetAdminStablePromotionRequestsRequestIdResponses = {
             package_id: number;
             package_release_id: number;
             status: 'pending' | 'approved' | 'denied';
+            created_at: number;
             admin_note: string | null;
             package_name: string;
             package_release_version: string;

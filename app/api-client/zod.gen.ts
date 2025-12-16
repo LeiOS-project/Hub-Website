@@ -22,6 +22,7 @@ export const zGetPublicPackagesResponse = z.object({
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.boolean(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         latest_stable_release_amd64: z.union([
             z.string(),
             z.null()
@@ -70,6 +71,7 @@ export const zGetPublicPackagesPackageNameResponse = z.object({
             description: z.string(),
             homepage_url: z.string(),
             requires_patching: z.boolean(),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
             latest_stable_release_amd64: z.union([
                 z.string(),
                 z.null()
@@ -248,6 +250,7 @@ export const zPostAuthLoginResponse = z.object({
             'developer',
             'user'
         ]),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         expires_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         token: z.string()
     })
@@ -273,6 +276,7 @@ export const zGetAuthSessionResponse = z.object({
             'developer',
             'user'
         ]),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         expires_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     })
 });
@@ -361,6 +365,7 @@ export const zGetAccountResponse = z.object({
     message: z.literal('Account information retrieved successfully'),
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         username: z.string(),
         display_name: z.string(),
         email: z.string(),
@@ -427,6 +432,7 @@ export const zGetAccountApikeysResponse = z.object({
     data: z.array(z.object({
         id: z.string(),
         description: z.string(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         expires_at: z.union([
             z.int().gte(-9007199254740991).lte(9007199254740991),
             z.null()
@@ -501,6 +507,7 @@ export const zGetDevPackagesResponse = z.object({
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.boolean(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         latest_stable_release_amd64: z.union([
             z.string(),
             z.null()
@@ -522,27 +529,10 @@ export const zGetDevPackagesResponse = z.object({
 
 export const zPostDevPackagesData = z.object({
     body: z.optional(z.object({
-        id: z.optional(z.int().gte(-9007199254740991).lte(9007199254740991)),
         name: z.string().regex(/^[a-z0-9][a-z0-9+.-]{1,62}$/),
         description: z.string(),
         homepage_url: z.string(),
-        requires_patching: z.optional(z.boolean()),
-        latest_stable_release_amd64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_stable_release_arm64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_testing_release_amd64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_testing_release_arm64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ]))
+        requires_patching: z.optional(z.boolean())
     })),
     path: z.optional(z.never()),
     query: z.optional(z.never())
@@ -580,6 +570,7 @@ export const zGetDevPackagesPackageNameResponse = z.object({
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.boolean(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         latest_stable_release_amd64: z.union([
             z.string(),
             z.null()
@@ -604,23 +595,7 @@ export const zPutDevPackagesPackageNameData = z.object({
         id: z.optional(z.int().gte(-9007199254740991).lte(9007199254740991)),
         description: z.optional(z.string()),
         homepage_url: z.optional(z.string()),
-        requires_patching: z.optional(z.boolean()),
-        latest_stable_release_amd64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_stable_release_arm64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_testing_release_amd64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_testing_release_arm64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ]))
+        requires_patching: z.optional(z.boolean())
     })),
     path: z.object({
         packageName: z.string()
@@ -657,7 +632,8 @@ export const zGetDevPackagesPackageNameReleasesResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.array(z.enum(['amd64', 'arm64']))
+        architecture: z.array(z.enum(['amd64', 'arm64'])),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     }))
 });
 
@@ -681,7 +657,8 @@ export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.array(z.enum(['amd64', 'arm64']))
+        architecture: z.array(z.enum(['amd64', 'arm64'])),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     })
 });
 
@@ -753,6 +730,7 @@ export const zGetDevPackagesPackageNameStablePromotionRequestsResponse = z.objec
             package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('pending'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
             admin_note: z.null()
         }),
         z.object({
@@ -760,6 +738,7 @@ export const zGetDevPackagesPackageNameStablePromotionRequestsResponse = z.objec
             package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('approved'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
             admin_note: z.union([
                 z.string(),
                 z.null()
@@ -770,6 +749,7 @@ export const zGetDevPackagesPackageNameStablePromotionRequestsResponse = z.objec
             package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('denied'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
             admin_note: z.string()
         })
     ]))
@@ -947,6 +927,7 @@ export const zGetAdminUsersResponse = z.object({
     message: z.literal('Users retrieved successfully'),
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         username: z.string(),
         display_name: z.string(),
         email: z.string(),
@@ -983,6 +964,7 @@ export const zPostAdminUsersResponse = z.object({
     message: z.literal('User created successfully'),
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         username: z.string(),
         display_name: z.string(),
         email: z.string(),
@@ -1029,6 +1011,7 @@ export const zGetAdminUsersUserIdResponse = z.object({
     message: z.literal('User retrieved successfully'),
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         username: z.string(),
         display_name: z.string(),
         email: z.string(),
@@ -1066,6 +1049,7 @@ export const zPutAdminUsersUserIdResponse = z.object({
     message: z.literal('User updated successfully'),
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         username: z.string(),
         display_name: z.string(),
         email: z.string(),
@@ -1117,6 +1101,7 @@ export const zGetAdminPackagesResponse = z.object({
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.boolean(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         latest_stable_release_amd64: z.union([
             z.string(),
             z.null()
@@ -1138,28 +1123,11 @@ export const zGetAdminPackagesResponse = z.object({
 
 export const zPostAdminPackagesData = z.object({
     body: z.optional(z.object({
-        id: z.optional(z.int().gte(-9007199254740991).lte(9007199254740991)),
         name: z.string().regex(/^[a-z0-9][a-z0-9+.-]{1,62}$/),
         owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         description: z.string(),
         homepage_url: z.string(),
-        requires_patching: z.optional(z.boolean()),
-        latest_stable_release_amd64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_stable_release_arm64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_testing_release_amd64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_testing_release_arm64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ]))
+        requires_patching: z.optional(z.boolean())
     })),
     path: z.optional(z.never()),
     query: z.optional(z.never())
@@ -1215,6 +1183,7 @@ export const zGetAdminPackagesPackageNameResponse = z.object({
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.boolean(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         latest_stable_release_amd64: z.union([
             z.string(),
             z.null()
@@ -1239,23 +1208,7 @@ export const zPutAdminPackagesPackageNameData = z.object({
         id: z.optional(z.int().gte(-9007199254740991).lte(9007199254740991)),
         description: z.optional(z.string()),
         homepage_url: z.optional(z.string()),
-        requires_patching: z.optional(z.boolean()),
-        latest_stable_release_amd64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_stable_release_arm64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_testing_release_amd64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ])),
-        latest_testing_release_arm64: z.optional(z.union([
-            z.string(),
-            z.null()
-        ]))
+        requires_patching: z.optional(z.boolean())
     })),
     path: z.object({
         packageName: z.string()
@@ -1292,7 +1245,8 @@ export const zGetAdminPackagesPackageNameReleasesResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.array(z.enum(['amd64', 'arm64']))
+        architecture: z.array(z.enum(['amd64', 'arm64'])),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     }))
 });
 
@@ -1335,7 +1289,8 @@ export const zGetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse =
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.array(z.enum(['amd64', 'arm64']))
+        architecture: z.array(z.enum(['amd64', 'arm64'])),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     })
 });
 
@@ -1407,6 +1362,7 @@ export const zGetAdminPackagesPackageNameStablePromotionRequestsResponse = z.obj
             package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('pending'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
             admin_note: z.null()
         }),
         z.object({
@@ -1414,6 +1370,7 @@ export const zGetAdminPackagesPackageNameStablePromotionRequestsResponse = z.obj
             package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('approved'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
             admin_note: z.union([
                 z.string(),
                 z.null()
@@ -1424,6 +1381,7 @@ export const zGetAdminPackagesPackageNameStablePromotionRequestsResponse = z.obj
             package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('denied'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
             admin_note: z.string()
         })
     ]))
@@ -1467,6 +1425,7 @@ export const zGetAdminOsReleasesResponse = z.object({
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         version: z.string(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         published_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     }))
 });
@@ -1509,6 +1468,7 @@ export const zGetAdminOsReleasesVersionResponse = z.object({
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         version: z.string(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         published_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     })
 });
@@ -1516,7 +1476,11 @@ export const zGetAdminOsReleasesVersionResponse = z.object({
 export const zGetAdminStablePromotionRequestsData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
-    query: z.optional(z.never())
+    query: z.optional(z.object({
+        limit: z.optional(z.int().gte(1).lte(100)).default(10),
+        offset: z.optional(z.int().gte(0).lte(9007199254740991)).default(0),
+        order: z.optional(z.enum(['newest', 'oldest']))
+    }))
 });
 
 /**
@@ -1535,6 +1499,7 @@ export const zGetAdminStablePromotionRequestsResponse = z.object({
             'approved',
             'denied'
         ]),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         admin_note: z.union([
             z.string(),
             z.null()
@@ -1568,6 +1533,7 @@ export const zGetAdminStablePromotionRequestsRequestIdResponse = z.object({
             'approved',
             'denied'
         ]),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         admin_note: z.union([
             z.string(),
             z.null()
