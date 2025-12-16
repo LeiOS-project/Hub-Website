@@ -276,6 +276,7 @@ defineExpose({
                             v-else-if="filter.type === 'select'"
                             :model-value="getFilterValue(filter.column)"
                             :items="getSelectItems(filter)"
+                            value-key="value"
                             :class="filter.class || 'min-w-40'"
                             :placeholder="filter.placeholder || 'All'"
                             @update:model-value="(val: any) => setFilterValue(filter.column, val)"
@@ -290,6 +291,7 @@ defineExpose({
                             v-else-if="filter.type === 'multi-select'"
                             :model-value="(getFilterValue(filter.column) as any[]) || []"
                             :items="getMultiSelectItems(filter)"
+                            value-key="value"
                             multiple
                             :class="filter.class || 'min-w-48'"
                             :placeholder="filter.placeholder || 'Select...'"
