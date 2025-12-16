@@ -132,6 +132,11 @@ const profileLabel = computed(() => {
 </script>
 
 <template>
+    <NuxtLoadingIndicator
+        color="#00bcff"
+        position="top"
+    />
+
     <UDashboardGroup class="app-layout-dashboard">
         <UDashboardSidebar
             collapsible
