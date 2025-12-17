@@ -2248,6 +2248,44 @@ export type GetAdminOsReleasesVersionResponses = {
 
 export type GetAdminOsReleasesVersionResponse = GetAdminOsReleasesVersionResponses[keyof GetAdminOsReleasesVersionResponses];
 
+export type GetAdminOsReleasesVersionPublishingLogsData = {
+    body?: never;
+    path: {
+        version: string;
+    };
+    query?: never;
+    url: '/admin/os-releases/{version}/publishing-logs';
+};
+
+export type GetAdminOsReleasesVersionPublishingLogsErrors = {
+    /**
+     * OS release not found / Log file not found for this OS release publishing task
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'OS release not found / Log file not found for this OS release publishing task';
+    };
+};
+
+export type GetAdminOsReleasesVersionPublishingLogsError = GetAdminOsReleasesVersionPublishingLogsErrors[keyof GetAdminOsReleasesVersionPublishingLogsErrors];
+
+export type GetAdminOsReleasesVersionPublishingLogsResponses = {
+    /**
+     * Publishing logs retrieved
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Publishing logs retrieved';
+        data: {
+            logs: string;
+        };
+    };
+};
+
+export type GetAdminOsReleasesVersionPublishingLogsResponse = GetAdminOsReleasesVersionPublishingLogsResponses[keyof GetAdminOsReleasesVersionPublishingLogsResponses];
+
 export type GetAdminStablePromotionRequestsData = {
     body?: never;
     path?: never;

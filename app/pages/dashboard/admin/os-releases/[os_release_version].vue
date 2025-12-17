@@ -21,7 +21,7 @@ useSeoMeta({
 });
 
 const { data: result, refresh, pending, error } = await useAsyncData(
-    `os-release:${os_release_version}`,
+    `admin-os-release:${os_release_version}`,
     async () => {
         // const res = await useAPI((api) => api.getAdminOsReleasesVersion({
         //     path: {

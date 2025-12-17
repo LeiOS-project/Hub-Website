@@ -1505,6 +1505,26 @@ export const zGetAdminOsReleasesVersionResponse = z.object({
     })
 });
 
+export const zGetAdminOsReleasesVersionPublishingLogsData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        version: z.string().regex(/^\d{4}\.\d{2}\.\d{2}$/)
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Publishing logs retrieved
+ */
+export const zGetAdminOsReleasesVersionPublishingLogsResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Publishing logs retrieved'),
+    data: z.object({
+        logs: z.string()
+    })
+});
+
 export const zGetAdminStablePromotionRequestsData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
