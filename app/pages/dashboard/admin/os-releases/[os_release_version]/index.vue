@@ -104,7 +104,7 @@ async function onDeleteOSRelease() {
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="space-y-6 lg:max-w-3xl mx-auto">
 		<!-- Header -->
 		<div>
 			<h2 class="text-xl font-semibold text-white">OS Release {{ os_release?.version }}</h2>

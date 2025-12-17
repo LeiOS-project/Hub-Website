@@ -57,8 +57,8 @@ const {
                 break;
         }
         return_data.logs += `[${timestamp}] [${level.toUpperCase()}] ${message}\n`;
-        return return_data;
     }
+    return return_data;
 
 });
 
