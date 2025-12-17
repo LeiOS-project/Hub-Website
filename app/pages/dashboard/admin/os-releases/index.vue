@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { GetAdminOsReleasesResponses } from '~/api-client'
 import type { TableColumn } from '@nuxt/ui'
+import type DashboardPageHeaderVue from '~/components/dashboard/DashboardPageHeader.vue';
 
 const toast = useToast()
 
@@ -74,11 +75,16 @@ const publishingStatusOptions = [
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar title="OS Releases" icon="i-lucide-rocket">
+            <!-- <UDashboardNavbar title="OS Releases" icon="i-lucide-rocket">
                 <template #trailing>
                     <span class="text-slate-400 hidden sm:inline"> | Manage all OS releases</span>
                 </template>
-            </UDashboardNavbar>
+            </UDashboardNavbar> -->
+            <DashboardPageHeader
+                title="OS Releases"
+                icon="i-lucide-rocket"
+                description="Manage all OS releases"
+            />
         </template>
 
         <template #body>
@@ -115,10 +121,13 @@ const publishingStatusOptions = [
                         />
                     </template>
 
-                    <template #name-cell="{ row }">
-                        <span class="font-medium text-sky-400">
+                    <template #version-cell="{ row }">
+                        <NuxtLink
+                            :to="`/dashboard/admin/os-releases/${row.original.version}`"
+                            class="font-medium text-primary-400 hover:underline"
+                        >
                             {{ row.original.version }}
-                        </span>
+                        </NuxtLink>
                     </template>
                     <template #created_at-cell="{ row }">
                         <span class="text-sm">
