@@ -28,8 +28,8 @@ const { data: osReleases, pending: loading, refresh } = await useAsyncData<OSRel
 
         for (let i = 0; i < 200; i++) {
             res.data.push({
-                id: i + 1,
-                version: `2025.12.${String(i).padStart(2, '0')}`,
+                id: i,
+                version: `2025.${String(Math.floor(i / 28) + 1).padStart(2, '0')}.${String((i % 28) + 1).padStart(2, '0')}`,
                 created_at: Date.now() - i * 1000 * 60 * 60 * 24,
                 published_at: Date.now() - i * 1000 * 60 * 60 * 24,
                 publishing_status: (['pending', 'running', 'paused', 'completed', 'failed'] satisfies OSRelease['publishing_status'][])[Math.floor(Math.random() * 1000) % 5] as OSRelease['publishing_status'],
