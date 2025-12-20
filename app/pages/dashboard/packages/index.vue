@@ -31,7 +31,7 @@ const packageTableColumns: TableColumn<DevPackage>[] = [
     { id: 'actions', header: '', enableSorting: false, enableHiding: false }
 ]
 
-const { data: packages, pending: loading, refresh } = await useAsyncData<DevPackage[]>(
+const { data: packages_data, pending: loading, refresh } = await useAsyncData<DevPackage[]>(
     'dev-packages-list',
     async () => {
         const res = await useAPI((api) => api.getDevPackages({}))
@@ -39,7 +39,7 @@ const { data: packages, pending: loading, refresh } = await useAsyncData<DevPack
             toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
             return []
         }
-        return res.data
+        return res.data;
     }
 )
 
@@ -201,11 +201,12 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
                             icon: 'i-lucide-search' 
                         }
                     ]"
-                    empty-title="No releases"
-                    empty-description="Create the first release to get started."
-                    empty-icon="i-lucide-rocket"
+                    empty-title="No packages"
+                    empty-description="Create the first package to get started."
+                    empty-icon="i-lucide-package"
                     @refresh="refresh()"
-                ></DashboardDataTable>
+                >
+            </DashboardDataTable>
 
             </DashboardPageBody>
         </template>

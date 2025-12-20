@@ -1,6 +1,17 @@
 import * as apiClient from "@/api-client";
+import type { KeysOf } from "~/api-client/client/types.gen";
 
-export async function useAPI<TReturn>(handler: (api: typeof apiClient) => TReturn, disableAuthRedirect = false) {
+type UseAPIReturnType<TReturn> = Promise<TReturn | {
+    readonly success: false;
+    readonly code: 500;
+    readonly message: string;
+    readonly data: null;
+}>;
+
+export async function useAPI<TReturn>(handler: (api: typeof apiClient) => TReturn, isAsyncData?: false, disableAuthRedirect?: boolean): UseAPIReturnType<TReturn>;
+export async function useAPI<TReturn>(handler: (api: typeof apiClient) => TReturn, isAsyncData: true, disableAuthRedirect?: boolean): UseAPIReturnType<TReturn>;
+export async function useAPI<TReturn>(handler: (api: typeof apiClient) => TReturn, isAsyncData: boolean, disableAuthRedirect?: boolean): UseAPIReturnType<TReturn> 
+export async function useAPI<TReturn>(handler: (api: typeof apiClient) => TReturn, isAsyncData = false, disableAuthRedirect = false): UseAPIReturnType<TReturn> {
 
     try {
         if (import.meta.server) {
@@ -14,7 +25,7 @@ export async function useAPI<TReturn>(handler: (api: typeof apiClient) => TRetur
                 return handler(apiClient);
             });
 
-            return data.value ?? {
+            return data.value as TReturn ?? {
                 success: false,
                 code: 500,
                 message: "Failed to process API request on server.",
