@@ -146,7 +146,7 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
 </script>
 
 <template>
-    <UDashboardPanel>
+    <!-- <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="`${packageName}`" icon="i-lucide-package">
                 <template #title>
@@ -156,12 +156,12 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                             link: "text-md"
                         }'
                     />
-                    <!-- <UButton
+                    <UButton
                         icon="i-lucide-arrow-left"
                         variant="ghost"
                         color="neutral"
                         to="/dashboard/packages"
-                    /> -->
+                    />
                 </template>
                 <template #right>
                     <div class="flex gap-2">
@@ -184,7 +184,7 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
         </template>
 
         <template #body>
-            <div class="space-y-6">
+            <div class="space-y-6"> -->
                 <div v-if="loadingPkg" class="flex items-center justify-center py-12">
                     <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
                 </div>
@@ -346,9 +346,9 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                         />
                     </UCard>
                 </template>
-            </div>
+            <!-- </div>
         </template>
-    </UDashboardPanel>
+    </UDashboardPanel> -->
 
     <!-- Upload Modal -->
     <DashboardModal

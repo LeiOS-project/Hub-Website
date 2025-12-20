@@ -783,7 +783,7 @@ export type GetDevPackagesResponse = GetDevPackagesResponses[keyof GetDevPackage
 
 export type PostDevPackagesData = {
     body?: {
-        name: string;
+        name: unknown & unknown;
         description: string;
         homepage_url: string;
         requires_patching?: boolean;
@@ -839,12 +839,12 @@ export type GetDevPackagesPackageNameData = {
 
 export type GetDevPackagesPackageNameErrors = {
     /**
-     * Package with specified ID not found
+     * Package with specified Name not found
      */
     404: {
         success: false;
         code: 404;
-        message: 'Package with specified ID not found';
+        message: 'Package with specified Name not found';
     };
 };
 
@@ -900,12 +900,12 @@ export type PutDevPackagesPackageNameErrors = {
         message: 'Bad Request: Syntax or validation error in request';
     };
     /**
-     * Package with specified ID not found
+     * Package with specified Name not found
      */
     404: {
         success: false;
         code: 404;
-        message: 'Package with specified ID not found';
+        message: 'Package with specified Name not found';
     };
 };
 
@@ -1657,7 +1657,7 @@ export type GetAdminPackagesResponse = GetAdminPackagesResponses[keyof GetAdminP
 
 export type PostAdminPackagesData = {
     body?: {
-        name: string;
+        name: unknown & unknown;
         owner_user_id: number;
         description: string;
         homepage_url: string;
@@ -1714,12 +1714,12 @@ export type DeleteAdminPackagesPackageNameData = {
 
 export type DeleteAdminPackagesPackageNameErrors = {
     /**
-     * Package with specified ID not found
+     * Package with specified Name not found
      */
     404: {
         success: false;
         code: 404;
-        message: 'Package with specified ID not found';
+        message: 'Package with specified Name not found';
     };
 };
 
@@ -1750,12 +1750,12 @@ export type GetAdminPackagesPackageNameData = {
 
 export type GetAdminPackagesPackageNameErrors = {
     /**
-     * Package with specified ID not found
+     * Package with specified Name not found
      */
     404: {
         success: false;
         code: 404;
-        message: 'Package with specified ID not found';
+        message: 'Package with specified Name not found';
     };
 };
 
@@ -1811,12 +1811,12 @@ export type PutAdminPackagesPackageNameErrors = {
         message: 'Bad Request: Syntax or validation error in request';
     };
     /**
-     * Package with specified ID not found
+     * Package with specified Name not found
      */
     404: {
         success: false;
         code: 404;
-        message: 'Package with specified ID not found';
+        message: 'Package with specified Name not found';
     };
 };
 

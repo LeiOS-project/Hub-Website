@@ -529,7 +529,7 @@ export const zGetDevPackagesResponse = z.object({
 
 export const zPostDevPackagesData = z.object({
     body: z.optional(z.object({
-        name: z.string().regex(/^[a-z0-9][a-z0-9+.-]{1,62}$/),
+        name: z.intersection(z.unknown(), z.unknown()),
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.optional(z.boolean())
@@ -1120,7 +1120,7 @@ export const zGetAdminPackagesResponse = z.object({
 
 export const zPostAdminPackagesData = z.object({
     body: z.optional(z.object({
-        name: z.string().regex(/^[a-z0-9][a-z0-9+.-]{1,62}$/),
+        name: z.intersection(z.unknown(), z.unknown()),
         owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         description: z.string(),
         homepage_url: z.string(),
