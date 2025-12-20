@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends Record<string, any>">
 import type { TableColumn } from '@nuxt/ui'
-import type { Row, ColumnFiltersState, FilterFn } from '@tanstack/vue-table'
+import type { Row, ColumnFiltersState, FilterFn, HeaderContext, CellContext } from '@tanstack/vue-table'
 import { getPaginationRowModel } from '@tanstack/table-core'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
@@ -89,29 +89,30 @@ const emit = defineEmits<{
     'row-click': [row: T]
 }>()
 
+type DynamicHeaderSlots<T, K = keyof T> = Record<`${K extends string ? K : never}-header`, (props: HeaderContext<T, unknown>) => any>;
+type DynamicFooterSlots<T, K = keyof T> = Record<`${K extends string ? K : never}-footer`, (props: HeaderContext<T, unknown>) => any>;
+type DynamicCellSlots<T, K = keyof T> = Record<`${K extends string ? K : never}-cell`, (props: CellContext<T, unknown>) => any>;
+
+type TableSlots = {
+    /** Header left side content (before search) */
+    'header-left'?: () => any
+    /** Header right side content (after refresh button) */
+    'header-right'?: () => any
+    /** Custom empty state */
+    'empty'?: () => any
+    /** Actions in the empty state */
+    'empty-actions'?: () => any
+    /** Footer left side content */
+    'footer-left'?: () => any
+    /** Footer right side content (replaces pagination) */
+    'footer-right'?: () => any
+} & DynamicHeaderSlots<T> & DynamicFooterSlots<T> & DynamicCellSlots<T>;
+
 // Slots with proper typing for type checking
-defineSlots<
-    {
-        /** Header left side content (before search) */
-        'header-left'?: () => any
-        /** Header right side content (after refresh button) */
-        'header-right'?: () => any
-        /** Custom empty state */
-        'empty'?: () => any
-        /** Actions in the empty state */
-        'empty-actions'?: () => any
-        /** Footer left side content */
-        'footer-left'?: () => any
-        /** Footer right side content (replaces pagination) */
-        'footer-right'?: () => any
-    } & {
-        /** Dynamic cell slots - use #[columnKey]-cell="{ row }" */
-        [K: `${string}-cell`]: (props: CellSlotProps) => any
-    }
->()
+defineSlots<TableSlots>()
 
 // Use useSlots for dynamic slot access (avoids index signature issues)
-const slots = useSlots()
+const slots = useSlots();
 
 // Table ref
 const table = useTemplateRef('table')
@@ -361,7 +362,7 @@ defineExpose({
         >
             <!-- Pass through all cell slots dynamically -->
             <template v-for="(_, slotName) in slots" :key="slotName" #[slotName]="slotProps">
-                <slot :name="(slotName as any as any)" v-bind="slotProps || {}" />
+                <slot :name="(slotName as keyof TableSlots)" v-bind="slotProps || {}" />
             </template>
         </UTable>
 
