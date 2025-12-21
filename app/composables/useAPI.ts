@@ -236,7 +236,15 @@ export async function useAPI<TReturn>(handler: (api: APIClient) => TReturn, disa
                 }
             }
 
-            return handler(baseAPIClient);
+            const result = await handler(baseAPIClient);
+
+            if ((result as any)?.success === false && (result as any)?.code === 401 && ((result as any)?.message === "Invalid or expired token") || ((result as any)?.message === "Missing or invalid Authorization header")) {
+                updateAPIClient(null);
+                sessionToken.value = null;
+                if (!disableAuthRedirect) {
+                    navigateTo('/auth/login?url=' + encodeURIComponent(useRoute().fullPath));
+                }
+            }
 
         } else {
             throw new Error("Unknown environment");

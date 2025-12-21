@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { NavigationMenuItem } from '@nuxt/ui';
+import type { BreadcrumbItem, NavigationMenuItem } from '@nuxt/ui';
 import type { GetAdminOsReleasesResponses } from '~/api-client';
 
 const toast = useToast();
@@ -48,10 +48,31 @@ provide('os_release_data', data);
 provide('os_release_refresh', refresh);
 provide('os_release_pending', pending);
 
-const pathBreadcrumbItems = [
-    { label: 'OS Releases', to: '/dashboard/admin/os-releases' },
-    { label: os_release_version },
-];
+// const pathBreadcrumbItems = [
+//     { label: 'OS Releases', to: '/dashboard/admin/os-releases' },
+//     { label: os_release_version },
+// ];
+
+const pathBreadcrumbItems = computed<BreadcrumbItem[]>(() => {
+    const items: BreadcrumbItem[] = [
+        { label: 'OS Releases', to: '/dashboard/admin/os-releases' },
+    ];
+
+    const normalizedPath = route.path.replace(/\/$/, '');
+
+    if (normalizedPath.endsWith('/logs')) {
+        items.push(
+            { label: os_release_version, to: `/dashboard/admin/os-releases/${os_release_version}` },
+            { label: 'Logs' }
+        );
+    } else {
+        items.push(
+            { label: os_release_version }
+        );
+    }
+
+    return items;
+});
 
 const links = [[
     {

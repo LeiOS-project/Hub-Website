@@ -88,7 +88,7 @@ const links = [[
         icon: 'i-lucide-git-pull-request',
         to: `/dashboard/packages/${package_name}/stable-promotion-requests`,
     }
-]] satisfies NavigationMenuItem[][]
+]] satisfies NavigationMenuItem[][];
 
 </script>
 
