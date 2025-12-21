@@ -245,6 +245,7 @@ export async function useAPI<TReturn>(handler: (api: APIClient) => TReturn, disa
                     navigateTo('/auth/login?url=' + encodeURIComponent(useRoute().fullPath));
                 }
             }
+            return result;
 
         } else {
             throw new Error("Unknown environment");
