@@ -41,7 +41,7 @@ const redirectQuery = computed(() => encodeURIComponent(route.fullPath))
     <UHeader class="backdrop-blur-xl">
         <template #left>
             <div class="flex items-center gap-2">
-                <NuxtLink to="https://www.leios.dev">
+                <NuxtLink to="https://www.leios.dev" target="_blank">
                     <LeiOSLogo class="h-8 w-auto" />
                 </NuxtLink>
                 <NuxtLink to="/" class="flex items-center gap-2 text-2xl font-bold leading-none">
