@@ -4,6 +4,7 @@ import type { GetDevPackagesResponses } from '@/api-client/types.gen'
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { useAPI } from '@/composables/useAPI'
+import DashboardPageBody from '~/components/dashboard/DashboardPageBody.vue'
 
 type DevPackage = GetDevPackagesResponses[200]['data'][number]
 
@@ -21,7 +22,7 @@ const toast = useToast()
 
 const showCreateModal = ref(route.query.action === 'create')
 
-const packageColumns: TableColumn<DevPackage>[] = [
+const packageTableColumns: TableColumn<DevPackage>[] = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'description', header: 'Description' },
     { accessorKey: 'homepage_url', header: 'Homepage' },
@@ -30,18 +31,16 @@ const packageColumns: TableColumn<DevPackage>[] = [
     { id: 'actions', header: '', enableSorting: false, enableHiding: false }
 ]
 
-const { data: packages, pending: loading, refresh } = await useAsyncData<DevPackage[]>(
-    'dev-packages-list',
-    async () => {
-        const res = await useAPI((api) => api.getDevPackages({}))
+const packages = await useAPIAsyncData(
+    "dev-packages", async () => {
+        const res = await useAPI((api) => api.getDevPackages({}));
         if (!res.success) {
             toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
-            return []
+            return [];
         }
-        return res.data
+        return res.data;
     }
 )
-
 
 const createSchema = z.object({
     name: z.string().min(1, 'Name is required').regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
@@ -68,7 +67,7 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
     if (res.success) {
         toast.add({ title: 'Package created', color: 'success' })
         showCreateModal.value = false
-        await refresh()
+        await packages.refresh()
     } else {
         toast.add({ title: 'Create failed', description: res.message, color: 'error' })
     }
@@ -78,7 +77,7 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar title="Packages" icon="i-lucide-package">
+            <!-- <UDashboardNavbar title="Packages" icon="i-lucide-package">
                 <template #right>
                     <UButton
                         label="New Package"
@@ -87,19 +86,23 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
                         @click="showCreateModal = true"
                     />
                 </template>
-            </UDashboardNavbar>
+            </UDashboardNavbar> -->
+            <DashboardPageHeader
+                title="Packages"
+                icon="i-lucide-package"
+                description="Manage your packages"
+            />
         </template>
 
         <template #body>
-            <div class="space-y-6">
-                <div v-if="loading" class="flex items-center justify-center py-12">
+            <DashboardPageBody>
+                <!-- <div v-if="packages.loading" class="flex items-center justify-center py-12">
                     <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
                 </div>
 
                 <UTable
-                    v-else-if="packages?.length"
-                    :data="packages"
-                    :columns="packageColumns"
+                    :data="package_data || []"
+                    :columns="packageTableColumns"
                 >
                     <template #name-cell="{ row }">
                         <NuxtLink
@@ -181,13 +184,112 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
                             @click="showCreateModal = true"
                         />
                     </template>
-                </UEmpty>
-            </div>
+                </UEmpty> -->
+
+                <DashboardDataTable
+                    :data="packages.data"
+                    :columns="packageTableColumns"
+                    :loading="packages.loading"
+                    :filters="[
+                        { 
+                            column: 'name', 
+                            type: 'text',
+                            placeholder: 'Search version...', 
+                            icon: 'i-lucide-search' 
+                        }
+                    ]"
+                    empty-title="No packages"
+                    empty-description="Create the first package to get started."
+                    empty-icon="i-lucide-package"
+                    @refresh="packages.refresh()"
+                >
+                    <template #header-right>
+                        <UButton
+                            label="New Package"
+                            icon="i-lucide-plus"
+                            color="primary"
+                            @click="showCreateModal = true"
+                        />
+                    </template>
+
+                    <template #name-cell="{ row }">
+                        <NuxtLink
+                            :to="`/dashboard/packages/${row.original.name}`"
+                            class="font-medium text-sky-400 hover:underline"
+                        >
+                            {{ row.original.name }}
+                        </NuxtLink>
+                    </template>
+
+                    <template #description-cell="{ row }">
+                        <span class="text-slate-400 line-clamp-1 max-w-xs">
+                            {{ row.original.description || '—' }}
+                        </span>
+                    </template>
+
+                    <template #homepage_url-cell="{ row }">
+                        <UButton
+                            v-if="row.original.homepage_url"
+                            :to="row.original.homepage_url"
+                            target="_blank"
+                            icon="i-lucide-external-link"
+                            variant="ghost"
+                            color="neutral"
+                            size="xs"
+                        />
+                        <span v-else class="text-slate-500">—</span>
+                    </template>
+
+                    <template #stable-cell="{ row }">
+                        <div class="flex gap-1">
+                            <UBadge v-if="row.original.latest_stable_release_amd64" color="success" variant="soft" size="sm">
+                                amd64
+                            </UBadge>
+                            <UBadge v-if="row.original.latest_stable_release_arm64" color="success" variant="soft" size="sm">
+                                arm64
+                            </UBadge>
+                            <span v-if="!row.original.latest_stable_release_amd64 && !row.original.latest_stable_release_arm64" class="text-slate-500">—</span>
+                        </div>
+                    </template>
+
+                    <template #testing-cell="{ row }">
+                        <div class="flex gap-1">
+                            <UBadge v-if="row.original.latest_testing_release_amd64" color="warning" variant="soft" size="sm">
+                                amd64
+                            </UBadge>
+                            <UBadge v-if="row.original.latest_testing_release_arm64" color="warning" variant="soft" size="sm">
+                                arm64
+                            </UBadge>
+                            <span v-if="!row.original.latest_testing_release_amd64 && !row.original.latest_testing_release_arm64" class="text-slate-500">—</span>
+                        </div>
+                    </template>
+
+                    <template #actions-cell="{ row }">
+                        <div class="flex gap-1">
+                            <UButton
+                                icon="i-lucide-upload"
+                                variant="ghost"
+                                color="neutral"
+                                size="xs"
+                                :to="`/dashboard/packages/${row.original.name}?action=upload`"
+                            />
+                            <UButton
+                                icon="i-lucide-settings"
+                                variant="ghost"
+                                color="neutral"
+                                size="xs"
+                                :to="`/dashboard/packages/${row.original.name}`"
+                            />
+                        </div>
+                    </template>
+                </DashboardDataTable>
+
+            </DashboardPageBody>
         </template>
     </UDashboardPanel>
 
     <!-- Create Package Modal -->
-    <DashboardModal
+    <!-- <DashboardModal
         v-model:open="showCreateModal"
         title="Create Package"
         icon="i-lucide-package-plus"
@@ -219,5 +321,5 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
                 />
             </div>
         </UForm>
-    </DashboardModal>
+    </DashboardModal> -->
 </template>

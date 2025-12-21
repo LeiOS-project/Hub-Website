@@ -9,11 +9,13 @@ export function updateAPIClient(token: string | null) {
             baseURL: apiURL,
             headers: {
                 Authorization: `Bearer ${token}`
-            }
+            },
+            ignoreResponseError: true
         });
     } else {
         client.setConfig({
-            baseURL: apiURL
+            baseURL: apiURL,
+            ignoreResponseError: true
         });
     }
 }

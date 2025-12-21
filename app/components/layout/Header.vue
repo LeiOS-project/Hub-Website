@@ -18,7 +18,7 @@ const links = computed<NavigationMenuItem[]>(() => [
     },
     {
         label: 'Explorer',
-        to: '/explorer'
+        to: '/explore'
     },
     {
         label: 'Dashboard',
@@ -41,8 +41,19 @@ const redirectQuery = computed(() => encodeURIComponent(route.fullPath))
     <UHeader class="backdrop-blur-xl">
         <template #left>
             <div class="flex items-center gap-2">
-                <NuxtLink to="https://www.leios.dev"><LeiOSLogo class="h-8 w-auto" /></NuxtLink>
-                <NuxtLink to="/" class="h-8 flex items-center text-2xl font-bold leading-none">/ Hub</NuxtLink>
+                <NuxtLink to="https://www.leios.dev">
+                    <LeiOSLogo class="h-8 w-auto" />
+                </NuxtLink>
+                <NuxtLink to="/" class="flex items-center gap-2 text-2xl font-bold leading-none">
+                    <span>/</span>
+                    <span>Hub</span>
+                </NuxtLink>
+                <!-- <NuxtLink to="/" class="flex items-center gap-1.5">
+                    <LeiOSLogo v-if="!collapsed" class="ms-2.5 h-6 w-auto flex-none" />
+                    <span v-if="!collapsed" class="text-lg font-semibold">/</span>
+                    <span v-if="!collapsed" class="text-lg font-semibold">Hub</span>
+                    <LeiOSIcon v-else class="h-8 w-8" />
+                </NuxtLink> -->
             </div>
         </template>
 
@@ -59,8 +70,13 @@ const redirectQuery = computed(() => encodeURIComponent(route.fullPath))
                         <UIcon name="i-lucide-user" class="size-4" />
                         <span class="text-sm">{{ profileLabel }}</span>
                     </div>
-                    <UButton icon="i-lucide-layout-dashboard" to="/dashboard" color="primary"
-                        variant="soft" class="">
+                    <UButton
+                        icon="i-lucide-layout-dashboard"
+                        to="/dashboard"
+                        color="primary"
+                        variant="soft"
+                        class="hidden sm:flex"
+                    >
                         Dashboard
                     </UButton>
                 </template>

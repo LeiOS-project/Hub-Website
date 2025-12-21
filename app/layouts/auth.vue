@@ -5,6 +5,11 @@ import Footer from '~/components/layout/Footer.vue'
 </script>
 
 <template>
+    <NuxtLoadingIndicator
+        color="#00bcff"
+        position="top"
+    />
+
     <div class="app-layout">
         <!-- Navigation -->
         <Header />

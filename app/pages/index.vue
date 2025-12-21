@@ -55,7 +55,13 @@ const cards = [
         detail: 'Coming soon: browse packages and pull metadata directly from the repo.',
         to: '#'
     }
-]
+];
+
+useSeoMeta({
+    title: 'LeiOS Hub | Centralized Package Management for LeiOS',
+    description: 'Manage and publish LeiOS packages with ease using the LeiOS Repository Hub. Designed for developers and admins alike.'
+});
+
 </script>
 
 <template>
@@ -81,7 +87,7 @@ const cards = [
                             and keep everything auditable for developers and admins.
                         </p>
                         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                            <UButton to="/explorer" size="lg" color="primary" class="px-7">
+                            <UButton to="/explore" size="lg" color="primary" class="px-7">
                                 <template #leading>
                                     <UIcon name="i-lucide-log-in" />
                                 </template>

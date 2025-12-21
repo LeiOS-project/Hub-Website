@@ -29,7 +29,7 @@ const { data: pkgData, pending, refresh } = await useAsyncData(
         if (!res.success) {
             toast.add({ title: 'Failed to load package', description: res.message, color: 'error' })
             if (Number(res.code) === 404) {
-                router.push('/explorer')
+                router.push('/explore')
             }
             return null
         }
@@ -92,7 +92,7 @@ const releaseColumns: TableColumn<ReleaseRow>[] = [
                 <div class="space-y-2">
                     <UBadge color="primary" variant="soft">Explorer</UBadge>
                     <div class="flex items-center gap-3">
-                        <UButton icon="i-lucide-arrow-left" to="/explorer" variant="ghost" color="neutral" size="sm">Back</UButton>
+                        <UButton icon="i-lucide-arrow-left" to="/explore" variant="ghost" color="neutral" size="sm">Back</UButton>
                         <h1 class="text-3xl font-bold">{{ packageTitle }}</h1>
                     </div>
                     <p class="text-slate-400">View public metadata and releases for this package.</p>

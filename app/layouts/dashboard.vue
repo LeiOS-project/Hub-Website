@@ -2,6 +2,7 @@
 import type { NavigationMenuItem } from "@nuxt/ui";
 import UserMenu from "~/components/dashboard/UserMenu.vue";
 import LeiOSLogo from "~/components/img/LeiOSLogo.vue";
+import LeiOSIcon from "~/components/img/LeiOSIcon.vue";
 import { UserStore } from "~/utils/stores/userStore";
 
 const route = useRoute();
@@ -64,7 +65,7 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             icon: "i-lucide-shield",
             type: "label",
             class: "mt-4 pt-4 border-t-2 border-default",
-            //   defaultOpen: route.path.startsWith("/dashboard/admin"),
+            // defaultOpen: route.path.startsWith("/dashboard/admin"),
             // children: [
             //     {
             //         label: "Stable Requests",
@@ -81,11 +82,6 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             // ],
         },
         {
-            label: "Stable Requests",
-            icon: "i-lucide-git-pull-request",
-            to: "/dashboard/admin/requests",
-        },
-        {
             label: "Users",
             icon: "i-lucide-users",
             to: "/dashboard/admin/users",
@@ -95,13 +91,28 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             icon: "i-lucide-package-search",
             to: "/dashboard/admin/packages",
         },
+        {
+            label: "Stable Requests",
+            icon: "i-lucide-git-pull-request",
+            to: "/dashboard/admin/requests",
+        },
+        {
+            label: "OS Releases",
+            icon: "i-lucide-rocket",
+            to: "/dashboard/admin/os-releases",
+        },
+        {
+            label: "Tasks",
+            icon: "i-lucide-list-checks",
+            to: "/dashboard/admin/tasks",
+        }
     ] : [];
 
     const footerItems: NavigationMenuItem[] = [
         {
             label: "Explorer",
             icon: "i-lucide-compass",
-            to: "/explorer",
+            to: "/explore",
         },
         {
             label: "Back to Home",
@@ -113,14 +124,15 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
     return [[...devItems, ...adminItems, ...settings], footerItems];
 });
 
-const profileLabel = computed(() => {
-    if (user.value?.display_name) return user.value.display_name;
-    if (user.value?.username) return user.value.username;
-    return "Profile";
-});
+
 </script>
 
 <template>
+    <NuxtLoadingIndicator
+        color="#00bcff"
+        position="top"
+    />
+
     <UDashboardGroup class="app-layout-dashboard">
         <UDashboardSidebar
             collapsible
@@ -136,16 +148,11 @@ const profileLabel = computed(() => {
             :max-size="30"
         >
             <template #header="{ collapsed }">
-                <NuxtLink to="/" class="flex items-center gap-2">
-                    <LeiOSLogo v-if="!collapsed" class="h-6 w-auto" />
-                    <UIcon
-                        v-else
-                        name="i-lucide-box"
-                        class="size-5 text-primary mx-auto"
-                    />
-                    <span v-if="!collapsed" class="text-lg font-semibold"
-                        >/ Hub</span
-                    >
+                <NuxtLink to="/" class="lg:ms-2.5 flex items-center gap-1.5">
+                    <LeiOSLogo v-if="!collapsed" class="h-6 w-auto flex-none" />
+                    <span v-if="!collapsed" class="text-lg font-semibold">/</span>
+                    <span v-if="!collapsed" class="text-lg font-semibold">Hub</span>
+                    <LeiOSIcon v-else class="h-8 w-8" />
                 </NuxtLink>
             </template>
 

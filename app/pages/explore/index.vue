@@ -59,7 +59,7 @@ const filteredPackages = computed(() => {
                                 </div>
                                 <p class="text-sm text-slate-400">{{ pkg.description || 'No description provided.' }}</p>
                                 <div class="flex flex-wrap gap-2">
-                                    <UButton size="sm" variant="soft" color="primary" :to="`/explorer/${pkg.name}`">
+                                    <UButton size="sm" variant="soft" color="primary" :to="`/explore/${pkg.name}`">
                                         View details
                                     </UButton>
                                     <UButton v-if="pkg.homepage_url" size="sm" variant="ghost" color="neutral" :to="pkg.homepage_url" target="_blank" icon="i-lucide-external-link">
