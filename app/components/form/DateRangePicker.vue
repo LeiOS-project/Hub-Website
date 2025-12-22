@@ -2,8 +2,8 @@
 import { DateFormatter, getLocalTimeZone, CalendarDate } from '@internationalized/date'
 
 interface Range {
-    start: Date
-    end: Date
+    start: Date | null,
+    end: Date | null
 }
 
 const df = new DateFormatter('en-US', {
@@ -27,11 +27,11 @@ const calendarRange = computed({
     }),
     set: (newValue: { start: CalendarDate | null, end: CalendarDate | null }) => {
         selected.value = {
-            start: newValue.start ? newValue.start.toDate(getLocalTimeZone()) : new Date(),
-            end: newValue.end ? newValue.end.toDate(getLocalTimeZone()) : new Date()
+            start: newValue.start ? newValue.start.toDate(getLocalTimeZone()) : null,
+            end: newValue.end ? newValue.end.toDate(getLocalTimeZone()) : null
         }
     }
-})
+});
 
 
 const inputValue = computed(() => {
@@ -42,6 +42,13 @@ const inputValue = computed(() => {
 
     return `${df.format(start)} - ${df.format(end)}`
 })
+
+const resetRange = () => {
+    selected.value = {
+        start: null,
+        end: null
+    }
+}
 
 </script>
 
@@ -54,8 +61,14 @@ const inputValue = computed(() => {
         </UInput>
 
         <template #content>
-            <UCalendar v-model="calendarRange" class="p-2" :number-of-months="2" range />
-            <!-- </div> -->
+            <div class="flex flex-col gap-2">
+                <UCalendar v-model="calendarRange" class="p-2" :number-of-months="2" range />
+                <div class="px-2 pb-2">
+                    <UButton variant="ghost" color="primary" @click="resetRange" block>
+                        Reset
+                    </UButton>
+                </div>
+            </div>
         </template>
     </UPopover>
 </template>
