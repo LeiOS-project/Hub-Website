@@ -271,11 +271,11 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                                     </div>
                                     <div>
                                         <p class="font-medium font-mono">{{ release.versionWithLeiosPatch }}</p>
-                                        <p class="text-sm text-slate-400">{{ release.architecture }}</p>
+                                        <p class="text-sm text-slate-400">{{ release.architectures }}</p>
                                     </div>
                                 </div>
                                 <UBadge color="info" variant="soft">
-                                    {{ release.architecture }}
+                                    {{ release.architectures }}
                                 </UBadge>
                             </div>
                         </div>
@@ -403,7 +403,7 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
             <UFormField label="Release" required>
                 <USelect
                     v-model="stableForm.release_id"
-                    :items="(releases || []).map(r => ({ label: `${r.versionWithLeiosPatch} (${r.architecture})`, value: r.id }))"
+                    :items="(releases || []).map(r => ({ label: `${r.versionWithLeiosPatch} (${r.architectures})`, value: r.id }))"
                     placeholder="Select a release"
                 />
             </UFormField>

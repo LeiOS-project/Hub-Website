@@ -200,11 +200,11 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                                     </div>
                                     <div>
                                         <p class="font-medium font-mono">{{ release.versionWithLeiosPatch }}</p>
-                                        <p class="text-sm text-slate-400">{{ release.architecture }}</p>
+                                        <p class="text-sm text-slate-400">{{ release.architectures }}</p>
                                     </div>
                                 </div>
                                 <UBadge color="info" variant="soft">
-                                    {{ release.architecture }}
+                                    {{ release.architectures }}
                                 </UBadge>
                             </div>
                         </div>

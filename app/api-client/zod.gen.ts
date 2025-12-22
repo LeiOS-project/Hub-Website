@@ -630,9 +630,8 @@ export const zGetDevPackagesPackageNameReleasesResponse = z.object({
     message: z.literal('Package releases retrieved successfully'),
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.array(z.enum(['amd64', 'arm64'])),
+        architectures: z.array(z.enum(['amd64', 'arm64'])),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     }))
 });
@@ -655,9 +654,8 @@ export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z
     message: z.literal('Package release retrieved successfully'),
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.array(z.enum(['amd64', 'arm64'])),
+        architectures: z.array(z.enum(['amd64', 'arm64'])),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     })
 });
@@ -1240,9 +1238,8 @@ export const zGetAdminPackagesPackageNameReleasesResponse = z.object({
     message: z.literal('Package releases retrieved successfully'),
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.array(z.enum(['amd64', 'arm64'])),
+        architectures: z.array(z.enum(['amd64', 'arm64'])),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     }))
 });
@@ -1284,9 +1281,8 @@ export const zGetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse =
     message: z.literal('Package release retrieved successfully'),
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.array(z.enum(['amd64', 'arm64'])),
+        architectures: z.array(z.enum(['amd64', 'arm64'])),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     })
 });

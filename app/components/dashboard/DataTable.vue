@@ -3,6 +3,7 @@ import type { TableColumn } from '@nuxt/ui'
 import type { Row, ColumnFiltersState, FilterFn, HeaderContext, CellContext } from '@tanstack/vue-table'
 import { getPaginationRowModel } from '@tanstack/table-core'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import DateRangePicker from '../form/DateRangePicker.vue';
 
 // Cell slot props type (matches UTable's slot props)
 type CellSlotProps = {
@@ -18,7 +19,7 @@ interface SelectOption {
 }
 
 // Filter types
-type FilterType = 'text' | 'select' | 'multi-select' | 'date' | 'number' | 'custom'
+type FilterType = 'text' | 'number' | 'date' | 'select' | 'multi-select' | 'custom'
 
 // Filter configuration type
 interface FilterConfig {
@@ -272,10 +273,19 @@ defineExpose({
                             type="number"
                             :model-value="getFilterValue(filter.column as string) as string"
                             :class="filter.class || 'w-full sm:w-auto sm:max-w-32 sm:min-w-24'"
-                            :icon="filter.icon || 'i-lucide-hash'"
+                            :icon="filter.icon || 'i-lucide-calendar'"
                             :placeholder="filter.placeholder || 'Number...'"
                             @update:model-value="(val: string) => setFilterValue(filter.column as string, val)"
                         />
+
+                        <!-- Date Picker Filter -->
+                        <!-- <DateRangePicker
+                            v-else-if="filter.type === 'date'"
+                            :model-value="getFilterValue(filter.column as string) as any"
+                            :class="filter.class || 'w-full sm:w-auto sm:min-w-40'"
+                            :icon="filter.icon || 'i-lucide-calendar'"
+                            
+                        /> -->
 
                         <!-- Select Filter -->
                         <USelectMenu
