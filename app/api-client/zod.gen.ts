@@ -379,7 +379,7 @@ export const zGetAccountResponse = z.object({
 
 export const zPutAccountData = z.object({
     body: z.optional(z.object({
-        username: z.optional(z.string().min(5).max(30).regex(/^[a-zA-Z0-9_]+$/)),
+        username: z.optional(z.string().min(5).max(40).regex(/^(?!.*[.-]{2})(?!.*--)(?!.*\.\.)[a-z0-9](?:[a-z0-9._-]{3,38}[a-z0-9_])?$/)),
         display_name: z.optional(z.string()),
         email: z.optional(z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/))
     })),
@@ -529,7 +529,7 @@ export const zGetDevPackagesResponse = z.object({
 
 export const zPostDevPackagesData = z.object({
     body: z.optional(z.object({
-        name: z.intersection(z.unknown(), z.unknown()),
+        name: z.string().min(2).max(63).regex(/^[a-z0-9][a-z0-9+.-]*[a-z0-9]$/),
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.optional(z.boolean())
@@ -936,7 +936,7 @@ export const zGetAdminUsersResponse = z.object({
 
 export const zPostAdminUsersData = z.object({
     body: z.optional(z.object({
-        username: z.string().min(5).max(30).regex(/^[a-zA-Z0-9_]+$/),
+        username: z.string().min(5).max(40).regex(/^(?!.*[.-]{2})(?!.*--)(?!.*\.\.)[a-z0-9](?:[a-z0-9._-]{3,38}[a-z0-9_])?$/),
         display_name: z.string().min(1).max(64),
         email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/),
         role: z.optional(z.enum([
@@ -1118,7 +1118,7 @@ export const zGetAdminPackagesResponse = z.object({
 
 export const zPostAdminPackagesData = z.object({
     body: z.optional(z.object({
-        name: z.intersection(z.unknown(), z.unknown()),
+        name: z.string().min(2).max(63).regex(/^[a-z0-9][a-z0-9+.-]*[a-z0-9]$/),
         owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         description: z.string(),
         homepage_url: z.string(),

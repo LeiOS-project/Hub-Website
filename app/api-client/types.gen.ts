@@ -783,7 +783,7 @@ export type GetDevPackagesResponse = GetDevPackagesResponses[keyof GetDevPackage
 
 export type PostDevPackagesData = {
     body?: {
-        name: unknown & unknown;
+        name: string;
         description: string;
         homepage_url: string;
         requires_patching?: boolean;
@@ -1655,7 +1655,7 @@ export type GetAdminPackagesResponse = GetAdminPackagesResponses[keyof GetAdminP
 
 export type PostAdminPackagesData = {
     body?: {
-        name: unknown & unknown;
+        name: string;
         owner_user_id: number;
         description: string;
         homepage_url: string;

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import type { BreadcrumbItem, NavigationMenuItem } from '@nuxt/ui';
-import type { GetDevPackagesResponses } from '~/api-client';
+import type { GetDevPackagesResponses, PostDevPackagesData } from '~/api-client';
 
 const toast = useToast();
 const route = useRoute();
@@ -8,37 +7,58 @@ const route = useRoute();
 const package_name = route.params.package_name as string;
 
 type Package = GetDevPackagesResponses["200"]["data"][number];
+type NewPackage = PostDevPackagesData["body"];
 
 definePageMeta({
     layout: 'dashboard'
 });
 
-const { data: result, refresh, loading } = await useAPIAsyncData(
-    `dev-package:${package_name}`,
-    async () => {
-        const res = await useAPI((api) => api.getDevPackagesPackageName({
-            path: {
-                packageName: package_name
-            }
-        }));
-        return res;
-    }
-)
-
 let error = null;
 
-if (!result.value?.success) {
-    error = createError({
-        statusCode: result.value?.code || 500,
-        statusMessage: result.value?.message || 'Failed to load package data'
+if (package_name === "new") {
+
+    const data = ref<NewPackage>({
+        name: "",
+        description: "",
+        homepage_url: "",
+        requires_patching: false
     });
+    const loading = ref(false);
+    const refresh = async () => null;
+
+    provide('package_data', data);
+    provide('package_refresh', refresh);
+    provide('package_loading', loading);
+    provide('package_is_new', true);
+
+} else {
+    const { data: result, refresh, loading } = await useAPIAsyncData(
+        `dev-package:${package_name}`,
+        async () => {
+            const res = await useAPI((api) => api.getDevPackagesPackageName({
+                path: {
+                    packageName: package_name
+                }
+            }));
+            return res;
+        }
+    )
+
+    if (!result.value?.success || !result.value?.data) {
+        error = createError({
+            statusCode: result.value?.code || 500,
+            statusMessage: result.value?.message || 'Failed to load package data'
+        });
+    }
+
+    const data = computed(() => result.value?.data as Package);
+
+    provide('package_data', data satisfies Ref<Package>);
+    provide('package_refresh', refresh);
+    provide('package_loading', loading);
+    provide('package_is_new', false);
 }
 
-const data = computed(() => result.value?.data);
-
-provide('package_data', data);
-provide('package_refresh', refresh);
-provide('package_loading', loading);
 
 // const pathDynamicValues = computed(() => {
 //     const breadcrumbItems: BreadcrumbItem[] = [
@@ -192,7 +212,7 @@ const routePathDynamicValues = await useAwaitedComputed(async () => {
 
         <template #body>
 			<div class="flex flex-col gap-4 sm:gap-6 lg:gap-12 w-full">
-				<NuxtPage v-if="result?.success" />
+				<NuxtPage v-if="!error" />
                 <UError v-else-if="error" :error="error" />
 			</div>
 		</template>
