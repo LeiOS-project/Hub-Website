@@ -16,7 +16,9 @@ useSeoMeta({
 
 const route = useRoute();
 let redirectUrl = route.query.url?.toString() || "/dashboard";
-if (redirectUrl.endsWith("/auth/login")) {
+
+// Ensure redirectUrl is a safe path within the application
+if (!redirectUrl.startsWith("/dashboard")) {
     redirectUrl = "/dashboard";
 }
 
