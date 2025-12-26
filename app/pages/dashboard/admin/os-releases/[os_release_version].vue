@@ -48,45 +48,56 @@ provide('os_release_data', data);
 provide('os_release_refresh', refresh);
 provide('os_release_pending', pending);
 
-// const pathBreadcrumbItems = [
-//     { label: 'OS Releases', to: '/dashboard/admin/os-releases' },
-//     { label: os_release_version },
-// ];
 
-const pathBreadcrumbItems = computed<BreadcrumbItem[]>(() => {
-    const items: BreadcrumbItem[] = [
-        { label: 'OS Releases', to: '/dashboard/admin/os-releases' },
-    ];
-
-    const normalizedPath = route.path.replace(/\/$/, '');
-
-    if (normalizedPath.endsWith('/logs')) {
-        items.push(
-            { label: os_release_version, to: `/dashboard/admin/os-releases/${os_release_version}` },
-            { label: 'Logs' }
-        );
-    } else {
-        items.push(
-            { label: os_release_version }
-        );
+const subrouterPathDynamics = useSubrouterPathDynamics({
+    baseTitle: `OS Release ${os_release_version} | OS Releases | LeiOS Hub`,
+    basebreadcrumbItems: [
+        { label: 'OS Releases', to: '/dashboard/admin/os-releases' }
+    ],
+    routes: {
+        [`/dashboard/admin/os-releases/${os_release_version}`]: {
+            isNavLink: true,
+            label: 'General',
+            icon: 'i-lucide-info',
+            exact: true,
+            getDynamicValues() {
+                return {
+                    seoSettings: {
+                        title: `Release ${os_release_version} | OS Releases | LeiOS Hub`,
+                        description: `Manage OS Release ${os_release_version} on LeiOS Hub`
+                    },
+                    breadcrumbItems: [
+                        { label: os_release_version }
+                    ]
+                };
+            }
+        },
+        [`/dashboard/admin/os-releases/${os_release_version}/logs`]: {
+            isNavLink: true,
+            label: 'Logs',
+            icon: 'i-lucide-file-text',
+            to: `/dashboard/admin/os-releases/${os_release_version}/logs`,
+            getDynamicValues() {
+                return {
+                    seoSettings: {
+                        title: `Logs`,
+                        description: `View logs for OS Release ${os_release_version} on LeiOS Hub`
+                    },
+                    breadcrumbItems: [
+                        { label: os_release_version, to: `/dashboard/admin/os-releases/${os_release_version}` },
+                        { label: 'Logs' }
+                    ]
+                };
+            }
+        }
     }
-
-    return items;
 });
 
-const links = [[
-    {
-        label: 'General',
-        icon: 'i-lucide-info',
-        to: `/dashboard/admin/os-releases/${os_release_version}`,
-        exact: true
-    },
-    {
-        label: 'Logs',
-        icon: 'i-lucide-file-text',
-        to: `/dashboard/admin/os-releases/${os_release_version}/logs`
-    }
-]] satisfies NavigationMenuItem[][]
+const routePathDynamicValues = await useAwaitedComputed(async () => {
+    const values = await subrouterPathDynamics.getPathDynamicValues(route.path);
+    useSeoMeta(values.seoSettings);
+    return values;
+});
 
 </script>
 
@@ -95,12 +106,12 @@ const links = [[
         <template #header>
             <DashboardPageHeader
                 icon="i-lucide-rocket"
-                :breadcrumb-items="pathBreadcrumbItems"
+                :breadcrumb-items="routePathDynamicValues.breadcrumbItems"
             />
 
             <UDashboardToolbar>
 				<!-- NOTE: The `-mx-1` class is used to align with the `DashboardSidebarCollapse` button here. -->
-				<UNavigationMenu :items="links" highlight class="-mx-1 flex-1" />
+				<UNavigationMenu :items="subrouterPathDynamics.links" highlight class="-mx-1 flex-1" />
 			</UDashboardToolbar>
 
         </template>

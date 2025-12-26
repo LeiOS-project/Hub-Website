@@ -1,6 +1,7 @@
 import type { BreadcrumbItem, NavigationMenuItem } from "@nuxt/ui"
-import type { RouteLocationNormalizedLoadedGeneric } from "vue-router";
 import { SimpleRouteMatcher } from "~/utils/routeMatcher";
+
+type NavigationMenuItemWithoutTo = NavigationMenuItem & { to?: any };
 
 export namespace UseSubrouterPathDynamics {
 
@@ -15,7 +16,7 @@ export namespace UseSubrouterPathDynamics {
         } & Parameters<typeof useSeoMeta>[0];
     }
 
-    export interface SubrouterPathDynamicsValue extends Omit<NavigationMenuItem, "to"> {
+    export interface SubrouterPathDynamicsValue extends NavigationMenuItemWithoutTo {
         isNavLink: boolean;
         getDynamicValues: (routeParams: Record<string, string>) => Promise<RichPathDynamicValues> | RichPathDynamicValues;
     }
