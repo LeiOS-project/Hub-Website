@@ -80,4 +80,20 @@ describe('Testing SimpleRouteMatcher Utility', () => {
 
     });
 
+    test('should return dynamic route for static with subpath', async () => {
+
+        const result = await SimpleRouteMatcher.match("/page/new/edit", routes);
+        expect(result).not.toBeNull();
+        expect(result?.route).toBe("/page/[page_name]/edit");
+        expect(result?.params.page_name).toBe("new");
+
+    });
+
+    test('should return null for incomplete dynamic routes', async () => {
+
+        const result = await SimpleRouteMatcher.match("/page/test/edit/more", routes);
+        expect(result).toBeNull();
+
+    });
+
 });
