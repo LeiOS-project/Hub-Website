@@ -13,11 +13,11 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
     icon: 'i-lucide-calendar'
-})
+});
 
 const df = new DateFormatter('en-US', {
     dateStyle: 'medium'
-})
+});
 
 const selected = defineModel<Range>({ required: true });
 
