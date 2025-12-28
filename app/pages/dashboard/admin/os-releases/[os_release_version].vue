@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { BreadcrumbItem, NavigationMenuItem } from '@nuxt/ui';
-import type { GetAdminOsReleasesResponses } from '~/api-client';
+import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from '~/api-client';
+import type { UseSubrouterPathDynamics } from '~/composables/useSubrouterPathDynamics';
 
 const toast = useToast();
 const route = useRoute();
@@ -10,51 +11,87 @@ const os_release_version = route.params.os_release_version as string;
 const title = `Release ${os_release_version} | OS Releases`;
 
 type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
+type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
 
 definePageMeta({
     layout: 'dashboard'
 });
 
-useSeoMeta({
-    title: `${title} | LeiOS Hub`,
-    description: `Manage OS Release ${os_release_version} on LeiOS Hub`
-});
+// useSeoMeta({
+//     title: `${title} | LeiOS Hub`,
+//     description: `Manage OS Release ${os_release_version} on LeiOS Hub`
+// });
 
-const { data: result, refresh, pending, error } = await useAsyncData(
-    `admin-os-release:${os_release_version}`,
-    async () => {
-        // const res = await useAPI((api) => api.getAdminOsReleasesVersion({
-        //     path: {
-        //         version: os_release_version
-        //     }
-        // }));
-        // return res;
-        return {
-            success: true,
-            data: {
-                id: 1,
-                version: os_release_version,
-                created_at: Date.now() - 1000 * 60 * 60 * 24 * 7,
-                published_at: Date.now() - 1000 * 60 * 60 * 24 * 3,
-                publishing_status: 'completed' as OSRelease['publishing_status'],
-            } satisfies OSRelease
-        };
+let error = null;
+
+if (os_release_version === "new") {
+    
+    useSubrouterInjectedData<number, NewOSRelease>('os_release', true).provide({
+        data: ref() as Ref<NewOSRelease>,
+        refresh: async () => void 0,
+        loading: ref(false),
+        isNew: true
+    });
+
+} else {
+    const { data: result, refresh, loading } = await useAPIAsyncData(
+        `admin-os-release:${os_release_version}`,
+        async () => {
+            const res = await useAPI((api) => api.getAdminOsReleasesVersion({
+                path: {
+                    version: os_release_version
+                }
+            }));
+            return res;
+            // return {
+            //     success: true,
+            //     data: {
+            //         id: 1,
+            //         version: os_release_version,
+            //         created_at: Date.now() - 1000 * 60 * 60 * 24 * 7,
+            //         published_at: Date.now() - 1000 * 60 * 60 * 24 * 3,
+            //         publishing_status: 'completed' as OSRelease['publishing_status'],
+            //     } satisfies OSRelease
+            // };
+        }
+    )
+
+    if (!result.value?.success || !result.value?.data) {
+        error = createError({
+            statusCode: result.value?.code || 500,
+            statusMessage: result.value?.message || 'Failed to load OS Release data'
+        });
     }
-)
 
-const data = computed(() => result.value?.data);
+    const data = computed(() => result.value?.data);
 
-provide('os_release_data', data);
-provide('os_release_refresh', refresh);
-provide('os_release_pending', pending);
+    provide('os_release_data', data);
+    provide('os_release_refresh', refresh);
+    provide('os_release_loading', loading);
+    provide('os_release_is_new', false);
+}
 
+function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
 
-const subrouterPathDynamics = useSubrouterPathDynamics({
-    baseTitle: `OS Release ${os_release_version} | OS Releases | LeiOS Hub`,
-    basebreadcrumbItems: [
-        { label: 'OS Releases', to: '/dashboard/admin/os-releases' }
-    ],
-    routes: {
+    return os_release_version === "new" ? {
+        [`/dashboard/admin/os-releases/new`]: {
+            isNavLink: true,
+            label: 'General',
+            icon: 'i-lucide-info',
+            exact: true,
+            getDynamicValues() {
+                return {
+                    seoSettings: {
+                        title: `New Release | OS Releases | LeiOS Hub`,
+                        description: `Create a new OS Release on LeiOS Hub`
+                    },
+                    breadcrumbItems: [
+                        { label: 'New Release' }
+                    ]
+                };
+            }
+        }
+    } : {
         [`/dashboard/admin/os-releases/${os_release_version}`]: {
             isNavLink: true,
             label: 'General',
@@ -90,7 +127,15 @@ const subrouterPathDynamics = useSubrouterPathDynamics({
                 };
             }
         }
-    }
+    };
+}
+
+const subrouterPathDynamics = useSubrouterPathDynamics({
+    baseTitle: `OS Release ${os_release_version} | OS Releases | LeiOS Hub`,
+    basebreadcrumbItems: [
+        { label: 'OS Releases', to: '/dashboard/admin/os-releases' }
+    ],
+    routes: getRoutesConfig()
 });
 
 const routePathDynamicValues = await useAwaitedComputed(async () => {
@@ -118,7 +163,7 @@ const routePathDynamicValues = await useAwaitedComputed(async () => {
 
         <template #body>
 			<div class="flex flex-col gap-4 sm:gap-6 lg:gap-12 w-full">
-				<NuxtPage v-if="result?.success" />
+				<NuxtPage v-if="!error" />
                 <UError v-else-if="error" :error="error" />
 			</div>
 		</template>

@@ -128,7 +128,7 @@ if (package_name === "new") {
 //     }
 // ]] satisfies NavigationMenuItem[][];
 
-function getRoutes(): UseSubrouterPathDynamics.RoutesConfig {
+function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
     if (package_name === "new") {
         return {
             [`/dashboard/packages/new`]: {
@@ -212,7 +212,7 @@ const subrouterPathDynamics = useSubrouterPathDynamics({
     basebreadcrumbItems: [
         { label: 'Packages', to: '/dashboard/packages' },
     ],
-    routes: getRoutes()
+    routes: getRoutesConfig()
 });
 
 const routePathDynamicValues = await useAwaitedComputed(async () => {
@@ -241,7 +241,7 @@ const routePathDynamicValues = await useAwaitedComputed(async () => {
         <template #body>
 			<div class="flex flex-col gap-4 sm:gap-6 lg:gap-12 w-full">
 				<NuxtPage v-if="!error" />
-                <UError v-else-if="error" :error="error" />
+                <UError v-else :error="error" />
 			</div>
 		</template>
 

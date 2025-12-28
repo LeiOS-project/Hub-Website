@@ -17,26 +17,26 @@ useSeoMeta({
     description: 'Manage OS Releases on LeiOS Hub'
 });
 
-const { data: osReleases, pending: loading, refresh } = await useAsyncData<OSRelease[]>(
-    'admin-os-releases',
+const { data: osReleases, loading, refresh } = await useAPIAsyncData<OSRelease[]>(
+    '/admin/os-releases',
     async () => {
         const res = await useAPI((api) => api.getAdminOsReleases({}))
         if (!res.success) {
             toast.add({ title: 'Failed to load OS Releases', description: res.message, color: 'error' })
             return []
         }
-        // return res.data;
-
-        for (let i = 0; i < 200; i++) {
-            res.data.push({
-                id: i,
-                version: `2025.${String(Math.floor(i / 28) + 1).padStart(2, '0')}.${String((i % 28) + 1).padStart(2, '0')}`,
-                created_at: Date.now() - i * 1000 * 60 * 60 * 24,
-                published_at: Date.now() - i * 1000 * 60 * 60 * 24,
-                publishing_status: (['pending', 'running', 'paused', 'completed', 'failed'] satisfies OSRelease['publishing_status'][])[Math.floor(Math.random() * 1000) % 5] as OSRelease['publishing_status'],
-            });
-        }
         return res.data;
+
+        // for (let i = 0; i < 200; i++) {
+        //     res.data.push({
+        //         id: i,
+        //         version: `2025.${String(Math.floor(i / 28) + 1).padStart(2, '0')}.${String((i % 28) + 1).padStart(2, '0')}`,
+        //         created_at: Date.now() - i * 1000 * 60 * 60 * 24,
+        //         published_at: Date.now() - i * 1000 * 60 * 60 * 24,
+        //         publishing_status: (['pending', 'running', 'paused', 'completed', 'failed'] satisfies OSRelease['publishing_status'][])[Math.floor(Math.random() * 1000) % 5] as OSRelease['publishing_status'],
+        //     });
+        // }
+        // return res.data;
     }
 );
 
@@ -119,6 +119,7 @@ const publishingStatusOptions = [
                             label="New Release"
                             icon="i-lucide-plus"
                             color="primary"
+                            to="/dashboard/admin/os-releases/new"
                         />
                     </template>
 
@@ -153,7 +154,11 @@ const publishingStatusOptions = [
                     </template>
 
                     <template #empty-actions>
-                        <UButton label="Create Release" color="primary" />
+                        <UButton
+                            label="Create Release"
+                            color="primary"
+                            to="/dashboard/admin/os-releases/new"
+                        />
                     </template>
                 </DashboardDataTable>
             </DashboardPageBody>

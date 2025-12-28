@@ -1,15 +1,21 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
-import type { GetAdminOsReleasesResponses } from '~/api-client';
+import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from '~/api-client';
 
 const toast = useToast();
 const route = useRoute();
 
 type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
+type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
 
-const os_release = inject<Ref<OSRelease>>('os_release_data') as Ref<OSRelease>;
-const os_release_refresh = inject<() => Promise<void>>('os_release_refresh');
-const os_release_pending = inject<Ref<boolean>>('os_release_pending');
+// const os_release = inject<Ref<OSRelease | NewOSRelease>>('os_release_data');
+// const os_release_refresh = inject<() => Promise<void>>('os_release_refresh');
+// const os_release_pending = inject<Ref<boolean>>('os_release_pending');
+// const os_release_is_new = inject<boolean>('os_release_is_new');
+
+const os_release = useSubrouterInjectedData<OSRelease, NewOSRelease>('os_release', true).inject();
+const os_release_data = os_release.data;
+const os_release_loading = os_release.loading;
 
 function getPublishingStatusColor(status: OSRelease['publishing_status']) {
     switch (status) {
@@ -98,7 +104,7 @@ async function onDeleteOSRelease() {
     <div class="space-y-6 lg:max-w-3xl mx-auto">
 		<!-- Header -->
 		<div>
-			<h2 class="text-xl font-semibold text-white">OS Release {{ os_release?.version }}</h2>
+			<h2 class="text-xl font-semibold text-white">OS Release {{ os_release_data?.version }}</h2>
 			<p class="text-sm text-slate-400 mt-1">View and manage the details of this OS Release.</p>
 		</div>
 
@@ -125,7 +131,7 @@ async function onDeleteOSRelease() {
 						required
 						class="flex justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
 					>
-						<UInput :model-value="os_release?.version" disabled variant="none" placeholder="Enter version" :ui="{
+						<UInput :model-value="os_release_data?.version" disabled variant="none" placeholder="Enter version" :ui="{
                             base: 'w-full text-end sm:text-center sm:w-96 font-bold text-xl px-0 text-info'
                         }" />
 					</UFormField>
@@ -139,8 +145,8 @@ async function onDeleteOSRelease() {
 					>
                         <div class="w-full sm:w-96 rounded-md border-0 appearance-none placeholder:text-dimmed focus:outline-none disabled:cursor-not-allowed disabled:opacity-75 transition-colors py-1.5 text-sm gap-1.5 text-highlighted bg-transparent sm:flex sm:justify-center">
                             <UBadge 
-                                :label="os_release.publishing_status.toUpperCase()" 
-                                :color="getPublishingStatusColor(os_release.publishing_status)"
+                                :label="os_release_data.publishing_status.toUpperCase()" 
+                                :color="getPublishingStatusColor(os_release_data.publishing_status)"
                                 size="md"
                                 class="sm:w-96 max-w-max" 
                             />
@@ -172,7 +178,7 @@ async function onDeleteOSRelease() {
 							color="primary"
                             disabled
 							type="submit" 
-							:loading="os_release_pending"
+							:loading="os_release_loading"
 							icon="i-lucide-save"
 						/>
 					</div>

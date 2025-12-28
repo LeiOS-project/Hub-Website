@@ -1,33 +1,39 @@
 import * as baseAPIClient from "@/api-client/sdk.gen";
 
-type APIClient = typeof baseAPIClient;
+export namespace UseAPITypes {
 
+    export type APIClient = typeof baseAPIClient;
 
-type UseAPIModes = "normal" | "lazyRequest" | "asyncData" | "lazyAsyncData" | "lazyAsyncDataRequest";
+    export type DefaultReturn<TReturn> = TReturn;
 
-// namespace UseAPIReturnTypes {
+    export type UseAPIReturnType<TReturn> = Promise<TReturn | {
+        readonly success: false;
+        readonly code: 500;
+        readonly message: string;
+        readonly data: null;
+    }>;
 
-//     export type NormalReturn<TReturn> = TReturn;
+    export type AsyncDataReturn<TReturn> = {
+        data: Ref<DefaultReturn<TReturn>>;
+        loading: Ref<boolean>;
+        refresh: () => Promise<void>;
+    }
 
-//     export type LazyRequestReturn<TReturn> = LazyRequestWrapper<TReturn>;
+    export type LazyAsyncDataReturn<TReturn> = {
+        data: Ref<DefaultReturn<TReturn>>;
+        loading: Ref<boolean>;
+        refresh: () => Promise<void>;
+    }
 
-//     export type AsyncDataReturn<TReturn> = {
-//         data: Ref<NormalReturn<TReturn>>;
-//         loading: Ref<boolean>;
-//         refresh: () => Promise<void>;
-//     }
+    export type LazyRequestReturn<TReturn> = LazyRequestWrapper<TReturn>;
 
-//     export type LazyAsyncDataReturn<TReturn> = {
-//         data: Ref<NormalReturn<TReturn>>;
-//         loading: Ref<boolean>;
-//         refresh: () => Promise<void>;
-//     }
+    export type LazyAsyncDataRequestReturn<TReturn> = LazyAsyncDataRequestWrapper<TReturn>;
 
-//     export type LazyAsyncDataRequestReturn<TReturn> = LazyAsyncDataRequestWrapper<TReturn>;
+    // export type UnionReturn<TReturn> = DefaultReturn<TReturn> | LazyRequestReturn<TReturn> | AsyncDataReturn<TReturn> | LazyAsyncDataReturn<TReturn> | LazyAsyncDataRequestReturn<TReturn>;
 
-//     export type UnionReturn<TReturn> = NormalReturn<TReturn> | LazyRequestReturn<TReturn> | AsyncDataReturn<TReturn> | LazyAsyncDataReturn<TReturn> | LazyAsyncDataRequestReturn<TReturn>;
+    // export type UseAPIModes = "normal" | "lazyRequest" | "asyncData" | "lazyAsyncData" | "lazyAsyncDataRequest";
 
-// }
+}
 
 class LazyRequestWrapper<TReturn> {
 
@@ -193,14 +199,8 @@ class LazyAsyncDataRequestWrapper<TReturn> {
 //     return handler(apiClient);
 // }
 
-type UseAPIReturnType<TReturn> = Promise<TReturn | {
-    readonly success: false;
-    readonly code: 500;
-    readonly message: string;
-    readonly data: null;
-}>;
 
-export async function useAPI<TReturn>(handler: (api: APIClient) => TReturn, disableAuthRedirect = false): UseAPIReturnType<TReturn> {
+export async function useAPI<TReturn>(handler: (api: UseAPITypes.APIClient) => TReturn, disableAuthRedirect = false): UseAPITypes.UseAPIReturnType<TReturn> {
 
     try {
         if (import.meta.server) {
@@ -267,7 +267,7 @@ export async function useAPIAsyncData<TReturn>(name: string, handler: () => Prom
         data: Ref<TReturn>;
         loading: Ref<boolean>;
         refresh: () => Promise<void>;
-    }
+    } satisfies UseAPITypes.AsyncDataReturn<TReturn>;
 }
 
 export async function useAPILazyAsyncData<TReturn>(name: string, handler: () => Promise<TReturn>) {
@@ -278,13 +278,13 @@ export async function useAPILazyAsyncData<TReturn>(name: string, handler: () => 
         data: Ref<TReturn>;
         loading: Ref<boolean>;
         refresh: () => Promise<void>;
-    }
+    } satisfies UseAPITypes.LazyAsyncDataReturn<TReturn>;
 }
 
 export function useAPILazyRequest<TReturn>(handler: () => Promise<TReturn>) {
-    return new LazyRequestWrapper<TReturn>(handler);
+    return new LazyRequestWrapper<TReturn>(handler) satisfies UseAPITypes.LazyRequestReturn<TReturn>;
 }
 
 export function useAPILazyAsyncRequest<TReturn>(name: string, handler: () => Promise<TReturn>) {
-    return new LazyAsyncDataRequestWrapper<TReturn>(name, handler);
+    return new LazyAsyncDataRequestWrapper<TReturn>(name, handler) satisfies UseAPITypes.LazyAsyncDataRequestReturn<TReturn>;
 }
