@@ -21,6 +21,10 @@ export namespace UseSubrouterPathDynamics {
         getDynamicValues: (routeParams: Record<string, string>) => Promise<RichPathDynamicValues> | RichPathDynamicValues;
     }
 
+    export interface RoutesConfig {
+        [path: string]: SubrouterPathDynamicsValue;
+    }
+
     export type SubrouterPathDynamicsSettings = {
         baseTitle: string;
         basebreadcrumbItems?: BreadcrumbItem[];
@@ -31,9 +35,7 @@ export namespace UseSubrouterPathDynamics {
          *   '/dashboard/packages/[package_name]': { ... },
          *   '/dashboard/packages/[package_name]/releases': { ... },
          */
-        routes: {
-            [path: string]: SubrouterPathDynamicsValue;
-        };
+        routes: RoutesConfig;
     }
 
     export type SubrouterPathDynamicsReturn = {

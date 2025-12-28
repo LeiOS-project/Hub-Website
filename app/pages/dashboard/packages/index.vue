@@ -280,6 +280,13 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
                             />
                         </div>
                     </template>
+                    <template #empty-actions>
+                        <UButton
+                            label="Create Package"
+                            color="primary"
+                            to="/dashboard/packages/new"
+                        />
+                    </template>
                 </DashboardDataTable>
 
             </DashboardPageBody>

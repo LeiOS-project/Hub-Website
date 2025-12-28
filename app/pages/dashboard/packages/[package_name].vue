@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { GetDevPackagesResponses, PostDevPackagesData } from '~/api-client';
+import type { UseSubrouterPathDynamics } from '~/composables/useSubrouterPathDynamics';
 
 const toast = useToast();
 const route = useRoute();
@@ -127,19 +128,15 @@ if (package_name === "new") {
 //     }
 // ]] satisfies NavigationMenuItem[][];
 
-const subrouterPathDynamics = useSubrouterPathDynamics({
-    baseTitle: `${package_name} | Packages | LeiOS Hub`,
-    basebreadcrumbItems: [
-        { label: 'Packages', to: '/dashboard/packages' },
-    ],
-    routes: {
-        [`/dashboard/packages/${package_name}`]: {
-            isNavLink: true,
-            label: 'General',
-            icon: 'i-lucide-info',
-            exact: true,
-            getDynamicValues() {
-                if (package_name === "new") {
+function getRoutes(): UseSubrouterPathDynamics.RoutesConfig {
+    if (package_name === "new") {
+        return {
+            [`/dashboard/packages/new`]: {
+                isNavLink: true,
+                label: 'General',
+                icon: 'i-lucide-info',
+                exact: true,
+                getDynamicValues() {
                     return {
                         breadcrumbItems: [
                             { label: 'New Package' }
@@ -150,52 +147,72 @@ const subrouterPathDynamics = useSubrouterPathDynamics({
                         }
                     };
                 }
-                return {
-                    breadcrumbItems: [
-                        { label: package_name }
-                    ],
-                    seoSettings: {
-                        description: `Manage the package ${package_name} on LeiOS Hub`
-                    }
-                };
             }
-        },
-        [`/dashboard/packages/${package_name}/releases`]: {
-            isNavLink: true,
-            label: 'Releases',
-            icon: 'i-lucide-file-text',
-            getDynamicValues() {
-                return {
-                    breadcrumbItems: [
-                        { label: package_name, to: `/dashboard/packages/${package_name}` },
-                        { label: 'Releases' }
-                    ],
-                    seoSettings: {
-                        title: `Releases`,
-                        description: `Manage releases for the package ${package_name} on LeiOS Hub`
-                    }
-                };
-            }
-        },
-        [`/dashboard/packages/${package_name}/stable-promotion-requests`]: {
-            isNavLink: true,
-            label: 'Stable Promotion Requests',
-            icon: 'i-lucide-git-pull-request',
-            to: `/dashboard/packages/${package_name}/stable-promotion-requests`,
-            getDynamicValues() {
-                return {
-                    breadcrumbItems: [
-                        { label: package_name, to: `/dashboard/packages/${package_name}` },
-                        { label: 'Stable Promotion Requests' }
-                    ],
-                    seoSettings: {
-                        title: `Stable Promotion Requests`,
-                        description: `Manage stable promotion requests for the package ${package_name} on LeiOS Hub`
-                    }
-                };
+        }
+    } else {
+        return {
+            [`/dashboard/packages/${package_name}`]: {
+                isNavLink: true,
+                label: 'General',
+                icon: 'i-lucide-info',
+                exact: true,
+                getDynamicValues() {
+                    return {
+                        breadcrumbItems: [
+                            { label: package_name }
+                        ],
+                        seoSettings: {
+                            description: `Manage the package ${package_name} on LeiOS Hub`
+                        }
+                    };
+                }
+            },
+            [`/dashboard/packages/${package_name}/releases`]: {
+                isNavLink: true,
+                label: 'Releases',
+                icon: 'i-lucide-file-text',
+                getDynamicValues() {
+                    return {
+                        breadcrumbItems: [
+                            { label: package_name, to: `/dashboard/packages/${package_name}` },
+                            { label: 'Releases' }
+                        ],
+                        seoSettings: {
+                            title: `Releases`,
+                            description: `Manage releases for the package ${package_name} on LeiOS Hub`
+                        }
+                    };
+                }
+            },
+            [`/dashboard/packages/${package_name}/stable-promotion-requests`]: {
+                isNavLink: true,
+                label: 'Stable Promotion Requests',
+                icon: 'i-lucide-git-pull-request',
+                to: `/dashboard/packages/${package_name}/stable-promotion-requests`,
+                getDynamicValues() {
+                    return {
+                        breadcrumbItems: [
+                            { label: package_name, to: `/dashboard/packages/${package_name}` },
+                            { label: 'Stable Promotion Requests' }
+                        ],
+                        seoSettings: {
+                            title: `Stable Promotion Requests`,
+                            description: `Manage stable promotion requests for the package ${package_name} on LeiOS Hub`
+                        }
+                    };
+                }
             }
         }
     }
+
+}
+
+const subrouterPathDynamics = useSubrouterPathDynamics({
+    baseTitle: `${package_name} | Packages | LeiOS Hub`,
+    basebreadcrumbItems: [
+        { label: 'Packages', to: '/dashboard/packages' },
+    ],
+    routes: getRoutes()
 });
 
 const routePathDynamicValues = await useAwaitedComputed(async () => {
