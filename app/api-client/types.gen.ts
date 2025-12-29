@@ -388,7 +388,7 @@ export type PostAuthResetPasswordData = {
         /**
          * New password for the account
          */
-        new_password: unknown & unknown & unknown & unknown;
+        new_password: string;
     };
     path?: never;
     query?: never;
@@ -596,7 +596,7 @@ export type PutAccountPasswordData = {
         /**
          * New password for the account
          */
-        new_password: unknown & unknown & unknown & unknown;
+        new_password: string;
     };
     path?: never;
     query?: never;
@@ -1576,7 +1576,7 @@ export type PutAdminUsersUserIdPasswordData = {
         /**
          * New password for the account
          */
-        password: unknown & unknown & unknown & unknown;
+        password: string;
     };
     path: {
         userId: number;
@@ -2166,6 +2166,7 @@ export type GetAdminOsReleasesResponses = {
         data: Array<{
             id: number;
             version: string;
+            changelog: string;
             created_at: number;
             published_at: number | null;
             publishing_status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
@@ -2176,7 +2177,9 @@ export type GetAdminOsReleasesResponses = {
 export type GetAdminOsReleasesResponse = GetAdminOsReleasesResponses[keyof GetAdminOsReleasesResponses];
 
 export type PostAdminOsReleasesData = {
-    body?: never;
+    body?: {
+        changelog: string;
+    };
     path?: never;
     query?: never;
     url: '/admin/os-releases';
@@ -2193,6 +2196,7 @@ export type PostAdminOsReleasesResponses = {
         data: {
             id: number;
             version: string;
+            changelog: string;
             created_at: number;
             published_at: number | null;
             publishing_status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
@@ -2235,6 +2239,7 @@ export type GetAdminOsReleasesVersionResponses = {
         data: {
             id: number;
             version: string;
+            changelog: string;
             created_at: number;
             published_at: number | null;
             publishing_status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';

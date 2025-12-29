@@ -598,7 +598,11 @@ export const getAdminOsReleases = <TComposable extends Composable = '$fetch', De
 export const postAdminOsReleases = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminOsReleasesResponse = PostAdminOsReleasesResponse>(options: Options<TComposable, PostAdminOsReleasesData, PostAdminOsReleasesResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminOsReleasesResponse | DefaultT, unknown, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/os-releases',
-    ...options
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });
 
 /**

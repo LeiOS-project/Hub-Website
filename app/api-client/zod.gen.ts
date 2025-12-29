@@ -300,7 +300,7 @@ export const zPostAuthLogoutResponse = z.object({
 export const zPostAuthResetPasswordData = z.object({
     body: z.optional(z.object({
         reset_token: z.string().min(1),
-        new_password: z.intersection(z.unknown(), z.unknown(), z.unknown(), z.unknown())
+        new_password: z.string().min(8).max(50)
     })),
     path: z.optional(z.never()),
     query: z.optional(z.never())
@@ -400,7 +400,7 @@ export const zPutAccountResponse = z.object({
 export const zPutAccountPasswordData = z.object({
     body: z.optional(z.object({
         current_password: z.string(),
-        new_password: z.intersection(z.unknown(), z.unknown(), z.unknown(), z.unknown())
+        new_password: z.string().min(8).max(50)
     })),
     path: z.optional(z.never()),
     query: z.optional(z.never())
@@ -1058,7 +1058,7 @@ export const zPutAdminUsersUserIdResponse = z.object({
 
 export const zPutAdminUsersUserIdPasswordData = z.object({
     body: z.optional(z.object({
-        password: z.intersection(z.unknown(), z.unknown(), z.unknown(), z.unknown())
+        password: z.string().min(8).max(50)
     })),
     path: z.object({
         userId: z.int().gt(0).lte(9007199254740991)
@@ -1422,6 +1422,7 @@ export const zGetAdminOsReleasesResponse = z.object({
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         version: z.string(),
+        changelog: z.string(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         published_at: z.union([
             z.number(),
@@ -1438,7 +1439,9 @@ export const zGetAdminOsReleasesResponse = z.object({
 });
 
 export const zPostAdminOsReleasesData = z.object({
-    body: z.optional(z.never()),
+    body: z.optional(z.object({
+        changelog: z.string()
+    })),
     path: z.optional(z.never()),
     query: z.optional(z.never())
 });
@@ -1453,6 +1456,7 @@ export const zPostAdminOsReleasesResponse = z.object({
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         version: z.string(),
+        changelog: z.string(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         published_at: z.union([
             z.number(),
@@ -1486,6 +1490,7 @@ export const zGetAdminOsReleasesVersionResponse = z.object({
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         version: z.string(),
+        changelog: z.string(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         published_at: z.union([
             z.number(),
