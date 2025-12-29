@@ -3,12 +3,9 @@ import type { BreadcrumbItem, NavigationMenuItem } from '@nuxt/ui';
 import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from '~/api-client';
 import type { UseSubrouterPathDynamics } from '~/composables/useSubrouterPathDynamics';
 
-const toast = useToast();
 const route = useRoute();
 
 const os_release_version = route.params.os_release_version as string;
-
-const title = `Release ${os_release_version} | OS Releases`;
 
 type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
 type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
@@ -25,7 +22,7 @@ definePageMeta({
 let error = null;
 
 if (os_release_version === "new") {
-    
+
     useSubrouterInjectedData<number, NewOSRelease>('os_release', true).provide({
         data: ref() as Ref<NewOSRelease>,
         refresh: async () => void 0,
@@ -63,12 +60,15 @@ if (os_release_version === "new") {
         });
     }
 
-    const data = computed(() => result.value?.data);
+    const data = computed(() => result.value?.data as OSRelease);
 
-    provide('os_release_data', data);
-    provide('os_release_refresh', refresh);
-    provide('os_release_loading', loading);
-    provide('os_release_is_new', false);
+    useSubrouterInjectedData<OSRelease, NewOSRelease>('os_release', true).provide({
+        data,
+        refresh,
+        loading,
+        isNew: false
+    });
+
 }
 
 function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
@@ -82,7 +82,7 @@ function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
             getDynamicValues() {
                 return {
                     seoSettings: {
-                        title: `New Release | OS Releases | LeiOS Hub`,
+                        title: `New Release`,
                         description: `Create a new OS Release on LeiOS Hub`
                     },
                     breadcrumbItems: [
@@ -100,7 +100,7 @@ function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
             getDynamicValues() {
                 return {
                     seoSettings: {
-                        title: `Release ${os_release_version} | OS Releases | LeiOS Hub`,
+                        title: `Release ${os_release_version}`,
                         description: `Manage OS Release ${os_release_version} on LeiOS Hub`
                     },
                     breadcrumbItems: [
@@ -117,7 +117,7 @@ function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
             getDynamicValues() {
                 return {
                     seoSettings: {
-                        title: `Logs`,
+                        title: `Logs | Release ${os_release_version}`,
                         description: `View logs for OS Release ${os_release_version} on LeiOS Hub`
                     },
                     breadcrumbItems: [
@@ -131,7 +131,7 @@ function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
 }
 
 const subrouterPathDynamics = useSubrouterPathDynamics({
-    baseTitle: `OS Release ${os_release_version} | OS Releases | LeiOS Hub`,
+    baseTitle: `OS Releases | LeiOS Hub`,
     basebreadcrumbItems: [
         { label: 'OS Releases', to: '/dashboard/admin/os-releases' }
     ],
