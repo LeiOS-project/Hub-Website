@@ -2,14 +2,14 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 import { UserStore } from '~/utils/stores/userStore'
 import LeiOSLogo from '../img/LeiOSLogo.vue';
+import type { GetAccountResponses } from '~/api-client';
+import type { UnwrapRef } from 'vue';
+
+type UserInfo = GetAccountResponses["200"]["data"];
 
 const route = useRoute()
 const sessionCookie = useCookie<string | null>('session_token')
-const user = ref<any | null>(null)
-
-if (sessionCookie.value) {
-    user.value = await UserStore.use().catch(() => null)
-}
+const user = await UserStore.use()
 
 const links = computed<NavigationMenuItem[]>(() => [
     {

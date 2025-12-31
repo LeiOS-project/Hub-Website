@@ -9,11 +9,14 @@ defineProps<{
 const toast = useToast();
 
 const userinfo = await UserStore.use();
+if (!UserStore.isValid(userinfo)) {
+    throw new Error("User not authenticated but should be to access UserMenu");
+}
 
 const user = computed(() => ({
-    name: userinfo.display_name,
+    name: userinfo.value.display_name,
     avatar: {
-        alt: userinfo.username,
+        alt: userinfo.value.username,
     },
 }));
 

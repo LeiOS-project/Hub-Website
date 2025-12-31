@@ -17,12 +17,16 @@ const profileSchema = z.object({
 const userInfo = await UserStore.use()
 const loading = ref(false)
 
+if (!UserStore.isValid(userInfo)) {
+	throw new Error('User not authenticated but trying to access Profile Settings')
+}
+
 type ProfileSchema = z.output<typeof profileSchema>
 
 const profile = reactive<Partial<ProfileSchema>>({
-	username: userInfo.username,
-	display_name: userInfo.display_name || '',
-	email: userInfo.email,
+	username: userInfo.value.username,
+	display_name: userInfo.value.display_name || '',
+	email: userInfo.value.email,
 })
 
 const toast = useToast()
@@ -45,14 +49,10 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
 				description: 'Your profile has been successfully updated.',
 				icon: 'i-lucide-check',
 				color: 'success'
-			})
+			});
 
-			UserStore.set({
-				...userInfo,
-				username: event.data.username,
-				display_name: event.data.display_name || userInfo.display_name,
-				email: event.data.email
-			})
+			await UserStore.refresh();
+
 		} else {
 			toast.add({
 				title: 'Error',

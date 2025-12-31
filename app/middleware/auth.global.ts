@@ -24,7 +24,7 @@ export default defineNuxtRouteMiddleware(async(to) => {
 
         if (to.path.startsWith('/dashboard/admin')) {
             // Check admin access
-            if (!user || user.role !== 'admin') {
+            if (!user.value || user.value.role !== 'admin') {
                 navigateTo('/dashboard')
             }
         }

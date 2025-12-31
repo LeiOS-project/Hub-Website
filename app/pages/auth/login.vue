@@ -80,7 +80,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 
         sessionToken.value = result.data.token;
 
-        await UserStore.fetchAndSet();
+        await UserStore.refresh();
 
         toast.add({
             title: "Login Successful",

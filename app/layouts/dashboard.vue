@@ -5,13 +5,7 @@ import LeiOSLogo from "~/components/img/LeiOSLogo.vue";
 import LeiOSIcon from "~/components/img/LeiOSIcon.vue";
 import { UserStore } from "~/utils/stores/userStore";
 
-const route = useRoute();
-const sessionCookie = useCookie<string | null>("session_token");
-const user = ref<any | null>(null);
-
-if (sessionCookie.value) {
-    user.value = await UserStore.use().catch(() => null);
-}
+const user = await UserStore.use();
 
 const isAdmin = computed(() => user.value?.role === "admin");
 

@@ -20,15 +20,12 @@ useSeoMeta({
 
 const toast = useToast();
 
-const user = await UserStore.use().catch(() => ({
-    id: 0,
-    username: 'user',
-    display_name: 'User',
-    email: '',
-    role: 'developer'
-}))
+const user = await UserStore.use();
+if (!UserStore.isValid(user)) {
+    throw new Error('User not authenticated but trying to access Dashboard')
+}
 
-const isAdmin = computed(() => user.role === 'admin')
+const isAdmin = computed(() => user.value.role === 'admin')
 
 // Fetch packages
 const { data: devPackages, pending: loadingPackages } = await useAsyncData<DevPackage[]>(

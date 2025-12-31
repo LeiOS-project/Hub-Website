@@ -19,8 +19,13 @@ useSeoMeta({
 const toast = useToast();
 
 // Check admin access
-const currentUser = await UserStore.use().catch(() => null);
-if (!currentUser || currentUser.role !== "admin") {
+const currentUser = await UserStore.use();
+if (!UserStore.isValid(currentUser)) {
+    throw new Error('User not authenticated but trying to access Admin Users');
+}
+
+
+if (!currentUser || currentUser.value.role !== "admin") {
     navigateTo("/dashboard");
 }
 
