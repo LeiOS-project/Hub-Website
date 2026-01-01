@@ -75,7 +75,7 @@ class LazyAsyncDataRequestWrapper<TReturn> {
 
     async fetchData() {
         await this.refreshFunction();
-        return this.data.value;
+        return this.data;
     }
 }
 
