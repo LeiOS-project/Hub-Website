@@ -7,8 +7,8 @@ const route = useRoute();
 
 const package_name = route.params.package_name as string;
 
-type Package = GetDevPackagesResponses["200"]["data"][number];
-type NewPackage = NonNullable<PostDevPackagesData["body"]>;
+type DevPackage = GetDevPackagesResponses["200"]["data"][number];
+type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
 
 definePageMeta({
     layout: 'dashboard'
@@ -18,19 +18,17 @@ let error = null;
 
 if (package_name === "new") {
 
-    const data = ref<NewPackage>({
+    const data = ref<NewDevPackage>({
         name: "",
         description: "",
         homepage_url: "",
         requires_patching: false
     });
-    const loading = ref(false);
-    const refresh = async () => null;
 
-    provide('package_data', data);
-    provide('package_refresh', refresh);
-    provide('package_loading', loading);
-    provide('package_is_new', true);
+    useSubrouterInjectedData<DevPackage, NewDevPackage>("package", true).provide({
+        data: data,
+        isNew: true,
+    });
 
 } else {
     const { data: result, refresh, loading } = await useAPIAsyncData(
@@ -52,12 +50,14 @@ if (package_name === "new") {
         });
     }
 
-    const data = computed(() => result.value?.data as Package);
+    const data = computed(() => result.value?.data as DevPackage);
 
-    provide('package_data', data satisfies Ref<Package>);
-    provide('package_refresh', refresh);
-    provide('package_loading', loading);
-    provide('package_is_new', false);
+    useSubrouterInjectedData<DevPackage, NewDevPackage>("package", true).provide({
+        data: data,
+        refresh,
+        loading,
+        isNew: false
+    });
 }
 
 

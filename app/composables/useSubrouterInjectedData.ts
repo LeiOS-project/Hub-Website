@@ -1,3 +1,4 @@
+import type { UtilityTypes } from "~/utils/types";
 import type { UseAPITypes } from "./useAPI";
 
 export namespace UseSubrouterInjectedDataTypes {
@@ -8,9 +9,16 @@ export namespace UseSubrouterInjectedDataTypes {
         isNew: IsNew;
     }
 
+    export interface SubrouterInjectedDataWithNewProvideArgs<T, NewT, IsNew extends true> extends UtilityTypes.SomePartial<SubrouterInjectedDataWithNew<T, NewT, IsNew>, "loading" | "refresh"> {}
+
     export type SubrouterInjectedDataUnion<T, NewT, IncludeNew extends boolean> = 
         IncludeNew extends true ? 
             (SubrouterInjectedDataWithNew<T, NewT, true> | SubrouterInjectedDataWithNew<T, NewT, false>) :
+            SubrouterInjectedData<T>;
+
+    export type SubrouterInjectedDataProvideArgsUnion<T, NewT, IncludeNew extends boolean> = 
+        IncludeNew extends true ? 
+            SubrouterInjectedDataWithNewProvideArgs<T, NewT, true> | SubrouterInjectedDataWithNew<T, NewT, false> :
             SubrouterInjectedData<T>;
     
 }
@@ -26,7 +34,7 @@ class SubrouterInjectedDataHandler<T, NewT, IncludeNew extends boolean = false> 
         return inject(this.key) as UseSubrouterInjectedDataTypes.SubrouterInjectedDataUnion<T, NewT, IncludeNew>;
     }
 
-    public provide<DataT extends UseSubrouterInjectedDataTypes.SubrouterInjectedDataUnion<T, NewT, IncludeNew>>(data: DataT) {
+    public provide<DataT extends UseSubrouterInjectedDataTypes.SubrouterInjectedDataProvideArgsUnion<T, NewT, IncludeNew>>(data: DataT) {
         provide(this.key, data);
     }
  
