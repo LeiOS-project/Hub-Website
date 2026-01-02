@@ -142,7 +142,7 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             :max-size="30"
         >
             <template #header="{ collapsed }">
-                <NuxtLink to="/" :class="!collapsed ? 'ms-2.5' : '' + ' flex items-center gap-1.5'">
+                <NuxtLink to="/" :class="`${!collapsed ? 'ms-2.5' : ''} flex items-center gap-1.5`">
                     <LeiOSLogo v-if="!collapsed" class="h-6 w-auto flex-none" />
                     <span v-if="!collapsed" class="text-lg font-semibold">/</span>
                     <span v-if="!collapsed" class="text-lg font-semibold">Hub</span>
