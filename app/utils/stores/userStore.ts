@@ -6,7 +6,7 @@ type UserInfo = GetAccountResponses["200"]["data"];
 export class UserStore {
 
     private static readonly userInfo = useAPILazyAsyncRequest("/account", async () => {
-        if (!useCookie("session_token").value) {
+        if (!useAppCookies().sessionToken.get().value) {
             return null;
         }
         const response = await useAPI((api) => api.getAccount({}));
