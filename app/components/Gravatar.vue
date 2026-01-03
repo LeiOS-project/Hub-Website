@@ -2,9 +2,9 @@
 import type { AvatarProps } from '@nuxt/ui';
 import { useGravatarURL } from '~/composables/useGravatarURL';
 
-const props = defineProps<Omit<AvatarProps, 'src'> & { email: string }>();
+const props = defineProps<Omit<AvatarProps, 'src'> & { email?: string }>();
 
-const avatarSrc = await useGravatarURL(props.email);
+const avatarSrc = props.email ? await useGravatarURL(props.email) : undefined;
 
 </script>
 
