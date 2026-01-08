@@ -181,7 +181,7 @@ const headerTexts = computed(() => {
 </script>
 
 <template>
-    <div class="space-y-6 lg:max-w-3xl mx-auto">
+    <div class="space-y-6 w-full lg:w-3xl mx-auto">
 		<!-- Header -->
 		<div>
 			<h2 class="text-xl font-semibold text-white">
