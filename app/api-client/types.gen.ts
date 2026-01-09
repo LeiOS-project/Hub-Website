@@ -878,7 +878,6 @@ export type GetDevPackagesPackageNameResponse = GetDevPackagesPackageNameRespons
 
 export type PutDevPackagesPackageNameData = {
     body?: {
-        id?: number;
         description?: string;
         homepage_url?: string;
         requires_patching?: boolean;
@@ -1787,7 +1786,6 @@ export type GetAdminPackagesPackageNameResponse = GetAdminPackagesPackageNameRes
 
 export type PutAdminPackagesPackageNameData = {
     body?: {
-        id?: number;
         description?: string;
         homepage_url?: string;
         requires_patching?: boolean;
@@ -2248,6 +2246,52 @@ export type GetAdminOsReleasesVersionResponses = {
 };
 
 export type GetAdminOsReleasesVersionResponse = GetAdminOsReleasesVersionResponses[keyof GetAdminOsReleasesVersionResponses];
+
+export type PutAdminOsReleasesVersionData = {
+    body?: {
+        changelog?: string;
+    };
+    path: {
+        version: string;
+    };
+    query?: never;
+    url: '/admin/os-releases/{version}';
+};
+
+export type PutAdminOsReleasesVersionErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * OS release not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'OS release not found';
+    };
+};
+
+export type PutAdminOsReleasesVersionError = PutAdminOsReleasesVersionErrors[keyof PutAdminOsReleasesVersionErrors];
+
+export type PutAdminOsReleasesVersionResponses = {
+    /**
+     * OS release updated successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'OS release updated successfully';
+        data: null;
+    };
+};
+
+export type PutAdminOsReleasesVersionResponse = PutAdminOsReleasesVersionResponses[keyof PutAdminOsReleasesVersionResponses];
 
 export type GetAdminOsReleasesVersionPublishingLogsData = {
     body?: never;

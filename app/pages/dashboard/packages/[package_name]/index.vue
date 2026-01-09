@@ -25,19 +25,11 @@ const headerTexts = computed(() => {
 });
 
 const package_form_schema = zPostDevPackagesData.shape.body;
-const package_form_state = computed({
-    get: () => ({
-        name: pkg_data.value.name,
-        description: pkg_data.value.description,
-        homepage_url: pkg_data.value.homepage_url,
-        requires_patching: pkg_data.value.requires_patching || false,
-    }),
-    set: (newState) => {
-        pkg_data.value.name = newState.name;
-        pkg_data.value.description = newState.description;
-        pkg_data.value.homepage_url = newState.homepage_url;
-        pkg_data.value.requires_patching = newState.requires_patching;
-    }
+const package_form_state = ref<NewDevPackage>({
+	name: pkg_data.value.name,
+	description: pkg_data.value.description,
+	homepage_url: pkg_data.value.homepage_url,
+	requires_patching: pkg_data.value.requires_patching
 });
 
 
@@ -48,7 +40,7 @@ async function onFormSubmit() {
 				body: package_form_state.value
 			}));
 
-			if (result.success && result.data) {
+			if (result.success) {
 				toast.add({
 					title: 'Package created',
 					description: `The Package has been successfully created.`,
@@ -57,18 +49,38 @@ async function onFormSubmit() {
 				});
 
 				// Redirect to the new package page
-				await navigateTo(`/dashboard/packages/${pkg_data.value.name}`);
+				await navigateTo(`/dashboard/packages/${package_form_state.value.name}`);
 			} else {
 				throw new Error(result.message || 'Failed to create package');
 			}
 		} else {
-			// Update existing package logic here (not implemented)
-			toast.add({
-				title: 'Update not implemented',
-				description: 'Updating existing packages is not yet implemented.',
-				icon: 'i-lucide-info',
-				color: 'info'
-			});
+			
+			const result = await useAPI((api) => api.putDevPackagesPackageName({
+				path: {
+					packageName: pkg_data.value.name
+				},
+				body: {
+					description: package_form_state.value.description,
+					homepage_url: package_form_state.value.homepage_url,
+					requires_patching: package_form_state.value.requires_patching
+				}
+			}));
+
+			if (result.success) {
+
+				pkg_data.value = package_form_state.value;
+
+				toast.add({
+					title: 'Package updated',
+					description: `The Package has been successfully updated.`,
+					icon: 'i-lucide-check',
+					color: 'success'
+				});
+
+			} else {
+				throw new Error(result.message || 'Failed to update package');
+			}
+
 		}
 	} catch (error: any) {
 		toast.add({
@@ -131,7 +143,7 @@ async function onDeletePackage() {
 						required
 						class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
 					>
-						<UInput :model-value="pkg_data.name" disabled variant="none" placeholder="Enter package name" :ui="{
+						<UInput :model-value="package_form_state.name" disabled variant="none" placeholder="Enter package name" :ui="{
                             base: 'w-full text-end sm:text-center sm:w-96 font-bold text-xl px-0 text-info'
                         }" />
 					</UFormField>
@@ -146,7 +158,7 @@ async function onDeletePackage() {
                         }'
                     >
 						<UTextarea 
-                            v-model="pkg_data.description"
+                            v-model="package_form_state.description"
                             placeholder="No description provided."
                             :rows="5"
                             autoresize

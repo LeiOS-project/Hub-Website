@@ -2,6 +2,7 @@
 import type { FormError, NavigationMenuItem } from '@nuxt/ui';
 import z from 'zod';
 import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from '~/api-client';
+import { zPostAdminOsReleasesData, zPutAdminOsReleasesVersionData } from '~/api-client/zod.gen';
 
 const toast = useToast();
 const route = useRoute();
@@ -34,17 +35,11 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
     }
 }
 
-const os_release_schema = z.object({
-	changelog: z.string().min(1, 'Changelog is required'),
+const os_release_form_schema = os_release.isNew ? zPostAdminOsReleasesData.shape.body : zPutAdminOsReleasesVersionData.shape.body;
+type OSReleaseFormState = NonNullable<z.infer<typeof os_release_form_schema>>;
+const os_release_form_state = ref<OSReleaseFormState>({
+	changelog: os_release_data.value.changelog,
 });
-const os_release_data_state = computed({
-	get: () => ({
-		changelog: os_release_data.value.changelog || '',
-	}),
-	set: (newState) => {
-		os_release_data.value.changelog = newState.changelog;
-	}
-})
 
 async function onFormSubmit() {
 
@@ -57,7 +52,7 @@ async function onFormSubmit() {
 				body: {
 					changelog: os_release_data.value.changelog,
 				}
-			}))
+			}));
 
 			if (result.success) {
 				toast.add({
@@ -70,25 +65,38 @@ async function onFormSubmit() {
 				// Redirect to the newly created OS Release page
 				navigateTo(`/dashboard/admin/os-releases/${result.data?.version}`);
 			} else {
-				toast.add({
-					title: 'Error',
-					description: result.message || 'An error occurred while creating the OS Release.',
-					icon: 'i-lucide-alert-circle',
-					color: 'error'
-				})
+				throw new Error(result.message || 'Failed to create OS Release');
 			}
+			
 		} else {
-			toast.add({
-				title: 'OS Release update not implemented',
-				description: 'The update of OS Releases is not yet implemented.',
-				icon: 'i-lucide-alert-triangle',
-				color: 'warning'
-			});
+			
+			const result = await useAPI((api) => api.putAdminOsReleasesVersion({
+				path: {
+					version: (os_release_data as Ref<OSRelease>).value.version
+				},
+				body: {
+					changelog: os_release_form_state.value.changelog
+				}
+			}));
+
+			if (result.success) {
+				os_release_data.value.changelog = os_release_form_state.value.changelog as string;
+
+				toast.add({
+					title: 'OS Release updated',
+					description: 'The OS Release has been successfully updated.',
+					icon: 'i-lucide-check',
+					color: 'success'
+				})
+			} else {
+				throw new Error(result.message || 'Failed to update OS Release');
+			}
+
 		}
-	} catch (error) {
+	} catch (error: any) {
 		toast.add({
 			title: 'Error',
-			description: 'An unexpected error occurred.',
+			description: error.message || 'An unexpected error occurred.',
 			icon: 'i-lucide-alert-circle',
 			color: 'error'
 		})
@@ -207,7 +215,7 @@ const headerTexts = computed(() => {
 			</div>
 			
 			<div class="p-6">
-				<UForm id="settings" class="divide-y divide-slate-800" :schema="os_release_schema" :state="os_release_data_state" @submit="os_release.isNew ? onFormSubmit() : null">
+				<UForm id="settings" class="divide-y divide-slate-800" :schema="os_release_form_schema" :state="os_release_form_state" @submit="os_release.isNew ? onFormSubmit() : null">
 					<UFormField 
 						name="version" 
 						label="Version"
@@ -266,7 +274,7 @@ const headerTexts = computed(() => {
                             class="w-full"
                         /> -->
 						<UTextarea 
-                            v-model="os_release_data.changelog"
+                            v-model="os_release_form_state.changelog"
                             placeholder="No changelog provided."
                             :rows="5"
                             autoresize

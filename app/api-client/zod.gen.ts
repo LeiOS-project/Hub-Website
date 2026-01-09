@@ -592,7 +592,6 @@ export const zGetDevPackagesPackageNameResponse = z.object({
 
 export const zPutDevPackagesPackageNameData = z.object({
     body: z.optional(z.object({
-        id: z.optional(z.int().gte(-9007199254740991).lte(9007199254740991)),
         description: z.optional(z.string()),
         homepage_url: z.optional(z.string()),
         requires_patching: z.optional(z.boolean())
@@ -1200,7 +1199,6 @@ export const zGetAdminPackagesPackageNameResponse = z.object({
 
 export const zPutAdminPackagesPackageNameData = z.object({
     body: z.optional(z.object({
-        id: z.optional(z.int().gte(-9007199254740991).lte(9007199254740991)),
         description: z.optional(z.string()),
         homepage_url: z.optional(z.string()),
         requires_patching: z.optional(z.boolean())
@@ -1504,6 +1502,26 @@ export const zGetAdminOsReleasesVersionResponse = z.object({
             'completed'
         ])
     })
+});
+
+export const zPutAdminOsReleasesVersionData = z.object({
+    body: z.optional(z.object({
+        changelog: z.optional(z.string())
+    })),
+    path: z.object({
+        version: z.string().regex(/^\d{4}\.\d{2}\.\d{1,3}$/)
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * OS release updated successfully
+ */
+export const zPutAdminOsReleasesVersionResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('OS release updated successfully'),
+    data: z.null()
 });
 
 export const zGetAdminOsReleasesVersionPublishingLogsData = z.object({
