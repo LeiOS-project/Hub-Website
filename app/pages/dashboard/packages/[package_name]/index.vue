@@ -194,6 +194,7 @@ async function onDeletePackage() {
                     >
                         <UInput
                             v-model="package_form_state.name"
+                            :disabled="!pkg.isNew"
                             placeholder="Enter package name"
                             class="w-full sm:w-96"
                         />
@@ -253,7 +254,6 @@ async function onDeletePackage() {
                             v-if="!pkg.isNew"
                             label="Save Changes"
                             color="primary"
-                            disabled
                             type="submit"
                             :loading="pkg_loading"
                             icon="i-lucide-save"
