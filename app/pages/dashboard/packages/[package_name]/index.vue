@@ -324,7 +324,7 @@ async function onDeletePackage() {
             title="Delete Package"
             warning-text="All data associated with this package and related information will be permanently deleted. This action cannot be reversed."
             :loading="deleteLoading"
-            :open="deleteConfirmOpen"
+            v-model:open="deleteConfirmOpen"
             :onDelete="onDeletePackage"
         >
         </DashboardDeleteModal>

@@ -343,7 +343,7 @@ const headerTexts = computed(() => {
 			title="Delete OS Release"
 			warning-text="All the OS release data including packages, releases, and related information will be permanently deleted. This action cannot be reversed."
 			:loading="deleteLoading"
-			:open="deleteConfirmOpen"
+			v-model:open="deleteConfirmOpen"
 			:onDelete="onDeleteOSRelease"
 		></DashboardDeleteModal>
 		<!-- <DashboardModal

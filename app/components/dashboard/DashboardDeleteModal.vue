@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const confirmText = ref("");
 
@@ -11,11 +11,22 @@ const props = defineProps<{
     onDelete: () => Promise<void> | void;
 }>();
 
+const emit = defineEmits<{
+    'update:open': [value: boolean];
+}>();
+
+// Setze confirmText zurück, wenn das Modal geschlossen wird
+watch(() => props.open, (newVal) => {
+    if (!newVal) {
+        confirmText.value = "";
+    }
+});
 </script>
 
 <template>
     <DashboardModal
         v-model:open="props.open"
+        @update:open="(value) => emit('update:open', value)"
         :title="title"
         description="This action is permanent"
         icon="i-lucide-alert-triangle"
@@ -46,7 +57,7 @@ const props = defineProps<{
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="open = false; confirmText = '';"
+                    @click="emit('update:open', false)"
                 />
                 <UButton
                     :label="title"
