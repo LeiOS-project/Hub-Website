@@ -547,34 +547,20 @@ function formatFileSize(bytes: number): string {
                             v-if="uploadStates[arch.key].file"
                             class="space-y-3"
                         >
-                            <div
-                                class="flex items-center justify-between p-4 rounded-lg bg-sky-950/30 border border-sky-900/30"
-                            >
+                            <div class="flex items-center justify-between p-4 rounded-lg bg-sky-950/30 border border-sky-900/30">
                                 <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center"
-                                    >
+                                    <div class="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center">
                                         <UIcon
                                             name="i-lucide-file-archive"
                                             class="w-5 h-5 text-sky-400"
                                         />
                                     </div>
                                     <div>
-                                        <p
-                                            class="text-sm font-medium text-white"
-                                        >
-                                            {{
-                                                uploadStates[arch.key].file!
-                                                    .name
-                                            }}
+                                        <p class="text-sm font-medium text-white">
+                                            {{ uploadStates[arch.key].file!.name }}
                                         </p>
                                         <p class="text-xs text-slate-400">
-                                            {{
-                                                formatFileSize(
-                                                    uploadStates[arch.key].file!
-                                                        .size
-                                                )
-                                            }}
+                                            {{ formatFileSize(uploadStates[arch.key].file!.size) }}
                                         </p>
                                     </div>
                                 </div>
