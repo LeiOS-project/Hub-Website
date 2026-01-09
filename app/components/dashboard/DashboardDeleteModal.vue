@@ -15,7 +15,7 @@ const props = defineProps<{
 
 <template>
     <DashboardModal
-        v-model:open="open"
+        v-model:open="props.open"
         :title="title"
         description="This action is permanent"
         icon="i-lucide-alert-triangle"
