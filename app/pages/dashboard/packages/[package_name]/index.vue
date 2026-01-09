@@ -8,6 +8,7 @@ import {
     zPostDevPackagesData,
     zPutDevPackagesPackageNameData,
 } from "~/api-client/zod.gen";
+import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 type DevPackage = GetDevPackagesPackageNameResponses[200]["data"];
 type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
 
@@ -318,7 +319,16 @@ async function onDeletePackage() {
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <DashboardModal
+        <DashboardDeleteModal
+            v-if="!pkg.isNew"
+            title="Delete Package"
+            warning-text="All data associated with this package and related information will be permanently deleted. This action cannot be reversed."
+            :loading="deleteLoading"
+            :open="deleteConfirmOpen"
+            :onDelete="onDeletePackage"
+        >
+        </DashboardDeleteModal>
+        <!-- <DashboardModal
             v-if="!pkg.isNew"
             v-model:open="deleteConfirmOpen"
             title="Delete Package"
@@ -372,6 +382,6 @@ async function onDeletePackage() {
                     />
                 </div>
             </div>
-        </DashboardModal>
+        </DashboardModal> -->
     </div>
 </template>

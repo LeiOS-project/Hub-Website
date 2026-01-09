@@ -3,6 +3,7 @@ import type { FormError, NavigationMenuItem } from '@nuxt/ui';
 import z from 'zod';
 import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from '~/api-client';
 import { zPostAdminOsReleasesData, zPutAdminOsReleasesVersionData } from '~/api-client/zod.gen';
+import DashboardDeleteModal from '~/components/dashboard/DashboardDeleteModal.vue';
 
 const toast = useToast();
 const route = useRoute();
@@ -337,7 +338,15 @@ const headerTexts = computed(() => {
 		</div>
 
 		<!-- Delete Confirmation Modal -->
-		<DashboardModal
+		<DashboardDeleteModal
+			v-if="!os_release.isNew"
+			title="Delete OS Release"
+			warning-text="All the OS release data including packages, releases, and related information will be permanently deleted. This action cannot be reversed."
+			:loading="deleteLoading"
+			:open="deleteConfirmOpen"
+			:onDelete="onDeleteOSRelease"
+		></DashboardDeleteModal>
+		<!-- <DashboardModal
 			v-if="!os_release.isNew"
 			v-model:open="deleteConfirmOpen"
 			title="Delete OS Release"
@@ -381,7 +390,7 @@ const headerTexts = computed(() => {
 					/>
 				</div>
 			</div>
-		</DashboardModal>
+		</DashboardModal> -->
 
 	</div>
 </template>
