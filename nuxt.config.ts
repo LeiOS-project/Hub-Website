@@ -21,7 +21,7 @@ export default defineNuxtConfig({
 
 		devProxy: process.env.USE_DEV_PROXY === "true" ? {
 			"/api/proxy": {
-				target: process.env.DEV_PROXY_TARGET || "https://api.repo.leios.dev",
+				target: process.env.DEV_PROXY_TARGET || "https://api.leios.dev",
 				changeOrigin: true
 			}
 		} : {}

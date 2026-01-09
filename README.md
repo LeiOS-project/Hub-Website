@@ -39,7 +39,7 @@ Key values:
 
 - `REPO_API_URL` — API base URL (defaults to `http://localhost:12151`)
 - `USE_DEV_PROXY` — set to `true` to enable the dev proxy in `nuxt.config.ts`
-- `DEV_PROXY_TARGET` — proxy target when `USE_DEV_PROXY=true` (defaults to `https://api.repo.leios.dev`)
+- `DEV_PROXY_TARGET` — proxy target when `USE_DEV_PROXY=true` (defaults to `https://api.leios.dev`)
 
 3) Development server (default port `12153`)
 
