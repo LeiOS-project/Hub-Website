@@ -300,7 +300,7 @@ export const zPostAuthLogoutResponse = z.object({
 export const zPostAuthResetPasswordData = z.object({
     body: z.optional(z.object({
         reset_token: z.string().min(1),
-        new_password: z.string().min(8).max(50)
+        new_password: z.string().min(8).max(50).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
     })),
     path: z.optional(z.never()),
     query: z.optional(z.never())
@@ -400,7 +400,7 @@ export const zPutAccountResponse = z.object({
 export const zPutAccountPasswordData = z.object({
     body: z.optional(z.object({
         current_password: z.string(),
-        new_password: z.string().min(8).max(50)
+        new_password: z.string().min(8).max(50).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
     })),
     path: z.optional(z.never()),
     query: z.optional(z.never())
@@ -1058,7 +1058,7 @@ export const zPutAdminUsersUserIdResponse = z.object({
 
 export const zPutAdminUsersUserIdPasswordData = z.object({
     body: z.optional(z.object({
-        password: z.string().min(8).max(50)
+        password: z.string().min(8).max(50).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
     })),
     path: z.object({
         userId: z.int().gt(0).lte(9007199254740991)
@@ -1475,7 +1475,7 @@ export const zPostAdminOsReleasesResponse = z.object({
 export const zGetAdminOsReleasesVersionData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        version: z.string().regex(/^\d{4}\.\d{2}\.\d{2}$/)
+        version: z.string().regex(/^\d{4}\.\d{2}\.\d{1,3}$/)
     }),
     query: z.optional(z.never())
 });
@@ -1509,7 +1509,7 @@ export const zGetAdminOsReleasesVersionResponse = z.object({
 export const zGetAdminOsReleasesVersionPublishingLogsData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        version: z.string().regex(/^\d{4}\.\d{2}\.\d{2}$/)
+        version: z.string().regex(/^\d{4}\.\d{2}\.\d{1,3}$/)
     }),
     query: z.optional(z.never())
 });
