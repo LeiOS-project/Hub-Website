@@ -26,10 +26,22 @@ class AppCookie<T extends string | null | undefined> {
 
 }
 
-export function useAppCookies() {
-    
-    return {
+class AppCookieHandler {
+
+    private constructor() {}
+
+    private static readonly cookies = {
+
         sessionToken: new AppCookie<string | null>("leioshub_session_token"),
+        
+    } as const;
+
+    static getCookies() {
+        return AppCookieHandler.cookies;
     }
 
+}
+
+export function useAppCookies() {
+    return AppCookieHandler.getCookies();
 }
