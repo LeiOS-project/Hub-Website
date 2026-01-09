@@ -142,7 +142,7 @@ async function onDeleteOSRelease() {
 	// 		})
 
 	// 		UserStore.clear()
-	// 		useCookie('session_token').value = null
+	// 		useCookie("leioshub_session_token").value = null
 	// 		navigateTo('/')
 	// 	} else {
 	// 		toast.add({

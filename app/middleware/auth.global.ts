@@ -2,7 +2,7 @@ import { UserStore } from "~/utils/stores/userStore";
 
 export default defineNuxtRouteMiddleware(async(to) => {
 
-    const token = useCookie("session_token").value;
+    const token = useCookie("leioshub_session_token").value;
 
     if (to.path.startsWith('/auth')) {
         if (!token) {

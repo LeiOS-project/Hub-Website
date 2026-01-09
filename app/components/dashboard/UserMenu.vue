@@ -28,7 +28,7 @@ async function logout() {
 
         UserStore.clear();
 
-        useCookie("session_token").value = null;
+        useCookie("leioshub_session_token").value = null;
 
         if (!result.success) {
             toast.add({

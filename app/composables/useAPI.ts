@@ -135,7 +135,7 @@ class LazyAsyncDataRequestWrapper<TReturn> {
 
 //             const { data } = await useAsyncData(async (nuxtApp) => {
 
-//                 const sessionToken = useCookie("session_token");
+//                 const sessionToken = useCookie("leioshub_session_token");
 
 //                 sessionToken.value ? updateAPIClient(sessionToken.value) : updateAPIClient(null);
 
@@ -154,7 +154,7 @@ class LazyAsyncDataRequestWrapper<TReturn> {
 
 //         apiClient = await createAPIClient(async (original, args) => {
 
-//             const sessionToken = useCookie("session_token");
+//             const sessionToken = useCookie("leioshub_session_token");
 
 //             if (sessionToken.value) {
 //                 updateAPIClient(sessionToken.value);
@@ -231,7 +231,7 @@ export async function useAPI<TReturn>(handler: (api: UseAPITypes.APIClient) => T
             /*
             const { data } = await useAsyncData(async (nuxtApp) => {
 
-                const sessionToken = useCookie("session_token");
+                const sessionToken = useCookie("leioshub_session_token");
 
                 sessionToken.value ? updateAPIClient(sessionToken.value) : updateAPIClient(null);
 
@@ -255,14 +255,14 @@ export async function useAPI<TReturn>(handler: (api: UseAPITypes.APIClient) => T
                     data: null
                 } as const;
             }
-            const sessionToken = getCookie(event, "session_token");
+            const sessionToken = useAppCookies().sessionToken.getServerSide(event);
             updateAPIClient(sessionToken ?? null);
             
             return await handler(baseAPIClient);
 
         } else if (import.meta.client) {
 
-            const sessionToken = useCookie("session_token");
+            const sessionToken = useCookie("leioshub_session_token");
 
             if (sessionToken.value) {
                 updateAPIClient(sessionToken.value);

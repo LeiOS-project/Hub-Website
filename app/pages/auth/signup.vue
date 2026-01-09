@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import * as z from "zod";
 import type { FormSubmitEvent, AuthFormField, FormError } from "@nuxt/ui";
+import { useRuntimeAppConfigs } from "~/composables/useRuntimeAppConfigs";
 
-if (!useRuntimeConfig().public.isSignupEnabled) {
+if (!useRuntimeAppConfigs().isSignupEnabled) {
     await navigateTo("/auth/login");
 }
 
@@ -111,7 +112,7 @@ async function onSubmit(payload: FormSubmitEvent<SingupSchema>) {
 
     //     updateAPIClient(result.data.token);
 
-    //     const sessionToken = useCookie('session_token', {
+    //     const sessionToken = useCookie("leioshub_session_token", {
     //         path:     '/',
     //         secure:   true,
     //         sameSite: 'strict',

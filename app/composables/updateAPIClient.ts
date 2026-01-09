@@ -1,8 +1,9 @@
 import { client } from "@/api-client/client.gen";
+import { useRuntimeAppConfigs } from "./useRuntimeAppConfigs";
 
 export function updateAPIClient(token: string | null) {
 
-    const apiURL = useRuntimeConfig().public.apiUrl;
+    const apiURL = useRuntimeAppConfigs().apiUrl
 
     if (token) {
         client.setConfig({

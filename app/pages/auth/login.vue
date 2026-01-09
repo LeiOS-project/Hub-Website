@@ -2,8 +2,9 @@
 import * as z from "zod";
 import type { FormSubmitEvent, AuthFormField } from "@nuxt/ui";
 import { UserStore } from "~/utils/stores/userStore";
+import { useRuntimeAppConfigs } from "~/composables/useRuntimeAppConfigs";
 
-const isSignupEnabled = useRuntimeConfig().public.isSignupEnabled;
+const isSignupEnabled = useRuntimeAppConfigs().isSignupEnabled
 
 definePageMeta({
     layout: "auth",
@@ -70,7 +71,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
     if (result.success) {
         updateAPIClient(result.data.token);
 
-        const sessionToken = useCookie("session_token", {
+        const sessionToken = useCookie("leioshub_session_token", {
             path: "/",
             secure: true,
             sameSite: "lax",

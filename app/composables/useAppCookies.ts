@@ -1,4 +1,5 @@
 import type { CookieOptions } from "#app";
+import type { H3Event } from "h3";
 
 type CookieOptionsWithoutReadonly<T> = CookieOptions<T> & {
     readonly?: false;
@@ -15,6 +16,10 @@ class AppCookie<T extends string | null | undefined> {
         return useCookie(this.name);
     }
 
+    getServerSide(event: H3Event) {
+        return getCookie(event, this.name);
+    }
+
     set(value: T) {
         useCookie(this.name, this.options as CookieOptionsWithoutReadonly<T> | undefined).value = value;
     }
@@ -22,9 +27,9 @@ class AppCookie<T extends string | null | undefined> {
 }
 
 export function useAppCookies() {
-
+    
     return {
-        sessionToken: new AppCookie<string | null>("session_token"),
+        sessionToken: new AppCookie<string | null>("leioshub_session_token"),
     }
 
 }

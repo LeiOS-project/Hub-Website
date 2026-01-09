@@ -8,7 +8,7 @@ import type { UnwrapRef } from 'vue';
 type UserInfo = GetAccountResponses["200"]["data"];
 
 const route = useRoute()
-const sessionCookie = useCookie<string | null>('session_token')
+const sessionCookie = useAppCookies().sessionToken.get()
 const user = await UserStore.use()
 
 const links = computed<NavigationMenuItem[]>(() => [
