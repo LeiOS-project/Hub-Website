@@ -67,7 +67,7 @@ async function onFormSubmit() {
 			} else {
 				throw new Error(result.message || 'Failed to create OS Release');
 			}
-			
+
 		} else {
 			
 			const result = await useAPI((api) => api.putAdminOsReleasesVersion({
@@ -286,7 +286,6 @@ const headerTexts = computed(() => {
 						<UButton v-if="!os_release.isNew"
 							label="Save Changes" 
 							color="primary"
-                            disabled
 							type="submit" 
 							:loading="os_release_loading"
 							icon="i-lucide-save"
