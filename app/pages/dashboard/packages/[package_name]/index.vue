@@ -164,7 +164,7 @@ async function onDeletePackage() {
                     :state="package_form_state"
                     @submit="onFormSubmit()"
                 >
-                    <UFormField
+                    <!-- <UFormField
                         name="name"
                         label="Package Name"
                         description="The name of this package."
@@ -179,6 +179,23 @@ async function onDeletePackage() {
                             :ui="{
                                 base: 'w-full text-end sm:text-center sm:w-96 font-bold text-xl px-0 text-info',
                             }"
+                        />
+                    </UFormField> -->
+
+                    <UFormField
+                        name="name"
+                        label="Package Name"
+                        description="The name of this package."
+                        class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
+                        :ui="{
+                            root: 'w-full sm:w-auto',
+                            container: 'w-full sm:w-auto',
+                        }"
+                    >
+                        <UInput
+                            v-model="package_form_state.name"
+                            placeholder="Enter package name"
+                            class="w-full sm:w-96"
                         />
                     </UFormField>
 
@@ -282,15 +299,15 @@ async function onDeletePackage() {
                 <div class="flex flex-col md:flex-row md:items-center gap-4">
                     <div class="flex-1">
                         <h4 class="font-medium text-white">
-                            Delete OS Release
+                            Delete Package
                         </h4>
                         <p class="text-sm text-slate-400 mt-1">
-                            Permanently delete this OS Release and all
+                            Permanently delete this package and all
                             associated data. This action cannot be undone.
                         </p>
                     </div>
                     <UButton
-                        label="Delete OS Release"
+                        label="Delete Package"
                         color="error"
                         variant="soft"
                         icon="i-lucide-trash-2"
@@ -314,8 +331,8 @@ async function onDeletePackage() {
                     class="p-4 rounded-lg bg-red-950/50 border border-red-900/50"
                 >
                     <p class="text-sm text-red-300">
-                        <strong>Warning:</strong> All the OS release data
-                        including packages, releases, and related information
+                        <strong>Warning:</strong> All data associated with this
+                        package and related information
                         will be permanently deleted. This action cannot be
                         reversed.
                     </p>
@@ -346,7 +363,7 @@ async function onDeletePackage() {
                         "
                     />
                     <UButton
-                        label="Delete OS Release"
+                        label="Delete Package"
                         color="error"
                         :loading="deleteLoading"
                         :disabled="deleteConfirmText !== 'DELETE'"
