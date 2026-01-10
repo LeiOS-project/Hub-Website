@@ -23,6 +23,9 @@ export type GetPublicPackagesResponses = {
             id: number;
             name: string;
             owner_user_id: number;
+            flags: string | number | boolean | null | {
+                [key: string]: unknown;
+            } | Array<unknown>;
             description: string;
             homepage_url: string;
             requires_patching: boolean;
@@ -74,6 +77,9 @@ export type GetPublicPackagesPackageNameResponses = {
                 id: number;
                 name: string;
                 owner_user_id: number;
+                flags: string | number | boolean | null | {
+                    [key: string]: unknown;
+                } | Array<unknown>;
                 description: string;
                 homepage_url: string;
                 requires_patching: boolean;
@@ -767,6 +773,9 @@ export type GetDevPackagesResponses = {
             id: number;
             name: string;
             owner_user_id: number;
+            flags: string | number | boolean | null | {
+                [key: string]: unknown;
+            } | Array<unknown>;
             description: string;
             homepage_url: string;
             requires_patching: boolean;
@@ -862,6 +871,9 @@ export type GetDevPackagesPackageNameResponses = {
             id: number;
             name: string;
             owner_user_id: number;
+            flags: string | number | boolean | null | {
+                [key: string]: unknown;
+            } | Array<unknown>;
             description: string;
             homepage_url: string;
             requires_patching: boolean;
@@ -897,6 +909,14 @@ export type PutDevPackagesPackageNameErrors = {
         success: false;
         code: 400;
         message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * System-managed packages cannot be updated
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'System-managed packages cannot be updated';
     };
     /**
      * Package with specified Name not found
@@ -1689,6 +1709,9 @@ export type GetAdminPackagesResponses = {
             id: number;
             name: string;
             owner_user_id: number;
+            flags: string | number | boolean | null | {
+                [key: string]: unknown;
+            } | Array<unknown>;
             description: string;
             homepage_url: string;
             requires_patching: boolean;
@@ -1762,6 +1785,14 @@ export type DeleteAdminPackagesPackageNameData = {
 
 export type DeleteAdminPackagesPackageNameErrors = {
     /**
+     * System-managed packages cannot be updated
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'System-managed packages cannot be updated';
+    };
+    /**
      * Package with specified Name not found
      */
     404: {
@@ -1821,6 +1852,9 @@ export type GetAdminPackagesPackageNameResponses = {
             id: number;
             name: string;
             owner_user_id: number;
+            flags: string | number | boolean | null | {
+                [key: string]: unknown;
+            } | Array<unknown>;
             description: string;
             homepage_url: string;
             requires_patching: boolean;
@@ -1856,6 +1890,14 @@ export type PutAdminPackagesPackageNameErrors = {
         success: false;
         code: 400;
         message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * System-managed packages cannot be updated
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'System-managed packages cannot be updated';
     };
     /**
      * Package with specified Name not found

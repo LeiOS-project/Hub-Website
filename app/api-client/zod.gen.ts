@@ -19,6 +19,16 @@ export const zGetPublicPackagesResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         name: z.string(),
         owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        flags: z.union([
+            z.union([
+                z.string(),
+                z.number(),
+                z.boolean(),
+                z.null()
+            ]),
+            z.record(z.string(), z.unknown()),
+            z.array(z.unknown())
+        ]),
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.boolean(),
@@ -68,6 +78,16 @@ export const zGetPublicPackagesPackageNameResponse = z.object({
             id: z.int().gte(-9007199254740991).lte(9007199254740991),
             name: z.string(),
             owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            flags: z.union([
+                z.union([
+                    z.string(),
+                    z.number(),
+                    z.boolean(),
+                    z.null()
+                ]),
+                z.record(z.string(), z.unknown()),
+                z.array(z.unknown())
+            ]),
             description: z.string(),
             homepage_url: z.string(),
             requires_patching: z.boolean(),
@@ -504,6 +524,16 @@ export const zGetDevPackagesResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         name: z.string(),
         owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        flags: z.union([
+            z.union([
+                z.string(),
+                z.number(),
+                z.boolean(),
+                z.null()
+            ]),
+            z.record(z.string(), z.unknown()),
+            z.array(z.unknown())
+        ]),
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.boolean(),
@@ -567,6 +597,16 @@ export const zGetDevPackagesPackageNameResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         name: z.string(),
         owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        flags: z.union([
+            z.union([
+                z.string(),
+                z.number(),
+                z.boolean(),
+                z.null()
+            ]),
+            z.record(z.string(), z.unknown()),
+            z.array(z.unknown())
+        ]),
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.boolean(),
@@ -1117,6 +1157,16 @@ export const zGetAdminPackagesResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         name: z.string(),
         owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        flags: z.union([
+            z.union([
+                z.string(),
+                z.number(),
+                z.boolean(),
+                z.null()
+            ]),
+            z.record(z.string(), z.unknown()),
+            z.array(z.unknown())
+        ]),
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.boolean(),
@@ -1199,6 +1249,16 @@ export const zGetAdminPackagesPackageNameResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         name: z.string(),
         owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        flags: z.union([
+            z.union([
+                z.string(),
+                z.number(),
+                z.boolean(),
+                z.null()
+            ]),
+            z.record(z.string(), z.unknown()),
+            z.array(z.unknown())
+        ]),
         description: z.string(),
         homepage_url: z.string(),
         requires_patching: z.boolean(),
@@ -1523,7 +1583,7 @@ export const zPostAdminOsReleasesResponse = z.object({
 export const zGetAdminOsReleasesVersionData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        version: z.string().regex(/^\d{4}\.\d{2}\.\d{1,3}$/)
+        version: z.string().regex(/^\d{4}\.\d{2}\.\d{3}$/)
     }),
     query: z.optional(z.never())
 });
@@ -1559,7 +1619,7 @@ export const zPutAdminOsReleasesVersionData = z.object({
         changelog: z.optional(z.string().min(1).max(10000))
     })),
     path: z.object({
-        version: z.string().regex(/^\d{4}\.\d{2}\.\d{1,3}$/)
+        version: z.string().regex(/^\d{4}\.\d{2}\.\d{3}$/)
     }),
     query: z.optional(z.never())
 });
@@ -1577,7 +1637,7 @@ export const zPutAdminOsReleasesVersionResponse = z.object({
 export const zGetAdminOsReleasesVersionPublishingLogsData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        version: z.string().regex(/^\d{4}\.\d{2}\.\d{1,3}$/)
+        version: z.string().regex(/^\d{4}\.\d{2}\.\d{3}$/)
     }),
     query: z.optional(z.never())
 });
