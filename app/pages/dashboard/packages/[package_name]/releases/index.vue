@@ -99,7 +99,17 @@ const packageReleasesTableColumns: TableColumn<Release>[] = [
             </template>
 
             <template #architectures-cell="{ row }">
-                
+                <div class="flex gap-1">
+                    <UBadge v-if="row.original.architectures.amd64" color="warning" variant="soft" size="sm">
+                        amd64
+                    </UBadge>
+                    <UBadge v-if="row.original.architectures.arm64" color="warning" variant="soft" size="sm">
+                        arm64
+                    </UBadge>
+                    <UBadge v-if="!row.original.architectures.amd64 && !row.original.architectures.arm64" color="neutral" variant="soft" size="sm">
+                        None
+                    </UBadge>
+                </div>
             </template>
 
             <template #empty-actions>
