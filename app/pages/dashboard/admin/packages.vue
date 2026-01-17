@@ -243,7 +243,7 @@ async function deletePackage() {
                     <template #stable-cell="{ row }">
                         <div class="flex gap-1">
                             <UBadge
-                                v-if="row.original.latest_stable_release_amd64"
+                                v-if="row.original.latest_stable_release.amd64"
                                 color="success"
                                 variant="soft"
                                 size="sm"
@@ -251,7 +251,7 @@ async function deletePackage() {
                                 amd64
                             </UBadge>
                             <UBadge
-                                v-if="row.original.latest_stable_release_arm64"
+                                v-if="row.original.latest_stable_release.arm64"
                                 color="success"
                                 variant="soft"
                                 size="sm"
@@ -260,8 +260,8 @@ async function deletePackage() {
                             </UBadge>
                             <span
                                 v-if="
-                                    !row.original.latest_stable_release_amd64 &&
-                                    !row.original.latest_stable_release_arm64
+                                    !row.original.latest_stable_release.amd64 &&
+                                    !row.original.latest_stable_release.arm64
                                 "
                                 class="text-slate-500"
                                 >—</span
@@ -271,7 +271,7 @@ async function deletePackage() {
                     <template #testing-cell="{ row }">
                         <div class="flex gap-1">
                             <UBadge
-                                v-if="row.original.latest_testing_release_amd64"
+                                v-if="row.original.latest_testing_release.amd64"
                                 color="warning"
                                 variant="soft"
                                 size="sm"
@@ -279,7 +279,7 @@ async function deletePackage() {
                                 amd64
                             </UBadge>
                             <UBadge
-                                v-if="row.original.latest_testing_release_arm64"
+                                v-if="row.original.latest_testing_release.arm64"
                                 color="warning"
                                 variant="soft"
                                 size="sm"
@@ -289,8 +289,8 @@ async function deletePackage() {
                             <span
                                 v-if="
                                     !row.original
-                                        .latest_testing_release_amd64 &&
-                                    !row.original.latest_testing_release_arm64
+                                        .latest_testing_release.amd64 &&
+                                    !row.original.latest_testing_release.arm64
                                 "
                                 class="text-slate-500"
                                 >—</span

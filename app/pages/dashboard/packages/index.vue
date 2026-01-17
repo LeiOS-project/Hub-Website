@@ -101,24 +101,24 @@ const packages = await useAPIAsyncData(
                     </template>
                     <template #stable-cell="{ row }">
                         <div class="flex gap-1">
-                            <UBadge v-if="row.original.latest_stable_release_amd64" color="success" variant="soft" size="sm">
+                            <UBadge v-if="row.original.latest_stable_release.amd64" color="success" variant="soft" size="sm">
                                 amd64
                             </UBadge>
-                            <UBadge v-if="row.original.latest_stable_release_arm64" color="success" variant="soft" size="sm">
+                            <UBadge v-if="row.original.latest_stable_release.arm64" color="success" variant="soft" size="sm">
                                 arm64
                             </UBadge>
-                            <span v-if="!row.original.latest_stable_release_amd64 && !row.original.latest_stable_release_arm64" class="text-slate-500">—</span>
+                            <span v-if="!row.original.latest_stable_release.amd64 && !row.original.latest_stable_release.arm64" class="text-slate-500">—</span>
                         </div>
                     </template>
                     <template #testing-cell="{ row }">
                         <div class="flex gap-1">
-                            <UBadge v-if="row.original.latest_testing_release_amd64" color="warning" variant="soft" size="sm">
+                            <UBadge v-if="row.original.latest_testing_release.amd64" color="warning" variant="soft" size="sm">
                                 amd64
                             </UBadge>
-                            <UBadge v-if="row.original.latest_testing_release_arm64" color="warning" variant="soft" size="sm">
+                            <UBadge v-if="row.original.latest_testing_release.arm64" color="warning" variant="soft" size="sm">
                                 arm64
                             </UBadge>
-                            <span v-if="!row.original.latest_testing_release_amd64 && !row.original.latest_testing_release_arm64" class="text-slate-500">—</span>
+                            <span v-if="!row.original.latest_testing_release.amd64 && !row.original.latest_testing_release.arm64" class="text-slate-500">—</span>
                         </div>
                     </template>
                     <template #actions-cell="{ row }">
@@ -212,25 +212,25 @@ const packages = await useAPIAsyncData(
 
                     <template #stable-cell="{ row }">
                         <div class="flex gap-1">
-                            <UBadge v-if="row.original.latest_stable_release_amd64" color="success" variant="soft" size="sm">
+                            <UBadge v-if="row.original.latest_stable_release.amd64" color="success" variant="soft" size="sm">
                                 amd64
                             </UBadge>
-                            <UBadge v-if="row.original.latest_stable_release_arm64" color="success" variant="soft" size="sm">
+                            <UBadge v-if="row.original.latest_stable_release.arm64" color="success" variant="soft" size="sm">
                                 arm64
                             </UBadge>
-                            <span v-if="!row.original.latest_stable_release_amd64 && !row.original.latest_stable_release_arm64" class="text-slate-500">—</span>
+                            <span v-if="!row.original.latest_stable_release.amd64 && !row.original.latest_stable_release.arm64" class="text-slate-500">—</span>
                         </div>
                     </template>
 
                     <template #testing-cell="{ row }">
                         <div class="flex gap-1">
-                            <UBadge v-if="row.original.latest_testing_release_amd64" color="warning" variant="soft" size="sm">
+                            <UBadge v-if="row.original.latest_testing_release.amd64" color="warning" variant="soft" size="sm">
                                 amd64
                             </UBadge>
-                            <UBadge v-if="row.original.latest_testing_release_arm64" color="warning" variant="soft" size="sm">
+                            <UBadge v-if="row.original.latest_testing_release.arm64" color="warning" variant="soft" size="sm">
                                 arm64
                             </UBadge>
-                            <span v-if="!row.original.latest_testing_release_amd64 && !row.original.latest_testing_release_arm64" class="text-slate-500">—</span>
+                            <span v-if="!row.original.latest_testing_release.amd64 && !row.original.latest_testing_release.arm64" class="text-slate-500">—</span>
                         </div>
                     </template>
 

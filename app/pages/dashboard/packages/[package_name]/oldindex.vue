@@ -219,19 +219,19 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                             </div>
                             <div>
                                 <p class="text-sm text-slate-400">Stable Release (amd64)</p>
-                                <p class="mt-1 font-mono">{{ pkg.latest_stable_release_amd64 || '—' }}</p>
+                                <p class="mt-1 font-mono">{{ pkg.latest_stable_release.amd64 || '—' }}</p>
                             </div>
                             <div>
                                 <p class="text-sm text-slate-400">Stable Release (arm64)</p>
-                                <p class="mt-1 font-mono">{{ pkg.latest_stable_release_arm64 || '—' }}</p>
+                                <p class="mt-1 font-mono">{{ pkg.latest_stable_release.arm64 || '—' }}</p>
                             </div>
                             <div>
                                 <p class="text-sm text-slate-400">Testing Release (amd64)</p>
-                                <p class="mt-1 font-mono">{{ pkg.latest_testing_release_amd64 || '—' }}</p>
+                                <p class="mt-1 font-mono">{{ pkg.latest_testing_release.amd64 || '—' }}</p>
                             </div>
                             <div>
                                 <p class="text-sm text-slate-400">Testing Release (arm64)</p>
-                                <p class="mt-1 font-mono">{{ pkg.latest_testing_release_arm64 || '—' }}</p>
+                                <p class="mt-1 font-mono">{{ pkg.latest_testing_release.arm64 || '—' }}</p>
                             </div>
                         </div>
                     </UCard>

@@ -33,22 +33,26 @@ export const zGetPublicPackagesResponse = z.object({
         homepage_url: z.string(),
         requires_patching: z.boolean(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        latest_stable_release_amd64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_stable_release_arm64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_testing_release_amd64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_testing_release_arm64: z.union([
-            z.string(),
-            z.null()
-        ])
+        latest_stable_release: z.object({
+            amd64: z.union([
+                z.string(),
+                z.null()
+            ]),
+            arm64: z.union([
+                z.string(),
+                z.null()
+            ])
+        }),
+        latest_testing_release: z.object({
+            amd64: z.union([
+                z.string(),
+                z.null()
+            ]),
+            arm64: z.union([
+                z.string(),
+                z.null()
+            ])
+        })
     }))
 });
 
@@ -92,22 +96,26 @@ export const zGetPublicPackagesPackageNameResponse = z.object({
             homepage_url: z.string(),
             requires_patching: z.boolean(),
             created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            latest_stable_release_amd64: z.union([
-                z.string(),
-                z.null()
-            ]),
-            latest_stable_release_arm64: z.union([
-                z.string(),
-                z.null()
-            ]),
-            latest_testing_release_amd64: z.union([
-                z.string(),
-                z.null()
-            ]),
-            latest_testing_release_arm64: z.union([
-                z.string(),
-                z.null()
-            ])
+            latest_stable_release: z.object({
+                amd64: z.union([
+                    z.string(),
+                    z.null()
+                ]),
+                arm64: z.union([
+                    z.string(),
+                    z.null()
+                ])
+            }),
+            latest_testing_release: z.object({
+                amd64: z.union([
+                    z.string(),
+                    z.null()
+                ]),
+                arm64: z.union([
+                    z.string(),
+                    z.null()
+                ])
+            })
         }),
         releases: z.object({
             'leios-archive': z.record(z.string(), z.object({
@@ -115,7 +123,11 @@ export const zGetPublicPackagesPackageNameResponse = z.object({
                     name: z.string(),
                     key: z.string(),
                     versionWithLeiosPatch: z.string(),
-                    architecture: z.enum(['amd64', 'arm64']),
+                    architecture: z.enum([
+                        'amd64',
+                        'arm64',
+                        'all'
+                    ]),
                     maintainer: z.string(),
                     description: z.string()
                 })),
@@ -123,7 +135,23 @@ export const zGetPublicPackagesPackageNameResponse = z.object({
                     name: z.string(),
                     key: z.string(),
                     versionWithLeiosPatch: z.string(),
-                    architecture: z.enum(['amd64', 'arm64']),
+                    architecture: z.enum([
+                        'amd64',
+                        'arm64',
+                        'all'
+                    ]),
+                    maintainer: z.string(),
+                    description: z.string()
+                })),
+                all: z.optional(z.object({
+                    name: z.string(),
+                    key: z.string(),
+                    versionWithLeiosPatch: z.string(),
+                    architecture: z.enum([
+                        'amd64',
+                        'arm64',
+                        'all'
+                    ]),
                     maintainer: z.string(),
                     description: z.string()
                 }))
@@ -133,7 +161,11 @@ export const zGetPublicPackagesPackageNameResponse = z.object({
                     name: z.string(),
                     key: z.string(),
                     versionWithLeiosPatch: z.string(),
-                    architecture: z.enum(['amd64', 'arm64']),
+                    architecture: z.enum([
+                        'amd64',
+                        'arm64',
+                        'all'
+                    ]),
                     maintainer: z.string(),
                     description: z.string()
                 })),
@@ -141,7 +173,23 @@ export const zGetPublicPackagesPackageNameResponse = z.object({
                     name: z.string(),
                     key: z.string(),
                     versionWithLeiosPatch: z.string(),
-                    architecture: z.enum(['amd64', 'arm64']),
+                    architecture: z.enum([
+                        'amd64',
+                        'arm64',
+                        'all'
+                    ]),
+                    maintainer: z.string(),
+                    description: z.string()
+                })),
+                all: z.optional(z.object({
+                    name: z.string(),
+                    key: z.string(),
+                    versionWithLeiosPatch: z.string(),
+                    architecture: z.enum([
+                        'amd64',
+                        'arm64',
+                        'all'
+                    ]),
                     maintainer: z.string(),
                     description: z.string()
                 }))
@@ -151,7 +199,11 @@ export const zGetPublicPackagesPackageNameResponse = z.object({
                     name: z.string(),
                     key: z.string(),
                     versionWithLeiosPatch: z.string(),
-                    architecture: z.enum(['amd64', 'arm64']),
+                    architecture: z.enum([
+                        'amd64',
+                        'arm64',
+                        'all'
+                    ]),
                     maintainer: z.string(),
                     description: z.string()
                 })),
@@ -159,7 +211,23 @@ export const zGetPublicPackagesPackageNameResponse = z.object({
                     name: z.string(),
                     key: z.string(),
                     versionWithLeiosPatch: z.string(),
-                    architecture: z.enum(['amd64', 'arm64']),
+                    architecture: z.enum([
+                        'amd64',
+                        'arm64',
+                        'all'
+                    ]),
+                    maintainer: z.string(),
+                    description: z.string()
+                })),
+                all: z.optional(z.object({
+                    name: z.string(),
+                    key: z.string(),
+                    versionWithLeiosPatch: z.string(),
+                    architecture: z.enum([
+                        'amd64',
+                        'arm64',
+                        'all'
+                    ]),
                     maintainer: z.string(),
                     description: z.string()
                 }))
@@ -195,7 +263,11 @@ export const zGetPublicPackagesPackageNameReleasesResponse = z.object({
                 name: z.string(),
                 key: z.string(),
                 versionWithLeiosPatch: z.string(),
-                architecture: z.enum(['amd64', 'arm64']),
+                architecture: z.enum([
+                    'amd64',
+                    'arm64',
+                    'all'
+                ]),
                 maintainer: z.string(),
                 description: z.string()
             })),
@@ -203,7 +275,23 @@ export const zGetPublicPackagesPackageNameReleasesResponse = z.object({
                 name: z.string(),
                 key: z.string(),
                 versionWithLeiosPatch: z.string(),
-                architecture: z.enum(['amd64', 'arm64']),
+                architecture: z.enum([
+                    'amd64',
+                    'arm64',
+                    'all'
+                ]),
+                maintainer: z.string(),
+                description: z.string()
+            })),
+            all: z.optional(z.object({
+                name: z.string(),
+                key: z.string(),
+                versionWithLeiosPatch: z.string(),
+                architecture: z.enum([
+                    'amd64',
+                    'arm64',
+                    'all'
+                ]),
                 maintainer: z.string(),
                 description: z.string()
             }))
@@ -213,7 +301,11 @@ export const zGetPublicPackagesPackageNameReleasesResponse = z.object({
                 name: z.string(),
                 key: z.string(),
                 versionWithLeiosPatch: z.string(),
-                architecture: z.enum(['amd64', 'arm64']),
+                architecture: z.enum([
+                    'amd64',
+                    'arm64',
+                    'all'
+                ]),
                 maintainer: z.string(),
                 description: z.string()
             })),
@@ -221,7 +313,23 @@ export const zGetPublicPackagesPackageNameReleasesResponse = z.object({
                 name: z.string(),
                 key: z.string(),
                 versionWithLeiosPatch: z.string(),
-                architecture: z.enum(['amd64', 'arm64']),
+                architecture: z.enum([
+                    'amd64',
+                    'arm64',
+                    'all'
+                ]),
+                maintainer: z.string(),
+                description: z.string()
+            })),
+            all: z.optional(z.object({
+                name: z.string(),
+                key: z.string(),
+                versionWithLeiosPatch: z.string(),
+                architecture: z.enum([
+                    'amd64',
+                    'arm64',
+                    'all'
+                ]),
                 maintainer: z.string(),
                 description: z.string()
             }))
@@ -231,7 +339,11 @@ export const zGetPublicPackagesPackageNameReleasesResponse = z.object({
                 name: z.string(),
                 key: z.string(),
                 versionWithLeiosPatch: z.string(),
-                architecture: z.enum(['amd64', 'arm64']),
+                architecture: z.enum([
+                    'amd64',
+                    'arm64',
+                    'all'
+                ]),
                 maintainer: z.string(),
                 description: z.string()
             })),
@@ -239,7 +351,23 @@ export const zGetPublicPackagesPackageNameReleasesResponse = z.object({
                 name: z.string(),
                 key: z.string(),
                 versionWithLeiosPatch: z.string(),
-                architecture: z.enum(['amd64', 'arm64']),
+                architecture: z.enum([
+                    'amd64',
+                    'arm64',
+                    'all'
+                ]),
+                maintainer: z.string(),
+                description: z.string()
+            })),
+            all: z.optional(z.object({
+                name: z.string(),
+                key: z.string(),
+                versionWithLeiosPatch: z.string(),
+                architecture: z.enum([
+                    'amd64',
+                    'arm64',
+                    'all'
+                ]),
                 maintainer: z.string(),
                 description: z.string()
             }))
@@ -538,22 +666,26 @@ export const zGetDevPackagesResponse = z.object({
         homepage_url: z.string(),
         requires_patching: z.boolean(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        latest_stable_release_amd64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_stable_release_arm64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_testing_release_amd64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_testing_release_arm64: z.union([
-            z.string(),
-            z.null()
-        ])
+        latest_stable_release: z.object({
+            amd64: z.union([
+                z.string(),
+                z.null()
+            ]),
+            arm64: z.union([
+                z.string(),
+                z.null()
+            ])
+        }),
+        latest_testing_release: z.object({
+            amd64: z.union([
+                z.string(),
+                z.null()
+            ]),
+            arm64: z.union([
+                z.string(),
+                z.null()
+            ])
+        })
     }))
 });
 
@@ -611,22 +743,26 @@ export const zGetDevPackagesPackageNameResponse = z.object({
         homepage_url: z.string(),
         requires_patching: z.boolean(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        latest_stable_release_amd64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_stable_release_arm64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_testing_release_amd64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_testing_release_arm64: z.union([
-            z.string(),
-            z.null()
-        ])
+        latest_stable_release: z.object({
+            amd64: z.union([
+                z.string(),
+                z.null()
+            ]),
+            arm64: z.union([
+                z.string(),
+                z.null()
+            ])
+        }),
+        latest_testing_release: z.object({
+            amd64: z.union([
+                z.string(),
+                z.null()
+            ]),
+            arm64: z.union([
+                z.string(),
+                z.null()
+            ])
+        })
     })
 });
 
@@ -670,7 +806,11 @@ export const zGetDevPackagesPackageNameReleasesResponse = z.object({
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architectures: z.array(z.enum(['amd64', 'arm64'])),
+        architectures: z.object({
+            amd64: z.boolean(),
+            arm64: z.boolean(),
+            is_all: z.boolean()
+        }),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         changelog: z.string()
     }))
@@ -716,7 +856,11 @@ export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architectures: z.array(z.enum(['amd64', 'arm64'])),
+        architectures: z.object({
+            amd64: z.boolean(),
+            arm64: z.boolean(),
+            is_all: z.boolean()
+        }),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         changelog: z.string()
     })
@@ -750,7 +894,11 @@ export const zPostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = 
     path: z.object({
         packageName: z.string(),
         versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
-        arch: z.enum(['amd64', 'arm64'])
+        arch: z.enum([
+            'amd64',
+            'arm64',
+            'all'
+        ])
     }),
     query: z.optional(z.never())
 });
@@ -1171,22 +1319,26 @@ export const zGetAdminPackagesResponse = z.object({
         homepage_url: z.string(),
         requires_patching: z.boolean(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        latest_stable_release_amd64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_stable_release_arm64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_testing_release_amd64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_testing_release_arm64: z.union([
-            z.string(),
-            z.null()
-        ])
+        latest_stable_release: z.object({
+            amd64: z.union([
+                z.string(),
+                z.null()
+            ]),
+            arm64: z.union([
+                z.string(),
+                z.null()
+            ])
+        }),
+        latest_testing_release: z.object({
+            amd64: z.union([
+                z.string(),
+                z.null()
+            ]),
+            arm64: z.union([
+                z.string(),
+                z.null()
+            ])
+        })
     }))
 });
 
@@ -1263,22 +1415,26 @@ export const zGetAdminPackagesPackageNameResponse = z.object({
         homepage_url: z.string(),
         requires_patching: z.boolean(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        latest_stable_release_amd64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_stable_release_arm64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_testing_release_amd64: z.union([
-            z.string(),
-            z.null()
-        ]),
-        latest_testing_release_arm64: z.union([
-            z.string(),
-            z.null()
-        ])
+        latest_stable_release: z.object({
+            amd64: z.union([
+                z.string(),
+                z.null()
+            ]),
+            arm64: z.union([
+                z.string(),
+                z.null()
+            ])
+        }),
+        latest_testing_release: z.object({
+            amd64: z.union([
+                z.string(),
+                z.null()
+            ]),
+            arm64: z.union([
+                z.string(),
+                z.null()
+            ])
+        })
     })
 });
 
@@ -1322,7 +1478,11 @@ export const zGetAdminPackagesPackageNameReleasesResponse = z.object({
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architectures: z.array(z.enum(['amd64', 'arm64'])),
+        architectures: z.object({
+            amd64: z.boolean(),
+            arm64: z.boolean(),
+            is_all: z.boolean()
+        }),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         changelog: z.string()
     }))
@@ -1387,7 +1547,11 @@ export const zGetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse =
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architectures: z.array(z.enum(['amd64', 'arm64'])),
+        architectures: z.object({
+            amd64: z.boolean(),
+            arm64: z.boolean(),
+            is_all: z.boolean()
+        }),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         changelog: z.string()
     })
@@ -1421,7 +1585,11 @@ export const zPostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData 
     path: z.object({
         packageName: z.string(),
         versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
-        arch: z.enum(['amd64', 'arm64'])
+        arch: z.enum([
+            'amd64',
+            'arm64',
+            'all'
+        ])
     }),
     query: z.optional(z.never())
 });

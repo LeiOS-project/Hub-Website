@@ -138,9 +138,17 @@ const architecturesLists: { key: Architecture; label: string; icon: string }[] =
     ];
 
 // Computed to check which architectures already have uploads
-const uploadedArchitectures = computed<Architecture[]>(() => {
-    if (pkg_release.isNew) return [];
-    return (pkg_release_data.value as DevPackageRelease).architectures || [];
+const uploadedArchitectures = computed(() => {
+    if (pkg_release.isNew) return {
+        amd64: false,
+        arm64: false,
+        all: false
+    };
+    return  {
+        amd64: (pkg_release_data.value as DevPackageRelease).architectures.amd64 ? true : false,
+        arm64: (pkg_release_data.value as DevPackageRelease).architectures.arm64 ? true : false,
+        all: (pkg_release_data.value as DevPackageRelease).architectures.is_all ? true : false
+    };
 });
 
 type UploadState = {
@@ -150,12 +158,13 @@ type UploadState = {
 };
 
 // File upload state per architecture
-const uploadStates = reactive<Record<Architecture, UploadState>>({
+const uploadStates = reactive<Record<Architecture | "all", UploadState>>({
     amd64: { file: null, uploading: false, dragOver: false },
     arm64: { file: null, uploading: false, dragOver: false },
+    all:   { file: null, uploading: false, dragOver: false }
 });
 
-async function uploadDebFile(arch: Architecture) {
+async function uploadDebFile(arch: Architecture | "all") {
     const file = uploadStates[arch].file;
     if (!file) return;
 
@@ -178,10 +187,14 @@ async function uploadDebFile(arch: Architecture) {
 
         if (result.success) {
             // Update the architectures list
-            if (!uploadedArchitectures.value.includes(arch)) {
-                (
-                    pkg_release_data.value as DevPackageRelease
-                ).architectures.push(arch);
+            if (!(uploadedArchitectures.value)[arch]) {
+                if (arch === "all") {
+                    (pkg_release_data.value as DevPackageRelease).architectures["amd64"] = true;
+                    (pkg_release_data.value as DevPackageRelease).architectures["arm64"] = true;
+                    (pkg_release_data.value as DevPackageRelease).architectures["is_all"] = true;
+                } else {
+                    (pkg_release_data.value as DevPackageRelease).architectures[arch] = true;
+                }
             }
 
             uploadStates[arch].file = null;
@@ -411,7 +424,7 @@ function formatFileSize(bytes: number): string {
                         </div>
                         <div>
                             <span
-                                v-if="uploadedArchitectures.includes(arch.key)"
+                                v-if="uploadedArchitectures[arch.key]"
                                 class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                             >
                                 <UIcon
@@ -437,7 +450,7 @@ function formatFileSize(bytes: number): string {
                     <div class="p-4">
                         <!-- Already Uploaded State -->
                         <div
-                            v-if="uploadedArchitectures.includes(arch.key)"
+                            v-if="uploadedArchitectures[arch.key]"
                             class="flex items-center justify-between p-4 rounded-lg bg-emerald-950/30 border border-emerald-900/30"
                         >
                             <div class="flex items-center gap-3">

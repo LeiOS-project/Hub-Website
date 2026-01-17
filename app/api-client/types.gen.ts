@@ -30,10 +30,14 @@ export type GetPublicPackagesResponses = {
             homepage_url: string;
             requires_patching: boolean;
             created_at: number;
-            latest_stable_release_amd64: string | null;
-            latest_stable_release_arm64: string | null;
-            latest_testing_release_amd64: string | null;
-            latest_testing_release_arm64: string | null;
+            latest_stable_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
+            latest_testing_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
         }>;
     };
 };
@@ -84,10 +88,14 @@ export type GetPublicPackagesPackageNameResponses = {
                 homepage_url: string;
                 requires_patching: boolean;
                 created_at: number;
-                latest_stable_release_amd64: string | null;
-                latest_stable_release_arm64: string | null;
-                latest_testing_release_amd64: string | null;
-                latest_testing_release_arm64: string | null;
+                latest_stable_release: {
+                    amd64: string | null;
+                    arm64: string | null;
+                };
+                latest_testing_release: {
+                    amd64: string | null;
+                    arm64: string | null;
+                };
             };
             releases: {
                 'leios-archive': {
@@ -96,7 +104,7 @@ export type GetPublicPackagesPackageNameResponses = {
                             name: string;
                             key: string;
                             versionWithLeiosPatch: string;
-                            architecture: 'amd64' | 'arm64';
+                            architecture: 'amd64' | 'arm64' | 'all';
                             maintainer: string;
                             description: string;
                         };
@@ -104,7 +112,15 @@ export type GetPublicPackagesPackageNameResponses = {
                             name: string;
                             key: string;
                             versionWithLeiosPatch: string;
-                            architecture: 'amd64' | 'arm64';
+                            architecture: 'amd64' | 'arm64' | 'all';
+                            maintainer: string;
+                            description: string;
+                        };
+                        all?: {
+                            name: string;
+                            key: string;
+                            versionWithLeiosPatch: string;
+                            architecture: 'amd64' | 'arm64' | 'all';
                             maintainer: string;
                             description: string;
                         };
@@ -116,7 +132,7 @@ export type GetPublicPackagesPackageNameResponses = {
                             name: string;
                             key: string;
                             versionWithLeiosPatch: string;
-                            architecture: 'amd64' | 'arm64';
+                            architecture: 'amd64' | 'arm64' | 'all';
                             maintainer: string;
                             description: string;
                         };
@@ -124,7 +140,15 @@ export type GetPublicPackagesPackageNameResponses = {
                             name: string;
                             key: string;
                             versionWithLeiosPatch: string;
-                            architecture: 'amd64' | 'arm64';
+                            architecture: 'amd64' | 'arm64' | 'all';
+                            maintainer: string;
+                            description: string;
+                        };
+                        all?: {
+                            name: string;
+                            key: string;
+                            versionWithLeiosPatch: string;
+                            architecture: 'amd64' | 'arm64' | 'all';
                             maintainer: string;
                             description: string;
                         };
@@ -136,7 +160,7 @@ export type GetPublicPackagesPackageNameResponses = {
                             name: string;
                             key: string;
                             versionWithLeiosPatch: string;
-                            architecture: 'amd64' | 'arm64';
+                            architecture: 'amd64' | 'arm64' | 'all';
                             maintainer: string;
                             description: string;
                         };
@@ -144,7 +168,15 @@ export type GetPublicPackagesPackageNameResponses = {
                             name: string;
                             key: string;
                             versionWithLeiosPatch: string;
-                            architecture: 'amd64' | 'arm64';
+                            architecture: 'amd64' | 'arm64' | 'all';
+                            maintainer: string;
+                            description: string;
+                        };
+                        all?: {
+                            name: string;
+                            key: string;
+                            versionWithLeiosPatch: string;
+                            architecture: 'amd64' | 'arm64' | 'all';
                             maintainer: string;
                             description: string;
                         };
@@ -196,7 +228,7 @@ export type GetPublicPackagesPackageNameReleasesResponses = {
                         name: string;
                         key: string;
                         versionWithLeiosPatch: string;
-                        architecture: 'amd64' | 'arm64';
+                        architecture: 'amd64' | 'arm64' | 'all';
                         maintainer: string;
                         description: string;
                     };
@@ -204,7 +236,15 @@ export type GetPublicPackagesPackageNameReleasesResponses = {
                         name: string;
                         key: string;
                         versionWithLeiosPatch: string;
-                        architecture: 'amd64' | 'arm64';
+                        architecture: 'amd64' | 'arm64' | 'all';
+                        maintainer: string;
+                        description: string;
+                    };
+                    all?: {
+                        name: string;
+                        key: string;
+                        versionWithLeiosPatch: string;
+                        architecture: 'amd64' | 'arm64' | 'all';
                         maintainer: string;
                         description: string;
                     };
@@ -216,7 +256,7 @@ export type GetPublicPackagesPackageNameReleasesResponses = {
                         name: string;
                         key: string;
                         versionWithLeiosPatch: string;
-                        architecture: 'amd64' | 'arm64';
+                        architecture: 'amd64' | 'arm64' | 'all';
                         maintainer: string;
                         description: string;
                     };
@@ -224,7 +264,15 @@ export type GetPublicPackagesPackageNameReleasesResponses = {
                         name: string;
                         key: string;
                         versionWithLeiosPatch: string;
-                        architecture: 'amd64' | 'arm64';
+                        architecture: 'amd64' | 'arm64' | 'all';
+                        maintainer: string;
+                        description: string;
+                    };
+                    all?: {
+                        name: string;
+                        key: string;
+                        versionWithLeiosPatch: string;
+                        architecture: 'amd64' | 'arm64' | 'all';
                         maintainer: string;
                         description: string;
                     };
@@ -236,7 +284,7 @@ export type GetPublicPackagesPackageNameReleasesResponses = {
                         name: string;
                         key: string;
                         versionWithLeiosPatch: string;
-                        architecture: 'amd64' | 'arm64';
+                        architecture: 'amd64' | 'arm64' | 'all';
                         maintainer: string;
                         description: string;
                     };
@@ -244,7 +292,15 @@ export type GetPublicPackagesPackageNameReleasesResponses = {
                         name: string;
                         key: string;
                         versionWithLeiosPatch: string;
-                        architecture: 'amd64' | 'arm64';
+                        architecture: 'amd64' | 'arm64' | 'all';
+                        maintainer: string;
+                        description: string;
+                    };
+                    all?: {
+                        name: string;
+                        key: string;
+                        versionWithLeiosPatch: string;
+                        architecture: 'amd64' | 'arm64' | 'all';
                         maintainer: string;
                         description: string;
                     };
@@ -780,10 +836,14 @@ export type GetDevPackagesResponses = {
             homepage_url: string;
             requires_patching: boolean;
             created_at: number;
-            latest_stable_release_amd64: string | null;
-            latest_stable_release_arm64: string | null;
-            latest_testing_release_amd64: string | null;
-            latest_testing_release_arm64: string | null;
+            latest_stable_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
+            latest_testing_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
         }>;
     };
 };
@@ -878,10 +938,14 @@ export type GetDevPackagesPackageNameResponses = {
             homepage_url: string;
             requires_patching: boolean;
             created_at: number;
-            latest_stable_release_amd64: string | null;
-            latest_stable_release_arm64: string | null;
-            latest_testing_release_amd64: string | null;
-            latest_testing_release_arm64: string | null;
+            latest_stable_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
+            latest_testing_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
         };
     };
 };
@@ -964,7 +1028,11 @@ export type GetDevPackagesPackageNameReleasesResponses = {
         data: Array<{
             id: number;
             versionWithLeiosPatch: string;
-            architectures: Array<'amd64' | 'arm64'>;
+            architectures: {
+                amd64: boolean;
+                arm64: boolean;
+                is_all: boolean;
+            };
             created_at: number;
             changelog: string;
         }>;
@@ -1054,7 +1122,11 @@ export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
         data: {
             id: number;
             versionWithLeiosPatch: string;
-            architectures: Array<'amd64' | 'arm64'>;
+            architectures: {
+                amd64: boolean;
+                arm64: boolean;
+                is_all: boolean;
+            };
             created_at: number;
             changelog: string;
         };
@@ -1117,7 +1189,7 @@ export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
     path: {
         packageName: string;
         versionWithLeiosPatch: string;
-        arch: 'amd64' | 'arm64';
+        arch: 'amd64' | 'arm64' | 'all';
     };
     query?: never;
     url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}/{arch}';
@@ -1716,10 +1788,14 @@ export type GetAdminPackagesResponses = {
             homepage_url: string;
             requires_patching: boolean;
             created_at: number;
-            latest_stable_release_amd64: string | null;
-            latest_stable_release_arm64: string | null;
-            latest_testing_release_amd64: string | null;
-            latest_testing_release_arm64: string | null;
+            latest_stable_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
+            latest_testing_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
         }>;
     };
 };
@@ -1859,10 +1935,14 @@ export type GetAdminPackagesPackageNameResponses = {
             homepage_url: string;
             requires_patching: boolean;
             created_at: number;
-            latest_stable_release_amd64: string | null;
-            latest_stable_release_arm64: string | null;
-            latest_testing_release_amd64: string | null;
-            latest_testing_release_arm64: string | null;
+            latest_stable_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
+            latest_testing_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
         };
     };
 };
@@ -1945,7 +2025,11 @@ export type GetAdminPackagesPackageNameReleasesResponses = {
         data: Array<{
             id: number;
             versionWithLeiosPatch: string;
-            architectures: Array<'amd64' | 'arm64'>;
+            architectures: {
+                amd64: boolean;
+                arm64: boolean;
+                is_all: boolean;
+            };
             created_at: number;
             changelog: string;
         }>;
@@ -2072,7 +2156,11 @@ export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = 
         data: {
             id: number;
             versionWithLeiosPatch: string;
-            architectures: Array<'amd64' | 'arm64'>;
+            architectures: {
+                amd64: boolean;
+                arm64: boolean;
+                is_all: boolean;
+            };
             created_at: number;
             changelog: string;
         };
@@ -2135,7 +2223,7 @@ export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData = 
     path: {
         packageName: string;
         versionWithLeiosPatch: string;
-        arch: 'amd64' | 'arm64';
+        arch: 'amd64' | 'arm64' | 'all';
     };
     query?: never;
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}/{arch}';
