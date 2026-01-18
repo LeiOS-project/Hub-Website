@@ -371,7 +371,7 @@ function formatFileSize(bytes: number): string {
 
                     <template #content="{ item }">
                         
-                        <div class="p-6 space-y-6">
+                        <div class="space-y-2">
 
                             <div v-for="arch in architecturesLists.filter(a => {
                                 console.log(item.label, a.key);
