@@ -370,148 +370,152 @@ function formatFileSize(bytes: number): string {
                 >
 
                     <template #content="{ item }">
+                        
+                        <div class="p-6 space-y-6">
 
-                        <div v-for="arch in architecturesLists.filter(a => {
-                            console.log(item.label, a.key);
-                            if (item.label === 'Per Architecture') {
-                                return a.key !== 'all';
-                            } else {
-                                return a.key === 'all';
-                            }
-                        })" :key="arch.key"
-                            class="rounded-lg border border-slate-700 bg-slate-800/40 overflow-hidden">
-                            <!-- Architecture Header -->
-                            <div class="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <UIcon :name="arch.icon" class="w-5 h-5 text-slate-400" />
-                                    <span class="font-medium text-white">
-                                        {{ arch.label }}</span>
-                                </div>
-                                <div>
-                                    <span v-if="uploadedArchitectures[arch.key]"
-                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                        <UIcon name="i-lucide-check-circle" class="w-3.5 h-3.5" />
-                                        Uploaded
-                                    </span>
-                                    <span v-else
-                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                                        <UIcon name="i-lucide-alert-circle" class="w-3.5 h-3.5" />
-                                        Missing
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Upload Area -->
-                            <div class="p-4">
-                                <!-- Already Uploaded State -->
-                                <div v-if="uploadedArchitectures[arch.key]"
-                                    class="flex items-center justify-between p-4 rounded-lg bg-emerald-950/30 border border-emerald-900/30">
+                            <div v-for="arch in architecturesLists.filter(a => {
+                                console.log(item.label, a.key);
+                                if (item.label === 'Per Architecture') {
+                                    return a.key !== 'all';
+                                } else {
+                                    return a.key === 'all';
+                                }
+                            })" :key="arch.key"
+                                class="rounded-lg border border-slate-700 bg-slate-800/40 overflow-hidden">
+                                <!-- Architecture Header -->
+                                <div class="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
                                     <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                                            <UIcon name="i-lucide-file-archive" class="w-5 h-5 text-emerald-400" />
-                                        </div>
-                                        <div>
-                                            <p class="text-sm font-medium text-white">
-                                                {{ pkg_data.name }}_{{
-                                                    pkg_release_data.versionWithLeiosPatch
-                                                }}_{{ arch.key }}.deb
-                                            </p>
-                                            <p class="text-xs text-slate-400">
-                                                Package file uploaded and available in
-                                                testing repository
-                                            </p>
-                                        </div>
+                                        <UIcon :name="arch.icon" class="w-5 h-5 text-slate-400" />
+                                        <span class="font-medium text-white">
+                                            {{ arch.label }}</span>
                                     </div>
-                                    <UIcon name="i-lucide-check" class="w-5 h-5 text-emerald-400" />
+                                    <div>
+                                        <span v-if="uploadedArchitectures[arch.key]"
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                            <UIcon name="i-lucide-check-circle" class="w-3.5 h-3.5" />
+                                            Uploaded
+                                        </span>
+                                        <span v-else
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                            <UIcon name="i-lucide-alert-circle" class="w-3.5 h-3.5" />
+                                            Missing
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <!-- File Upload with UFileUpload -->
-                                <div v-else class="space-y-3">
-                                    <UFileUpload v-if="!uploadStates[arch.key].file"
-                                        :model-value="uploadStates[arch.key].file" @update:model-value="
-                                            onFileChange(arch.key, $event)
-                                            " accept=".deb" color="neutral" :disabled="uploadStates[arch.key].uploading"
-                                        :preview="true" layout="list" file-icon="i-lucide-file-archive"
-                                        class="w-full min-h-32" @dragover.prevent="
-                                            uploadStates[arch.key].dragOver = true;
-                                        console.log(
-                                            'dragover',
-                                            uploadStates[arch.key].dragOver
-                                        );
-                                        " @dragleave.prevent="
-                                            uploadStates[arch.key].dragOver = false;
-                                        console.log(
-                                            'dragover',
-                                            uploadStates[arch.key].dragOver
-                                        );
-                                        " :ui="{
-                                            base: 'relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer data-[dragging=true]:border-sky-500 data-[dragging=true]:bg-sky-500/10 data-[dragging=false]:border-slate-700 data-[dragging=false]:hover:border-slate-600 data-[dragging=false]:bg-slate-800 data-[dragging=false]:hover:bg-slate-800/50',
-                                            wrapper: 'py-0',
-                                            label: 'text-slate-300',
-                                            description: 'text-slate-500',
-                                        }">
-                                        <template #leading>
-                                            <div class="w-12 h-12 rounded-full flex items-center justify-center transition-colors"
-                                                :class="uploadStates[arch.key].dragOver
-                                                        ? 'bg-sky-500/20'
-                                                        : 'bg-slate-700'
-                                                    ">
-                                                <UIcon name="i-lucide-upload-cloud" class="w-6 h-6 transition-colors"
-                                                    :class="uploadStates[arch.key].dragOver
-                                                            ? 'text-sky-400'
-                                                            : 'text-slate-400'
-                                                        " />
-                                            </div>
-                                        </template>
-
-                                        <template #label>
-                                            <span class="text-sm text-white">
-                                                <span class="text-sky-400 font-medium">Click to upload</span>
-                                                or drag and drop
-                                            </span>
-                                        </template>
-
-                                        <template #description>
-                                            <span class="text-xs text-slate-500 mt-1">
-                                                Select the .deb file for
-                                                {{ arch.label }}.
-                                            </span>
-                                        </template>
-                                    </UFileUpload>
-                                    <!-- Upload Button -->
-                                </div>
-                                <div v-if="uploadStates[arch.key].file" class="space-y-3">
-                                    <div
-                                        class="flex items-center justify-between p-4 rounded-lg bg-sky-950/30 border border-sky-900/30">
+                                <!-- Upload Area -->
+                                <div class="p-4">
+                                    <!-- Already Uploaded State -->
+                                    <div v-if="uploadedArchitectures[arch.key]"
+                                        class="flex items-center justify-between p-4 rounded-lg bg-emerald-950/30 border border-emerald-900/30">
                                         <div class="flex items-center gap-3">
                                             <div
-                                                class="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center">
-                                                <UIcon name="i-lucide-file-archive" class="w-5 h-5 text-sky-400" />
+                                                class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                                                <UIcon name="i-lucide-file-archive" class="w-5 h-5 text-emerald-400" />
                                             </div>
                                             <div>
                                                 <p class="text-sm font-medium text-white">
-                                                    {{ uploadStates[arch.key].file!.name }}
+                                                    {{ pkg_data.name }}_{{
+                                                        pkg_release_data.versionWithLeiosPatch
+                                                    }}_{{ arch.key }}.deb
                                                 </p>
                                                 <p class="text-xs text-slate-400">
-                                                    {{ formatFileSize(uploadStates[arch.key].file!.size) }}
+                                                    Package file uploaded and available in
+                                                    testing repository
                                                 </p>
                                             </div>
                                         </div>
-                                        <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="sm"
-                                            :disabled="uploadStates[arch.key].uploading"
-                                            @click="uploadStates[arch.key].file = null" />
+                                        <UIcon name="i-lucide-check" class="w-5 h-5 text-emerald-400" />
                                     </div>
-                                    <div class="flex justify-end gap-2">
-                                        <UButton label="Cancel" color="neutral" variant="ghost"
-                                            :disabled="uploadStates[arch.key].uploading"
-                                            @click="uploadStates[arch.key].file = null" />
-                                        <UButton label="Upload" color="primary" icon="i-lucide-upload"
-                                            :loading="uploadStates[arch.key].uploading"
-                                            @click="uploadDebFile(arch.key)" />
+
+                                    <!-- File Upload with UFileUpload -->
+                                    <div v-else class="space-y-3">
+                                        <UFileUpload v-if="!uploadStates[arch.key].file"
+                                            :model-value="uploadStates[arch.key].file" @update:model-value="
+                                                onFileChange(arch.key, $event)
+                                                " accept=".deb" color="neutral" :disabled="uploadStates[arch.key].uploading"
+                                            :preview="true" layout="list" file-icon="i-lucide-file-archive"
+                                            class="w-full min-h-32" @dragover.prevent="
+                                                uploadStates[arch.key].dragOver = true;
+                                            console.log(
+                                                'dragover',
+                                                uploadStates[arch.key].dragOver
+                                            );
+                                            " @dragleave.prevent="
+                                                uploadStates[arch.key].dragOver = false;
+                                            console.log(
+                                                'dragover',
+                                                uploadStates[arch.key].dragOver
+                                            );
+                                            " :ui="{
+                                                base: 'relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer data-[dragging=true]:border-sky-500 data-[dragging=true]:bg-sky-500/10 data-[dragging=false]:border-slate-700 data-[dragging=false]:hover:border-slate-600 data-[dragging=false]:bg-slate-800 data-[dragging=false]:hover:bg-slate-800/50',
+                                                wrapper: 'py-0',
+                                                label: 'text-slate-300',
+                                                description: 'text-slate-500',
+                                            }">
+                                            <template #leading>
+                                                <div class="w-12 h-12 rounded-full flex items-center justify-center transition-colors"
+                                                    :class="uploadStates[arch.key].dragOver
+                                                            ? 'bg-sky-500/20'
+                                                            : 'bg-slate-700'
+                                                        ">
+                                                    <UIcon name="i-lucide-upload-cloud" class="w-6 h-6 transition-colors"
+                                                        :class="uploadStates[arch.key].dragOver
+                                                                ? 'text-sky-400'
+                                                                : 'text-slate-400'
+                                                            " />
+                                                </div>
+                                            </template>
+
+                                            <template #label>
+                                                <span class="text-sm text-white">
+                                                    <span class="text-sky-400 font-medium">Click to upload</span>
+                                                    or drag and drop
+                                                </span>
+                                            </template>
+
+                                            <template #description>
+                                                <span class="text-xs text-slate-500 mt-1">
+                                                    Select the .deb file for
+                                                    {{ arch.label }}.
+                                                </span>
+                                            </template>
+                                        </UFileUpload>
+                                        <!-- Upload Button -->
+                                    </div>
+                                    <div v-if="uploadStates[arch.key].file" class="space-y-3">
+                                        <div
+                                            class="flex items-center justify-between p-4 rounded-lg bg-sky-950/30 border border-sky-900/30">
+                                            <div class="flex items-center gap-3">
+                                                <div
+                                                    class="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center">
+                                                    <UIcon name="i-lucide-file-archive" class="w-5 h-5 text-sky-400" />
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-medium text-white">
+                                                        {{ uploadStates[arch.key].file!.name }}
+                                                    </p>
+                                                    <p class="text-xs text-slate-400">
+                                                        {{ formatFileSize(uploadStates[arch.key].file!.size) }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="sm"
+                                                :disabled="uploadStates[arch.key].uploading"
+                                                @click="uploadStates[arch.key].file = null" />
+                                        </div>
+                                        <div class="flex justify-end gap-2">
+                                            <UButton label="Cancel" color="neutral" variant="ghost"
+                                                :disabled="uploadStates[arch.key].uploading"
+                                                @click="uploadStates[arch.key].file = null" />
+                                            <UButton label="Upload" color="primary" icon="i-lucide-upload"
+                                                :loading="uploadStates[arch.key].uploading"
+                                                @click="uploadDebFile(arch.key)" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                         
                     </template>
