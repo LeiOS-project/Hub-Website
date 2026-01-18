@@ -198,25 +198,6 @@ async function uploadDebFile(arch: Architecture | "all") {
         );
 
         if (result.success) {
-            // Update the architectures list
-            if (!(uploadedArchitectures.value)[arch]) {
-
-                const data = pkg_release_data.value as DevPackageRelease;
-
-                if (arch === "all") {
-                    data.architectures = {
-                        ...data.architectures,
-                        amd64: true,
-                        arm64: true,
-                        is_all: true
-                    };
-                } else {
-                    data.architectures = {
-                        ...data.architectures,
-                        [arch]: true
-                    };
-                }
-            }
 
             uploadStates[arch].file = null;
 
@@ -226,6 +207,9 @@ async function uploadDebFile(arch: Architecture | "all") {
                 icon: "i-lucide-check-circle",
                 color: "success",
             });
+
+            await pkg_release.refresh();
+
         } else {
             throw new Error(result.message || "Failed to upload file");
         }
@@ -379,8 +363,8 @@ function formatFileSize(bytes: number): string {
 
                 <UTabs
                     :items='[
-                        { slot: "per-arch",  label: "Per Architecture" },
-                        { slot: "universal", label: "Universal" }
+                        { label: "Per Architecture" as const },
+                        { label: "Universal" as const }
                     ]'
                     color="primary"
                 >
@@ -388,8 +372,8 @@ function formatFileSize(bytes: number): string {
                     <template #content="{ item }">
 
                         <div v-for="arch in architecturesLists.filter(a => {
-                            console.log(item.slot, a.key);
-                            if (item.slot === 'per-arch') {
+                            console.log(item.label, a.key);
+                            if (item.label === 'Per Architecture') {
                                 return a.key !== 'all';
                             } else {
                                 return a.key === 'all';
