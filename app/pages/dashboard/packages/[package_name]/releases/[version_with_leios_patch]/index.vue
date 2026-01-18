@@ -145,13 +145,6 @@ const architecturesLists: { key: Architecture | "all"; label: string; icon: stri
     }
 ];
 
-const getFilteredArches = (slot: string) => {
-    console.log('Filtering for slot:', slot); // This will confirm it's running
-    return architecturesLists.filter(a => {
-        return slot === 'per-arch' ? a.key !== 'all' : a.key === 'all';
-    });
-};
-
 // Computed to check which architectures already have uploads
 const uploadedArchitectures = computed(() => {
 
@@ -384,13 +377,24 @@ function formatFileSize(bytes: number): string {
             <div class="p-6 space-y-6">
                 <!-- Architecture Upload Sections -->
 
-                <UTabs :items='[
-                    { slot: "per-arch", label: "Per Architecture" },
-                    { slot: "universal", label: "Universal" }
-                ]' color="primary">
+                <UTabs
+                    :items='[
+                        { slot: "per-arch",  label: "Per Architecture" },
+                        { slot: "universal", label: "Universal" }
+                    ]'
+                    color="primary"
+                >
 
                     <template #content="{ item }">
-                        <div v-for="arch in getFilteredArches(item.slot)" :key="arch.key"
+
+                        <div v-for="arch in architecturesLists.filter(a => {
+                            console.log(item.slot, a.key);
+                            if (item.slot === 'per-arch') {
+                                return a.key !== 'all';
+                            } else {
+                                return a.key === 'all';
+                            }
+                        })" :key="arch.key"
                             class="rounded-lg border border-slate-700 bg-slate-800/40 overflow-hidden">
                             <!-- Architecture Header -->
                             <div class="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
@@ -525,7 +529,9 @@ function formatFileSize(bytes: number): string {
                                 </div>
                             </div>
                         </div>
+                        
                     </template>
+
                 </UTabs>
 
                 <!-- Info Box -->
