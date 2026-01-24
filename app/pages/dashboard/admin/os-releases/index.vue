@@ -131,11 +131,13 @@ const publishingStatusOptions = [
                             {{ row.original.version }}
                         </NuxtLink>
                     </template>
+
                     <template #created_at-cell="{ row }">
                         <span class="text-sm">
                             {{ new Date(row.original.created_at).toLocaleString() }}
                         </span>
                     </template>
+
                     <template #publishing_status-cell="{ row }">
                         <UBadge
                             :color="getPublishingStatusColor(row.original.publishing_status) || 'neutral'"
@@ -145,6 +147,7 @@ const publishingStatusOptions = [
                             {{ row.original.publishing_status || "Unknown" }}
                         </UBadge>
                     </template>
+                    
                     <template #published_at-cell="{ row }">
                         <span class="text-sm">{{
                                 (row.original.published_at && row.original.publishing_status === 'completed')

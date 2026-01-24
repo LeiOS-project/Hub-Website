@@ -108,12 +108,10 @@ async function onFormSubmit() {
 }
 
 
-const deleteLoading = ref(false);
 const deleteConfirmOpen = ref(false);
 
 async function onDeleteOSRelease() {
 
-	deleteLoading.value = true;
 
     toast.add({
         title: 'OS Release deletion not implemented',
@@ -122,7 +120,6 @@ async function onDeleteOSRelease() {
         color: 'warning'
     });
 
-    deleteLoading.value = false;
 	deleteConfirmOpen.value = false;
 
 	// try {
@@ -328,9 +325,9 @@ const headerTexts = computed(() => {
 			v-if="!os_release.isNew"
 			title="Delete OS Release"
 			warning-text="All the OS release data including packages, releases, and related information will be permanently deleted. This action cannot be reversed."
-			:loading="deleteLoading"
 			v-model:open="deleteConfirmOpen"
 			:onDelete="onDeleteOSRelease"
+			:prevent-auto-close=true
 		></DashboardDeleteModal>
 		<!-- <DashboardModal
 			v-if="!os_release.isNew"

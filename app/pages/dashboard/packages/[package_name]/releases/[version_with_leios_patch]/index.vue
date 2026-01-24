@@ -107,11 +107,9 @@ async function onFormSubmit() {
     }
 }
 
-const deleteLoading = ref(false);
 const deleteConfirmOpen = ref(false);
 
 async function onDeletePackage() {
-    deleteLoading.value = true;
 
     toast.add({
         title: "Package release deletion is not yet implemented.",
@@ -120,7 +118,6 @@ async function onDeletePackage() {
         color: "info",
     });
 
-    deleteLoading.value = false;
     deleteConfirmOpen.value = false;
 }
 
@@ -576,9 +573,13 @@ function formatFileSize(bytes: number): string {
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <DashboardDeleteModal v-if="!pkg_release.isNew" title="Delete Package Release"
+        <DashboardDeleteModal
+            v-if="!pkg_release.isNew"
+            title="Delete Package Release"
             warning-text="All data associated with this package release and related information will be permanently deleted. This action cannot be reversed."
-            :loading="deleteLoading" v-model:open="deleteConfirmOpen" :onDelete="onDeletePackage">
-        </DashboardDeleteModal>
+            v-model:open="deleteConfirmOpen"
+            :onDelete="onDeletePackage"
+            :prevent-auto-close=true
+        />
     </div>
 </template>

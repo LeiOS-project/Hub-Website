@@ -103,12 +103,9 @@ async function onFormSubmit() {
     }
 }
 
-const deleteLoading = ref(false);
 const deleteConfirmOpen = ref(false);
 
 async function onDeletePackage() {
-
-    deleteLoading.value = true;
 
     toast.add({
         title: "Package deletion is not yet implemented.",
@@ -117,7 +114,6 @@ async function onDeletePackage() {
         color: "info",
     });
 
-    deleteLoading.value = false;
 	deleteConfirmOpen.value = false;
 }
 </script>
@@ -325,9 +321,9 @@ async function onDeletePackage() {
             v-if="!pkg.isNew"
             title="Delete Package"
             warning-text="All data associated with this package and related information will be permanently deleted. This action cannot be reversed."
-            :loading="deleteLoading"
             v-model:open="deleteConfirmOpen"
             :onDelete="onDeletePackage"
+            :prevent-auto-close=true
         >
         </DashboardDeleteModal>
         <!-- <DashboardModal

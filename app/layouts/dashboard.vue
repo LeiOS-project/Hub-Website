@@ -26,6 +26,11 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             icon: "i-lucide-list-checks",
             to: "/dashboard/tasks",
         },
+        {
+            label: "API Keys",
+            icon: "i-lucide-key",
+            to: "/dashboard/apikeys",
+        },
     ];
 
     const settings: NavigationMenuItem[] = [

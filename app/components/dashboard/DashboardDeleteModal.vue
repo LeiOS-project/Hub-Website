@@ -3,13 +3,17 @@ import { ref, watch } from 'vue';
 
 const confirmText = ref("");
 
-const props = defineProps<{
+interface Props {
     title: string;
     warningText: string;
-    loading: boolean;
     open: boolean;
+    preventAutoClose?: boolean;
     onDelete: () => Promise<void> | void;
-}>();
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    preventAutoClose: false
+});
 
 const emit = defineEmits<{
     'update:open': [value: boolean];
@@ -21,6 +25,21 @@ watch(() => props.open, (newVal) => {
         confirmText.value = "";
     }
 });
+
+const loading = ref(false);
+
+async function onDeleteWrapper() {
+    loading.value = true;
+
+    await props.onDelete();
+
+    loading.value = false;
+
+    if (!props.preventAutoClose) {
+        emit('update:open', false);
+    }
+}
+
 </script>
 
 <template>
@@ -65,7 +84,7 @@ watch(() => props.open, (newVal) => {
                     :loading="loading"
                     :disabled="confirmText !== 'DELETE'"
                     icon="i-lucide-trash-2"
-                    @click="onDelete"
+                    @click="onDeleteWrapper"
                 />
             </div>
         </div>
