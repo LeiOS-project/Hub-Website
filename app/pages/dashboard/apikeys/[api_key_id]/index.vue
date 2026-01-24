@@ -14,6 +14,7 @@ const apiKey_form_state = ref<NewAPIKey>({
     expires_at: apiKey_data.value.expires_at as any
 })
 
+const api_key_token_data = ref<string | null>(null);
 
 async function onFormSubmit() {
 
@@ -35,7 +36,7 @@ async function onFormSubmit() {
 					description: 'The API Key has been successfully created.',
 					icon: 'i-lucide-check',
 					color: 'success'
-				})
+				});
 
 				// Redirect to the newly created ÁPI Key page
 				// navigateTo(`/dashboard/apikeys/${result.data?.id}`);
@@ -133,7 +134,14 @@ const headerTexts = computed(() => {
 			</div>
 			
 			<div class="p-6">
-				<UForm id="settings" class="divide-y divide-slate-800" :schema="apiKey_form_schema" :state="apiKey_form_state" @submit="onFormSubmit()">
+				<UForm
+                    id="settings"
+                    class="divide-y divide-slate-800"
+                    :schema="apiKey_form_schema"
+                    :state="apiKey_form_state"
+                    @submit="onFormSubmit()"
+                    :disabled="!apiKey.isNew"
+                >
 
 					<UFormField
                         name="description"

@@ -28,10 +28,37 @@ if (api_key_id === "new") {
     });
 
 } else {
-    error = createError({
-        statusCode: 404,
-        statusMessage: `API Key ${api_key_id} cannot be edited at this time.`
+    
+    const { data: result, refresh, loading } = await useAPIAsyncData(
+        `/account/apikeys/${api_key_id}`,
+        async () => {
+
+            const res = await useAPI((api) => api.getAccountApikeysApiKeyId({
+                path: {
+                    apiKeyID: api_key_id
+                }
+            }));
+
+            return res;
+        }
+    )
+
+    if (!result.value?.success || !result.value?.data) {
+        error = createError({
+            statusCode: result.value?.code || 500,
+            statusMessage: result.value?.message || 'Failed to load API Key data'
+        });
+    }
+
+    const data = computed(() => result.value?.data as APIKey);
+
+    useSubrouterInjectedData<APIKey, NewAPIKey>("package", true).provide({
+        data: data,
+        refresh,
+        loading,
+        isNew: false
     });
+
 }
 
 function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {

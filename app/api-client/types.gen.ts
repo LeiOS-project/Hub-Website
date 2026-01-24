@@ -810,6 +810,47 @@ export type DeleteAccountApikeysApiKeyIdResponses = {
 
 export type DeleteAccountApikeysApiKeyIdResponse = DeleteAccountApikeysApiKeyIdResponses[keyof DeleteAccountApikeysApiKeyIdResponses];
 
+export type GetAccountApikeysApiKeyIdData = {
+    body?: never;
+    path: {
+        apiKeyID: string;
+    };
+    query?: never;
+    url: '/account/apikeys/{apiKeyID}';
+};
+
+export type GetAccountApikeysApiKeyIdErrors = {
+    /**
+     * API key not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'API key not found';
+    };
+};
+
+export type GetAccountApikeysApiKeyIdError = GetAccountApikeysApiKeyIdErrors[keyof GetAccountApikeysApiKeyIdErrors];
+
+export type GetAccountApikeysApiKeyIdResponses = {
+    /**
+     * API key retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'API key retrieved successfully';
+        data: {
+            id: string;
+            description: string;
+            created_at: number;
+            expires_at: number | null;
+        };
+    };
+};
+
+export type GetAccountApikeysApiKeyIdResponse = GetAccountApikeysApiKeyIdResponses[keyof GetAccountApikeysApiKeyIdResponses];
+
 export type GetDevPackagesData = {
     body?: never;
     path?: never;

@@ -25,7 +25,7 @@ const apikeysTableColumns: TableColumn<APIKey>[] = [
 ];
 
 const apiKeys = await useAPIAsyncData<APIKey[]>(
-    '/user/apikeys',
+    '/account/apikeys',
     async () => {
         const res = await useAPI((api) => api.getAccountApikeys({}));
         if (!res.success) {
@@ -148,6 +148,15 @@ async function onDeleteApiKey() {
                         />
                     </template>
 
+
+                    <template #id-cell="{ row }">
+                        <NuxtLink
+                            :to="`/dashboard/apikeys/${row.original.id}`"
+                            class="font-medium text-sky-400 hover:underline"
+                        >
+                            {{ row.original.id }}
+                        </NuxtLink>
+                    </template>
                     
                     <template #description-cell="{ row }">
                         <span class="text-slate-400 line-clamp-1 max-w-xs">

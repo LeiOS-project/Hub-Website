@@ -620,7 +620,7 @@ export const zPostAccountApikeysResponse = z.object({
 export const zDeleteAccountApikeysApiKeyIdData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        apiKeyID: z.string()
+        apiKeyID: z.string().min(1).max(255)
     }),
     query: z.optional(z.never())
 });
@@ -633,6 +633,32 @@ export const zDeleteAccountApikeysApiKeyIdResponse = z.object({
     code: z.literal(200),
     message: z.literal('API key deleted successfully'),
     data: z.null()
+});
+
+export const zGetAccountApikeysApiKeyIdData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        apiKeyID: z.string().min(1).max(255)
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * API key retrieved successfully
+ */
+export const zGetAccountApikeysApiKeyIdResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('API key retrieved successfully'),
+    data: z.object({
+        id: z.string(),
+        description: z.string(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        expires_at: z.union([
+            z.int().gte(-9007199254740991).lte(9007199254740991),
+            z.null()
+        ])
+    })
 });
 
 export const zGetDevPackagesData = z.object({
