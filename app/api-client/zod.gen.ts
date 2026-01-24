@@ -960,7 +960,10 @@ export const zGetDevPackagesPackageNameStablePromotionRequestsResponse = z.objec
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('denied'),
             created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string()
+            admin_note: z.union([
+                z.string(),
+                z.null()
+            ])
         })
     ]))
 });
@@ -1651,7 +1654,10 @@ export const zGetAdminPackagesPackageNameStablePromotionRequestsResponse = z.obj
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('denied'),
             created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string()
+            admin_note: z.union([
+                z.string(),
+                z.null()
+            ])
         })
     ]))
 });

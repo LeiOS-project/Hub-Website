@@ -1277,7 +1277,7 @@ export type GetDevPackagesPackageNameStablePromotionRequestsResponses = {
             package_release_id: number;
             status: 'denied';
             created_at: number;
-            admin_note: string;
+            admin_note: string | null;
         }>;
     };
 };
@@ -2311,7 +2311,7 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsResponses = {
             package_release_id: number;
             status: 'denied';
             created_at: number;
-            admin_note: string;
+            admin_note: string | null;
         }>;
     };
 };
