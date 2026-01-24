@@ -70,7 +70,9 @@ async function onDeleteWrapper() {
                     class="w-full"
                 />
             </div>
+        </div>
 
+        <template #footer>
             <div class="flex justify-end gap-3 pt-2">
                 <UButton
                     label="Cancel"
@@ -87,6 +89,6 @@ async function onDeleteWrapper() {
                     @click="onDeleteWrapper"
                 />
             </div>
-        </div>
+        </template>
     </DashboardModal>
 </template>
