@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PostAccountApikeysResponses } from '~/api-client';
 import { zPostAccountApikeysData } from '~/api-client/zod.gen';
 
 
@@ -12,9 +13,9 @@ const apiKey_form_schema = apiKey.isNew ? zPostAccountApikeysData.shape.body : n
 const apiKey_form_state = ref<NewAPIKey>({
     description: apiKey_data.value.description,
     expires_at: apiKey_data.value.expires_at as any
-})
+});
 
-const api_key_token_data = ref<string | null>(null);
+const api_key_result_data = ref<PostAccountApikeysResponses["200"]["data"] | null>(null);
 
 async function onFormSubmit() {
 
@@ -38,8 +39,10 @@ async function onFormSubmit() {
 					color: 'success'
 				});
 
+				api_key_result_data.value = result.data 
+
 				// Redirect to the newly created ÁPI Key page
-				navigateTo(`/dashboard/apikeys/${result.data?.id}`);
+				// navigateTo(`/dashboard/apikeys/${result.data?.id}`);
 
 			} else {
 				throw new Error(result.message || 'Failed to create API Key');
@@ -128,6 +131,15 @@ async function onDeleteApiKey() {
             color: 'error'
         });
     }
+}
+
+async function onAPIKeyReveal() {
+	if (!api_key_result_data.value) return;
+
+	const id = api_key_result_data.value.id;
+	api_key_result_data.value = null;
+	
+	navigateTo(`/dashboard/apikeys/${id}`);
 }
 
 
@@ -307,6 +319,46 @@ const headerTexts = computed(() => {
             :prevent-auto-close=true
         >
         </DashboardDeleteModal>
+
+		<DashboardModal
+			:open="!!api_key_result_data?.token"
+			:title="'API Key Created Successfully'"
+			description="Make sure to copy your new API Key now. You won't be able to see it again!"
+			icon="i-lucide-check-circle"
+			icon-color="emerald"
+			@close="onAPIKeyReveal()"
+		>
+			<div class="space-y-4">
+				<div class="p-4 rounded-lg bg-red-950/50 border border-red-900/50">
+					<p class="text-sm text-red-300">
+						<strong>Warning:</strong>
+						The API Key will only be shown once. Make sure to copy and store it securely.
+					</p>
+				</div>
+
+				<div>
+					<label class="block text-sm font-medium text-slate-300 mb-2">
+						API Key
+					</label>
+					<UInput
+						:value="api_key_result_data?.token"
+						readonly
+						type="password"
+						class="w-full"
+					/>
+				</div>
+			</div>
+			<template #footer>
+				<div class="flex justify-end gap-3">
+					<UButton
+						label="Close"
+						color="neutral"
+						variant="ghost"
+						@click="onAPIKeyReveal()"
+					/>
+				</div>
+			</template>
+		</DashboardModal>
 
 	</div>
 </template>
