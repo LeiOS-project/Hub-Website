@@ -39,8 +39,8 @@ async function onFormSubmit() {
 				});
 
 				// Redirect to the newly created ÁPI Key page
-				// navigateTo(`/dashboard/apikeys/${result.data?.id}`);
-                navigateTo(`/dashboard/apikeys`);
+				navigateTo(`/dashboard/apikeys/${result.data?.id}`);
+
 			} else {
 				throw new Error(result.message || 'Failed to create API Key');
 			}
@@ -91,6 +91,45 @@ async function onFormSubmit() {
 	}
 	
 }
+
+
+const deleteConfirmOpen = ref(false);
+
+async function onDeleteApiKey() {
+
+    try {
+        const res = await useAPI((api) => api.deleteAccountApikeysApiKeyId({
+            path: {
+                apiKeyID: (apiKey_data as Ref<APIKey>).value.id
+            }
+        }));
+
+        if (res.success) {
+
+            toast.add({
+                title: 'API Key deleted',
+                description: 'The API Key has been successfully deleted.',
+                color: 'success'
+            });
+
+			deleteConfirmOpen.value = false;
+
+			await navigateTo('/dashboard/apikeys');
+
+        } else {
+            throw new Error(res.message || 'Failed to delete API Key.');
+        }
+
+    } catch (error: any) {
+        toast.add({
+            title: 'Failed to delete API Key',
+            description: error.message || 'An unknown error occurred.',
+            icon: 'i-lucide-alert-circle',
+            color: 'error'
+        });
+    }
+}
+
 
 const headerTexts = computed(() => {
     if (apiKey.isNew) {
@@ -171,6 +210,7 @@ const headerTexts = computed(() => {
                         }"
                     >
                         <USelect
+							v-if="apiKey.isNew"
                             v-model="apiKey_form_state.expires_at"
                             placeholder="Select expiration date"
                             class="w-full"
@@ -183,6 +223,11 @@ const headerTexts = computed(() => {
                                 { label: "No Expiration", value: null }
                             ]'
                         />
+						<UInput
+							v-else
+							:value="apiKey_data.expires_at ? new Date(apiKey_data.expires_at).toLocaleString() : 'Never'"
+							disabled
+						/>
                     </UFormField>
 
                     <div class="pt-4">
@@ -192,6 +237,7 @@ const headerTexts = computed(() => {
 							type="submit" 
 							:loading="apiKey_loading"
 							icon="i-lucide-save"
+							disabled
 						/>
 						<UButton v-else
 							label="Create API Key" 
@@ -205,6 +251,62 @@ const headerTexts = computed(() => {
 				</UForm>
 			</div>
 		</div>
+
+		<!-- Danger Zone Card -->
+        <div
+            v-if="!apiKey.isNew"
+            class="rounded-xl border border-red-900/50 bg-red-950/20 backdrop-blur-sm overflow-hidden"
+        >
+            <div class="px-6 py-4 border-b border-red-900/50">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center"
+                    >
+                        <UIcon
+                            name="i-lucide-alert-triangle"
+                            class="w-5 h-5 text-red-400"
+                        />
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-red-400">Danger Zone</h3>
+                        <p class="text-sm text-slate-400">
+                            Irreversible and destructive actions
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <div class="flex-1">
+                        <h4 class="font-medium text-white">
+                            Delete API Key
+                        </h4>
+                        <p class="text-sm text-slate-400 mt-1">
+                            Permanently delete this API Key
+                        </p>
+                    </div>
+                    <UButton
+                        label="Delete API Key"
+                        color="error"
+                        variant="soft"
+                        icon="i-lucide-trash-2"
+                        @click="deleteConfirmOpen = true"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <DashboardDeleteModal
+            v-if="!apiKey.isNew"
+            title="Delete API Key"
+            warning-text="All data associated with this API Key and related information will be permanently deleted. This action cannot be reversed."
+            v-model:open="deleteConfirmOpen"
+            @delete="onDeleteApiKey"
+            :prevent-auto-close=true
+        >
+        </DashboardDeleteModal>
 
 	</div>
 </template>
