@@ -590,7 +590,7 @@ export const zGetAccountApikeysResponse = z.object({
 
 export const zPostAccountApikeysData = z.object({
     body: z.optional(z.object({
-        description: z.string(),
+        description: z.string().min(1).max(255),
         expires_at: z.union([
             z.literal('7d'),
             z.literal('30d'),
