@@ -15,7 +15,8 @@ const apiKey_form_state = ref<NewAPIKey>({
     expires_at: apiKey_data.value.expires_at as any
 });
 
-const api_key_result_data = ref<PostAccountApikeysResponses["200"]["data"] | null>(null);
+const api_key_creation_result_data = ref<PostAccountApikeysResponses["200"]["data"] | null>(null);
+const api_key_creation_result_reveale_token = ref(false);
 
 async function onFormSubmit() {
 
@@ -39,7 +40,7 @@ async function onFormSubmit() {
 					color: 'success'
 				});
 
-				api_key_result_data.value = result.data 
+				api_key_creation_result_data.value = result.data 
 
 				// Redirect to the newly created ÁPI Key page
 				// navigateTo(`/dashboard/apikeys/${result.data?.id}`);
@@ -134,10 +135,10 @@ async function onDeleteApiKey() {
 }
 
 async function onAPIKeyReveal() {
-	if (!api_key_result_data.value) return;
+	if (!api_key_creation_result_data.value) return;
 
-	const id = api_key_result_data.value.id;
-	api_key_result_data.value = null;
+	const id = api_key_creation_result_data.value.id;
+	api_key_creation_result_data.value = null;
 	
 	navigateTo(`/dashboard/apikeys/${id}`);
 }
@@ -321,7 +322,7 @@ const headerTexts = computed(() => {
         </DashboardDeleteModal>
 
 		<DashboardModal
-			:open="!!api_key_result_data?.token"
+			:open="!!api_key_creation_result_data?.token"
 			:title="'API Key Created Successfully'"
 			description="Make sure to copy your new API Key now. You won't be able to see it again!"
 			icon="i-lucide-check-circle"
@@ -341,11 +342,31 @@ const headerTexts = computed(() => {
 						API Key
 					</label>
 					<UInput
-						:value="api_key_result_data?.token"
+						:value="api_key_creation_result_data?.token"
 						readonly
-						type="password"
+						:type="api_key_creation_result_reveale_token ? 'text' : 'password'"
 						class="w-full"
-					/>
+						:ui="{
+							trailing: 'pe-1'
+						}"
+					>
+						<template #trailing>
+							<UButton
+								color="neutral"
+								variant="link"
+								size="sm"
+								:icon="api_key_creation_result_reveale_token ?'i-lucide-eye-off' : 'i-lucide-eye'"
+								:aria-label="api_key_creation_result_reveale_token ? 'Hide password' : 'Show password'"
+								:aria-pressed="api_key_creation_result_reveale_token"
+								aria-controls="password"
+								autocomplete="new-password"
+								autocapitalize="off" 
+								autocorrect="off"
+								spellcheck="false"
+								@click="api_key_creation_result_reveale_token = !api_key_creation_result_reveale_token"
+							/>
+						</template>
+					</UInput>
 				</div>
 			</div>
 			<template #footer>
