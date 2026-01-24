@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GetAdminOsReleasesResponses } from '~/api-client'
 import type { TableColumn } from '@nuxt/ui'
-import type DashboardPageHeaderVue from '~/components/dashboard/DashboardPageHeader.vue';
+import DashboardPageHeader from '~/components/dashboard/DashboardPageHeader.vue';
 import DashboardPageBody from '~/components/dashboard/DashboardPageBody.vue';
 
 const toast = useToast()
