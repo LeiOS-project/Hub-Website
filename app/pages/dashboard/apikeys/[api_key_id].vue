@@ -52,7 +52,7 @@ if (api_key_id === "new") {
 
     const data = computed(() => result.value?.data as APIKey);
 
-    useSubrouterInjectedData<APIKey, NewAPIKey>("package", true).provide({
+    useSubrouterInjectedData<APIKey, NewAPIKey>("api_key", true).provide({
         data: data,
         refresh,
         loading,
