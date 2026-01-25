@@ -137,23 +137,13 @@ async function onDeleteRequest() {
                     </div>
                 </div>
 
-                <!-- Package ID -->
-                <div class="flex items-center justify-between py-3 border-b border-slate-800">
-                    <div>
-                        <label class="text-sm font-medium text-slate-300">Package ID</label>
-                    </div>
-                    <div class="text-right">
-                        <span class="font-mono text-sm text-slate-400">{{ request_data.package_id }}</span>
-                    </div>
-                </div>
-
                 <!-- Package Release ID -->
                 <div class="flex items-center justify-between py-3 border-b border-slate-800">
                     <div>
-                        <label class="text-sm font-medium text-slate-300">Release ID</label>
+                        <label class="text-sm font-medium text-slate-300">Package Release</label>
                     </div>
                     <div class="text-right">
-                        <span class="font-mono text-sm text-slate-400">{{ request_data.package_release_id }}</span>
+                        <span class="font-mono text-sm text-slate-400">{{ request_data.package_release_version }}</span>
                     </div>
                 </div>
 

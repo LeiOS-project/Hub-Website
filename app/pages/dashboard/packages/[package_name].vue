@@ -225,6 +225,7 @@ function getRoutesConfig(): Ref<UseSubrouterPathDynamics.RoutesConfig> {
                     label: 'Stable Promotion Requests',
                     icon: 'i-lucide-git-pull-request',
                     to: `/dashboard/packages/${package_name}/stable-promotion-requests`,
+                    active: useRoute().path.startsWith(`/dashboard/packages/${package_name}/stable-promotion-requests`),
                     getDynamicValues() {
                         return {
                             breadcrumbItems: [

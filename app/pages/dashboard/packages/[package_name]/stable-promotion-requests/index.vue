@@ -38,7 +38,7 @@ const stablePromotionRequests = await useAPIAsyncData(
 
 // Fetch releases for the new request modal
 const availableReleases = await useAPIAsyncData(
-    `/dev/packages/${pkgData.value.name}/releases`,
+    `forStablePromotionRequests:/dev/packages/${pkgData.value.name}/releases`,
     async () => {
         const res = await useAPI((api) => api.getDevPackagesPackageNameReleases({
             path: {
@@ -46,21 +46,16 @@ const availableReleases = await useAPIAsyncData(
             }
         }));
 
-        const result: Record<number, DevPackageRelease> = {};
-
         if (!res.success) {
             toast.add({
                 title: 'Error',
                 description: `Failed to load releases for stable promotion requests: ${res.message}`,
                 color: 'error'
             });
-            return result;
+            return [];
         }
 
-        res.data.forEach(release => {
-            result[release.id] = release;
-        });
-        return result;
+        return res.data;
     }
 );
 
@@ -152,7 +147,7 @@ const releaseOptions = computed(() => {
     //     label: release.versionWithLeiosPatch,
     //     value: release.id
     // }));
-    return Object.values(availableReleases.data.value || {}).map(release => ({
+    return availableReleases.data.value.map(release => ({
         label: release.versionWithLeiosPatch,
         value: release.id
     }));
@@ -210,10 +205,10 @@ const releaseOptions = computed(() => {
 
             <template #package_release_version-cell="{ row }">
                 <NuxtLink
-                    :to="`/dashboard/packages/${pkgData.name}/releases/${availableReleases.data.value[row.original.package_release_id]?.versionWithLeiosPatch}`"
+                    :to="`/dashboard/packages/${pkgData.name}/releases/${row.original.package_release_version}`"
                     class="font-medium text-primary-400 hover:underline"
                 >
-                    {{ availableReleases.data.value[row.original.package_release_id]?.versionWithLeiosPatch || 'Unknown Release' }}
+                    {{ row.original.package_release_version || 'Unknown Release' }}
                 </NuxtLink>
             </template>
 

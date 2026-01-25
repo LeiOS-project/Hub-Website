@@ -967,7 +967,9 @@ export const zGetDevPackagesPackageNameStablePromotionRequestsResponse = z.objec
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('pending'),
             created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.null()
+            admin_note: z.null(),
+            package_name: z.string(),
+            package_release_version: z.string()
         }),
         z.object({
             id: z.int().gte(-9007199254740991).lte(9007199254740991),
@@ -978,7 +980,9 @@ export const zGetDevPackagesPackageNameStablePromotionRequestsResponse = z.objec
             admin_note: z.union([
                 z.string(),
                 z.null()
-            ])
+            ]),
+            package_name: z.string(),
+            package_release_version: z.string()
         }),
         z.object({
             id: z.int().gte(-9007199254740991).lte(9007199254740991),
@@ -989,7 +993,9 @@ export const zGetDevPackagesPackageNameStablePromotionRequestsResponse = z.objec
             admin_note: z.union([
                 z.string(),
                 z.null()
-            ])
+            ]),
+            package_name: z.string(),
+            package_release_version: z.string()
         })
     ]))
 });
@@ -1058,7 +1064,9 @@ export const zGetDevPackagesPackageNameStablePromotionRequestsStablePromotionReq
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('pending'),
             created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.null()
+            admin_note: z.null(),
+            package_name: z.string(),
+            package_release_version: z.string()
         }),
         z.object({
             id: z.int().gte(-9007199254740991).lte(9007199254740991),
@@ -1069,7 +1077,9 @@ export const zGetDevPackagesPackageNameStablePromotionRequestsStablePromotionReq
             admin_note: z.union([
                 z.string(),
                 z.null()
-            ])
+            ]),
+            package_name: z.string(),
+            package_release_version: z.string()
         }),
         z.object({
             id: z.int().gte(-9007199254740991).lte(9007199254740991),
@@ -1080,7 +1090,9 @@ export const zGetDevPackagesPackageNameStablePromotionRequestsStablePromotionReq
             admin_note: z.union([
                 z.string(),
                 z.null()
-            ])
+            ]),
+            package_name: z.string(),
+            package_release_version: z.string()
         })
     ])
 });
@@ -1730,7 +1742,9 @@ export const zGetAdminPackagesPackageNameStablePromotionRequestsResponse = z.obj
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('pending'),
             created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.null()
+            admin_note: z.null(),
+            package_name: z.string(),
+            package_release_version: z.string()
         }),
         z.object({
             id: z.int().gte(-9007199254740991).lte(9007199254740991),
@@ -1741,7 +1755,9 @@ export const zGetAdminPackagesPackageNameStablePromotionRequestsResponse = z.obj
             admin_note: z.union([
                 z.string(),
                 z.null()
-            ])
+            ]),
+            package_name: z.string(),
+            package_release_version: z.string()
         }),
         z.object({
             id: z.int().gte(-9007199254740991).lte(9007199254740991),
@@ -1752,7 +1768,9 @@ export const zGetAdminPackagesPackageNameStablePromotionRequestsResponse = z.obj
             admin_note: z.union([
                 z.string(),
                 z.null()
-            ])
+            ]),
+            package_name: z.string(),
+            package_release_version: z.string()
         })
     ]))
 });
@@ -1821,7 +1839,9 @@ export const zGetAdminPackagesPackageNameStablePromotionRequestsStablePromotionR
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.literal('pending'),
             created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.null()
+            admin_note: z.null(),
+            package_name: z.string(),
+            package_release_version: z.string()
         }),
         z.object({
             id: z.int().gte(-9007199254740991).lte(9007199254740991),
@@ -1832,7 +1852,9 @@ export const zGetAdminPackagesPackageNameStablePromotionRequestsStablePromotionR
             admin_note: z.union([
                 z.string(),
                 z.null()
-            ])
+            ]),
+            package_name: z.string(),
+            package_release_version: z.string()
         }),
         z.object({
             id: z.int().gte(-9007199254740991).lte(9007199254740991),
@@ -1843,7 +1865,9 @@ export const zGetAdminPackagesPackageNameStablePromotionRequestsStablePromotionR
             admin_note: z.union([
                 z.string(),
                 z.null()
-            ])
+            ]),
+            package_name: z.string(),
+            package_release_version: z.string()
         })
     ])
 });

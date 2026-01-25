@@ -1305,6 +1305,8 @@ export type GetDevPackagesPackageNameStablePromotionRequestsResponses = {
             status: 'pending';
             created_at: number;
             admin_note: null;
+            package_name: string;
+            package_release_version: string;
         } | {
             id: number;
             package_id: number;
@@ -1312,6 +1314,8 @@ export type GetDevPackagesPackageNameStablePromotionRequestsResponses = {
             status: 'approved';
             created_at: number;
             admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
         } | {
             id: number;
             package_id: number;
@@ -1319,6 +1323,8 @@ export type GetDevPackagesPackageNameStablePromotionRequestsResponses = {
             status: 'denied';
             created_at: number;
             admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
         }>;
     };
 };
@@ -1432,6 +1438,8 @@ export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionReque
             status: 'pending';
             created_at: number;
             admin_note: null;
+            package_name: string;
+            package_release_version: string;
         } | {
             id: number;
             package_id: number;
@@ -1439,6 +1447,8 @@ export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionReque
             status: 'approved';
             created_at: number;
             admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
         } | {
             id: number;
             package_id: number;
@@ -1446,6 +1456,8 @@ export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionReque
             status: 'denied';
             created_at: number;
             admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
         };
     };
 };
@@ -2410,6 +2422,8 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsResponses = {
             status: 'pending';
             created_at: number;
             admin_note: null;
+            package_name: string;
+            package_release_version: string;
         } | {
             id: number;
             package_id: number;
@@ -2417,6 +2431,8 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsResponses = {
             status: 'approved';
             created_at: number;
             admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
         } | {
             id: number;
             package_id: number;
@@ -2424,6 +2440,8 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsResponses = {
             status: 'denied';
             created_at: number;
             admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
         }>;
     };
 };
@@ -2537,6 +2555,8 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionReq
             status: 'pending';
             created_at: number;
             admin_note: null;
+            package_name: string;
+            package_release_version: string;
         } | {
             id: number;
             package_id: number;
@@ -2544,6 +2564,8 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionReq
             status: 'approved';
             created_at: number;
             admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
         } | {
             id: number;
             package_id: number;
@@ -2551,6 +2573,8 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionReq
             status: 'denied';
             created_at: number;
             admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
         };
     };
 };
