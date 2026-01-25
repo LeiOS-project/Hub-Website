@@ -62,7 +62,7 @@ const { data: releases, pending: loadingReleases, refresh: refreshReleases } = a
     }
 )
 
-// Fetch stable requests
+// Fetch stable promotion requests
 const { data: stableRequests, refresh: refreshStableRequests } = await useAsyncData<StableRequest[]>(
     `dev-package-${package_name}-stable-requests`,
     async () => {
@@ -296,7 +296,7 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                         </UEmpty>
                     </UCard>
 
-                    <!-- Stable Requests -->
+                    <!-- Stable Promotion Requests -->
                     <UCard class="border-slate-800 bg-slate-900/60">
                         <template #header>
                             <div class="flex items-center justify-between">

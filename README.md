@@ -6,7 +6,7 @@ Central control center for LeiOS packages: public explorer, developer workflows,
 
 - 🔍 Public package explorer with search, repo filters (archive/testing/stable), and release tables
 - 🛠️ Developer workspace to create packages, upload amd64/arm64 releases, and request promotion to stable
-- 🛡️ Admin controls for approving/denying stable requests and managing users/roles
+- 🛡️ Admin controls for approving/denying stable promotion requests and managing users/roles
 - 🔐 Session-based authentication with automatic API client configuration
 - 🎨 Dark Nuxt UI theme using the Aurora-inspired palette
 

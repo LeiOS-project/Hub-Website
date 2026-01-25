@@ -10,7 +10,7 @@ definePageMeta({
 })
 
 useSeoMeta({
-    title: 'Stable Requests | LeiOS Hub',
+    title: 'Stable Promotion Requests | LeiOS Hub',
     description: 'Review stable promotion requests'
 })
 
@@ -89,7 +89,7 @@ function getStatusColor(status: StableRequest['status']) {
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar title="Stable Requests" icon="i-lucide-git-pull-request">
+            <UDashboardNavbar title="Stable Promotion Requests" icon="i-lucide-git-pull-request">
                 <template #right>
                     <UButton
                         label="Refresh"

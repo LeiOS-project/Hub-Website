@@ -321,7 +321,7 @@ const stats = computed(() => [
                     <UCard
                         v-if="isAdmin"
                         class="border-slate-800 bg-slate-900/60 transition hover:border-amber-500/50 cursor-pointer"
-                        @click="navigateTo('/dashboard/admin/requests')"
+                        @click="navigateTo('/dashboard/admin/stable-promotion-requests')"
                     >
                         <div class="flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10">

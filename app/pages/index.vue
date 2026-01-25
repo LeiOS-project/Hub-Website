@@ -46,7 +46,7 @@ const cards = [
     {
         title: 'Admin controls',
         icon: 'i-lucide-shield',
-        detail: 'Approve stable requests, reset passwords, and manage roles without leaving Nuxt UI.',
+        detail: 'Approve stable promotion requests, reset passwords, and manage roles without leaving Nuxt UI.',
         to: '/dashboard?tab=admin'
     },
     {

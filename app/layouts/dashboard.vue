@@ -67,8 +67,8 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             // defaultOpen: route.path.startsWith("/dashboard/admin"),
             // children: [
             //     {
-            //         label: "Stable Requests",
-            //         to: "/dashboard/admin/requests",
+            //         label: "Stable Promotion Requests",
+            //         to: "/dashboard/admin/stable-promotion-requests",
             //     },
             //     {
             //         label: "Users",
@@ -91,9 +91,9 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             to: "/dashboard/admin/packages",
         },
         {
-            label: "Stable Requests",
+            label: "Stable Promotion Requests",
             icon: "i-lucide-git-pull-request",
-            to: "/dashboard/admin/requests",
+            to: "/dashboard/admin/stable-promotion-requests",
         },
         {
             label: "OS Releases",
