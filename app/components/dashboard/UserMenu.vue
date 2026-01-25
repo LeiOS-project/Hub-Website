@@ -13,12 +13,22 @@ if (!UserStore.isValid(userinfo)) {
     throw new Error("User not authenticated but should be to access UserMenu");
 }
 
-const user = computed(() => ({
-    name: userinfo.value.display_name,
-    avatar: {
-        alt: userinfo.value.username,
-    },
-}));
+const user = computed(() => {
+    if (!userinfo.value) {
+        return {
+            name: "Unknown User",
+            avatar: {
+                alt: "Unknown User",
+            },
+        };
+    }
+    return {
+        name: userinfo.value.display_name,
+        avatar: {
+            alt: userinfo.value.username,
+        },
+    };
+});
 
 async function logout() {
     try {
