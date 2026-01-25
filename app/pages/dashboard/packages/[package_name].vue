@@ -237,7 +237,24 @@ function getRoutesConfig(): Ref<UseSubrouterPathDynamics.RoutesConfig> {
                             }
                         };
                     }
-                }
+                },
+
+                [`/dashboard/packages/${package_name}/stable-promotion-requests/[stable_promotion_request_id]`]: {
+                    isNavLink: false,
+                    getDynamicValues(params) {
+                        return {
+                            breadcrumbItems: [
+                                { label: package_name, to: `/dashboard/packages/${package_name}` },
+                                { label: 'Stable Promotion Requests', to: `/dashboard/packages/${package_name}/stable-promotion-requests` },
+                                { label: `#${params.stable_promotion_request_id}` }
+                            ],
+                            seoSettings: {
+                                title: `Stable Promotion Request #${params.stable_promotion_request_id}`,
+                                description: `Manage stable promotion request #${params.stable_promotion_request_id} for the package ${package_name} on LeiOS Hub`
+                            }
+                        };
+                    }
+                },
             }
         }
     });

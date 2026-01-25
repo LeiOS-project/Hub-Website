@@ -1381,6 +1381,77 @@ export type PostDevPackagesPackageNameStablePromotionRequestsResponses = {
 
 export type PostDevPackagesPackageNameStablePromotionRequestsResponse = PostDevPackagesPackageNameStablePromotionRequestsResponses[keyof PostDevPackagesPackageNameStablePromotionRequestsResponses];
 
+export type DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = {
+    body?: never;
+    path: {
+        packageName: string;
+        stablePromotionRequestID: number;
+    };
+    query?: never;
+    url: '/dev/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}';
+};
+
+export type DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses = {
+    /**
+     * Stable promotion request deleted successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable promotion request deleted successfully';
+        data: {
+            [key: string]: unknown;
+        };
+    };
+};
+
+export type DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses[keyof DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses];
+
+export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = {
+    body?: never;
+    path: {
+        packageName: string;
+        stablePromotionRequestID: number;
+    };
+    query?: never;
+    url: '/dev/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}';
+};
+
+export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses = {
+    /**
+     * Stable promotion request retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable promotion request retrieved successfully';
+        data: {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'pending';
+            created_at: number;
+            admin_note: null;
+        } | {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'approved';
+            created_at: number;
+            admin_note: string | null;
+        } | {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'denied';
+            created_at: number;
+            admin_note: string | null;
+        };
+    };
+};
+
+export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses[keyof GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses];
+
 export type GetDevTasksData = {
     body?: never;
     path?: never;
@@ -2415,6 +2486,77 @@ export type PostAdminPackagesPackageNameStablePromotionRequestsResponses = {
 
 export type PostAdminPackagesPackageNameStablePromotionRequestsResponse = PostAdminPackagesPackageNameStablePromotionRequestsResponses[keyof PostAdminPackagesPackageNameStablePromotionRequestsResponses];
 
+export type DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = {
+    body?: never;
+    path: {
+        packageName: string;
+        stablePromotionRequestID: number;
+    };
+    query?: never;
+    url: '/admin/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}';
+};
+
+export type DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses = {
+    /**
+     * Stable promotion request deleted successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable promotion request deleted successfully';
+        data: {
+            [key: string]: unknown;
+        };
+    };
+};
+
+export type DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses[keyof DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses];
+
+export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = {
+    body?: never;
+    path: {
+        packageName: string;
+        stablePromotionRequestID: number;
+    };
+    query?: never;
+    url: '/admin/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}';
+};
+
+export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses = {
+    /**
+     * Stable promotion request retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable promotion request retrieved successfully';
+        data: {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'pending';
+            created_at: number;
+            admin_note: null;
+        } | {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'approved';
+            created_at: number;
+            admin_note: string | null;
+        } | {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'denied';
+            created_at: number;
+            admin_note: string | null;
+        };
+    };
+};
+
+export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses[keyof GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses];
+
 export type GetAdminOsReleasesData = {
     body?: never;
     path?: never;
@@ -2638,16 +2780,16 @@ export type GetAdminStablePromotionRequestsResponses = {
 
 export type GetAdminStablePromotionRequestsResponse = GetAdminStablePromotionRequestsResponses[keyof GetAdminStablePromotionRequestsResponses];
 
-export type GetAdminStablePromotionRequestsRequestIdData = {
+export type GetAdminStablePromotionRequestsStablePromotionRequestIdData = {
     body?: never;
     path: {
-        requestID: number;
+        stablePromotionRequestID: number;
     };
     query?: never;
-    url: '/admin/stable-promotion-requests/{requestID}';
+    url: '/admin/stable-promotion-requests/{stablePromotionRequestID}';
 };
 
-export type GetAdminStablePromotionRequestsRequestIdErrors = {
+export type GetAdminStablePromotionRequestsStablePromotionRequestIdErrors = {
     /**
      * Stable promotion request not found
      */
@@ -2658,9 +2800,9 @@ export type GetAdminStablePromotionRequestsRequestIdErrors = {
     };
 };
 
-export type GetAdminStablePromotionRequestsRequestIdError = GetAdminStablePromotionRequestsRequestIdErrors[keyof GetAdminStablePromotionRequestsRequestIdErrors];
+export type GetAdminStablePromotionRequestsStablePromotionRequestIdError = GetAdminStablePromotionRequestsStablePromotionRequestIdErrors[keyof GetAdminStablePromotionRequestsStablePromotionRequestIdErrors];
 
-export type GetAdminStablePromotionRequestsRequestIdResponses = {
+export type GetAdminStablePromotionRequestsStablePromotionRequestIdResponses = {
     /**
      * Stable promotion request retrieved successfully
      */
@@ -2681,21 +2823,21 @@ export type GetAdminStablePromotionRequestsRequestIdResponses = {
     };
 };
 
-export type GetAdminStablePromotionRequestsRequestIdResponse = GetAdminStablePromotionRequestsRequestIdResponses[keyof GetAdminStablePromotionRequestsRequestIdResponses];
+export type GetAdminStablePromotionRequestsStablePromotionRequestIdResponse = GetAdminStablePromotionRequestsStablePromotionRequestIdResponses[keyof GetAdminStablePromotionRequestsStablePromotionRequestIdResponses];
 
-export type PostAdminStablePromotionRequestsRequestIdDecideData = {
+export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideData = {
     body?: {
         status: 'approved' | 'denied';
         admin_note: string;
     };
     path: {
-        requestID: number;
+        stablePromotionRequestID: number;
     };
     query?: never;
-    url: '/admin/stable-promotion-requests/{requestID}/decide';
+    url: '/admin/stable-promotion-requests/{stablePromotionRequestID}/decide';
 };
 
-export type PostAdminStablePromotionRequestsRequestIdDecideErrors = {
+export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -2714,9 +2856,9 @@ export type PostAdminStablePromotionRequestsRequestIdDecideErrors = {
     };
 };
 
-export type PostAdminStablePromotionRequestsRequestIdDecideError = PostAdminStablePromotionRequestsRequestIdDecideErrors[keyof PostAdminStablePromotionRequestsRequestIdDecideErrors];
+export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideError = PostAdminStablePromotionRequestsStablePromotionRequestIdDecideErrors[keyof PostAdminStablePromotionRequestsStablePromotionRequestIdDecideErrors];
 
-export type PostAdminStablePromotionRequestsRequestIdDecideResponses = {
+export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponses = {
     /**
      * Decided on stable promotion request successfully
      */
@@ -2728,7 +2870,7 @@ export type PostAdminStablePromotionRequestsRequestIdDecideResponses = {
     };
 };
 
-export type PostAdminStablePromotionRequestsRequestIdDecideResponse = PostAdminStablePromotionRequestsRequestIdDecideResponses[keyof PostAdminStablePromotionRequestsRequestIdDecideResponses];
+export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponse = PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponses[keyof PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponses];
 
 export type GetAdminTasksData = {
     body?: never;

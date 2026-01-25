@@ -1,4 +1,13 @@
-import type { GetAccountApikeysResponses, GetDevPackagesPackageNameReleasesResponses, GetDevPackagesResponses, PostAccountApikeysData, PostDevPackagesData, PostDevPackagesPackageNameReleasesData } from "~/api-client";
+import type {
+    GetAccountApikeysResponses,
+    GetDevPackagesPackageNameReleasesResponses,
+    GetDevPackagesPackageNameStablePromotionRequestsResponses,
+    GetDevPackagesResponses,
+    PostAccountApikeysData,
+    PostDevPackagesData,
+    PostDevPackagesPackageNameReleasesData,
+    PostDevPackagesPackageNameStablePromotionRequestsData
+} from "~/api-client";
 
 export namespace UtilityTypes {
 
@@ -15,3 +24,6 @@ export type NewDevPackageRelease = NonNullable<PostDevPackagesPackageNameRelease
 
 export type APIKey = GetAccountApikeysResponses["200"]["data"][number];
 export type NewAPIKey = NonNullable<PostAccountApikeysData["body"]>;
+
+export type DevPackageStablePromotionRequest = GetDevPackagesPackageNameStablePromotionRequestsResponses["200"]["data"][number];
+export type NewDevPackageStablePromotionRequest = NonNullable<PostDevPackagesPackageNameStablePromotionRequestsData["body"]>;

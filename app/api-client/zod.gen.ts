@@ -1016,6 +1016,75 @@ export const zPostDevPackagesPackageNameStablePromotionRequestsResponse = z.obje
     })
 });
 
+export const zDeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        packageName: z.string(),
+        stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Stable promotion request deleted successfully
+ */
+export const zDeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Stable promotion request deleted successfully'),
+    data: z.record(z.string(), z.unknown())
+});
+
+export const zGetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        packageName: z.string(),
+        stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Stable promotion request retrieved successfully
+ */
+export const zGetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Stable promotion request retrieved successfully'),
+    data: z.union([
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('pending'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.null()
+        }),
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('approved'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.union([
+                z.string(),
+                z.null()
+            ])
+        }),
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('denied'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.union([
+                z.string(),
+                z.null()
+            ])
+        })
+    ])
+});
+
 export const zGetDevTasksData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
@@ -1710,6 +1779,75 @@ export const zPostAdminPackagesPackageNameStablePromotionRequestsResponse = z.ob
     })
 });
 
+export const zDeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        packageName: z.string(),
+        stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Stable promotion request deleted successfully
+ */
+export const zDeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Stable promotion request deleted successfully'),
+    data: z.record(z.string(), z.unknown())
+});
+
+export const zGetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        packageName: z.string(),
+        stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Stable promotion request retrieved successfully
+ */
+export const zGetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Stable promotion request retrieved successfully'),
+    data: z.union([
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('pending'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.null()
+        }),
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('approved'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.union([
+                z.string(),
+                z.null()
+            ])
+        }),
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('denied'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.union([
+                z.string(),
+                z.null()
+            ])
+        })
+    ])
+});
+
 export const zGetAdminOsReleasesData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
@@ -1890,10 +2028,10 @@ export const zGetAdminStablePromotionRequestsResponse = z.object({
     }))
 });
 
-export const zGetAdminStablePromotionRequestsRequestIdData = z.object({
+export const zGetAdminStablePromotionRequestsStablePromotionRequestIdData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        requestID: z.int().gt(0).lte(9007199254740991)
+        stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
     }),
     query: z.optional(z.never())
 });
@@ -1901,7 +2039,7 @@ export const zGetAdminStablePromotionRequestsRequestIdData = z.object({
 /**
  * Stable promotion request retrieved successfully
  */
-export const zGetAdminStablePromotionRequestsRequestIdResponse = z.object({
+export const zGetAdminStablePromotionRequestsStablePromotionRequestIdResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Stable promotion request retrieved successfully'),
@@ -1924,13 +2062,13 @@ export const zGetAdminStablePromotionRequestsRequestIdResponse = z.object({
     })
 });
 
-export const zPostAdminStablePromotionRequestsRequestIdDecideData = z.object({
+export const zPostAdminStablePromotionRequestsStablePromotionRequestIdDecideData = z.object({
     body: z.optional(z.object({
         status: z.enum(['approved', 'denied']),
         admin_note: z.string()
     })),
     path: z.object({
-        requestID: z.int().gt(0).lte(9007199254740991)
+        stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
     }),
     query: z.optional(z.never())
 });
@@ -1938,7 +2076,7 @@ export const zPostAdminStablePromotionRequestsRequestIdDecideData = z.object({
 /**
  * Decided on stable promotion request successfully
  */
-export const zPostAdminStablePromotionRequestsRequestIdDecideResponse = z.object({
+export const zPostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Decided on stable promotion request successfully'),

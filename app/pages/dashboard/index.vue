@@ -104,7 +104,7 @@ const stats = computed(() => [
                 <div class="flex items-center justify-between">
                     <div>
                         <h1 class="text-2xl font-bold">
-                            Welcome back, {{ user.display_name || user.username }}
+                            Welcome back, {{ user?.display_name || user?.username }}
                         </h1>
                         <p class="text-slate-400 mt-1">
                             Here's an overview of your packages and tasks.

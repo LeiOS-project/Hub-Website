@@ -14,19 +14,11 @@ if (!UserStore.isValid(userinfo)) {
 }
 
 const user = computed(() => {
-    if (!userinfo.value) {
-        return {
-            name: "Unknown User",
-            avatar: {
-                alt: "Unknown User",
-            },
-        };
-    }
     return {
-        name: userinfo.value.display_name,
+        name: userinfo.value?.display_name,
         avatar: {
-            alt: userinfo.value.display_name,
-        },
+            alt: userinfo.value?.display_name,
+        }
     };
 });
 
