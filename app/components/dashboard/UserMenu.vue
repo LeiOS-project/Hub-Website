@@ -25,7 +25,7 @@ const user = computed(() => {
     return {
         name: userinfo.value.display_name,
         avatar: {
-            alt: userinfo.value.username,
+            alt: userinfo.value.display_name,
         },
     };
 });
