@@ -46,7 +46,7 @@ const availableReleases = await useAPIAsyncData(
             }
         }));
 
-        const result: Map<number, DevPackageRelease> = new Map();
+        const result: Record<number, DevPackageRelease> = {};
 
         if (!res.success) {
             toast.add({
@@ -58,7 +58,7 @@ const availableReleases = await useAPIAsyncData(
         }
 
         res.data.forEach(release => {
-            result.set(release.id, release);
+            result[release.id] = release;
         });
         return result;
     }
@@ -152,7 +152,7 @@ const releaseOptions = computed(() => {
     //     label: release.versionWithLeiosPatch,
     //     value: release.id
     // }));
-    return Array.from(availableReleases.data.value?.values() || []).map(release => ({
+    return Object.values(availableReleases.data.value || {}).map(release => ({
         label: release.versionWithLeiosPatch,
         value: release.id
     }));
@@ -210,10 +210,10 @@ const releaseOptions = computed(() => {
 
             <template #package_release_version-cell="{ row }">
                 <NuxtLink
-                    :to="`/dashboard/packages/${pkgData.name}/releases/${availableReleases.data.value.get(row.original.package_release_id)?.versionWithLeiosPatch}`"
+                    :to="`/dashboard/packages/${pkgData.name}/releases/${availableReleases.data.value[row.original.package_release_id]?.versionWithLeiosPatch}`"
                     class="font-medium text-primary-400 hover:underline"
                 >
-                    {{ availableReleases.data.value.get(row.original.package_release_id)?.versionWithLeiosPatch || 'Unknown Release' }}
+                    {{ availableReleases.data.value[row.original.package_release_id]?.versionWithLeiosPatch || 'Unknown Release' }}
                 </NuxtLink>
             </template>
 
