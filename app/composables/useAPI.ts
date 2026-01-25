@@ -60,6 +60,7 @@ class LazyAsyncDataRequestWrapper<TReturn> {
     readonly loading: Ref<boolean> = ref(false);
 
     protected refreshFunction?: () => Promise<void>;
+    protected clearFunction?: () => void;
 
     constructor(
         protected readonly name: string,
@@ -73,31 +74,24 @@ class LazyAsyncDataRequestWrapper<TReturn> {
 
     public init() {
 
-        const { data, refresh, pending } = useLazyAsyncData<TReturn>(this.name, this.handler, {
+        const { data, refresh, clear, pending } = useLazyAsyncData<TReturn>(this.name, this.handler, {
             immediate: false
         });
 
-        // watch(data, (newData) => {
-        //     console.log("LazyAsyncDataRequestWrapper data updated!", newData);
-        //     this.data.value = newData as TReturn | undefined || null;
-        // }, { immediate: true });
-
         watch(data, (newData) => {
-            console.log("LazyAsyncDataRequestWrapper data updated!", newData);
             this.data.value = newData as TReturn | undefined || null;
         }, { immediate: true });
-
-        // use watchEffect to be more responsive
-        watchEffect(() => {
-            console.log("LazyAsyncDataRequestWrapper data updated 2!", data.value);
-            // this.data.value = (data.value as TReturn | undefined) || null;
-        });
         
         watch(pending, (newPending) => {
             this.loading.value = newPending;
         }, { immediate: true });
 
         this.refreshFunction = refresh;
+        this.clearFunction = clear;
+    }
+
+    async clearData() {
+        this.clearFunction?.();
     }
 
     async fetchData() {
@@ -109,7 +103,7 @@ class LazyAsyncDataRequestWrapper<TReturn> {
             throw new Error("Failed to initialize refresh function.");
         }
         await this.refreshFunction();
-        console.log("LazyAsyncDataRequestWrapper data updated! should have logged above at this point.");
+
         return this.data;
     }
 }
