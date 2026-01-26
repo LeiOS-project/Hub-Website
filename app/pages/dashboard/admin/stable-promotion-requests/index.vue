@@ -66,7 +66,7 @@ async function submitDecision() {
 
     try {
         const res = await useAPI((api) => api.postAdminStablePromotionRequestsStablePromotionRequestIdDecide({
-            path: { stablePromotionRequestID: selectedRequest.value.id },
+            path: { stablePromotionRequestID: (selectedRequest.value as AdminStableRequest).id },
             body: {
                 status: decisionForm.status,
                 admin_note: decisionForm.admin_note
@@ -291,7 +291,8 @@ function getStatusColor(status: AdminStableRequest['status']) {
                     v-model="decisionForm.admin_note"
                     placeholder="Add a note for this decision..."
                     :disabled="submittingDecision"
-                    rows="4"
+                    :rows="4"
+                    class="w-full"
                 />
             </UFormField>
 
