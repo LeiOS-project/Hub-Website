@@ -57,8 +57,8 @@ function openDecision(request: StableRequest) {
 async function submitDecision() {
     if (!selectedRequest.value) return
 
-    const res = await useAPI((api) => api.postAdminStablePromotionRequestsRequestIdDecide({
-        path: { requestID: selectedRequest.value!.id },
+    const res = await useAPI((api) => api.postAdminStablePromotionRequestsStablePromotionRequestIdDecide({
+        path: { stablePromotionRequestID: selectedRequest.value!.id },
         body: {
             status: decisionForm.status,
             admin_note: decisionForm.admin_note
