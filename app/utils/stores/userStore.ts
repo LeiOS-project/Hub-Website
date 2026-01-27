@@ -1,7 +1,6 @@
 import { reactive } from "vue";
 import type { GetAccountResponses } from "@/api-client/types.gen";
-
-type UserInfo = GetAccountResponses["200"]["data"];
+import type { UserInfo } from "../types";
 
 export class UserStore {
 
