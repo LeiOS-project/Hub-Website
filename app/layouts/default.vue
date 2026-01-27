@@ -5,7 +5,7 @@ import Footer from '~/components/layout/Footer.vue'
 </script>
 
 <template>
-    <div class="app-layout">
+    <div class="app-layout main-bg-color">
         <!-- Navigation -->
         <Header />
 
@@ -22,7 +22,6 @@ import Footer from '~/components/layout/Footer.vue'
 <style scoped>
 .app-layout {
     min-height: 100vh;
-    background-color: rgb(2 6 23);
     color: rgb(241 245 249);
     display: flex;
     flex-direction: column;

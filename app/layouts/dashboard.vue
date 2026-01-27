@@ -133,7 +133,7 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
         position="top"
     />
 
-    <UDashboardGroup class="app-layout-dashboard">
+    <UDashboardGroup class="app-layout-dashboard main-bg-color">
         <UDashboardSidebar
             collapsible
             resizable
@@ -182,7 +182,6 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
 
 <style scoped>
 .app-layout-dashboard {
-    background-color: rgb(2 6 23);
     color: rgb(241 245 249);
 }
 </style>
