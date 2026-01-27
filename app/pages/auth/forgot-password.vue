@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as z from "zod";
 import type { FormSubmitEvent, AuthFormField } from "@nuxt/ui";
-import { UserStore } from "~/utils/stores/userStore";
 import { useRuntimeAppConfigs } from "~/composables/useRuntimeAppConfigs";
 
 const isSignupEnabled = useRuntimeAppConfigs().isSignupEnabled;
@@ -56,7 +55,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 
     //     sessionToken.value = result.data.token;
 
-    //     await UserStore.fetchAndSetUserInfo();
+    //     await useUserInfoStore().refreshIfNeeded();
 
     //     toast.add({
     //         title: 'Login Successful',

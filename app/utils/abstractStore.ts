@@ -24,11 +24,10 @@ export abstract class BasicAbstractStore<T> {
     
 
     async use(): Promise<Readonly<Ref<T | null>>> {
-        const data = this.useRaw();
-        if (this.options.enableAutoFetchIfEmpty && this.isValid(data) === false) {
-            await this.refresh();
+        if (this.options.enableAutoFetchIfEmpty) {
+            await this.refreshIfNeeded();
         }
-        return data;
+        return this.useRaw();
     }
 
 
@@ -39,7 +38,7 @@ export abstract class BasicAbstractStore<T> {
 
     async refreshIfNeeded() {
         const data = this.useRaw();
-        if (this.isValid(data) === false) {
+        if (!this.isValid(data)) {
             await this.refresh();
         }
     }
@@ -48,7 +47,7 @@ export abstract class BasicAbstractStore<T> {
         this.useRaw().value = null;
     }
 
-    public isValid(data: Readonly<Ref<any>>): data is Ref<T> {
+    public isValid(data: Readonly<Ref<T | null>>): data is Ref<T> {
         return data.value !== null;
     }
 

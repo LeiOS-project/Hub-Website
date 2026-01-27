@@ -1,27 +1,12 @@
-import { ModifiableAbstractStore } from "~/utils/store";
+import { ModifiableAbstractStore } from "~/utils/abstractStore";
 import type { UserInfo } from "~/utils/types";
 
-class UserStore extends ModifiableAbstractStore<UserInfo, Partial<UserInfo>> {
+class UserInfoStore extends ModifiableAbstractStore<UserInfo, Partial<UserInfo>> {
 
     constructor() {
         super("userInfo", {
-            enableAutoFetchIfEmpty: false
+            enableAutoFetchIfEmpty: true
         });
-    }
-
-    override async update(updates: Partial<UserInfo>) {
-
-        const current = this.useRaw();
-
-        if (!current.value) {
-            console.error("Cannot update user info: no user is logged in.");
-            return;
-        }
-
-        current.value = {
-            ...current.value,
-            ...updates
-        };
     }
     
     protected override async fetchData() {
@@ -43,9 +28,26 @@ class UserStore extends ModifiableAbstractStore<UserInfo, Partial<UserInfo>> {
         }
     }
 
+    
+    override async update(updates: Partial<UserInfo>) {
+
+        await this.refreshIfNeeded();
+        const current = this.useRaw();
+
+        if (!current.value) {
+            console.error("Cannot update user info: no user is logged in.");
+            return;
+        }
+
+        current.value = {
+            ...current.value,
+            ...updates
+        };
+    }
+
 }
 
 
-export function useUserStore() {
-    return new UserStore();
+export function useUserInfoStore() {
+    return new UserInfoStore();
 }

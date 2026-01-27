@@ -133,7 +133,7 @@ async function onDeleteOSRelease() {
 	// 			color: 'success'
 	// 		})
 
-	// 		UserStore.clear()
+	// 		await useUserInfoStore().clear();
 	// 		useCookie("leioshub_session_token").value = null
 	// 		navigateTo('/')
 	// 	} else {

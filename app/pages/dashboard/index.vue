@@ -4,7 +4,7 @@ import type {
     GetDevPackagesResponses,
     GetDevTasksResponses
 } from '@/api-client/types.gen';
-import { UserStore } from '~/utils/stores/userStore';
+import { useUserInfoStore } from '~/composables/stores/useUserStore';
 
 type DevPackage = GetDevPackagesResponses[200]['data'][number];
 type DevTask = GetDevTasksResponses[200]['data'][number];
@@ -20,8 +20,9 @@ useSeoMeta({
 
 const toast = useToast();
 
-const user = await UserStore.use();
-if (!UserStore.isValid(user)) {
+const userInfoStore = useUserInfoStore();
+const user = await userInfoStore.use();
+if (!userInfoStore.isValid(user)) {
     throw new Error('User not authenticated but trying to access Dashboard')
 }
 

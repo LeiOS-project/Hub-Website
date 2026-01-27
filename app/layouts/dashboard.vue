@@ -3,9 +3,10 @@ import type { NavigationMenuItem } from "@nuxt/ui";
 import UserMenu from "~/components/dashboard/UserMenu.vue";
 import LeiOSLogo from "~/components/img/LeiOSLogo.vue";
 import LeiOSIcon from "~/components/img/LeiOSIcon.vue";
-import { UserStore } from "~/utils/stores/userStore";
+import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
-const user = await UserStore.use();
+const userInfoStore = useUserInfoStore();
+const user = await userInfoStore.use();
 
 const isAdmin = computed(() => user.value?.role === "admin");
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from "@nuxt/ui";
-import { UserStore } from "~/utils/stores/userStore";
+import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
 defineProps<{
     collapsed?: boolean;
@@ -8,8 +8,9 @@ defineProps<{
 
 const toast = useToast();
 
-const userinfo = await UserStore.use();
-if (!UserStore.isValid(userinfo)) {
+const userinfoStore = await useUserInfoStore();
+const userinfo = await userinfoStore.use();
+if (!userinfoStore.isValid(userinfo)) {
     throw new Error("User not authenticated but should be to access UserMenu");
 }
 
@@ -36,7 +37,7 @@ async function logout() {
             return api.postAuthLogout({});
         });
 
-        UserStore.clear();
+        await userinfoStore.clear();
 
         useCookie("leioshub_session_token").value = null;
 
