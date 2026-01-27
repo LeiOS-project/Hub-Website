@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
-import { UserStore } from '~/utils/stores/userStore'
 import LeiOSLogo from '../img/LeiOSLogo.vue';
 import type { GetAccountResponses } from '~/api-client';
 import type { UnwrapRef } from 'vue';
+import { useUserInfoStore } from '~/composables/stores/useUserStore';
 
 type UserInfo = GetAccountResponses["200"]["data"];
 
 const route = useRoute()
 const sessionCookie = useAppCookies().sessionToken.get()
-const user = await UserStore.use()
+const userInfoStore = useUserInfoStore();
+const user = await userInfoStore.use();
 
 const links = computed<NavigationMenuItem[]>(() => [
     {

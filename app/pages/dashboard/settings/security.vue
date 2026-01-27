@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormError, FormSubmitEvent } from '@nuxt/ui'
-import { UserStore } from '~/utils/stores/userStore'
+import { useUserInfoStore } from '~/composables/stores/useUserStore'
 
 const toast = useToast()
 const overlay = useOverlay()
@@ -61,7 +61,7 @@ async function onPasswordSubmit(event: FormSubmitEvent<PasswordSchema>) {
 				color: 'success'
 			})
 
-			UserStore.clear()
+			await useUserInfoStore().clear()
 			useCookie("leioshub_session_token").value = null
 			navigateTo('/auth/login')
 		} else {
@@ -108,7 +108,7 @@ async function onDeleteAccount() {
 				color: 'success'
 			})
 
-			UserStore.clear()
+			await useUserInfoStore().clear()
 			useCookie("leioshub_session_token").value = null
 			navigateTo('/')
 		} else {

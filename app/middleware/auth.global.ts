@@ -1,4 +1,4 @@
-import { UserStore } from "~/utils/stores/userStore";
+import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
 export default defineNuxtRouteMiddleware(async(to) => {
 
@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware(async(to) => {
             return;
         }
 
-        await UserStore.fetchAndSetIfNeeded();
+        await useUserInfoStore().refreshIfNeeded();
 
         return navigateTo('/dashboard');
     }
@@ -20,12 +20,12 @@ export default defineNuxtRouteMiddleware(async(to) => {
             return navigateTo('/auth/login?url=' + encodeURIComponent(to.fullPath));
         }
 
-        const user = await UserStore.use();
+        const user = await useUserInfoStore().use();
 
         if (to.path.startsWith('/dashboard/admin')) {
             // Check admin access
             if (!user.value || user.value.role !== 'admin') {
-                navigateTo('/dashboard')
+                return navigateTo('/dashboard');
             }
         }
 

@@ -16,32 +16,17 @@ class AppCookie<T extends string | null | undefined> {
         return useCookie(this.name);
     }
 
-    getServerSide(event: H3Event) {
-        return getCookie(event, this.name);
-    }
-
     set(value: T) {
         useCookie(this.name, this.options as CookieOptionsWithoutReadonly<T> | undefined).value = value;
     }
 
 }
 
-class AppCookieHandler {
 
-    private constructor() {}
-
-    private static readonly cookies = {
+export function useAppCookies() {
+    return {
 
         sessionToken: new AppCookie<string | null>("leioshub_session_token"),
         
     } as const;
-
-    static getCookies() {
-        return AppCookieHandler.cookies;
-    }
-
-}
-
-export function useAppCookies() {
-    return AppCookieHandler.getCookies();
 }

@@ -1,5 +1,6 @@
 import type {
     GetAccountApikeysResponses,
+    GetAccountResponses,
     GetDevPackagesPackageNameReleasesResponses,
     GetDevPackagesPackageNameStablePromotionRequestsResponses,
     GetDevPackagesResponses,
@@ -14,6 +15,9 @@ export namespace UtilityTypes {
     export type SomePartial<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
 
 }
+
+
+export type UserInfo = GetAccountResponses["200"]["data"];
 
 export type DevPackage = GetDevPackagesResponses["200"]["data"][number];
 export type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
