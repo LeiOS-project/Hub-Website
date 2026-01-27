@@ -62,7 +62,7 @@ async function onPasswordSubmit(event: FormSubmitEvent<PasswordSchema>) {
 			})
 
 			await useUserInfoStore().clear()
-			useCookie("leioshub_session_token").value = null
+			useAppCookies().sessionToken.get().value = null;
 			navigateTo('/auth/login')
 		} else {
 			toast.add({
@@ -109,7 +109,7 @@ async function onDeleteAccount() {
 			})
 
 			await useUserInfoStore().clear()
-			useCookie("leioshub_session_token").value = null
+			useAppCookies().sessionToken.get().value = null;
 			navigateTo('/')
 		} else {
 			toast.add({

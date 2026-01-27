@@ -39,7 +39,7 @@ async function logout() {
 
         await userinfoStore.clear();
 
-        useCookie("leioshub_session_token").value = null;
+        useAppCookies().sessionToken.get().value = null;
 
         if (!result.success) {
             toast.add({
