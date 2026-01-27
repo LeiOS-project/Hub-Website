@@ -3,6 +3,8 @@ export abstract class BasicAbstractStore<T> {
     
     protected readonly options: BasicAbstractStore.Options;
 
+    protected readonly state: Ref<T | null>;
+
     protected constructor(
         protected readonly storeKey: string,
         options?: BasicAbstractStore.InitOptions
@@ -14,12 +16,14 @@ export abstract class BasicAbstractStore<T> {
             ...options
         };
 
+        this.state = useState<T | null>(this.storeKey, () => null);
+
     }
 
     protected abstract fetchData(): Promise<T | null>;
 
     protected useRaw(): Ref<T | null> {
-        return useState<T | null>(this.storeKey, () => null);
+        return this.state;
     }
     
 
@@ -59,15 +63,19 @@ export abstract class BasicAbstractStoreWithMetadata<T, MetaT> extends BasicAbst
     //@ts-ignore
     protected override readonly options: BasicAbstractStore.OptionsWithMetadata<MetaT>;
 
+    protected readonly metadataState: Ref<MetaT>;
+
     protected constructor(
         storeKey: string,
         options: BasicAbstractStore.InitOptionsWithMetadata<MetaT>
     ) {
         super(storeKey, options);
+
+        this.metadataState = useState<MetaT>(`${this.storeKey}_metadata`, () => options.defaultMetadata);
     }
 
     protected useMetadataRaw(): Ref<MetaT> {
-        return useState<MetaT>(`${this.storeKey}_metadata`, () => this.options.defaultMetadata);
+        return this.metadataState;
     }
 
     async useMetadata(): Promise<Readonly<Ref<MetaT>>> {

@@ -148,16 +148,7 @@ export async function useAPI<TReturn>(handler: (api: UseAPITypes.APIClient) => T
     try {
         if (import.meta.server) {
 
-            const event = useRequestEvent();
-            if (!event) {
-                return {
-                    success: false,
-                    code: 500,
-                    message: "Failed to retrieve request event on server.",
-                    data: null
-                } as const;
-            }
-            const sessionToken = useAppCookies().sessionToken.getServerSide(event);
+            const sessionToken = useAppCookies().sessionToken.get().value;
             updateAPIClient(sessionToken ?? null);
             
             return await handler(baseAPIClient);
