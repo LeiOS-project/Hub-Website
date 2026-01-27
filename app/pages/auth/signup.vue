@@ -12,7 +12,7 @@ definePageMeta({
 });
 
 useSeoMeta({
-    title: "Sign Up | NowIP",
+    title: "Sign Up | LeiOS Hub",
     description: "Create a new account",
 });
 
