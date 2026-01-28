@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from '#ui/types'
 import type { GetDevPackagesResponses } from '@/api-client/types.gen'
-import * as z from 'zod'
-import type { FormSubmitEvent } from '@nuxt/ui'
 import { useAPI } from '@/composables/useAPI'
 import DashboardPageBody from '~/components/dashboard/DashboardPageBody.vue'
 
