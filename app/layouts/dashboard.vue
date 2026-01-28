@@ -10,7 +10,7 @@ const user = await userInfoStore.use();
 
 const isAdmin = computed(() => user.value?.role === "admin");
 
-const sidebarItems = computed<NavigationMenuItem[][]>(() => {
+const sidebarItems = computed(() => {
     const devItems: NavigationMenuItem[] = [
         {
             label: "Overview",
@@ -34,37 +34,11 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
         },
     ];
 
-    const settings: NavigationMenuItem[] = [
-        {
-            type: "label",
-            class: "mt-4 pt-3 border-t-2 border-default",
-        },
-        {
-            label: "Settings",
-            to: "/dashboard/settings",
-            icon: "i-lucide-settings",
-            defaultOpen: true,
-            type: "trigger",
-            children: [
-                {
-                    label: "General",
-                    to: "/dashboard/settings",
-                    exact: true,
-                },
-                {
-                    label: "Security",
-                    to: "/dashboard/settings/security",
-                },
-            ],
-        },
-    ];
-
-    const adminItems: NavigationMenuItem[] = isAdmin.value ? [
+    const adminItems: NavigationMenuItem[] = [
         {
             label: "Admin",
             icon: "i-lucide-shield",
             type: "label",
-            class: "mt-4 pt-4 border-t-2 border-default",
             // defaultOpen: route.path.startsWith("/dashboard/admin"),
             // children: [
             //     {
@@ -106,7 +80,27 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             icon: "i-lucide-list-checks",
             to: "/dashboard/admin/tasks",
         }
-    ] : [];
+    ];
+
+
+    const settings: NavigationMenuItem[] = [
+        {
+            label: "Settings",
+            icon: "i-lucide-settings",
+            type: "label",
+        },
+        {
+            label: "General",
+            icon: "i-lucide-user",
+            to: "/dashboard/settings",
+            exact: true,
+        },
+        {
+            label: "Security",
+            icon: "i-lucide-shield",
+            to: "/dashboard/settings/security",
+        },
+    ];
 
     const footerItems: NavigationMenuItem[] = [
         {
@@ -121,7 +115,12 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
         },
     ];
 
-    return [[...devItems, ...adminItems, ...settings], footerItems];
+    return {
+        dev: devItems,
+        settings: settings,
+        admin: adminItems,
+        footer: footerItems,
+    }
 });
 
 
@@ -159,13 +158,26 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
             <template #default="{ collapsed }">
                 <UNavigationMenu
                     :collapsed="collapsed"
-                    :items="sidebarItems[0]"
+                    :items="sidebarItems.dev"
+                    orientation="vertical"
+                />
+
+                <UNavigationMenu
+                    v-if="isAdmin"
+                    :collapsed="collapsed"
+                    :items="sidebarItems.admin"
                     orientation="vertical"
                 />
 
                 <UNavigationMenu
                     :collapsed="collapsed"
-                    :items="sidebarItems[1]"
+                    :items="sidebarItems.settings"
+                    orientation="vertical"
+                />
+
+                <UNavigationMenu
+                    :collapsed="collapsed"
+                    :items="sidebarItems.footer"
                     orientation="vertical"
                     class="mt-auto"
                 />
