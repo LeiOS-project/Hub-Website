@@ -36,7 +36,7 @@ if (os_release_version === "new") {
     const { data: result, refresh, loading } = await useAPIAsyncData(
         `admin-os-release:${os_release_version}`,
         async () => {
-            const res = await useAPI((api) => api.getAdminOsReleasesVersion({
+            const res = await useAPI((api) => api.getAdminOsReleasesByVersion({
                 path: {
                     version: os_release_version
                 }

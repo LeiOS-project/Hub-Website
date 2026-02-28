@@ -102,7 +102,7 @@ const deleteConfirmOpen = ref(false);
 async function onDeleteApiKey() {
 
     try {
-        const res = await useAPI((api) => api.deleteAccountApikeysApiKeyId({
+        const res = await useAPI((api) => api.deleteAccountApikeysByApiKeyId({
             path: {
                 apiKeyID: (apiKey_data as Ref<APIKey>).value.id
             }

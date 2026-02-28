@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { GetDevPackagesPackageNameResponses, GetDevPackagesPackageNameReleasesResponses, GetDevPackagesPackageNameStablePromotionRequestsResponses } from '@/api-client/types.gen'
+import type { GetDevPackagesByPackageNameResponses, GetDevPackagesByPackageNameReleasesResponses, GetDevPackagesByPackageNameStablePromotionRequestsResponses } from '@/api-client/types.gen'
 import type { BreadcrumbItem } from '@nuxt/ui'
 
-type DevPackage = GetDevPackagesPackageNameResponses[200]['data']
-type Release = GetDevPackagesPackageNameReleasesResponses[200]['data'][number]
-type StableRequest = GetDevPackagesPackageNameStablePromotionRequestsResponses[200]['data'][number]
+type DevPackage = GetDevPackagesByPackageNameResponses[200]['data']
+type Release = GetDevPackagesByPackageNameReleasesResponses[200]['data'][number]
+type StableRequest = GetDevPackagesByPackageNameStablePromotionRequestsResponses[200]['data'][number]
 
 definePageMeta({
     layout: 'dashboard'
@@ -41,7 +41,7 @@ const stableForm = reactive({
 const { data: pkg, pending: loadingPkg } = await useAsyncData<DevPackage>(
     `dev-package-${package_name}`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesPackageName({ path: { packageName: package_name } }))
+        const res = await useAPI((api) => api.getDevPackagesByPackageName({ path: { packageName: package_name } }))
         if (!res.success) {
             toast.add({ title: 'Failed to load package', description: res.message, color: 'error' })
             return null as unknown as DevPackage
@@ -54,7 +54,7 @@ const { data: pkg, pending: loadingPkg } = await useAsyncData<DevPackage>(
 const { data: releases, pending: loadingReleases, refresh: refreshReleases } = await useAsyncData<Release[]>(
     `dev-package-${package_name}-releases`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesPackageNameReleases({ path: { packageName: package_name } }))
+        const res = await useAPI((api) => api.getDevPackagesByPackageNameReleases({ path: { packageName: package_name } }))
         if (!res.success) {
             return []
         }
@@ -66,7 +66,7 @@ const { data: releases, pending: loadingReleases, refresh: refreshReleases } = a
 const { data: stableRequests, refresh: refreshStableRequests } = await useAsyncData<StableRequest[]>(
     `dev-package-${package_name}-stable-requests`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesPackageNameStablePromotionRequests({ path: { packageName: package_name } }))
+        const res = await useAPI((api) => api.getDevPackagesByPackageNameStablePromotionRequests({ path: { packageName: package_name } }))
         if (!res.success) {
             return []
         }
@@ -87,7 +87,7 @@ async function handleUpload() {
         return
     }
     console.log(uploadForm.file instanceof Blob)
-    const res = await useAPI((api) => api.postDevPackagesPackageNameReleasesVersionWithLeiosPatchArch({
+    const res = await useAPI((api) => api.postDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArch({
         path: {
             packageName: package_name,
             versionWithLeiosPatch: uploadForm.version,
@@ -115,7 +115,7 @@ async function requestStable() {
         return
     }
 
-    const res = await useAPI((api) => api.postDevPackagesPackageNameStablePromotionRequests({
+    const res = await useAPI((api) => api.postDevPackagesByPackageNameStablePromotionRequests({
         path: { packageName: package_name },
         body: { package_release_id: stableForm.release_id }
     }))

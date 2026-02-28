@@ -2,7 +2,7 @@
 import type { FormError, NavigationMenuItem } from '@nuxt/ui';
 import z from 'zod';
 import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from '~/api-client';
-import { zPostAdminOsReleasesData, zPutAdminOsReleasesVersionData } from '~/api-client/zod.gen';
+import { zPostAdminOsReleasesData, zPutAdminOsReleasesByVersionData } from '~/api-client/zod.gen';
 import DashboardDeleteModal from '~/components/dashboard/DashboardDeleteModal.vue';
 
 const toast = useToast();
@@ -36,7 +36,7 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
     }
 }
 
-const os_release_form_schema = os_release.isNew ? zPostAdminOsReleasesData.shape.body : zPutAdminOsReleasesVersionData.shape.body;
+const os_release_form_schema = os_release.isNew ? zPostAdminOsReleasesData.shape.body : zPutAdminOsReleasesByVersionData.shape.body;
 type OSReleaseFormState = NonNullable<z.infer<typeof os_release_form_schema>>;
 const os_release_form_state = ref<NewOSRelease>({
 	changelog: os_release_data.value.changelog,
@@ -71,7 +71,7 @@ async function onFormSubmit() {
 
 		} else {
 			
-			const result = await useAPI((api) => api.putAdminOsReleasesVersion({
+			const result = await useAPI((api) => api.putAdminOsReleasesByVersion({
 				path: {
 					version: (os_release_data as Ref<OSRelease>).value.version
 				},

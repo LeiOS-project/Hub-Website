@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
-import type { GetAdminOsReleasesResponses, GetAdminOsReleasesVersionPublishingLogsResponses } from '~/api-client';
+import type { GetAdminOsReleasesResponses, GetAdminOsReleasesByVersionPublishingLogsResponses } from '~/api-client';
 
 const toast = useToast();
 const route = useRoute();
 
 type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
-type OSReleasePublishingLogs = GetAdminOsReleasesVersionPublishingLogsResponses["200"]["data"];
+type OSReleasePublishingLogs = GetAdminOsReleasesByVersionPublishingLogsResponses["200"]["data"];
 
 const os_release = useSubrouterInjectedData<OSRelease>('os_release').inject();
 const os_release_data = os_release.data;
@@ -23,7 +23,7 @@ const {
     refresh: os_release_publishing_logs_refresh,
     loading: os_release_publishing_logs_loading,
 } = await useAPIAsyncData(`admin-os-release:${os_release.data.value.version}:logs`, async () => {
-    const res = await useAPI((api) => api.getAdminOsReleasesVersionPublishingLogs({
+    const res = await useAPI((api) => api.getAdminOsReleasesByVersionPublishingLogs({
         path: {
             version: os_release.data.value.version
         }

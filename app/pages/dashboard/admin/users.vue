@@ -139,7 +139,7 @@ async function submitEdit() {
     if (!selectedUser.value) return;
 
     const res = await useAPI((api) =>
-        api.putAdminUsersUserId({
+        api.putAdminUsersByUserId({
             path: { userId: selectedUser.value!.id },
             body: {
                 display_name: editForm.display_name,
@@ -176,7 +176,7 @@ async function submitPassword() {
     if (!selectedUser.value) return;
 
     const res = await useAPI((api) =>
-        api.putAdminUsersUserIdPassword({
+        api.putAdminUsersByUserIdPassword({
             path: { userId: selectedUser.value!.id },
             body: { password: passwordForm.password },
         })
@@ -199,7 +199,7 @@ async function deleteUser(user: AdminUser) {
         return;
 
     const res = await useAPI((api) =>
-        api.deleteAdminUsersUserId({
+        api.deleteAdminUsersByUserId({
             path: { userId: user.id },
         })
     );

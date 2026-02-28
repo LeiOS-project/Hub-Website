@@ -19,7 +19,7 @@ const { data: pkgData, pending, refresh } = await useAsyncData(
     async () => {
         const res = await useAPI(
             (api) =>
-                api.getPublicPackagesPackageName({
+                api.getPublicPackagesByPackageName({
                     path: { packageName: route.params.packageName as string },
                     ...(repo.value === 'all' ? {} : { query: { repo: repo.value } })
                 }),

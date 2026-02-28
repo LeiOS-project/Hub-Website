@@ -33,7 +33,7 @@ if (api_key_id === "new") {
         `/account/apikeys/${api_key_id}`,
         async () => {
 
-            const res = await useAPI((api) => api.getAccountApikeysApiKeyId({
+            const res = await useAPI((api) => api.getAccountApikeysByApiKeyId({
                 path: {
                     apiKeyID: api_key_id
                 }

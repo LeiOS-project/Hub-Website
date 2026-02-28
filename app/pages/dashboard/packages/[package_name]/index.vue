@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type {
-    GetDevPackagesPackageNameResponses,
+    GetDevPackagesByPackageNameResponses,
     PostDevPackagesData,
 } from "@/api-client/types.gen";
 import type z from "zod";
 import {
     zPostDevPackagesData,
-    zPutDevPackagesPackageNameData,
+    zPutDevPackagesByPackageNameData,
 } from "~/api-client/zod.gen";
 import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
-type DevPackage = GetDevPackagesPackageNameResponses[200]["data"];
+type DevPackage = GetDevPackagesByPackageNameResponses[200]["data"];
 type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
 
 const route = useRoute();
@@ -67,7 +67,7 @@ async function onFormSubmit() {
             }
         } else {
             const result = await useAPI((api) =>
-                api.putDevPackagesPackageName({
+                api.putDevPackagesByPackageName({
                     path: {
                         packageName: pkg_data.value.name,
                     },

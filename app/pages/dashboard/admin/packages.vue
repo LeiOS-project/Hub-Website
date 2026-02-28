@@ -141,7 +141,7 @@ async function submitEdit() {
     if (!selectedPackage.value) return;
 
     const res = await useAPI((api) =>
-        api.putAdminPackagesPackageName({
+        api.putAdminPackagesByPackageName({
             path: { packageName: selectedPackage.value!.name },
             body: {
                 description: editForm.description,
@@ -168,7 +168,7 @@ async function deletePackage() {
     deleting.value = true;
 
     const res = await useAPI((api) =>
-        api.deleteAdminPackagesPackageName({
+        api.deleteAdminPackagesByPackageName({
             path: { packageName: packageToDelete.value!.name },
         })
     );

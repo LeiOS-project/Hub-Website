@@ -2,7 +2,7 @@
 
 import { type Client, type Composable, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteAccountApikeysApiKeyIdData, DeleteAccountApikeysApiKeyIdError, DeleteAccountApikeysApiKeyIdResponse, DeleteAccountData, DeleteAccountError, DeleteAccountResponse, DeleteAdminPackagesPackageNameData, DeleteAdminPackagesPackageNameError, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DeleteAdminPackagesPackageNameResponse, DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData, DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse, DeleteAdminUsersUserIdData, DeleteAdminUsersUserIdError, DeleteAdminUsersUserIdResponse, DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData, DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse, GetAccountApikeysApiKeyIdData, GetAccountApikeysApiKeyIdError, GetAccountApikeysApiKeyIdResponse, GetAccountApikeysData, GetAccountApikeysResponse, GetAccountData, GetAccountError, GetAccountResponse, GetAdminOsReleasesData, GetAdminOsReleasesResponse, GetAdminOsReleasesVersionData, GetAdminOsReleasesVersionError, GetAdminOsReleasesVersionPublishingLogsData, GetAdminOsReleasesVersionPublishingLogsError, GetAdminOsReleasesVersionPublishingLogsResponse, GetAdminOsReleasesVersionResponse, GetAdminPackagesData, GetAdminPackagesPackageNameData, GetAdminPackagesPackageNameError, GetAdminPackagesPackageNameReleasesData, GetAdminPackagesPackageNameReleasesResponse, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, GetAdminPackagesPackageNameResponse, GetAdminPackagesPackageNameStablePromotionRequestsData, GetAdminPackagesPackageNameStablePromotionRequestsResponse, GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData, GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse, GetAdminPackagesResponse, GetAdminStablePromotionRequestsData, GetAdminStablePromotionRequestsResponse, GetAdminStablePromotionRequestsStablePromotionRequestIdData, GetAdminStablePromotionRequestsStablePromotionRequestIdError, GetAdminStablePromotionRequestsStablePromotionRequestIdResponse, GetAdminTasksData, GetAdminTasksResponse, GetAdminTasksTaskIdData, GetAdminTasksTaskIdError, GetAdminTasksTaskIdLogsData, GetAdminTasksTaskIdLogsError, GetAdminTasksTaskIdLogsResponse, GetAdminTasksTaskIdResponse, GetAdminUsersData, GetAdminUsersResponse, GetAdminUsersUserIdData, GetAdminUsersUserIdError, GetAdminUsersUserIdResponse, GetAuthSessionData, GetAuthSessionError, GetAuthSessionResponse, GetDevPackagesData, GetDevPackagesPackageNameData, GetDevPackagesPackageNameError, GetDevPackagesPackageNameReleasesData, GetDevPackagesPackageNameReleasesResponse, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchData, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchError, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse, GetDevPackagesPackageNameResponse, GetDevPackagesPackageNameStablePromotionRequestsData, GetDevPackagesPackageNameStablePromotionRequestsResponse, GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData, GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse, GetDevPackagesResponse, GetDevTasksData, GetDevTasksResponse, GetDevTasksTaskIdData, GetDevTasksTaskIdError, GetDevTasksTaskIdLogsData, GetDevTasksTaskIdLogsError, GetDevTasksTaskIdLogsResponse, GetDevTasksTaskIdResponse, GetPublicPackagesData, GetPublicPackagesPackageNameData, GetPublicPackagesPackageNameError, GetPublicPackagesPackageNameReleasesData, GetPublicPackagesPackageNameReleasesError, GetPublicPackagesPackageNameReleasesResponse, GetPublicPackagesPackageNameResponse, GetPublicPackagesResponse, PostAccountApikeysData, PostAccountApikeysError, PostAccountApikeysResponse, PostAdminOsReleasesData, PostAdminOsReleasesResponse, PostAdminPackagesData, PostAdminPackagesError, PostAdminPackagesPackageNameReleasesData, PostAdminPackagesPackageNameReleasesError, PostAdminPackagesPackageNameReleasesResponse, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchError, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse, PostAdminPackagesPackageNameStablePromotionRequestsData, PostAdminPackagesPackageNameStablePromotionRequestsError, PostAdminPackagesPackageNameStablePromotionRequestsResponse, PostAdminPackagesResponse, PostAdminStablePromotionRequestsStablePromotionRequestIdDecideData, PostAdminStablePromotionRequestsStablePromotionRequestIdDecideError, PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponse, PostAdminUsersData, PostAdminUsersError, PostAdminUsersResponse, PostAuthLoginData, PostAuthLoginError, PostAuthLoginResponse, PostAuthLogoutData, PostAuthLogoutError, PostAuthLogoutResponse, PostAuthResetPasswordData, PostAuthResetPasswordError, PostAuthResetPasswordRequestData, PostAuthResetPasswordRequestError, PostAuthResetPasswordRequestResponse, PostAuthResetPasswordResponse, PostDevPackagesData, PostDevPackagesError, PostDevPackagesPackageNameReleasesData, PostDevPackagesPackageNameReleasesError, PostDevPackagesPackageNameReleasesResponse, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchError, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse, PostDevPackagesPackageNameStablePromotionRequestsData, PostDevPackagesPackageNameStablePromotionRequestsError, PostDevPackagesPackageNameStablePromotionRequestsResponse, PostDevPackagesResponse, PutAccountData, PutAccountError, PutAccountPasswordData, PutAccountPasswordError, PutAccountPasswordResponse, PutAccountResponse, PutAdminOsReleasesVersionData, PutAdminOsReleasesVersionError, PutAdminOsReleasesVersionResponse, PutAdminPackagesPackageNameData, PutAdminPackagesPackageNameError, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, PutAdminPackagesPackageNameResponse, PutAdminUsersUserIdData, PutAdminUsersUserIdError, PutAdminUsersUserIdPasswordData, PutAdminUsersUserIdPasswordError, PutAdminUsersUserIdPasswordResponse, PutAdminUsersUserIdResponse, PutDevPackagesPackageNameData, PutDevPackagesPackageNameError, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchData, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchError, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse, PutDevPackagesPackageNameResponse } from './types.gen';
+import type { DeleteAccountApikeysByApiKeyIdData, DeleteAccountApikeysByApiKeyIdError, DeleteAccountApikeysByApiKeyIdResponse, DeleteAccountData, DeleteAccountError, DeleteAccountResponse, DeleteAdminPackagesByPackageNameData, DeleteAdminPackagesByPackageNameError, DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchData, DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchError, DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse, DeleteAdminPackagesByPackageNameResponse, DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData, DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse, DeleteAdminUsersByUserIdData, DeleteAdminUsersByUserIdError, DeleteAdminUsersByUserIdResponse, DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData, DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse, GetAccountApikeysByApiKeyIdData, GetAccountApikeysByApiKeyIdError, GetAccountApikeysByApiKeyIdResponse, GetAccountApikeysData, GetAccountApikeysResponse, GetAccountData, GetAccountError, GetAccountResponse, GetAdminOsReleasesByVersionData, GetAdminOsReleasesByVersionError, GetAdminOsReleasesByVersionPublishingLogsData, GetAdminOsReleasesByVersionPublishingLogsError, GetAdminOsReleasesByVersionPublishingLogsResponse, GetAdminOsReleasesByVersionResponse, GetAdminOsReleasesData, GetAdminOsReleasesResponse, GetAdminPackagesByPackageNameData, GetAdminPackagesByPackageNameError, GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchData, GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchError, GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse, GetAdminPackagesByPackageNameReleasesData, GetAdminPackagesByPackageNameReleasesResponse, GetAdminPackagesByPackageNameResponse, GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData, GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse, GetAdminPackagesByPackageNameStablePromotionRequestsData, GetAdminPackagesByPackageNameStablePromotionRequestsResponse, GetAdminPackagesData, GetAdminPackagesResponse, GetAdminStablePromotionRequestsByStablePromotionRequestIdData, GetAdminStablePromotionRequestsByStablePromotionRequestIdError, GetAdminStablePromotionRequestsByStablePromotionRequestIdResponse, GetAdminStablePromotionRequestsData, GetAdminStablePromotionRequestsResponse, GetAdminTasksByTaskIdData, GetAdminTasksByTaskIdError, GetAdminTasksByTaskIdLogsData, GetAdminTasksByTaskIdLogsError, GetAdminTasksByTaskIdLogsResponse, GetAdminTasksByTaskIdResponse, GetAdminTasksData, GetAdminTasksResponse, GetAdminUsersByUserIdData, GetAdminUsersByUserIdError, GetAdminUsersByUserIdResponse, GetAdminUsersData, GetAdminUsersResponse, GetAuthSessionData, GetAuthSessionError, GetAuthSessionResponse, GetDevPackagesByPackageNameData, GetDevPackagesByPackageNameError, GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchData, GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchError, GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse, GetDevPackagesByPackageNameReleasesData, GetDevPackagesByPackageNameReleasesResponse, GetDevPackagesByPackageNameResponse, GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData, GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse, GetDevPackagesByPackageNameStablePromotionRequestsData, GetDevPackagesByPackageNameStablePromotionRequestsResponse, GetDevPackagesData, GetDevPackagesResponse, GetDevTasksByTaskIdData, GetDevTasksByTaskIdError, GetDevTasksByTaskIdLogsData, GetDevTasksByTaskIdLogsError, GetDevTasksByTaskIdLogsResponse, GetDevTasksByTaskIdResponse, GetDevTasksData, GetDevTasksResponse, GetPublicPackagesByPackageNameData, GetPublicPackagesByPackageNameError, GetPublicPackagesByPackageNameReleasesData, GetPublicPackagesByPackageNameReleasesError, GetPublicPackagesByPackageNameReleasesResponse, GetPublicPackagesByPackageNameResponse, GetPublicPackagesData, GetPublicPackagesResponse, PostAccountApikeysData, PostAccountApikeysError, PostAccountApikeysResponse, PostAdminOsReleasesData, PostAdminOsReleasesResponse, PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchData, PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchError, PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse, PostAdminPackagesByPackageNameReleasesData, PostAdminPackagesByPackageNameReleasesError, PostAdminPackagesByPackageNameReleasesResponse, PostAdminPackagesByPackageNameStablePromotionRequestsData, PostAdminPackagesByPackageNameStablePromotionRequestsError, PostAdminPackagesByPackageNameStablePromotionRequestsResponse, PostAdminPackagesData, PostAdminPackagesError, PostAdminPackagesResponse, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideData, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideError, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse, PostAdminUsersData, PostAdminUsersError, PostAdminUsersResponse, PostAuthLoginData, PostAuthLoginError, PostAuthLoginResponse, PostAuthLogoutData, PostAuthLogoutError, PostAuthLogoutResponse, PostAuthResetPasswordData, PostAuthResetPasswordError, PostAuthResetPasswordRequestData, PostAuthResetPasswordRequestError, PostAuthResetPasswordRequestResponse, PostAuthResetPasswordResponse, PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchData, PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchError, PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse, PostDevPackagesByPackageNameReleasesData, PostDevPackagesByPackageNameReleasesError, PostDevPackagesByPackageNameReleasesResponse, PostDevPackagesByPackageNameStablePromotionRequestsData, PostDevPackagesByPackageNameStablePromotionRequestsError, PostDevPackagesByPackageNameStablePromotionRequestsResponse, PostDevPackagesData, PostDevPackagesError, PostDevPackagesResponse, PutAccountData, PutAccountError, PutAccountPasswordData, PutAccountPasswordError, PutAccountPasswordResponse, PutAccountResponse, PutAdminOsReleasesByVersionData, PutAdminOsReleasesByVersionError, PutAdminOsReleasesByVersionResponse, PutAdminPackagesByPackageNameData, PutAdminPackagesByPackageNameError, PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchData, PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchError, PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse, PutAdminPackagesByPackageNameResponse, PutAdminUsersByUserIdData, PutAdminUsersByUserIdError, PutAdminUsersByUserIdPasswordData, PutAdminUsersByUserIdPasswordError, PutAdminUsersByUserIdPasswordResponse, PutAdminUsersByUserIdResponse, PutDevPackagesByPackageNameData, PutDevPackagesByPackageNameError, PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchData, PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchError, PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse, PutDevPackagesByPackageNameResponse } from './types.gen';
 
 export type Options<TComposable extends Composable = '$fetch', TData extends TDataShape = TDataShape, ResT = unknown, DefaultT = undefined> = Options2<TComposable, TData, ResT, DefaultT> & {
     /**
@@ -30,14 +30,14 @@ export const getPublicPackages = <TComposable extends Composable = '$fetch', Def
  *
  * Retrieve a package and all releases across archive/testing/stable.
  */
-export const getPublicPackagesPackageName = <TComposable extends Composable = '$fetch', DefaultT extends GetPublicPackagesPackageNameResponse = GetPublicPackagesPackageNameResponse>(options: Options<TComposable, GetPublicPackagesPackageNameData, GetPublicPackagesPackageNameResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetPublicPackagesPackageNameResponse | DefaultT, GetPublicPackagesPackageNameError, DefaultT>({ url: '/public/packages/{packageName}', ...options });
+export const getPublicPackagesByPackageName = <TComposable extends Composable = '$fetch', DefaultT extends GetPublicPackagesByPackageNameResponse = GetPublicPackagesByPackageNameResponse>(options: Options<TComposable, GetPublicPackagesByPackageNameData, GetPublicPackagesByPackageNameResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetPublicPackagesByPackageNameResponse | DefaultT, GetPublicPackagesByPackageNameError, DefaultT>({ url: '/public/packages/{packageName}', ...options });
 
 /**
  * List package releases
  *
  * List package releases in archive/testing/stable repositories.
  */
-export const getPublicPackagesPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends GetPublicPackagesPackageNameReleasesResponse = GetPublicPackagesPackageNameReleasesResponse>(options: Options<TComposable, GetPublicPackagesPackageNameReleasesData, GetPublicPackagesPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetPublicPackagesPackageNameReleasesResponse | DefaultT, GetPublicPackagesPackageNameReleasesError, DefaultT>({ url: '/public/packages/{packageName}/releases', ...options });
+export const getPublicPackagesByPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends GetPublicPackagesByPackageNameReleasesResponse = GetPublicPackagesByPackageNameReleasesResponse>(options: Options<TComposable, GetPublicPackagesByPackageNameReleasesData, GetPublicPackagesByPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetPublicPackagesByPackageNameReleasesResponse | DefaultT, GetPublicPackagesByPackageNameReleasesError, DefaultT>({ url: '/public/packages/{packageName}/releases', ...options });
 
 /**
  * User Login
@@ -186,7 +186,7 @@ export const postAccountApikeys = <TComposable extends Composable = '$fetch', De
  *
  * Delete an API key by its ID for the authenticated user's account.
  */
-export const deleteAccountApikeysApiKeyId = <TComposable extends Composable = '$fetch', DefaultT extends DeleteAccountApikeysApiKeyIdResponse = DeleteAccountApikeysApiKeyIdResponse>(options: Options<TComposable, DeleteAccountApikeysApiKeyIdData, DeleteAccountApikeysApiKeyIdResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteAccountApikeysApiKeyIdResponse | DefaultT, DeleteAccountApikeysApiKeyIdError, DefaultT>({
+export const deleteAccountApikeysByApiKeyId = <TComposable extends Composable = '$fetch', DefaultT extends DeleteAccountApikeysByApiKeyIdResponse = DeleteAccountApikeysByApiKeyIdResponse>(options: Options<TComposable, DeleteAccountApikeysByApiKeyIdData, DeleteAccountApikeysByApiKeyIdResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteAccountApikeysByApiKeyIdResponse | DefaultT, DeleteAccountApikeysByApiKeyIdError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/account/apikeys/{apiKeyID}',
     ...options
@@ -197,7 +197,7 @@ export const deleteAccountApikeysApiKeyId = <TComposable extends Composable = '$
  *
  * Retrieve details of a specific API key by its ID for the authenticated user's account.
  */
-export const getAccountApikeysApiKeyId = <TComposable extends Composable = '$fetch', DefaultT extends GetAccountApikeysApiKeyIdResponse = GetAccountApikeysApiKeyIdResponse>(options: Options<TComposable, GetAccountApikeysApiKeyIdData, GetAccountApikeysApiKeyIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAccountApikeysApiKeyIdResponse | DefaultT, GetAccountApikeysApiKeyIdError, DefaultT>({
+export const getAccountApikeysByApiKeyId = <TComposable extends Composable = '$fetch', DefaultT extends GetAccountApikeysByApiKeyIdResponse = GetAccountApikeysByApiKeyIdResponse>(options: Options<TComposable, GetAccountApikeysByApiKeyIdData, GetAccountApikeysByApiKeyIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAccountApikeysByApiKeyIdResponse | DefaultT, GetAccountApikeysByApiKeyIdError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/account/apikeys/{apiKeyID}',
     ...options
@@ -234,7 +234,7 @@ export const postDevPackages = <TComposable extends Composable = '$fetch', Defau
  *
  * Retrieve details of a specific package.
  */
-export const getDevPackagesPackageName = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesPackageNameResponse = GetDevPackagesPackageNameResponse>(options: Options<TComposable, GetDevPackagesPackageNameData, GetDevPackagesPackageNameResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesPackageNameResponse | DefaultT, GetDevPackagesPackageNameError, DefaultT>({
+export const getDevPackagesByPackageName = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesByPackageNameResponse = GetDevPackagesByPackageNameResponse>(options: Options<TComposable, GetDevPackagesByPackageNameData, GetDevPackagesByPackageNameResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesByPackageNameResponse | DefaultT, GetDevPackagesByPackageNameError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}',
     ...options
@@ -245,7 +245,7 @@ export const getDevPackagesPackageName = <TComposable extends Composable = '$fet
  *
  * Update details of a specific package owned by the authenticated developer.
  */
-export const putDevPackagesPackageName = <TComposable extends Composable = '$fetch', DefaultT extends PutDevPackagesPackageNameResponse = PutDevPackagesPackageNameResponse>(options: Options<TComposable, PutDevPackagesPackageNameData, PutDevPackagesPackageNameResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutDevPackagesPackageNameResponse | DefaultT, PutDevPackagesPackageNameError, DefaultT>({
+export const putDevPackagesByPackageName = <TComposable extends Composable = '$fetch', DefaultT extends PutDevPackagesByPackageNameResponse = PutDevPackagesByPackageNameResponse>(options: Options<TComposable, PutDevPackagesByPackageNameData, PutDevPackagesByPackageNameResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutDevPackagesByPackageNameResponse | DefaultT, PutDevPackagesByPackageNameError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}',
     ...options,
@@ -260,7 +260,7 @@ export const putDevPackagesPackageName = <TComposable extends Composable = '$fet
  *
  * Retrieve a list of all releases for the specified package.
  */
-export const getDevPackagesPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesPackageNameReleasesResponse = GetDevPackagesPackageNameReleasesResponse>(options: Options<TComposable, GetDevPackagesPackageNameReleasesData, GetDevPackagesPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesPackageNameReleasesResponse | DefaultT, unknown, DefaultT>({
+export const getDevPackagesByPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesByPackageNameReleasesResponse = GetDevPackagesByPackageNameReleasesResponse>(options: Options<TComposable, GetDevPackagesByPackageNameReleasesData, GetDevPackagesByPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesByPackageNameReleasesResponse | DefaultT, unknown, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}/releases',
     ...options
@@ -271,7 +271,7 @@ export const getDevPackagesPackageNameReleases = <TComposable extends Composable
  *
  * Create a new release for the specified package.
  */
-export const postDevPackagesPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends PostDevPackagesPackageNameReleasesResponse = PostDevPackagesPackageNameReleasesResponse>(options: Options<TComposable, PostDevPackagesPackageNameReleasesData, PostDevPackagesPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostDevPackagesPackageNameReleasesResponse | DefaultT, PostDevPackagesPackageNameReleasesError, DefaultT>({
+export const postDevPackagesByPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends PostDevPackagesByPackageNameReleasesResponse = PostDevPackagesByPackageNameReleasesResponse>(options: Options<TComposable, PostDevPackagesByPackageNameReleasesData, PostDevPackagesByPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostDevPackagesByPackageNameReleasesResponse | DefaultT, PostDevPackagesByPackageNameReleasesError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}/releases',
     ...options,
@@ -286,7 +286,7 @@ export const postDevPackagesPackageNameReleases = <TComposable extends Composabl
  *
  * Retrieve details of a specific package release.
  */
-export const getDevPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse>(options: Options<TComposable, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchData, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse | DefaultT, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchError, DefaultT>({
+export const getDevPackagesByPackageNameReleasesByVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse = GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse>(options: Options<TComposable, GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchData, GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse | DefaultT, GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}',
     ...options
@@ -297,7 +297,7 @@ export const getDevPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposab
  *
  * Update details of a specific package release.
  */
-export const putDevPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse>(options: Options<TComposable, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchData, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse | DefaultT, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchError, DefaultT>({
+export const putDevPackagesByPackageNameReleasesByVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse = PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse>(options: Options<TComposable, PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchData, PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse | DefaultT, PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}',
     ...options,
@@ -312,7 +312,7 @@ export const putDevPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposab
  *
  * Upload a release file for the specified package and architecture.
  */
-export const postDevPackagesPackageNameReleasesVersionWithLeiosPatchArch = <TComposable extends Composable = '$fetch', DefaultT extends PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse>(options: Options<TComposable, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse | DefaultT, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchError, DefaultT>({
+export const postDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArch = <TComposable extends Composable = '$fetch', DefaultT extends PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse = PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse>(options: Options<TComposable, PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchData, PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse | DefaultT, PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchError, DefaultT>({
     ...formDataBodySerializer,
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}/{arch}',
@@ -328,7 +328,7 @@ export const postDevPackagesPackageNameReleasesVersionWithLeiosPatchArch = <TCom
  *
  * Retrieve a list of stable promotion requests for the specified package.
  */
-export const getDevPackagesPackageNameStablePromotionRequests = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesPackageNameStablePromotionRequestsResponse = GetDevPackagesPackageNameStablePromotionRequestsResponse>(options: Options<TComposable, GetDevPackagesPackageNameStablePromotionRequestsData, GetDevPackagesPackageNameStablePromotionRequestsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesPackageNameStablePromotionRequestsResponse | DefaultT, unknown, DefaultT>({
+export const getDevPackagesByPackageNameStablePromotionRequests = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesByPackageNameStablePromotionRequestsResponse = GetDevPackagesByPackageNameStablePromotionRequestsResponse>(options: Options<TComposable, GetDevPackagesByPackageNameStablePromotionRequestsData, GetDevPackagesByPackageNameStablePromotionRequestsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesByPackageNameStablePromotionRequestsResponse | DefaultT, unknown, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}/stable-promotion-requests',
     ...options
@@ -339,7 +339,7 @@ export const getDevPackagesPackageNameStablePromotionRequests = <TComposable ext
  *
  * Submit a request for an existing release of the specified package to be promoted to stable.
  */
-export const postDevPackagesPackageNameStablePromotionRequests = <TComposable extends Composable = '$fetch', DefaultT extends PostDevPackagesPackageNameStablePromotionRequestsResponse = PostDevPackagesPackageNameStablePromotionRequestsResponse>(options: Options<TComposable, PostDevPackagesPackageNameStablePromotionRequestsData, PostDevPackagesPackageNameStablePromotionRequestsResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostDevPackagesPackageNameStablePromotionRequestsResponse | DefaultT, PostDevPackagesPackageNameStablePromotionRequestsError, DefaultT>({
+export const postDevPackagesByPackageNameStablePromotionRequests = <TComposable extends Composable = '$fetch', DefaultT extends PostDevPackagesByPackageNameStablePromotionRequestsResponse = PostDevPackagesByPackageNameStablePromotionRequestsResponse>(options: Options<TComposable, PostDevPackagesByPackageNameStablePromotionRequestsData, PostDevPackagesByPackageNameStablePromotionRequestsResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostDevPackagesByPackageNameStablePromotionRequestsResponse | DefaultT, PostDevPackagesByPackageNameStablePromotionRequestsError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}/stable-promotion-requests',
     ...options,
@@ -354,7 +354,7 @@ export const postDevPackagesPackageNameStablePromotionRequests = <TComposable ex
  *
  * Delete a specific stable promotion request for the specified package.
  */
-export const deleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestId = <TComposable extends Composable = '$fetch', DefaultT extends DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse>(options: Options<TComposable, DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData, DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse | DefaultT, unknown, DefaultT>({
+export const deleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestId = <TComposable extends Composable = '$fetch', DefaultT extends DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse>(options: Options<TComposable, DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData, DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse | DefaultT, unknown, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}',
     ...options
@@ -365,7 +365,7 @@ export const deleteDevPackagesPackageNameStablePromotionRequestsStablePromotionR
  *
  * Retrieve details of a specific stable promotion request for the specified package.
  */
-export const getDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestId = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse>(options: Options<TComposable, GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData, GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse | DefaultT, unknown, DefaultT>({
+export const getDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestId = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse>(options: Options<TComposable, GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData, GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse | DefaultT, unknown, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}',
     ...options
@@ -387,7 +387,7 @@ export const getDevTasks = <TComposable extends Composable = '$fetch', DefaultT 
  *
  * Retrieve details of a specific scheduled task by its ID.
  */
-export const getDevTasksTaskId = <TComposable extends Composable = '$fetch', DefaultT extends GetDevTasksTaskIdResponse = GetDevTasksTaskIdResponse>(options: Options<TComposable, GetDevTasksTaskIdData, GetDevTasksTaskIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevTasksTaskIdResponse | DefaultT, GetDevTasksTaskIdError, DefaultT>({
+export const getDevTasksByTaskId = <TComposable extends Composable = '$fetch', DefaultT extends GetDevTasksByTaskIdResponse = GetDevTasksByTaskIdResponse>(options: Options<TComposable, GetDevTasksByTaskIdData, GetDevTasksByTaskIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevTasksByTaskIdResponse | DefaultT, GetDevTasksByTaskIdError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/tasks/{taskID}',
     ...options
@@ -398,7 +398,7 @@ export const getDevTasksTaskId = <TComposable extends Composable = '$fetch', Def
  *
  * Retrieve logs of a specific scheduled task by its ID.
  */
-export const getDevTasksTaskIdLogs = <TComposable extends Composable = '$fetch', DefaultT extends GetDevTasksTaskIdLogsResponse = GetDevTasksTaskIdLogsResponse>(options: Options<TComposable, GetDevTasksTaskIdLogsData, GetDevTasksTaskIdLogsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevTasksTaskIdLogsResponse | DefaultT, GetDevTasksTaskIdLogsError, DefaultT>({
+export const getDevTasksByTaskIdLogs = <TComposable extends Composable = '$fetch', DefaultT extends GetDevTasksByTaskIdLogsResponse = GetDevTasksByTaskIdLogsResponse>(options: Options<TComposable, GetDevTasksByTaskIdLogsData, GetDevTasksByTaskIdLogsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevTasksByTaskIdLogsResponse | DefaultT, GetDevTasksByTaskIdLogsError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/tasks/{taskID}/logs',
     ...options
@@ -435,7 +435,7 @@ export const postAdminUsers = <TComposable extends Composable = '$fetch', Defaul
  *
  * Permanently remove a LeiOS account after verifying it has no owned packages.
  */
-export const deleteAdminUsersUserId = <TComposable extends Composable = '$fetch', DefaultT extends DeleteAdminUsersUserIdResponse = DeleteAdminUsersUserIdResponse>(options: Options<TComposable, DeleteAdminUsersUserIdData, DeleteAdminUsersUserIdResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteAdminUsersUserIdResponse | DefaultT, DeleteAdminUsersUserIdError, DefaultT>({
+export const deleteAdminUsersByUserId = <TComposable extends Composable = '$fetch', DefaultT extends DeleteAdminUsersByUserIdResponse = DeleteAdminUsersByUserIdResponse>(options: Options<TComposable, DeleteAdminUsersByUserIdData, DeleteAdminUsersByUserIdResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteAdminUsersByUserIdResponse | DefaultT, DeleteAdminUsersByUserIdError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/users/{userId}',
     ...options
@@ -446,7 +446,7 @@ export const deleteAdminUsersUserId = <TComposable extends Composable = '$fetch'
  *
  * Retrieve details for a specific LeiOS account.
  */
-export const getAdminUsersUserId = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminUsersUserIdResponse = GetAdminUsersUserIdResponse>(options: Options<TComposable, GetAdminUsersUserIdData, GetAdminUsersUserIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminUsersUserIdResponse | DefaultT, GetAdminUsersUserIdError, DefaultT>({
+export const getAdminUsersByUserId = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminUsersByUserIdResponse = GetAdminUsersByUserIdResponse>(options: Options<TComposable, GetAdminUsersByUserIdData, GetAdminUsersByUserIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminUsersByUserIdResponse | DefaultT, GetAdminUsersByUserIdError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/users/{userId}',
     ...options
@@ -457,7 +457,7 @@ export const getAdminUsersUserId = <TComposable extends Composable = '$fetch', D
  *
  * Modify profile fields or role for a LeiOS account.
  */
-export const putAdminUsersUserId = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminUsersUserIdResponse = PutAdminUsersUserIdResponse>(options: Options<TComposable, PutAdminUsersUserIdData, PutAdminUsersUserIdResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminUsersUserIdResponse | DefaultT, PutAdminUsersUserIdError, DefaultT>({
+export const putAdminUsersByUserId = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminUsersByUserIdResponse = PutAdminUsersByUserIdResponse>(options: Options<TComposable, PutAdminUsersByUserIdData, PutAdminUsersByUserIdResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminUsersByUserIdResponse | DefaultT, PutAdminUsersByUserIdError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/users/{userId}',
     ...options,
@@ -472,7 +472,7 @@ export const putAdminUsersUserId = <TComposable extends Composable = '$fetch', D
  *
  * Set a new password for a LeiOS account and revoke active sessions.
  */
-export const putAdminUsersUserIdPassword = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminUsersUserIdPasswordResponse = PutAdminUsersUserIdPasswordResponse>(options: Options<TComposable, PutAdminUsersUserIdPasswordData, PutAdminUsersUserIdPasswordResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminUsersUserIdPasswordResponse | DefaultT, PutAdminUsersUserIdPasswordError, DefaultT>({
+export const putAdminUsersByUserIdPassword = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminUsersByUserIdPasswordResponse = PutAdminUsersByUserIdPasswordResponse>(options: Options<TComposable, PutAdminUsersByUserIdPasswordData, PutAdminUsersByUserIdPasswordResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminUsersByUserIdPasswordResponse | DefaultT, PutAdminUsersByUserIdPasswordError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/users/{userId}/password',
     ...options,
@@ -513,7 +513,7 @@ export const postAdminPackages = <TComposable extends Composable = '$fetch', Def
  *
  * Delete a specific package owned by the authenticated developer.
  */
-export const deleteAdminPackagesPackageName = <TComposable extends Composable = '$fetch', DefaultT extends DeleteAdminPackagesPackageNameResponse = DeleteAdminPackagesPackageNameResponse>(options: Options<TComposable, DeleteAdminPackagesPackageNameData, DeleteAdminPackagesPackageNameResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteAdminPackagesPackageNameResponse | DefaultT, DeleteAdminPackagesPackageNameError, DefaultT>({
+export const deleteAdminPackagesByPackageName = <TComposable extends Composable = '$fetch', DefaultT extends DeleteAdminPackagesByPackageNameResponse = DeleteAdminPackagesByPackageNameResponse>(options: Options<TComposable, DeleteAdminPackagesByPackageNameData, DeleteAdminPackagesByPackageNameResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteAdminPackagesByPackageNameResponse | DefaultT, DeleteAdminPackagesByPackageNameError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}',
     ...options
@@ -524,7 +524,7 @@ export const deleteAdminPackagesPackageName = <TComposable extends Composable = 
  *
  * Retrieve details of a specific package.
  */
-export const getAdminPackagesPackageName = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesPackageNameResponse = GetAdminPackagesPackageNameResponse>(options: Options<TComposable, GetAdminPackagesPackageNameData, GetAdminPackagesPackageNameResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesPackageNameResponse | DefaultT, GetAdminPackagesPackageNameError, DefaultT>({
+export const getAdminPackagesByPackageName = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesByPackageNameResponse = GetAdminPackagesByPackageNameResponse>(options: Options<TComposable, GetAdminPackagesByPackageNameData, GetAdminPackagesByPackageNameResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesByPackageNameResponse | DefaultT, GetAdminPackagesByPackageNameError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}',
     ...options
@@ -535,7 +535,7 @@ export const getAdminPackagesPackageName = <TComposable extends Composable = '$f
  *
  * Update details of a specific package owned by the authenticated developer.
  */
-export const putAdminPackagesPackageName = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminPackagesPackageNameResponse = PutAdminPackagesPackageNameResponse>(options: Options<TComposable, PutAdminPackagesPackageNameData, PutAdminPackagesPackageNameResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminPackagesPackageNameResponse | DefaultT, PutAdminPackagesPackageNameError, DefaultT>({
+export const putAdminPackagesByPackageName = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminPackagesByPackageNameResponse = PutAdminPackagesByPackageNameResponse>(options: Options<TComposable, PutAdminPackagesByPackageNameData, PutAdminPackagesByPackageNameResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminPackagesByPackageNameResponse | DefaultT, PutAdminPackagesByPackageNameError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}',
     ...options,
@@ -550,7 +550,7 @@ export const putAdminPackagesPackageName = <TComposable extends Composable = '$f
  *
  * Retrieve a list of all releases for the specified package.
  */
-export const getAdminPackagesPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesPackageNameReleasesResponse = GetAdminPackagesPackageNameReleasesResponse>(options: Options<TComposable, GetAdminPackagesPackageNameReleasesData, GetAdminPackagesPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesPackageNameReleasesResponse | DefaultT, unknown, DefaultT>({
+export const getAdminPackagesByPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesByPackageNameReleasesResponse = GetAdminPackagesByPackageNameReleasesResponse>(options: Options<TComposable, GetAdminPackagesByPackageNameReleasesData, GetAdminPackagesByPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesByPackageNameReleasesResponse | DefaultT, unknown, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/releases',
     ...options
@@ -561,7 +561,7 @@ export const getAdminPackagesPackageNameReleases = <TComposable extends Composab
  *
  * Create a new release for the specified package.
  */
-export const postAdminPackagesPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPackagesPackageNameReleasesResponse = PostAdminPackagesPackageNameReleasesResponse>(options: Options<TComposable, PostAdminPackagesPackageNameReleasesData, PostAdminPackagesPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminPackagesPackageNameReleasesResponse | DefaultT, PostAdminPackagesPackageNameReleasesError, DefaultT>({
+export const postAdminPackagesByPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPackagesByPackageNameReleasesResponse = PostAdminPackagesByPackageNameReleasesResponse>(options: Options<TComposable, PostAdminPackagesByPackageNameReleasesData, PostAdminPackagesByPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminPackagesByPackageNameReleasesResponse | DefaultT, PostAdminPackagesByPackageNameReleasesError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/releases',
     ...options,
@@ -576,7 +576,7 @@ export const postAdminPackagesPackageNameReleases = <TComposable extends Composa
  *
  * Delete a specific package release.
  */
-export const deleteAdminPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse>(options: Options<TComposable, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse | DefaultT, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, DefaultT>({
+export const deleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse = DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse>(options: Options<TComposable, DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchData, DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse | DefaultT, DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}',
     ...options
@@ -587,7 +587,7 @@ export const deleteAdminPackagesPackageNameReleasesVersionWithLeiosPatch = <TCom
  *
  * Retrieve details of a specific package release.
  */
-export const getAdminPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse>(options: Options<TComposable, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse | DefaultT, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, DefaultT>({
+export const getAdminPackagesByPackageNameReleasesByVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse = GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse>(options: Options<TComposable, GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchData, GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse | DefaultT, GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}',
     ...options
@@ -598,7 +598,7 @@ export const getAdminPackagesPackageNameReleasesVersionWithLeiosPatch = <TCompos
  *
  * Update details of a specific package release.
  */
-export const putAdminPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse>(options: Options<TComposable, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse | DefaultT, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, DefaultT>({
+export const putAdminPackagesByPackageNameReleasesByVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse = PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse>(options: Options<TComposable, PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchData, PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse | DefaultT, PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}',
     ...options,
@@ -613,7 +613,7 @@ export const putAdminPackagesPackageNameReleasesVersionWithLeiosPatch = <TCompos
  *
  * Upload a release file for the specified package and architecture.
  */
-export const postAdminPackagesPackageNameReleasesVersionWithLeiosPatchArch = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse>(options: Options<TComposable, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse | DefaultT, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchError, DefaultT>({
+export const postAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArch = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse = PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse>(options: Options<TComposable, PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchData, PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse | DefaultT, PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchError, DefaultT>({
     ...formDataBodySerializer,
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}/{arch}',
@@ -629,7 +629,7 @@ export const postAdminPackagesPackageNameReleasesVersionWithLeiosPatchArch = <TC
  *
  * Retrieve a list of stable promotion requests for the specified package.
  */
-export const getAdminPackagesPackageNameStablePromotionRequests = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesPackageNameStablePromotionRequestsResponse = GetAdminPackagesPackageNameStablePromotionRequestsResponse>(options: Options<TComposable, GetAdminPackagesPackageNameStablePromotionRequestsData, GetAdminPackagesPackageNameStablePromotionRequestsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesPackageNameStablePromotionRequestsResponse | DefaultT, unknown, DefaultT>({
+export const getAdminPackagesByPackageNameStablePromotionRequests = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesByPackageNameStablePromotionRequestsResponse = GetAdminPackagesByPackageNameStablePromotionRequestsResponse>(options: Options<TComposable, GetAdminPackagesByPackageNameStablePromotionRequestsData, GetAdminPackagesByPackageNameStablePromotionRequestsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesByPackageNameStablePromotionRequestsResponse | DefaultT, unknown, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/stable-promotion-requests',
     ...options
@@ -640,7 +640,7 @@ export const getAdminPackagesPackageNameStablePromotionRequests = <TComposable e
  *
  * Submit a request for an existing release of the specified package to be promoted to stable.
  */
-export const postAdminPackagesPackageNameStablePromotionRequests = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPackagesPackageNameStablePromotionRequestsResponse = PostAdminPackagesPackageNameStablePromotionRequestsResponse>(options: Options<TComposable, PostAdminPackagesPackageNameStablePromotionRequestsData, PostAdminPackagesPackageNameStablePromotionRequestsResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminPackagesPackageNameStablePromotionRequestsResponse | DefaultT, PostAdminPackagesPackageNameStablePromotionRequestsError, DefaultT>({
+export const postAdminPackagesByPackageNameStablePromotionRequests = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPackagesByPackageNameStablePromotionRequestsResponse = PostAdminPackagesByPackageNameStablePromotionRequestsResponse>(options: Options<TComposable, PostAdminPackagesByPackageNameStablePromotionRequestsData, PostAdminPackagesByPackageNameStablePromotionRequestsResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminPackagesByPackageNameStablePromotionRequestsResponse | DefaultT, PostAdminPackagesByPackageNameStablePromotionRequestsError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/stable-promotion-requests',
     ...options,
@@ -655,7 +655,7 @@ export const postAdminPackagesPackageNameStablePromotionRequests = <TComposable 
  *
  * Delete a specific stable promotion request for the specified package.
  */
-export const deleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestId = <TComposable extends Composable = '$fetch', DefaultT extends DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse>(options: Options<TComposable, DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData, DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse | DefaultT, unknown, DefaultT>({
+export const deleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestId = <TComposable extends Composable = '$fetch', DefaultT extends DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse>(options: Options<TComposable, DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData, DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse, DefaultT>) => (options.client ?? client).delete<TComposable, DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse | DefaultT, unknown, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}',
     ...options
@@ -666,7 +666,7 @@ export const deleteAdminPackagesPackageNameStablePromotionRequestsStablePromotio
  *
  * Retrieve details of a specific stable promotion request for the specified package.
  */
-export const getAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestId = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse>(options: Options<TComposable, GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData, GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse | DefaultT, unknown, DefaultT>({
+export const getAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestId = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse>(options: Options<TComposable, GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData, GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse | DefaultT, unknown, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}',
     ...options
@@ -703,7 +703,7 @@ export const postAdminOsReleases = <TComposable extends Composable = '$fetch', D
  *
  * Retrieve a specific OS release by version.
  */
-export const getAdminOsReleasesVersion = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminOsReleasesVersionResponse = GetAdminOsReleasesVersionResponse>(options: Options<TComposable, GetAdminOsReleasesVersionData, GetAdminOsReleasesVersionResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminOsReleasesVersionResponse | DefaultT, GetAdminOsReleasesVersionError, DefaultT>({
+export const getAdminOsReleasesByVersion = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminOsReleasesByVersionResponse = GetAdminOsReleasesByVersionResponse>(options: Options<TComposable, GetAdminOsReleasesByVersionData, GetAdminOsReleasesByVersionResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminOsReleasesByVersionResponse | DefaultT, GetAdminOsReleasesByVersionError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/os-releases/{version}',
     ...options
@@ -714,7 +714,7 @@ export const getAdminOsReleasesVersion = <TComposable extends Composable = '$fet
  *
  * Update details of a specific OS release by version.
  */
-export const putAdminOsReleasesVersion = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminOsReleasesVersionResponse = PutAdminOsReleasesVersionResponse>(options: Options<TComposable, PutAdminOsReleasesVersionData, PutAdminOsReleasesVersionResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminOsReleasesVersionResponse | DefaultT, PutAdminOsReleasesVersionError, DefaultT>({
+export const putAdminOsReleasesByVersion = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminOsReleasesByVersionResponse = PutAdminOsReleasesByVersionResponse>(options: Options<TComposable, PutAdminOsReleasesByVersionData, PutAdminOsReleasesByVersionResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminOsReleasesByVersionResponse | DefaultT, PutAdminOsReleasesByVersionError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/os-releases/{version}',
     ...options,
@@ -729,7 +729,7 @@ export const putAdminOsReleasesVersion = <TComposable extends Composable = '$fet
  *
  * Retrieve publishing logs of a specific OS release by version.
  */
-export const getAdminOsReleasesVersionPublishingLogs = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminOsReleasesVersionPublishingLogsResponse = GetAdminOsReleasesVersionPublishingLogsResponse>(options: Options<TComposable, GetAdminOsReleasesVersionPublishingLogsData, GetAdminOsReleasesVersionPublishingLogsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminOsReleasesVersionPublishingLogsResponse | DefaultT, GetAdminOsReleasesVersionPublishingLogsError, DefaultT>({
+export const getAdminOsReleasesByVersionPublishingLogs = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminOsReleasesByVersionPublishingLogsResponse = GetAdminOsReleasesByVersionPublishingLogsResponse>(options: Options<TComposable, GetAdminOsReleasesByVersionPublishingLogsData, GetAdminOsReleasesByVersionPublishingLogsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminOsReleasesByVersionPublishingLogsResponse | DefaultT, GetAdminOsReleasesByVersionPublishingLogsError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/os-releases/{version}/publishing-logs',
     ...options
@@ -751,7 +751,7 @@ export const getAdminStablePromotionRequests = <TComposable extends Composable =
  *
  * Retrieve details of a specific stable promotion request.
  */
-export const getAdminStablePromotionRequestsStablePromotionRequestId = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminStablePromotionRequestsStablePromotionRequestIdResponse = GetAdminStablePromotionRequestsStablePromotionRequestIdResponse>(options: Options<TComposable, GetAdminStablePromotionRequestsStablePromotionRequestIdData, GetAdminStablePromotionRequestsStablePromotionRequestIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminStablePromotionRequestsStablePromotionRequestIdResponse | DefaultT, GetAdminStablePromotionRequestsStablePromotionRequestIdError, DefaultT>({
+export const getAdminStablePromotionRequestsByStablePromotionRequestId = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminStablePromotionRequestsByStablePromotionRequestIdResponse = GetAdminStablePromotionRequestsByStablePromotionRequestIdResponse>(options: Options<TComposable, GetAdminStablePromotionRequestsByStablePromotionRequestIdData, GetAdminStablePromotionRequestsByStablePromotionRequestIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminStablePromotionRequestsByStablePromotionRequestIdResponse | DefaultT, GetAdminStablePromotionRequestsByStablePromotionRequestIdError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/stable-promotion-requests/{stablePromotionRequestID}',
     ...options
@@ -762,7 +762,7 @@ export const getAdminStablePromotionRequestsStablePromotionRequestId = <TComposa
  *
  * Approve or reject a stable promotion request for a package.
  */
-export const postAdminStablePromotionRequestsStablePromotionRequestIdDecide = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponse = PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponse>(options: Options<TComposable, PostAdminStablePromotionRequestsStablePromotionRequestIdDecideData, PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponse | DefaultT, PostAdminStablePromotionRequestsStablePromotionRequestIdDecideError, DefaultT>({
+export const postAdminStablePromotionRequestsByStablePromotionRequestIdDecide = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse = PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse>(options: Options<TComposable, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideData, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse | DefaultT, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/stable-promotion-requests/{stablePromotionRequestID}/decide',
     ...options,
@@ -788,7 +788,7 @@ export const getAdminTasks = <TComposable extends Composable = '$fetch', Default
  *
  * Retrieve details of a specific scheduled task by its ID.
  */
-export const getAdminTasksTaskId = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminTasksTaskIdResponse = GetAdminTasksTaskIdResponse>(options: Options<TComposable, GetAdminTasksTaskIdData, GetAdminTasksTaskIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminTasksTaskIdResponse | DefaultT, GetAdminTasksTaskIdError, DefaultT>({
+export const getAdminTasksByTaskId = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminTasksByTaskIdResponse = GetAdminTasksByTaskIdResponse>(options: Options<TComposable, GetAdminTasksByTaskIdData, GetAdminTasksByTaskIdResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminTasksByTaskIdResponse | DefaultT, GetAdminTasksByTaskIdError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/tasks/{taskID}',
     ...options
@@ -799,7 +799,7 @@ export const getAdminTasksTaskId = <TComposable extends Composable = '$fetch', D
  *
  * Retrieve logs of a specific scheduled task by its ID.
  */
-export const getAdminTasksTaskIdLogs = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminTasksTaskIdLogsResponse = GetAdminTasksTaskIdLogsResponse>(options: Options<TComposable, GetAdminTasksTaskIdLogsData, GetAdminTasksTaskIdLogsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminTasksTaskIdLogsResponse | DefaultT, GetAdminTasksTaskIdLogsError, DefaultT>({
+export const getAdminTasksByTaskIdLogs = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminTasksByTaskIdLogsResponse = GetAdminTasksByTaskIdLogsResponse>(options: Options<TComposable, GetAdminTasksByTaskIdLogsData, GetAdminTasksByTaskIdLogsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminTasksByTaskIdLogsResponse | DefaultT, GetAdminTasksByTaskIdLogsError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/tasks/{taskID}/logs',
     ...options

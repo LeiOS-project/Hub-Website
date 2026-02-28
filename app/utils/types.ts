@@ -1,13 +1,13 @@
 import type {
     GetAccountApikeysResponses,
     GetAccountResponses,
-    GetDevPackagesPackageNameReleasesResponses,
-    GetDevPackagesPackageNameStablePromotionRequestsResponses,
+    GetDevPackagesByPackageNameReleasesResponses,
+    GetDevPackagesByPackageNameStablePromotionRequestsResponses,
     GetDevPackagesResponses,
     PostAccountApikeysData,
     PostDevPackagesData,
-    PostDevPackagesPackageNameReleasesData,
-    PostDevPackagesPackageNameStablePromotionRequestsData
+    PostDevPackagesByPackageNameReleasesData,
+    PostDevPackagesByPackageNameStablePromotionRequestsData
 } from "~/api-client";
 
 export namespace UtilityTypes {
@@ -22,12 +22,12 @@ export type UserInfo = GetAccountResponses["200"]["data"];
 export type DevPackage = GetDevPackagesResponses["200"]["data"][number];
 export type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
 
-export type DevPackageRelease = GetDevPackagesPackageNameReleasesResponses["200"]["data"][number];
-export type NewDevPackageRelease = NonNullable<PostDevPackagesPackageNameReleasesData["body"]>;
+export type DevPackageRelease = GetDevPackagesByPackageNameReleasesResponses["200"]["data"][number];
+export type NewDevPackageRelease = NonNullable<PostDevPackagesByPackageNameReleasesData["body"]>;
 
 
 export type APIKey = GetAccountApikeysResponses["200"]["data"][number];
 export type NewAPIKey = NonNullable<PostAccountApikeysData["body"]>;
 
-export type DevPackageStablePromotionRequest = GetDevPackagesPackageNameStablePromotionRequestsResponses["200"]["data"][number];
-export type NewDevPackageStablePromotionRequest = NonNullable<PostDevPackagesPackageNameStablePromotionRequestsData["body"]>;
+export type DevPackageStablePromotionRequest = GetDevPackagesByPackageNameStablePromotionRequestsResponses["200"]["data"][number];
+export type NewDevPackageStablePromotionRequest = NonNullable<PostDevPackagesByPackageNameStablePromotionRequestsData["body"]>;

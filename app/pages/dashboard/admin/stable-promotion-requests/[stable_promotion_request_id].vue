@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import type { GetAdminStablePromotionRequestsStablePromotionRequestIdResponses } from '~/api-client';
+import type { GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses } from '~/api-client';
 
 const route = useRoute();
 const toast = useToast();
 
 const requestId = parseInt(route.params.stable_promotion_request_id as string);
 
-type AdminStableRequest = GetAdminStablePromotionRequestsStablePromotionRequestIdResponses[200]['data'];
+type AdminStableRequest = GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses[200]['data'];
 
 const { data: result, refresh } = await useAPIAsyncData(
     `/admin/stable-promotion-requests/${requestId}`,
     async () => {
-        const res = await useAPI((api) => api.getAdminStablePromotionRequestsStablePromotionRequestId({
+        const res = await useAPI((api) => api.getAdminStablePromotionRequestsByStablePromotionRequestId({
             path: {
                 stablePromotionRequestID: requestId
             }
@@ -78,7 +78,7 @@ async function submitDecision() {
     submittingDecision.value = true;
 
     try {
-        const res = await useAPI((api) => api.postAdminStablePromotionRequestsStablePromotionRequestIdDecide({
+        const res = await useAPI((api) => api.postAdminStablePromotionRequestsByStablePromotionRequestIdDecide({
             path: { stablePromotionRequestID: requestData.value.id },
             body: {
                 status: decisionForm.status,

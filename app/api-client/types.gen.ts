@@ -44,7 +44,7 @@ export type GetPublicPackagesResponses = {
 
 export type GetPublicPackagesResponse = GetPublicPackagesResponses[keyof GetPublicPackagesResponses];
 
-export type GetPublicPackagesPackageNameData = {
+export type GetPublicPackagesByPackageNameData = {
     body?: never;
     path: {
         packageName: string;
@@ -55,7 +55,7 @@ export type GetPublicPackagesPackageNameData = {
     url: '/public/packages/{packageName}';
 };
 
-export type GetPublicPackagesPackageNameErrors = {
+export type GetPublicPackagesByPackageNameErrors = {
     /**
      * Package not found
      */
@@ -66,9 +66,9 @@ export type GetPublicPackagesPackageNameErrors = {
     };
 };
 
-export type GetPublicPackagesPackageNameError = GetPublicPackagesPackageNameErrors[keyof GetPublicPackagesPackageNameErrors];
+export type GetPublicPackagesByPackageNameError = GetPublicPackagesByPackageNameErrors[keyof GetPublicPackagesByPackageNameErrors];
 
-export type GetPublicPackagesPackageNameResponses = {
+export type GetPublicPackagesByPackageNameResponses = {
     /**
      * Package retrieved successfully
      */
@@ -187,9 +187,9 @@ export type GetPublicPackagesPackageNameResponses = {
     };
 };
 
-export type GetPublicPackagesPackageNameResponse = GetPublicPackagesPackageNameResponses[keyof GetPublicPackagesPackageNameResponses];
+export type GetPublicPackagesByPackageNameResponse = GetPublicPackagesByPackageNameResponses[keyof GetPublicPackagesByPackageNameResponses];
 
-export type GetPublicPackagesPackageNameReleasesData = {
+export type GetPublicPackagesByPackageNameReleasesData = {
     body?: never;
     path: {
         packageName: string;
@@ -200,7 +200,7 @@ export type GetPublicPackagesPackageNameReleasesData = {
     url: '/public/packages/{packageName}/releases';
 };
 
-export type GetPublicPackagesPackageNameReleasesErrors = {
+export type GetPublicPackagesByPackageNameReleasesErrors = {
     /**
      * Package not found
      */
@@ -211,9 +211,9 @@ export type GetPublicPackagesPackageNameReleasesErrors = {
     };
 };
 
-export type GetPublicPackagesPackageNameReleasesError = GetPublicPackagesPackageNameReleasesErrors[keyof GetPublicPackagesPackageNameReleasesErrors];
+export type GetPublicPackagesByPackageNameReleasesError = GetPublicPackagesByPackageNameReleasesErrors[keyof GetPublicPackagesByPackageNameReleasesErrors];
 
-export type GetPublicPackagesPackageNameReleasesResponses = {
+export type GetPublicPackagesByPackageNameReleasesResponses = {
     /**
      * Package releases retrieved successfully
      */
@@ -310,7 +310,7 @@ export type GetPublicPackagesPackageNameReleasesResponses = {
     };
 };
 
-export type GetPublicPackagesPackageNameReleasesResponse = GetPublicPackagesPackageNameReleasesResponses[keyof GetPublicPackagesPackageNameReleasesResponses];
+export type GetPublicPackagesByPackageNameReleasesResponse = GetPublicPackagesByPackageNameReleasesResponses[keyof GetPublicPackagesByPackageNameReleasesResponses];
 
 export type PostAuthLoginData = {
     body?: {
@@ -766,7 +766,7 @@ export type PostAccountApikeysResponses = {
 
 export type PostAccountApikeysResponse = PostAccountApikeysResponses[keyof PostAccountApikeysResponses];
 
-export type DeleteAccountApikeysApiKeyIdData = {
+export type DeleteAccountApikeysByApiKeyIdData = {
     body?: never;
     path: {
         apiKeyID: string;
@@ -775,7 +775,7 @@ export type DeleteAccountApikeysApiKeyIdData = {
     url: '/account/apikeys/{apiKeyID}';
 };
 
-export type DeleteAccountApikeysApiKeyIdErrors = {
+export type DeleteAccountApikeysByApiKeyIdErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -794,9 +794,9 @@ export type DeleteAccountApikeysApiKeyIdErrors = {
     };
 };
 
-export type DeleteAccountApikeysApiKeyIdError = DeleteAccountApikeysApiKeyIdErrors[keyof DeleteAccountApikeysApiKeyIdErrors];
+export type DeleteAccountApikeysByApiKeyIdError = DeleteAccountApikeysByApiKeyIdErrors[keyof DeleteAccountApikeysByApiKeyIdErrors];
 
-export type DeleteAccountApikeysApiKeyIdResponses = {
+export type DeleteAccountApikeysByApiKeyIdResponses = {
     /**
      * API key deleted successfully
      */
@@ -808,9 +808,9 @@ export type DeleteAccountApikeysApiKeyIdResponses = {
     };
 };
 
-export type DeleteAccountApikeysApiKeyIdResponse = DeleteAccountApikeysApiKeyIdResponses[keyof DeleteAccountApikeysApiKeyIdResponses];
+export type DeleteAccountApikeysByApiKeyIdResponse = DeleteAccountApikeysByApiKeyIdResponses[keyof DeleteAccountApikeysByApiKeyIdResponses];
 
-export type GetAccountApikeysApiKeyIdData = {
+export type GetAccountApikeysByApiKeyIdData = {
     body?: never;
     path: {
         apiKeyID: string;
@@ -819,7 +819,7 @@ export type GetAccountApikeysApiKeyIdData = {
     url: '/account/apikeys/{apiKeyID}';
 };
 
-export type GetAccountApikeysApiKeyIdErrors = {
+export type GetAccountApikeysByApiKeyIdErrors = {
     /**
      * API key not found
      */
@@ -830,9 +830,9 @@ export type GetAccountApikeysApiKeyIdErrors = {
     };
 };
 
-export type GetAccountApikeysApiKeyIdError = GetAccountApikeysApiKeyIdErrors[keyof GetAccountApikeysApiKeyIdErrors];
+export type GetAccountApikeysByApiKeyIdError = GetAccountApikeysByApiKeyIdErrors[keyof GetAccountApikeysByApiKeyIdErrors];
 
-export type GetAccountApikeysApiKeyIdResponses = {
+export type GetAccountApikeysByApiKeyIdResponses = {
     /**
      * API key retrieved successfully
      */
@@ -849,7 +849,7 @@ export type GetAccountApikeysApiKeyIdResponses = {
     };
 };
 
-export type GetAccountApikeysApiKeyIdResponse = GetAccountApikeysApiKeyIdResponses[keyof GetAccountApikeysApiKeyIdResponses];
+export type GetAccountApikeysByApiKeyIdResponse = GetAccountApikeysByApiKeyIdResponses[keyof GetAccountApikeysByApiKeyIdResponses];
 
 export type GetDevPackagesData = {
     body?: never;
@@ -938,7 +938,7 @@ export type PostDevPackagesResponses = {
 
 export type PostDevPackagesResponse = PostDevPackagesResponses[keyof PostDevPackagesResponses];
 
-export type GetDevPackagesPackageNameData = {
+export type GetDevPackagesByPackageNameData = {
     body?: never;
     path: {
         packageName: string;
@@ -947,7 +947,7 @@ export type GetDevPackagesPackageNameData = {
     url: '/dev/packages/{packageName}';
 };
 
-export type GetDevPackagesPackageNameErrors = {
+export type GetDevPackagesByPackageNameErrors = {
     /**
      * Package with specified Name not found
      */
@@ -958,9 +958,9 @@ export type GetDevPackagesPackageNameErrors = {
     };
 };
 
-export type GetDevPackagesPackageNameError = GetDevPackagesPackageNameErrors[keyof GetDevPackagesPackageNameErrors];
+export type GetDevPackagesByPackageNameError = GetDevPackagesByPackageNameErrors[keyof GetDevPackagesByPackageNameErrors];
 
-export type GetDevPackagesPackageNameResponses = {
+export type GetDevPackagesByPackageNameResponses = {
     /**
      * Package retrieved successfully
      */
@@ -991,9 +991,9 @@ export type GetDevPackagesPackageNameResponses = {
     };
 };
 
-export type GetDevPackagesPackageNameResponse = GetDevPackagesPackageNameResponses[keyof GetDevPackagesPackageNameResponses];
+export type GetDevPackagesByPackageNameResponse = GetDevPackagesByPackageNameResponses[keyof GetDevPackagesByPackageNameResponses];
 
-export type PutDevPackagesPackageNameData = {
+export type PutDevPackagesByPackageNameData = {
     body?: {
         description?: string;
         homepage_url?: string;
@@ -1006,7 +1006,7 @@ export type PutDevPackagesPackageNameData = {
     url: '/dev/packages/{packageName}';
 };
 
-export type PutDevPackagesPackageNameErrors = {
+export type PutDevPackagesByPackageNameErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -1033,9 +1033,9 @@ export type PutDevPackagesPackageNameErrors = {
     };
 };
 
-export type PutDevPackagesPackageNameError = PutDevPackagesPackageNameErrors[keyof PutDevPackagesPackageNameErrors];
+export type PutDevPackagesByPackageNameError = PutDevPackagesByPackageNameErrors[keyof PutDevPackagesByPackageNameErrors];
 
-export type PutDevPackagesPackageNameResponses = {
+export type PutDevPackagesByPackageNameResponses = {
     /**
      * Package updated successfully
      */
@@ -1047,9 +1047,9 @@ export type PutDevPackagesPackageNameResponses = {
     };
 };
 
-export type PutDevPackagesPackageNameResponse = PutDevPackagesPackageNameResponses[keyof PutDevPackagesPackageNameResponses];
+export type PutDevPackagesByPackageNameResponse = PutDevPackagesByPackageNameResponses[keyof PutDevPackagesByPackageNameResponses];
 
-export type GetDevPackagesPackageNameReleasesData = {
+export type GetDevPackagesByPackageNameReleasesData = {
     body?: never;
     path: {
         packageName: string;
@@ -1058,7 +1058,7 @@ export type GetDevPackagesPackageNameReleasesData = {
     url: '/dev/packages/{packageName}/releases';
 };
 
-export type GetDevPackagesPackageNameReleasesResponses = {
+export type GetDevPackagesByPackageNameReleasesResponses = {
     /**
      * Package releases retrieved successfully
      */
@@ -1080,9 +1080,9 @@ export type GetDevPackagesPackageNameReleasesResponses = {
     };
 };
 
-export type GetDevPackagesPackageNameReleasesResponse = GetDevPackagesPackageNameReleasesResponses[keyof GetDevPackagesPackageNameReleasesResponses];
+export type GetDevPackagesByPackageNameReleasesResponse = GetDevPackagesByPackageNameReleasesResponses[keyof GetDevPackagesByPackageNameReleasesResponses];
 
-export type PostDevPackagesPackageNameReleasesData = {
+export type PostDevPackagesByPackageNameReleasesData = {
     body?: {
         versionWithLeiosPatch: string;
         changelog: string;
@@ -1094,7 +1094,7 @@ export type PostDevPackagesPackageNameReleasesData = {
     url: '/dev/packages/{packageName}/releases';
 };
 
-export type PostDevPackagesPackageNameReleasesErrors = {
+export type PostDevPackagesByPackageNameReleasesErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -1113,9 +1113,9 @@ export type PostDevPackagesPackageNameReleasesErrors = {
     };
 };
 
-export type PostDevPackagesPackageNameReleasesError = PostDevPackagesPackageNameReleasesErrors[keyof PostDevPackagesPackageNameReleasesErrors];
+export type PostDevPackagesByPackageNameReleasesError = PostDevPackagesByPackageNameReleasesErrors[keyof PostDevPackagesByPackageNameReleasesErrors];
 
-export type PostDevPackagesPackageNameReleasesResponses = {
+export type PostDevPackagesByPackageNameReleasesResponses = {
     /**
      * Package release created successfully
      */
@@ -1127,9 +1127,9 @@ export type PostDevPackagesPackageNameReleasesResponses = {
     };
 };
 
-export type PostDevPackagesPackageNameReleasesResponse = PostDevPackagesPackageNameReleasesResponses[keyof PostDevPackagesPackageNameReleasesResponses];
+export type PostDevPackagesByPackageNameReleasesResponse = PostDevPackagesByPackageNameReleasesResponses[keyof PostDevPackagesByPackageNameReleasesResponses];
 
-export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchData = {
+export type GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchData = {
     body?: never;
     path: {
         packageName: string;
@@ -1139,7 +1139,7 @@ export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}';
 };
 
-export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
+export type GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors = {
     /**
      * Package release with specified version not found
      */
@@ -1150,9 +1150,9 @@ export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
     };
 };
 
-export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchError = GetDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof GetDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
+export type GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchError = GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors[keyof GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors];
 
-export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
+export type GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses = {
     /**
      * Package release retrieved successfully
      */
@@ -1174,9 +1174,9 @@ export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
     };
 };
 
-export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
+export type GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse = GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses[keyof GetDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses];
 
-export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchData = {
+export type PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchData = {
     body?: {
         changelog?: string;
     };
@@ -1188,7 +1188,7 @@ export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}';
 };
 
-export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
+export type PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -1207,9 +1207,9 @@ export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
     };
 };
 
-export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchError = PutDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof PutDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
+export type PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchError = PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors[keyof PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors];
 
-export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
+export type PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses = {
     /**
      * Package release updated successfully
      */
@@ -1221,9 +1221,9 @@ export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
     };
 };
 
-export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
+export type PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse = PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses[keyof PutDevPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses];
 
-export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
+export type PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchData = {
     body?: {
         file: Blob | File;
     };
@@ -1236,7 +1236,7 @@ export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
     url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}/{arch}';
 };
 
-export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors = {
+export type PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -1263,9 +1263,9 @@ export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors = 
     };
 };
 
-export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchError = PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors[keyof PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors];
+export type PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchError = PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchErrors[keyof PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchErrors];
 
-export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses = {
+export type PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponses = {
     /**
      * Package release file uploaded successfully
      */
@@ -1277,9 +1277,9 @@ export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses
     };
 };
 
-export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses[keyof PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses];
+export type PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse = PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponses[keyof PostDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponses];
 
-export type GetDevPackagesPackageNameStablePromotionRequestsData = {
+export type GetDevPackagesByPackageNameStablePromotionRequestsData = {
     body?: never;
     path: {
         packageName: string;
@@ -1290,7 +1290,7 @@ export type GetDevPackagesPackageNameStablePromotionRequestsData = {
     url: '/dev/packages/{packageName}/stable-promotion-requests';
 };
 
-export type GetDevPackagesPackageNameStablePromotionRequestsResponses = {
+export type GetDevPackagesByPackageNameStablePromotionRequestsResponses = {
     /**
      * Stable promotion requests retrieved successfully
      */
@@ -1329,9 +1329,9 @@ export type GetDevPackagesPackageNameStablePromotionRequestsResponses = {
     };
 };
 
-export type GetDevPackagesPackageNameStablePromotionRequestsResponse = GetDevPackagesPackageNameStablePromotionRequestsResponses[keyof GetDevPackagesPackageNameStablePromotionRequestsResponses];
+export type GetDevPackagesByPackageNameStablePromotionRequestsResponse = GetDevPackagesByPackageNameStablePromotionRequestsResponses[keyof GetDevPackagesByPackageNameStablePromotionRequestsResponses];
 
-export type PostDevPackagesPackageNameStablePromotionRequestsData = {
+export type PostDevPackagesByPackageNameStablePromotionRequestsData = {
     body?: {
         package_release_id: number;
     };
@@ -1342,7 +1342,7 @@ export type PostDevPackagesPackageNameStablePromotionRequestsData = {
     url: '/dev/packages/{packageName}/stable-promotion-requests';
 };
 
-export type PostDevPackagesPackageNameStablePromotionRequestsErrors = {
+export type PostDevPackagesByPackageNameStablePromotionRequestsErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -1369,9 +1369,9 @@ export type PostDevPackagesPackageNameStablePromotionRequestsErrors = {
     };
 };
 
-export type PostDevPackagesPackageNameStablePromotionRequestsError = PostDevPackagesPackageNameStablePromotionRequestsErrors[keyof PostDevPackagesPackageNameStablePromotionRequestsErrors];
+export type PostDevPackagesByPackageNameStablePromotionRequestsError = PostDevPackagesByPackageNameStablePromotionRequestsErrors[keyof PostDevPackagesByPackageNameStablePromotionRequestsErrors];
 
-export type PostDevPackagesPackageNameStablePromotionRequestsResponses = {
+export type PostDevPackagesByPackageNameStablePromotionRequestsResponses = {
     /**
      * Stable promotion request submitted
      */
@@ -1385,9 +1385,9 @@ export type PostDevPackagesPackageNameStablePromotionRequestsResponses = {
     };
 };
 
-export type PostDevPackagesPackageNameStablePromotionRequestsResponse = PostDevPackagesPackageNameStablePromotionRequestsResponses[keyof PostDevPackagesPackageNameStablePromotionRequestsResponses];
+export type PostDevPackagesByPackageNameStablePromotionRequestsResponse = PostDevPackagesByPackageNameStablePromotionRequestsResponses[keyof PostDevPackagesByPackageNameStablePromotionRequestsResponses];
 
-export type DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = {
+export type DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData = {
     body?: never;
     path: {
         packageName: string;
@@ -1397,7 +1397,7 @@ export type DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRe
     url: '/dev/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}';
 };
 
-export type DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses = {
+export type DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses = {
     /**
      * Stable promotion request deleted successfully
      */
@@ -1411,9 +1411,9 @@ export type DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRe
     };
 };
 
-export type DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses[keyof DeleteDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses];
+export type DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses[keyof DeleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses];
 
-export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = {
+export type GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData = {
     body?: never;
     path: {
         packageName: string;
@@ -1423,7 +1423,7 @@ export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionReque
     url: '/dev/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}';
 };
 
-export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses = {
+export type GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses = {
     /**
      * Stable promotion request retrieved successfully
      */
@@ -1462,7 +1462,7 @@ export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionReque
     };
 };
 
-export type GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses[keyof GetDevPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses];
+export type GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses[keyof GetDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses];
 
 export type GetDevTasksData = {
     body?: never;
@@ -1500,7 +1500,7 @@ export type GetDevTasksResponses = {
 
 export type GetDevTasksResponse = GetDevTasksResponses[keyof GetDevTasksResponses];
 
-export type GetDevTasksTaskIdData = {
+export type GetDevTasksByTaskIdData = {
     body?: never;
     path: {
         /**
@@ -1512,7 +1512,7 @@ export type GetDevTasksTaskIdData = {
     url: '/dev/tasks/{taskID}';
 };
 
-export type GetDevTasksTaskIdErrors = {
+export type GetDevTasksByTaskIdErrors = {
     /**
      * Task with specified ID or Tag not found
      */
@@ -1523,9 +1523,9 @@ export type GetDevTasksTaskIdErrors = {
     };
 };
 
-export type GetDevTasksTaskIdError = GetDevTasksTaskIdErrors[keyof GetDevTasksTaskIdErrors];
+export type GetDevTasksByTaskIdError = GetDevTasksByTaskIdErrors[keyof GetDevTasksByTaskIdErrors];
 
-export type GetDevTasksTaskIdResponses = {
+export type GetDevTasksByTaskIdResponses = {
     /**
      * Task retrieved successfully
      */
@@ -1547,9 +1547,9 @@ export type GetDevTasksTaskIdResponses = {
     };
 };
 
-export type GetDevTasksTaskIdResponse = GetDevTasksTaskIdResponses[keyof GetDevTasksTaskIdResponses];
+export type GetDevTasksByTaskIdResponse = GetDevTasksByTaskIdResponses[keyof GetDevTasksByTaskIdResponses];
 
-export type GetDevTasksTaskIdLogsData = {
+export type GetDevTasksByTaskIdLogsData = {
     body?: never;
     path: {
         /**
@@ -1561,7 +1561,7 @@ export type GetDevTasksTaskIdLogsData = {
     url: '/dev/tasks/{taskID}/logs';
 };
 
-export type GetDevTasksTaskIdLogsErrors = {
+export type GetDevTasksByTaskIdLogsErrors = {
     /**
      * Logs are not stored for this task
      */
@@ -1580,9 +1580,9 @@ export type GetDevTasksTaskIdLogsErrors = {
     };
 };
 
-export type GetDevTasksTaskIdLogsError = GetDevTasksTaskIdLogsErrors[keyof GetDevTasksTaskIdLogsErrors];
+export type GetDevTasksByTaskIdLogsError = GetDevTasksByTaskIdLogsErrors[keyof GetDevTasksByTaskIdLogsErrors];
 
-export type GetDevTasksTaskIdLogsResponses = {
+export type GetDevTasksByTaskIdLogsResponses = {
     /**
      * Task logs retrieved successfully
      */
@@ -1596,7 +1596,7 @@ export type GetDevTasksTaskIdLogsResponses = {
     };
 };
 
-export type GetDevTasksTaskIdLogsResponse = GetDevTasksTaskIdLogsResponses[keyof GetDevTasksTaskIdLogsResponses];
+export type GetDevTasksByTaskIdLogsResponse = GetDevTasksByTaskIdLogsResponses[keyof GetDevTasksByTaskIdLogsResponses];
 
 export type GetAdminUsersData = {
     body?: never;
@@ -1686,7 +1686,7 @@ export type PostAdminUsersResponses = {
 
 export type PostAdminUsersResponse = PostAdminUsersResponses[keyof PostAdminUsersResponses];
 
-export type DeleteAdminUsersUserIdData = {
+export type DeleteAdminUsersByUserIdData = {
     body?: never;
     path: {
         userId: number;
@@ -1695,7 +1695,7 @@ export type DeleteAdminUsersUserIdData = {
     url: '/admin/users/{userId}';
 };
 
-export type DeleteAdminUsersUserIdErrors = {
+export type DeleteAdminUsersByUserIdErrors = {
     /**
      * Cannot delete user while packages are assigned
      */
@@ -1714,9 +1714,9 @@ export type DeleteAdminUsersUserIdErrors = {
     };
 };
 
-export type DeleteAdminUsersUserIdError = DeleteAdminUsersUserIdErrors[keyof DeleteAdminUsersUserIdErrors];
+export type DeleteAdminUsersByUserIdError = DeleteAdminUsersByUserIdErrors[keyof DeleteAdminUsersByUserIdErrors];
 
-export type DeleteAdminUsersUserIdResponses = {
+export type DeleteAdminUsersByUserIdResponses = {
     /**
      * User deleted successfully
      */
@@ -1728,9 +1728,9 @@ export type DeleteAdminUsersUserIdResponses = {
     };
 };
 
-export type DeleteAdminUsersUserIdResponse = DeleteAdminUsersUserIdResponses[keyof DeleteAdminUsersUserIdResponses];
+export type DeleteAdminUsersByUserIdResponse = DeleteAdminUsersByUserIdResponses[keyof DeleteAdminUsersByUserIdResponses];
 
-export type GetAdminUsersUserIdData = {
+export type GetAdminUsersByUserIdData = {
     body?: never;
     path: {
         userId: number;
@@ -1739,7 +1739,7 @@ export type GetAdminUsersUserIdData = {
     url: '/admin/users/{userId}';
 };
 
-export type GetAdminUsersUserIdErrors = {
+export type GetAdminUsersByUserIdErrors = {
     /**
      * User not found
      */
@@ -1750,9 +1750,9 @@ export type GetAdminUsersUserIdErrors = {
     };
 };
 
-export type GetAdminUsersUserIdError = GetAdminUsersUserIdErrors[keyof GetAdminUsersUserIdErrors];
+export type GetAdminUsersByUserIdError = GetAdminUsersByUserIdErrors[keyof GetAdminUsersByUserIdErrors];
 
-export type GetAdminUsersUserIdResponses = {
+export type GetAdminUsersByUserIdResponses = {
     /**
      * User retrieved successfully
      */
@@ -1771,9 +1771,9 @@ export type GetAdminUsersUserIdResponses = {
     };
 };
 
-export type GetAdminUsersUserIdResponse = GetAdminUsersUserIdResponses[keyof GetAdminUsersUserIdResponses];
+export type GetAdminUsersByUserIdResponse = GetAdminUsersByUserIdResponses[keyof GetAdminUsersByUserIdResponses];
 
-export type PutAdminUsersUserIdData = {
+export type PutAdminUsersByUserIdData = {
     body?: {
         username?: string;
         display_name?: string;
@@ -1787,7 +1787,7 @@ export type PutAdminUsersUserIdData = {
     url: '/admin/users/{userId}';
 };
 
-export type PutAdminUsersUserIdErrors = {
+export type PutAdminUsersByUserIdErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -1814,9 +1814,9 @@ export type PutAdminUsersUserIdErrors = {
     };
 };
 
-export type PutAdminUsersUserIdError = PutAdminUsersUserIdErrors[keyof PutAdminUsersUserIdErrors];
+export type PutAdminUsersByUserIdError = PutAdminUsersByUserIdErrors[keyof PutAdminUsersByUserIdErrors];
 
-export type PutAdminUsersUserIdResponses = {
+export type PutAdminUsersByUserIdResponses = {
     /**
      * User updated successfully
      */
@@ -1835,9 +1835,9 @@ export type PutAdminUsersUserIdResponses = {
     };
 };
 
-export type PutAdminUsersUserIdResponse = PutAdminUsersUserIdResponses[keyof PutAdminUsersUserIdResponses];
+export type PutAdminUsersByUserIdResponse = PutAdminUsersByUserIdResponses[keyof PutAdminUsersByUserIdResponses];
 
-export type PutAdminUsersUserIdPasswordData = {
+export type PutAdminUsersByUserIdPasswordData = {
     body?: {
         /**
          * New password for the account
@@ -1851,7 +1851,7 @@ export type PutAdminUsersUserIdPasswordData = {
     url: '/admin/users/{userId}/password';
 };
 
-export type PutAdminUsersUserIdPasswordErrors = {
+export type PutAdminUsersByUserIdPasswordErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -1870,9 +1870,9 @@ export type PutAdminUsersUserIdPasswordErrors = {
     };
 };
 
-export type PutAdminUsersUserIdPasswordError = PutAdminUsersUserIdPasswordErrors[keyof PutAdminUsersUserIdPasswordErrors];
+export type PutAdminUsersByUserIdPasswordError = PutAdminUsersByUserIdPasswordErrors[keyof PutAdminUsersByUserIdPasswordErrors];
 
-export type PutAdminUsersUserIdPasswordResponses = {
+export type PutAdminUsersByUserIdPasswordResponses = {
     /**
      * Password reset successfully
      */
@@ -1884,7 +1884,7 @@ export type PutAdminUsersUserIdPasswordResponses = {
     };
 };
 
-export type PutAdminUsersUserIdPasswordResponse = PutAdminUsersUserIdPasswordResponses[keyof PutAdminUsersUserIdPasswordResponses];
+export type PutAdminUsersByUserIdPasswordResponse = PutAdminUsersByUserIdPasswordResponses[keyof PutAdminUsersByUserIdPasswordResponses];
 
 export type GetAdminPackagesData = {
     body?: never;
@@ -1974,7 +1974,7 @@ export type PostAdminPackagesResponses = {
 
 export type PostAdminPackagesResponse = PostAdminPackagesResponses[keyof PostAdminPackagesResponses];
 
-export type DeleteAdminPackagesPackageNameData = {
+export type DeleteAdminPackagesByPackageNameData = {
     body?: never;
     path: {
         packageName: string;
@@ -1983,7 +1983,7 @@ export type DeleteAdminPackagesPackageNameData = {
     url: '/admin/packages/{packageName}';
 };
 
-export type DeleteAdminPackagesPackageNameErrors = {
+export type DeleteAdminPackagesByPackageNameErrors = {
     /**
      * System-managed packages cannot be updated
      */
@@ -2002,9 +2002,9 @@ export type DeleteAdminPackagesPackageNameErrors = {
     };
 };
 
-export type DeleteAdminPackagesPackageNameError = DeleteAdminPackagesPackageNameErrors[keyof DeleteAdminPackagesPackageNameErrors];
+export type DeleteAdminPackagesByPackageNameError = DeleteAdminPackagesByPackageNameErrors[keyof DeleteAdminPackagesByPackageNameErrors];
 
-export type DeleteAdminPackagesPackageNameResponses = {
+export type DeleteAdminPackagesByPackageNameResponses = {
     /**
      * Package deleted successfully
      */
@@ -2016,9 +2016,9 @@ export type DeleteAdminPackagesPackageNameResponses = {
     };
 };
 
-export type DeleteAdminPackagesPackageNameResponse = DeleteAdminPackagesPackageNameResponses[keyof DeleteAdminPackagesPackageNameResponses];
+export type DeleteAdminPackagesByPackageNameResponse = DeleteAdminPackagesByPackageNameResponses[keyof DeleteAdminPackagesByPackageNameResponses];
 
-export type GetAdminPackagesPackageNameData = {
+export type GetAdminPackagesByPackageNameData = {
     body?: never;
     path: {
         packageName: string;
@@ -2027,7 +2027,7 @@ export type GetAdminPackagesPackageNameData = {
     url: '/admin/packages/{packageName}';
 };
 
-export type GetAdminPackagesPackageNameErrors = {
+export type GetAdminPackagesByPackageNameErrors = {
     /**
      * Package with specified Name not found
      */
@@ -2038,9 +2038,9 @@ export type GetAdminPackagesPackageNameErrors = {
     };
 };
 
-export type GetAdminPackagesPackageNameError = GetAdminPackagesPackageNameErrors[keyof GetAdminPackagesPackageNameErrors];
+export type GetAdminPackagesByPackageNameError = GetAdminPackagesByPackageNameErrors[keyof GetAdminPackagesByPackageNameErrors];
 
-export type GetAdminPackagesPackageNameResponses = {
+export type GetAdminPackagesByPackageNameResponses = {
     /**
      * Package retrieved successfully
      */
@@ -2071,9 +2071,9 @@ export type GetAdminPackagesPackageNameResponses = {
     };
 };
 
-export type GetAdminPackagesPackageNameResponse = GetAdminPackagesPackageNameResponses[keyof GetAdminPackagesPackageNameResponses];
+export type GetAdminPackagesByPackageNameResponse = GetAdminPackagesByPackageNameResponses[keyof GetAdminPackagesByPackageNameResponses];
 
-export type PutAdminPackagesPackageNameData = {
+export type PutAdminPackagesByPackageNameData = {
     body?: {
         description?: string;
         homepage_url?: string;
@@ -2086,7 +2086,7 @@ export type PutAdminPackagesPackageNameData = {
     url: '/admin/packages/{packageName}';
 };
 
-export type PutAdminPackagesPackageNameErrors = {
+export type PutAdminPackagesByPackageNameErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -2113,9 +2113,9 @@ export type PutAdminPackagesPackageNameErrors = {
     };
 };
 
-export type PutAdminPackagesPackageNameError = PutAdminPackagesPackageNameErrors[keyof PutAdminPackagesPackageNameErrors];
+export type PutAdminPackagesByPackageNameError = PutAdminPackagesByPackageNameErrors[keyof PutAdminPackagesByPackageNameErrors];
 
-export type PutAdminPackagesPackageNameResponses = {
+export type PutAdminPackagesByPackageNameResponses = {
     /**
      * Package updated successfully
      */
@@ -2127,9 +2127,9 @@ export type PutAdminPackagesPackageNameResponses = {
     };
 };
 
-export type PutAdminPackagesPackageNameResponse = PutAdminPackagesPackageNameResponses[keyof PutAdminPackagesPackageNameResponses];
+export type PutAdminPackagesByPackageNameResponse = PutAdminPackagesByPackageNameResponses[keyof PutAdminPackagesByPackageNameResponses];
 
-export type GetAdminPackagesPackageNameReleasesData = {
+export type GetAdminPackagesByPackageNameReleasesData = {
     body?: never;
     path: {
         packageName: string;
@@ -2138,7 +2138,7 @@ export type GetAdminPackagesPackageNameReleasesData = {
     url: '/admin/packages/{packageName}/releases';
 };
 
-export type GetAdminPackagesPackageNameReleasesResponses = {
+export type GetAdminPackagesByPackageNameReleasesResponses = {
     /**
      * Package releases retrieved successfully
      */
@@ -2160,9 +2160,9 @@ export type GetAdminPackagesPackageNameReleasesResponses = {
     };
 };
 
-export type GetAdminPackagesPackageNameReleasesResponse = GetAdminPackagesPackageNameReleasesResponses[keyof GetAdminPackagesPackageNameReleasesResponses];
+export type GetAdminPackagesByPackageNameReleasesResponse = GetAdminPackagesByPackageNameReleasesResponses[keyof GetAdminPackagesByPackageNameReleasesResponses];
 
-export type PostAdminPackagesPackageNameReleasesData = {
+export type PostAdminPackagesByPackageNameReleasesData = {
     body?: {
         versionWithLeiosPatch: string;
         changelog: string;
@@ -2174,7 +2174,7 @@ export type PostAdminPackagesPackageNameReleasesData = {
     url: '/admin/packages/{packageName}/releases';
 };
 
-export type PostAdminPackagesPackageNameReleasesErrors = {
+export type PostAdminPackagesByPackageNameReleasesErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -2193,9 +2193,9 @@ export type PostAdminPackagesPackageNameReleasesErrors = {
     };
 };
 
-export type PostAdminPackagesPackageNameReleasesError = PostAdminPackagesPackageNameReleasesErrors[keyof PostAdminPackagesPackageNameReleasesErrors];
+export type PostAdminPackagesByPackageNameReleasesError = PostAdminPackagesByPackageNameReleasesErrors[keyof PostAdminPackagesByPackageNameReleasesErrors];
 
-export type PostAdminPackagesPackageNameReleasesResponses = {
+export type PostAdminPackagesByPackageNameReleasesResponses = {
     /**
      * Package release created successfully
      */
@@ -2207,9 +2207,9 @@ export type PostAdminPackagesPackageNameReleasesResponses = {
     };
 };
 
-export type PostAdminPackagesPackageNameReleasesResponse = PostAdminPackagesPackageNameReleasesResponses[keyof PostAdminPackagesPackageNameReleasesResponses];
+export type PostAdminPackagesByPackageNameReleasesResponse = PostAdminPackagesByPackageNameReleasesResponses[keyof PostAdminPackagesByPackageNameReleasesResponses];
 
-export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
+export type DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchData = {
     body?: never;
     path: {
         packageName: string;
@@ -2219,7 +2219,7 @@ export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}';
 };
 
-export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
+export type DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors = {
     /**
      * Package release with specified ID not found
      */
@@ -2230,9 +2230,9 @@ export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = 
     };
 };
 
-export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchError = DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
+export type DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchError = DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors[keyof DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors];
 
-export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
+export type DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses = {
     /**
      * Package release deleted successfully
      */
@@ -2244,9 +2244,9 @@ export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses
     };
 };
 
-export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
+export type DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse = DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses[keyof DeleteAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses];
 
-export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
+export type GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchData = {
     body?: never;
     path: {
         packageName: string;
@@ -2256,7 +2256,7 @@ export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}';
 };
 
-export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
+export type GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors = {
     /**
      * Package release with specified version not found
      */
@@ -2267,9 +2267,9 @@ export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
     };
 };
 
-export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchError = GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
+export type GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchError = GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors[keyof GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors];
 
-export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
+export type GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses = {
     /**
      * Package release retrieved successfully
      */
@@ -2291,9 +2291,9 @@ export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = 
     };
 };
 
-export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
+export type GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse = GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses[keyof GetAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses];
 
-export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
+export type PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchData = {
     body?: {
         changelog?: string;
     };
@@ -2305,7 +2305,7 @@ export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}';
 };
 
-export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
+export type PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -2324,9 +2324,9 @@ export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
     };
 };
 
-export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchError = PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
+export type PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchError = PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors[keyof PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchErrors];
 
-export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
+export type PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses = {
     /**
      * Package release updated successfully
      */
@@ -2338,9 +2338,9 @@ export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = 
     };
 };
 
-export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
+export type PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponse = PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses[keyof PutAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchResponses];
 
-export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
+export type PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchData = {
     body?: {
         file: Blob | File;
     };
@@ -2353,7 +2353,7 @@ export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData = 
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}/{arch}';
 };
 
-export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors = {
+export type PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -2380,9 +2380,9 @@ export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors 
     };
 };
 
-export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchError = PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors[keyof PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors];
+export type PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchError = PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchErrors[keyof PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchErrors];
 
-export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses = {
+export type PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponses = {
     /**
      * Package release file uploaded successfully
      */
@@ -2394,9 +2394,9 @@ export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchRespons
     };
 };
 
-export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses[keyof PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses];
+export type PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponse = PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponses[keyof PostAdminPackagesByPackageNameReleasesByVersionWithLeiosPatchByArchResponses];
 
-export type GetAdminPackagesPackageNameStablePromotionRequestsData = {
+export type GetAdminPackagesByPackageNameStablePromotionRequestsData = {
     body?: never;
     path: {
         packageName: string;
@@ -2407,7 +2407,7 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsData = {
     url: '/admin/packages/{packageName}/stable-promotion-requests';
 };
 
-export type GetAdminPackagesPackageNameStablePromotionRequestsResponses = {
+export type GetAdminPackagesByPackageNameStablePromotionRequestsResponses = {
     /**
      * Stable promotion requests retrieved successfully
      */
@@ -2446,9 +2446,9 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsResponses = {
     };
 };
 
-export type GetAdminPackagesPackageNameStablePromotionRequestsResponse = GetAdminPackagesPackageNameStablePromotionRequestsResponses[keyof GetAdminPackagesPackageNameStablePromotionRequestsResponses];
+export type GetAdminPackagesByPackageNameStablePromotionRequestsResponse = GetAdminPackagesByPackageNameStablePromotionRequestsResponses[keyof GetAdminPackagesByPackageNameStablePromotionRequestsResponses];
 
-export type PostAdminPackagesPackageNameStablePromotionRequestsData = {
+export type PostAdminPackagesByPackageNameStablePromotionRequestsData = {
     body?: {
         package_release_id: number;
     };
@@ -2459,7 +2459,7 @@ export type PostAdminPackagesPackageNameStablePromotionRequestsData = {
     url: '/admin/packages/{packageName}/stable-promotion-requests';
 };
 
-export type PostAdminPackagesPackageNameStablePromotionRequestsErrors = {
+export type PostAdminPackagesByPackageNameStablePromotionRequestsErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -2486,9 +2486,9 @@ export type PostAdminPackagesPackageNameStablePromotionRequestsErrors = {
     };
 };
 
-export type PostAdminPackagesPackageNameStablePromotionRequestsError = PostAdminPackagesPackageNameStablePromotionRequestsErrors[keyof PostAdminPackagesPackageNameStablePromotionRequestsErrors];
+export type PostAdminPackagesByPackageNameStablePromotionRequestsError = PostAdminPackagesByPackageNameStablePromotionRequestsErrors[keyof PostAdminPackagesByPackageNameStablePromotionRequestsErrors];
 
-export type PostAdminPackagesPackageNameStablePromotionRequestsResponses = {
+export type PostAdminPackagesByPackageNameStablePromotionRequestsResponses = {
     /**
      * Stable promotion request submitted
      */
@@ -2502,9 +2502,9 @@ export type PostAdminPackagesPackageNameStablePromotionRequestsResponses = {
     };
 };
 
-export type PostAdminPackagesPackageNameStablePromotionRequestsResponse = PostAdminPackagesPackageNameStablePromotionRequestsResponses[keyof PostAdminPackagesPackageNameStablePromotionRequestsResponses];
+export type PostAdminPackagesByPackageNameStablePromotionRequestsResponse = PostAdminPackagesByPackageNameStablePromotionRequestsResponses[keyof PostAdminPackagesByPackageNameStablePromotionRequestsResponses];
 
-export type DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = {
+export type DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData = {
     body?: never;
     path: {
         packageName: string;
@@ -2514,7 +2514,7 @@ export type DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotion
     url: '/admin/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}';
 };
 
-export type DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses = {
+export type DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses = {
     /**
      * Stable promotion request deleted successfully
      */
@@ -2528,9 +2528,9 @@ export type DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotion
     };
 };
 
-export type DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses[keyof DeleteAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses];
+export type DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses[keyof DeleteAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses];
 
-export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdData = {
+export type GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdData = {
     body?: never;
     path: {
         packageName: string;
@@ -2540,7 +2540,7 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionReq
     url: '/admin/packages/{packageName}/stable-promotion-requests/{stablePromotionRequestID}';
 };
 
-export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses = {
+export type GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses = {
     /**
      * Stable promotion request retrieved successfully
      */
@@ -2579,7 +2579,7 @@ export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionReq
     };
 };
 
-export type GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponse = GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses[keyof GetAdminPackagesPackageNameStablePromotionRequestsStablePromotionRequestIdResponses];
+export type GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses[keyof GetAdminPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses];
 
 export type GetAdminOsReleasesData = {
     body?: never;
@@ -2643,7 +2643,7 @@ export type PostAdminOsReleasesResponses = {
 
 export type PostAdminOsReleasesResponse = PostAdminOsReleasesResponses[keyof PostAdminOsReleasesResponses];
 
-export type GetAdminOsReleasesVersionData = {
+export type GetAdminOsReleasesByVersionData = {
     body?: never;
     path: {
         version: string;
@@ -2652,7 +2652,7 @@ export type GetAdminOsReleasesVersionData = {
     url: '/admin/os-releases/{version}';
 };
 
-export type GetAdminOsReleasesVersionErrors = {
+export type GetAdminOsReleasesByVersionErrors = {
     /**
      * OS release not found
      */
@@ -2663,9 +2663,9 @@ export type GetAdminOsReleasesVersionErrors = {
     };
 };
 
-export type GetAdminOsReleasesVersionError = GetAdminOsReleasesVersionErrors[keyof GetAdminOsReleasesVersionErrors];
+export type GetAdminOsReleasesByVersionError = GetAdminOsReleasesByVersionErrors[keyof GetAdminOsReleasesByVersionErrors];
 
-export type GetAdminOsReleasesVersionResponses = {
+export type GetAdminOsReleasesByVersionResponses = {
     /**
      * OS release retrieved
      */
@@ -2684,9 +2684,9 @@ export type GetAdminOsReleasesVersionResponses = {
     };
 };
 
-export type GetAdminOsReleasesVersionResponse = GetAdminOsReleasesVersionResponses[keyof GetAdminOsReleasesVersionResponses];
+export type GetAdminOsReleasesByVersionResponse = GetAdminOsReleasesByVersionResponses[keyof GetAdminOsReleasesByVersionResponses];
 
-export type PutAdminOsReleasesVersionData = {
+export type PutAdminOsReleasesByVersionData = {
     body?: {
         changelog?: string;
     };
@@ -2697,7 +2697,7 @@ export type PutAdminOsReleasesVersionData = {
     url: '/admin/os-releases/{version}';
 };
 
-export type PutAdminOsReleasesVersionErrors = {
+export type PutAdminOsReleasesByVersionErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -2716,9 +2716,9 @@ export type PutAdminOsReleasesVersionErrors = {
     };
 };
 
-export type PutAdminOsReleasesVersionError = PutAdminOsReleasesVersionErrors[keyof PutAdminOsReleasesVersionErrors];
+export type PutAdminOsReleasesByVersionError = PutAdminOsReleasesByVersionErrors[keyof PutAdminOsReleasesByVersionErrors];
 
-export type PutAdminOsReleasesVersionResponses = {
+export type PutAdminOsReleasesByVersionResponses = {
     /**
      * OS release updated successfully
      */
@@ -2730,9 +2730,9 @@ export type PutAdminOsReleasesVersionResponses = {
     };
 };
 
-export type PutAdminOsReleasesVersionResponse = PutAdminOsReleasesVersionResponses[keyof PutAdminOsReleasesVersionResponses];
+export type PutAdminOsReleasesByVersionResponse = PutAdminOsReleasesByVersionResponses[keyof PutAdminOsReleasesByVersionResponses];
 
-export type GetAdminOsReleasesVersionPublishingLogsData = {
+export type GetAdminOsReleasesByVersionPublishingLogsData = {
     body?: never;
     path: {
         version: string;
@@ -2741,7 +2741,7 @@ export type GetAdminOsReleasesVersionPublishingLogsData = {
     url: '/admin/os-releases/{version}/publishing-logs';
 };
 
-export type GetAdminOsReleasesVersionPublishingLogsErrors = {
+export type GetAdminOsReleasesByVersionPublishingLogsErrors = {
     /**
      * OS release not found / Log file not found for this OS release publishing task
      */
@@ -2752,9 +2752,9 @@ export type GetAdminOsReleasesVersionPublishingLogsErrors = {
     };
 };
 
-export type GetAdminOsReleasesVersionPublishingLogsError = GetAdminOsReleasesVersionPublishingLogsErrors[keyof GetAdminOsReleasesVersionPublishingLogsErrors];
+export type GetAdminOsReleasesByVersionPublishingLogsError = GetAdminOsReleasesByVersionPublishingLogsErrors[keyof GetAdminOsReleasesByVersionPublishingLogsErrors];
 
-export type GetAdminOsReleasesVersionPublishingLogsResponses = {
+export type GetAdminOsReleasesByVersionPublishingLogsResponses = {
     /**
      * Publishing logs retrieved
      */
@@ -2768,7 +2768,7 @@ export type GetAdminOsReleasesVersionPublishingLogsResponses = {
     };
 };
 
-export type GetAdminOsReleasesVersionPublishingLogsResponse = GetAdminOsReleasesVersionPublishingLogsResponses[keyof GetAdminOsReleasesVersionPublishingLogsResponses];
+export type GetAdminOsReleasesByVersionPublishingLogsResponse = GetAdminOsReleasesByVersionPublishingLogsResponses[keyof GetAdminOsReleasesByVersionPublishingLogsResponses];
 
 export type GetAdminStablePromotionRequestsData = {
     body?: never;
@@ -2804,7 +2804,7 @@ export type GetAdminStablePromotionRequestsResponses = {
 
 export type GetAdminStablePromotionRequestsResponse = GetAdminStablePromotionRequestsResponses[keyof GetAdminStablePromotionRequestsResponses];
 
-export type GetAdminStablePromotionRequestsStablePromotionRequestIdData = {
+export type GetAdminStablePromotionRequestsByStablePromotionRequestIdData = {
     body?: never;
     path: {
         stablePromotionRequestID: number;
@@ -2813,7 +2813,7 @@ export type GetAdminStablePromotionRequestsStablePromotionRequestIdData = {
     url: '/admin/stable-promotion-requests/{stablePromotionRequestID}';
 };
 
-export type GetAdminStablePromotionRequestsStablePromotionRequestIdErrors = {
+export type GetAdminStablePromotionRequestsByStablePromotionRequestIdErrors = {
     /**
      * Stable promotion request not found
      */
@@ -2824,9 +2824,9 @@ export type GetAdminStablePromotionRequestsStablePromotionRequestIdErrors = {
     };
 };
 
-export type GetAdminStablePromotionRequestsStablePromotionRequestIdError = GetAdminStablePromotionRequestsStablePromotionRequestIdErrors[keyof GetAdminStablePromotionRequestsStablePromotionRequestIdErrors];
+export type GetAdminStablePromotionRequestsByStablePromotionRequestIdError = GetAdminStablePromotionRequestsByStablePromotionRequestIdErrors[keyof GetAdminStablePromotionRequestsByStablePromotionRequestIdErrors];
 
-export type GetAdminStablePromotionRequestsStablePromotionRequestIdResponses = {
+export type GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses = {
     /**
      * Stable promotion request retrieved successfully
      */
@@ -2847,9 +2847,9 @@ export type GetAdminStablePromotionRequestsStablePromotionRequestIdResponses = {
     };
 };
 
-export type GetAdminStablePromotionRequestsStablePromotionRequestIdResponse = GetAdminStablePromotionRequestsStablePromotionRequestIdResponses[keyof GetAdminStablePromotionRequestsStablePromotionRequestIdResponses];
+export type GetAdminStablePromotionRequestsByStablePromotionRequestIdResponse = GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses[keyof GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses];
 
-export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideData = {
+export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideData = {
     body?: {
         status: 'approved' | 'denied';
         admin_note: string;
@@ -2861,7 +2861,7 @@ export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideData =
     url: '/admin/stable-promotion-requests/{stablePromotionRequestID}/decide';
 };
 
-export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideErrors = {
+export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -2880,9 +2880,9 @@ export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideErrors
     };
 };
 
-export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideError = PostAdminStablePromotionRequestsStablePromotionRequestIdDecideErrors[keyof PostAdminStablePromotionRequestsStablePromotionRequestIdDecideErrors];
+export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideError = PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideErrors[keyof PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideErrors];
 
-export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponses = {
+export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponses = {
     /**
      * Decided on stable promotion request successfully
      */
@@ -2894,7 +2894,7 @@ export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideRespon
     };
 };
 
-export type PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponse = PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponses[keyof PostAdminStablePromotionRequestsStablePromotionRequestIdDecideResponses];
+export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse = PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponses[keyof PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponses];
 
 export type GetAdminTasksData = {
     body?: never;
@@ -2932,7 +2932,7 @@ export type GetAdminTasksResponses = {
 
 export type GetAdminTasksResponse = GetAdminTasksResponses[keyof GetAdminTasksResponses];
 
-export type GetAdminTasksTaskIdData = {
+export type GetAdminTasksByTaskIdData = {
     body?: never;
     path: {
         /**
@@ -2944,7 +2944,7 @@ export type GetAdminTasksTaskIdData = {
     url: '/admin/tasks/{taskID}';
 };
 
-export type GetAdminTasksTaskIdErrors = {
+export type GetAdminTasksByTaskIdErrors = {
     /**
      * Task with specified ID or Tag not found
      */
@@ -2955,9 +2955,9 @@ export type GetAdminTasksTaskIdErrors = {
     };
 };
 
-export type GetAdminTasksTaskIdError = GetAdminTasksTaskIdErrors[keyof GetAdminTasksTaskIdErrors];
+export type GetAdminTasksByTaskIdError = GetAdminTasksByTaskIdErrors[keyof GetAdminTasksByTaskIdErrors];
 
-export type GetAdminTasksTaskIdResponses = {
+export type GetAdminTasksByTaskIdResponses = {
     /**
      * Task retrieved successfully
      */
@@ -2979,9 +2979,9 @@ export type GetAdminTasksTaskIdResponses = {
     };
 };
 
-export type GetAdminTasksTaskIdResponse = GetAdminTasksTaskIdResponses[keyof GetAdminTasksTaskIdResponses];
+export type GetAdminTasksByTaskIdResponse = GetAdminTasksByTaskIdResponses[keyof GetAdminTasksByTaskIdResponses];
 
-export type GetAdminTasksTaskIdLogsData = {
+export type GetAdminTasksByTaskIdLogsData = {
     body?: never;
     path: {
         /**
@@ -2993,7 +2993,7 @@ export type GetAdminTasksTaskIdLogsData = {
     url: '/admin/tasks/{taskID}/logs';
 };
 
-export type GetAdminTasksTaskIdLogsErrors = {
+export type GetAdminTasksByTaskIdLogsErrors = {
     /**
      * Logs are not stored for this task
      */
@@ -3012,9 +3012,9 @@ export type GetAdminTasksTaskIdLogsErrors = {
     };
 };
 
-export type GetAdminTasksTaskIdLogsError = GetAdminTasksTaskIdLogsErrors[keyof GetAdminTasksTaskIdLogsErrors];
+export type GetAdminTasksByTaskIdLogsError = GetAdminTasksByTaskIdLogsErrors[keyof GetAdminTasksByTaskIdLogsErrors];
 
-export type GetAdminTasksTaskIdLogsResponses = {
+export type GetAdminTasksByTaskIdLogsResponses = {
     /**
      * Task logs retrieved successfully
      */
@@ -3028,4 +3028,4 @@ export type GetAdminTasksTaskIdLogsResponses = {
     };
 };
 
-export type GetAdminTasksTaskIdLogsResponse = GetAdminTasksTaskIdLogsResponses[keyof GetAdminTasksTaskIdLogsResponses];
+export type GetAdminTasksByTaskIdLogsResponse = GetAdminTasksByTaskIdLogsResponses[keyof GetAdminTasksByTaskIdLogsResponses];

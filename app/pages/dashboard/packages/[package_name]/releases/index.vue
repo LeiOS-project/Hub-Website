@@ -1,18 +1,18 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem, TableColumn } from '@nuxt/ui';
-import type { GetDevPackagesPackageNameReleasesResponses, GetDevPackagesPackageNameResponses } from '~/api-client';
+import type { GetDevPackagesByPackageNameReleasesResponses, GetDevPackagesByPackageNameResponses } from '~/api-client';
 
 const toast = useToast();
 
-type DevPackage = GetDevPackagesPackageNameResponses[200]['data'];
-type Release = GetDevPackagesPackageNameReleasesResponses[200]['data'][number];
+type DevPackage = GetDevPackagesByPackageNameResponses[200]['data'];
+type Release = GetDevPackagesByPackageNameReleasesResponses[200]['data'][number];
 
 const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 
 const package_releases = await useAPIAsyncData(
     `/dev/packages/${pkgData.value.name}/releases`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesPackageNameReleases({
+        const res = await useAPI((api) => api.getDevPackagesByPackageNameReleases({
             path: {
                 packageName: pkgData.value.name
             }

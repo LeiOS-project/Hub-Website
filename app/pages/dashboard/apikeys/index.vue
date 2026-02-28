@@ -72,7 +72,7 @@ async function onDeleteApiKey() {
             throw new Error('No API Key ID specified for deletion.');
         }
 
-        const res = await useAPI((api) => api.deleteAccountApikeysApiKeyId({
+        const res = await useAPI((api) => api.deleteAccountApikeysByApiKeyId({
             path: {
                 apiKeyID: latestOnDeleteClickAPIKeyId.value as string
             }

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type {
-    GetDevPackagesPackageNameResponses,
+    GetDevPackagesByPackageNameResponses,
     PostDevPackagesData,
 } from "@/api-client/types.gen";
 import type z from "zod";
-import { zPostDevPackagesPackageNameReleasesData } from "~/api-client/zod.gen";
+import { zPostDevPackagesByPackageNameReleasesData } from "~/api-client/zod.gen";
 import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 
 const route = useRoute();
@@ -32,7 +32,7 @@ const headerTexts = computed(() => {
 });
 
 const package_release_form_schema =
-    zPostDevPackagesPackageNameReleasesData.shape.body;
+    zPostDevPackagesByPackageNameReleasesData.shape.body;
 const package_release_form_state = ref<NewDevPackageRelease>({
     versionWithLeiosPatch: pkg_release_data.value.versionWithLeiosPatch,
     changelog: pkg_release_data.value.changelog,
@@ -42,7 +42,7 @@ async function onFormSubmit() {
     try {
         if (pkg_release.isNew) {
             const result = await useAPI((api) =>
-                api.postDevPackagesPackageNameReleases({
+                api.postDevPackagesByPackageNameReleases({
                     path: {
                         packageName: pkg_data.value.name,
                     },
@@ -69,7 +69,7 @@ async function onFormSubmit() {
             }
         } else {
             const result = await useAPI((api) =>
-                api.putDevPackagesPackageNameReleasesVersionWithLeiosPatch({
+                api.putDevPackagesByPackageNameReleasesByVersionWithLeiosPatch({
                     path: {
                         packageName: pkg_data.value.name,
                         versionWithLeiosPatch:
@@ -181,7 +181,7 @@ async function uploadDebFile(arch: Architecture | "all") {
 
     try {
         const result = await useAPI((api) =>
-            api.postDevPackagesPackageNameReleasesVersionWithLeiosPatchArch({
+            api.postDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArch({
                 path: {
                     packageName: pkg_data.value.name,
                     versionWithLeiosPatch:

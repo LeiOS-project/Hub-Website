@@ -34,7 +34,7 @@ if (package_name === "new") {
     const { data: result, refresh, loading } = await useAPIAsyncData(
         `/dev/packages/${package_name}`,
         async () => {
-            const res = await useAPI((api) => api.getDevPackagesPackageName({
+            const res = await useAPI((api) => api.getDevPackagesByPackageName({
                 path: {
                     packageName: package_name
                 }

@@ -25,7 +25,7 @@ if (version_with_leios_patch === "new") {
     const { data: result, refresh, loading } = await useAPIAsyncData(
         `/dev/packages/${pkgData.value.name}/releases/${version_with_leios_patch}`,
         async () => {
-            const res = await useAPI((api) => api.getDevPackagesPackageNameReleasesVersionWithLeiosPatch({
+            const res = await useAPI((api) => api.getDevPackagesByPackageNameReleasesByVersionWithLeiosPatch({
                 path: {
                     packageName: pkgData.value.name,
                     versionWithLeiosPatch: version_with_leios_patch

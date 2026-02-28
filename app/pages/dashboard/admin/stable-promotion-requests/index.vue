@@ -65,7 +65,7 @@ async function submitDecision() {
     submittingDecision.value = true;
 
     try {
-        const res = await useAPI((api) => api.postAdminStablePromotionRequestsStablePromotionRequestIdDecide({
+        const res = await useAPI((api) => api.postAdminStablePromotionRequestsByStablePromotionRequestIdDecide({
             path: { stablePromotionRequestID: (selectedRequest.value as AdminStableRequest).id },
             body: {
                 status: decisionForm.status,

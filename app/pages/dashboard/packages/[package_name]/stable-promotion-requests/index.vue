@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import type { TableColumn } from '@nuxt/ui';
 import type { 
-    GetDevPackagesPackageNameResponses, 
-    GetDevPackagesPackageNameStablePromotionRequestsResponses,
-    GetDevPackagesPackageNameReleasesResponses 
+    GetDevPackagesByPackageNameResponses, 
+    GetDevPackagesByPackageNameStablePromotionRequestsResponses,
+    GetDevPackagesByPackageNameReleasesResponses 
 } from '~/api-client';
 
 const toast = useToast();
 
-type DevPackage = GetDevPackagesPackageNameResponses[200]['data'];
-type StablePromotionRequest = GetDevPackagesPackageNameStablePromotionRequestsResponses[200]['data'][number];
+type DevPackage = GetDevPackagesByPackageNameResponses[200]['data'];
+type StablePromotionRequest = GetDevPackagesByPackageNameStablePromotionRequestsResponses[200]['data'][number];
 
 const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 
@@ -17,7 +17,7 @@ const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 const stablePromotionRequests = await useAPIAsyncData(
     `/dev/packages/${pkgData.value.name}/stable-promotion-requests`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesPackageNameStablePromotionRequests({
+        const res = await useAPI((api) => api.getDevPackagesByPackageNameStablePromotionRequests({
             path: {
                 packageName: pkgData.value.name
             }
@@ -40,7 +40,7 @@ const stablePromotionRequests = await useAPIAsyncData(
 const availableReleases = await useAPIAsyncData(
     `forStablePromotionRequests:/dev/packages/${pkgData.value.name}/releases`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesPackageNameReleases({
+        const res = await useAPI((api) => api.getDevPackagesByPackageNameReleases({
             path: {
                 packageName: pkgData.value.name
             }
@@ -93,7 +93,7 @@ async function submitNewRequest() {
 
     submittingRequest.value = true;
 
-    const res = await useAPI((api) => api.postDevPackagesPackageNameStablePromotionRequests({
+    const res = await useAPI((api) => api.postDevPackagesByPackageNameStablePromotionRequests({
         path: {
             packageName: pkgData.value.name
         },
