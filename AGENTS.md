@@ -2,7 +2,7 @@
 
 ## Stack That Matters Here
 - Single-package Nuxt 4 app on Bun, not a monorepo. Main source lives under `app/`.
-- UI work is built on `@nuxt/ui` 4.x components and dashboard primitives. If MCP docs servers for Nuxt/Nuxt UI are available in the session, use them instead of guessing props, slots, or component names.
+- UI work is built on `@nuxt/ui` 4.x components and dashboard primitives and Tailwind 4. If MCP docs servers for Nuxt/Nuxt UI are available in the session, use them instead of guessing props, slots, or component names.
 - Runtime is Bun end-to-end: Nitro uses `preset: 'bun'`, tests run with `bun test`, and production starts with `bun run .output/server/index.mjs`.
 
 ## Exact Commands

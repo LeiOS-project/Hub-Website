@@ -60,6 +60,19 @@ bun run build
 bun start
 ```
 
+## OpenCode setup
+
+- Project config is checked in at `opencode.json`.
+- Project commands live under `.opencode/commands/`.
+- Nuxt and Nuxt UI MCP servers are enabled for OpenCode and match the existing VS Code MCP config in `.vscode/mcp.json`.
+- Repo instructions for OpenCode live in `AGENTS.md`.
+
+Useful OpenCode commands in this repo:
+
+- `/verify` - run `bun test` and `bun run build`
+- `/dev` - work on local dev-server setup
+- `/api-client` - regenerate the typed API client
+
 
 ## Styling
 
