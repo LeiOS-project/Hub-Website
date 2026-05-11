@@ -5,18 +5,18 @@
     "": {
       "name": "leios-hub-website",
       "dependencies": {
-        "@hey-api/nuxt": "latest",
-        "@hey-api/openapi-ts": "latest",
-        "@nuxt/ui": "latest",
-        "bun-types": "latest",
-        "nuxt": "latest",
-        "typescript": "latest",
-        "vue": "latest",
-        "vue-router": "latest",
-        "zod": "latest",
+        "@hey-api/nuxt": "^0.2.1",
+        "@hey-api/openapi-ts": "^0.93.1",
+        "@nuxt/ui": "^4.5.0",
+        "bun-types": "^1.3.10",
+        "nuxt": "^4.3.1",
+        "typescript": "^6.0.0",
+        "vue": "^3.5.29",
+        "vue-router": "^5.0.3",
+        "zod": "^4.3.6",
       },
       "devDependencies": {
-        "@iconify-json/lucide": "latest",
+        "@iconify-json/lucide": "^1.2.95",
       },
     },
   },
@@ -1569,7 +1569,7 @@
 
     "type-level-regexp": ["type-level-regexp@0.1.17", "", {}, "sha512-wTk4DH3cxwk196uGLK/E9pE45aLfeKJacKmcEgEOA/q5dnPGNxXt0cfYdFxb57L+sEpf1oJH4Dnx/pnRcku9jg=="],
 
-    "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
+    "typescript": ["typescript@6.0.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw=="],
 
     "uc.micro": ["uc.micro@2.1.0", "", {}, "sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A=="],
 
