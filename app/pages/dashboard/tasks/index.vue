@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { TableColumn } from '#ui/types'
-import type { GetDevTasksResponses } from '@/api-client/types.gen'
+import type { GetAdminTasksResponses } from '@/api-client/types.gen'
 
-type DevTask = GetDevTasksResponses[200]['data'][number]
+type DevTask = GetAdminTasksResponses[200]['data'][number]
 
 definePageMeta({
     layout: 'dashboard'
@@ -27,7 +27,7 @@ const taskColumns: TableColumn<DevTask>[] = [
 const { data: tasks, pending: loading, refresh } = await useAsyncData<DevTask[]>(
     'dev-tasks-list',
     async () => {
-        const res = await useAPI((api) => api.getDevTasks({}))
+        const res = await useAPI((api) => api.getAdminTasks({}))
         if (!res.success) {
             toast.add({ title: 'Failed to load tasks', description: res.message, color: 'error' })
             return []

@@ -10,7 +10,7 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "api-client:generate": "openapi-ts",
-        "typecheck": "tsc -p ./tsconfig/tsconfig.typecheck.json && echo 'Typecheck passed!'",
+        "typecheck": "nuxi typecheck && tsc -p ./tsconfig/tsconfig.typecheck.json && echo 'Typecheck passed!'",
         "test": "bun test"
     },
     "dependencies": {

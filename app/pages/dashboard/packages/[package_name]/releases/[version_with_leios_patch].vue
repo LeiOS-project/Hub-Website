@@ -12,7 +12,7 @@ let error = null;
 if (version_with_leios_patch === "new") {
 
     const data = ref<NewDevPackageRelease>({
-        versionWithLeiosPatch: "",
+        version_with_leios_patch: "",
         changelog: "",
     });
 
@@ -25,10 +25,10 @@ if (version_with_leios_patch === "new") {
     const { data: result, refresh, loading } = await useAPIAsyncData(
         `/dev/packages/${pkgData.value.name}/releases/${version_with_leios_patch}`,
         async () => {
-            const res = await useAPI((api) => api.getDevPackagesByPackageNameReleasesByVersionWithLeiosPatch({
+            const res = await useAPI((api) => api.getPackagesByFullPackageNameReleasesByVersionWithLeiosPatch({
                 path: {
-                    packageName: pkgData.value.name,
-                    versionWithLeiosPatch: version_with_leios_patch
+                    fullPackageName: pkgData.value.fullname,
+                    version_with_leios_patch
                 }
             }));
             return res;

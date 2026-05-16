@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { GetDevPackagesByPackageNameResponses, GetDevPackagesByPackageNameReleasesResponses, GetDevPackagesByPackageNameStablePromotionRequestsResponses } from '@/api-client/types.gen'
+import type { GetPackagesByFullPackageNameResponses, GetPackagesByFullPackageNameReleasesResponses, GetPackagesByFullPackageNameStablePromotionRequestsResponses } from '@/api-client/types.gen'
 import type { BreadcrumbItem } from '@nuxt/ui'
 
-type DevPackage = GetDevPackagesByPackageNameResponses[200]['data']
-type Release = GetDevPackagesByPackageNameReleasesResponses[200]['data'][number]
-type StableRequest = GetDevPackagesByPackageNameStablePromotionRequestsResponses[200]['data'][number]
+type DevPackage = GetPackagesByFullPackageNameResponses[200]['data']
+type Release = GetPackagesByFullPackageNameReleasesResponses[200]['data'][number]
+type StableRequest = GetPackagesByFullPackageNameStablePromotionRequestsResponses[200]['data'][number]
 
 definePageMeta({
     layout: 'dashboard'
@@ -41,7 +41,7 @@ const stableForm = reactive({
 const { data: pkg, pending: loadingPkg } = await useAsyncData<DevPackage>(
     `dev-package-${package_name}`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesByPackageName({ path: { packageName: package_name } }))
+        const res = await useAPI((api) => api.getPackagesByFullPackageName({ path: { fullPackageName: package_name } }))
         if (!res.success) {
             toast.add({ title: 'Failed to load package', description: res.message, color: 'error' })
             return null as unknown as DevPackage
@@ -54,7 +54,7 @@ const { data: pkg, pending: loadingPkg } = await useAsyncData<DevPackage>(
 const { data: releases, pending: loadingReleases, refresh: refreshReleases } = await useAsyncData<Release[]>(
     `dev-package-${package_name}-releases`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesByPackageNameReleases({ path: { packageName: package_name } }))
+        const res = await useAPI((api) => api.getPackagesByFullPackageNameReleases({ path: { fullPackageName: package_name } }))
         if (!res.success) {
             return []
         }
@@ -66,7 +66,7 @@ const { data: releases, pending: loadingReleases, refresh: refreshReleases } = a
 const { data: stableRequests, refresh: refreshStableRequests } = await useAsyncData<StableRequest[]>(
     `dev-package-${package_name}-stable-requests`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesByPackageNameStablePromotionRequests({ path: { packageName: package_name } }))
+        const res = await useAPI((api) => api.getPackagesByFullPackageNameStablePromotionRequests({ path: { fullPackageName: package_name } }))
         if (!res.success) {
             return []
         }
@@ -87,10 +87,10 @@ async function handleUpload() {
         return
     }
     console.log(uploadForm.file instanceof Blob)
-    const res = await useAPI((api) => api.postDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArch({
+    const res = await useAPI((api) => api.postPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArch({
         path: {
-            packageName: package_name,
-            versionWithLeiosPatch: uploadForm.version,
+            fullPackageName: package_name,
+            version_with_leios_patch: uploadForm.version,
             arch: uploadForm.arch
         },
         body: {
@@ -115,8 +115,8 @@ async function requestStable() {
         return
     }
 
-    const res = await useAPI((api) => api.postDevPackagesByPackageNameStablePromotionRequests({
-        path: { packageName: package_name },
+    const res = await useAPI((api) => api.postPackagesByFullPackageNameStablePromotionRequests({
+        path: { fullPackageName: package_name },
         body: { package_release_id: stableForm.release_id }
     }))
 
@@ -270,7 +270,7 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                                         <UIcon name="i-lucide-file-archive" class="text-slate-400" />
                                     </div>
                                     <div>
-                                        <p class="font-medium font-mono">{{ release.versionWithLeiosPatch }}</p>
+                                        <p class="font-medium font-mono">{{ release.version_with_leios_patch }}</p>
                                         <p class="text-sm text-slate-400">{{ release.architectures }}</p>
                                     </div>
                                 </div>
@@ -403,7 +403,7 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
             <UFormField label="Release" required>
                 <USelect
                     v-model="stableForm.release_id"
-                    :items="(releases || []).map(r => ({ label: `${r.versionWithLeiosPatch} (${r.architectures})`, value: r.id }))"
+                    :items="(releases || []).map(r => ({ label: `${r.version_with_leios_patch} (${r.architectures})`, value: r.id }))"
                     placeholder="Select a release"
                 />
             </UFormField>

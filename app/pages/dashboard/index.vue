@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { TableColumn } from '#ui/types';
 import type {
-    GetDevPackagesResponses,
-    GetDevTasksResponses
+    GetAdminTasksResponses,
+    GetPackagesResponses
 } from '@/api-client/types.gen';
 import { useUserInfoStore } from '~/composables/stores/useUserStore';
 
-type DevPackage = GetDevPackagesResponses[200]['data'][number];
-type DevTask = GetDevTasksResponses[200]['data'][number];
+type DevPackage = GetPackagesResponses[200]['data'][number];
+type DevTask = GetAdminTasksResponses[200]['data'][number];
 
 definePageMeta({
     layout: 'dashboard',
@@ -32,7 +32,7 @@ const isAdmin = computed(() => user.value.role === 'admin')
 const { data: devPackages, loading: loadingPackages } = await useAPIAsyncData<DevPackage[]>(
     'dev-packages',
     async () => {
-        const res = await useAPI((api) => api.getDevPackages({}))
+        const res = await useAPI((api) => api.getPackages({}))
         if (!res.success) {
             toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
             return []
@@ -45,7 +45,7 @@ const { data: devPackages, loading: loadingPackages } = await useAPIAsyncData<De
 const { data: devTasks, loading: loadingTasks } = await useAPIAsyncData<DevTask[]>(
     'dev-tasks',
     async () => {
-        const res = await useAPI((api) => api.getDevTasks({}))
+        const res = await useAPI((api) => api.getAdminTasks({}))
         if (!res.success) {
             return []
         }
@@ -166,7 +166,7 @@ const stats = computed(() => [
                     >
                         <template #name-cell="{ row }">
                             <NuxtLink
-                                :to="`/dashboard/packages/${row.original.name}`"
+                                :to="`/dashboard/packages/${row.original.fullname}`"
                                 class="font-medium text-sky-400 hover:underline"
                             >
                                 {{ row.original.name }}
@@ -183,7 +183,7 @@ const stats = computed(() => [
                                 variant="ghost"
                                 color="neutral"
                                 size="xs"
-                                :to="`/dashboard/packages/${row.original.name}`"
+                                :to="`/dashboard/packages/${row.original.fullname}`"
                             />
                         </template>
                     </UTable>

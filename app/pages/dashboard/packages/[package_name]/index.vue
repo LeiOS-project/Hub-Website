@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import type {
-    GetDevPackagesByPackageNameResponses,
-    PostDevPackagesData,
+    GetPackagesByFullPackageNameResponses,
+    PostPackagesData,
 } from "@/api-client/types.gen";
 import type z from "zod";
 import {
-    zPostDevPackagesData,
-    zPutDevPackagesByPackageNameData,
+    zPostPackagesData,
+    zPutPackagesByFullPackageNameData,
 } from "~/api-client/zod.gen";
 import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
-type DevPackage = GetDevPackagesByPackageNameResponses[200]["data"];
-type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
+type DevPackage = GetPackagesByFullPackageNameResponses[200]["data"];
+type NewDevPackage = NonNullable<PostPackagesData["body"]>;
 
 const route = useRoute();
 const toast = useToast();
@@ -32,10 +32,12 @@ const headerTexts = computed(() => {
     };
 });
 
-const package_form_schema = zPostDevPackagesData.shape.body;
+const package_form_schema = pkg.isNew ? zPostPackagesData.shape.body : zPutPackagesByFullPackageNameData.shape.body;
 type PackageFormSchema = NonNullable<z.infer<typeof package_form_schema>>;
 const package_form_state = ref<NewDevPackage>({
+    publisher_id: pkg_data.value.publisher_id,
     name: pkg_data.value.name,
+    display_name: pkg_data.value.display_name,
     description: pkg_data.value.description,
     homepage_url: pkg_data.value.homepage_url,
     requires_patching: pkg_data.value.requires_patching,
@@ -45,7 +47,7 @@ async function onFormSubmit() {
     try {
         if (pkg.isNew) {
             const result = await useAPI((api) =>
-                api.postDevPackages({
+                api.postPackages({
                     body: package_form_state.value,
                 })
             );
@@ -67,11 +69,12 @@ async function onFormSubmit() {
             }
         } else {
             const result = await useAPI((api) =>
-                api.putDevPackagesByPackageName({
+                api.putPackagesByFullPackageName({
                     path: {
-                        packageName: pkg_data.value.name,
+                        fullPackageName: (pkg_data.value as DevPackage).fullname,
                     },
                     body: {
+                        display_name: package_form_state.value.display_name,
                         description: package_form_state.value.description,
                         homepage_url: package_form_state.value.homepage_url,
                         requires_patching:
@@ -81,7 +84,10 @@ async function onFormSubmit() {
             );
 
             if (result.success) {
-                pkg_data.value = package_form_state.value;
+                pkg_data.value = {
+                    ...pkg_data.value,
+                    ...package_form_state.value,
+                };
 
                 toast.add({
                     title: "Package updated",

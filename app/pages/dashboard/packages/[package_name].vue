@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { GetDevPackagesResponses, PostDevPackagesData } from '~/api-client';
+import type { GetPackagesByFullPackageNameResponses, PostPackagesData } from '~/api-client';
 import type { UseSubrouterPathDynamics } from '~/composables/useSubrouterPathDynamics';
 
 const toast = useToast();
@@ -7,8 +7,8 @@ const route = useRoute();
 
 const package_name = route.params.package_name as string;
 
-type DevPackage = GetDevPackagesResponses["200"]["data"][number];
-type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
+type DevPackage = GetPackagesByFullPackageNameResponses["200"]["data"];
+type NewDevPackage = NonNullable<PostPackagesData["body"]>;
 
 definePageMeta({
     layout: 'dashboard'
@@ -19,7 +19,9 @@ let error = null;
 if (package_name === "new") {
 
     const data = ref<NewDevPackage>({
+        publisher_id: 0,
         name: "",
+        display_name: "",
         description: "",
         homepage_url: "",
         requires_patching: false
@@ -34,9 +36,9 @@ if (package_name === "new") {
     const { data: result, refresh, loading } = await useAPIAsyncData(
         `/dev/packages/${package_name}`,
         async () => {
-            const res = await useAPI((api) => api.getDevPackagesByPackageName({
+            const res = await useAPI((api) => api.getPackagesByFullPackageName({
                 path: {
-                    packageName: package_name
+                    fullPackageName: package_name
                 }
             }));
             return res;

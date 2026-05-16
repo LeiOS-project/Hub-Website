@@ -12,9 +12,9 @@ let error = null;
 const { data: result, refresh, loading } = await useAPIAsyncData(
     `/dev/packages/${pkgData.value.name}/stable-promotion-requests/${stable_promotion_request_id}`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestId({
+        const res = await useAPI((api) => api.getPackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestId({
             path: {
-                packageName: pkgData.value.name,
+                fullPackageName: pkgData.value.fullname,
                 stablePromotionRequestID: parseInt(stable_promotion_request_id)
             }
         }));

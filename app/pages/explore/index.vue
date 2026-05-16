@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import type { GetPackagesResponses } from '~/api-client';
+
+type PublicPackage = GetPackagesResponses[200]['data'][number]
+
 const toast = useToast()
 const search = ref('')
 
-const { data: packages, pending, refresh } = await useAsyncData('public-packages', async () => {
-    const res = await useAPI((api) => api.getPublicPackages({}), true)
+const { data: packages, pending, refresh } = await useAsyncData<PublicPackage[]>('public-packages', async () => {
+    const res = await useAPI((api) => api.getPackages({}), true)
     if (!res.success) {
         toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
         return []
@@ -14,7 +18,7 @@ const { data: packages, pending, refresh } = await useAsyncData('public-packages
 const filteredPackages = computed(() => {
     const term = search.value.trim().toLowerCase()
     if (!term) return packages.value || []
-    return (packages.value || []).filter((pkg: any) =>
+    return (packages.value || []).filter((pkg) =>
         pkg.name.toLowerCase().includes(term) ||
         (pkg.description || '').toLowerCase().includes(term) ||
         (pkg.homepage_url || '').toLowerCase().includes(term)
@@ -55,11 +59,11 @@ const filteredPackages = computed(() => {
                                         <UIcon name="i-lucide-package" class="text-sky-400" />
                                         <h3 class="text-lg font-semibold">{{ pkg.name }}</h3>
                                     </div>
-                                    <UBadge color="neutral" variant="soft">owner #{{ pkg.owner_user_id }}</UBadge>
+                                    <UBadge color="neutral" variant="soft">publisher #{{ pkg.publisher_id }}</UBadge>
                                 </div>
                                 <p class="text-sm text-slate-400">{{ pkg.description || 'No description provided.' }}</p>
                                 <div class="flex flex-wrap gap-2">
-                                    <UButton size="sm" variant="soft" color="primary" :to="`/explore/${pkg.name}`">
+                                    <UButton size="sm" variant="soft" color="primary" :to="`/explore/${pkg.fullname}`">
                                         View details
                                     </UButton>
                                     <UButton v-if="pkg.homepage_url" size="sm" variant="ghost" color="neutral" :to="pkg.homepage_url" target="_blank" icon="i-lucide-external-link">

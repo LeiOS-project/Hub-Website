@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import type {
-    GetDevPackagesByPackageNameResponses,
-    PostDevPackagesData,
-} from "@/api-client/types.gen";
 import type z from "zod";
-import { zPostDevPackagesByPackageNameReleasesData } from "~/api-client/zod.gen";
+import { zPostPackagesByFullPackageNameReleasesData } from "~/api-client/zod.gen";
 import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 
 const route = useRoute();
@@ -26,15 +22,15 @@ const headerTexts = computed(() => {
         };
     }
     return {
-        title: `Package Release: ${pkg_release_data.value.versionWithLeiosPatch}`,
+        title: `Package Release: ${pkg_release_data.value.version_with_leios_patch}`,
         description: "View and manage the details of the package.",
     };
 });
 
 const package_release_form_schema =
-    zPostDevPackagesByPackageNameReleasesData.shape.body;
+    zPostPackagesByFullPackageNameReleasesData.shape.body;
 const package_release_form_state = ref<NewDevPackageRelease>({
-    versionWithLeiosPatch: pkg_release_data.value.versionWithLeiosPatch,
+    version_with_leios_patch: pkg_release_data.value.version_with_leios_patch,
     changelog: pkg_release_data.value.changelog,
 });
 
@@ -42,9 +38,9 @@ async function onFormSubmit() {
     try {
         if (pkg_release.isNew) {
             const result = await useAPI((api) =>
-                api.postDevPackagesByPackageNameReleases({
+                api.postPackagesByFullPackageNameReleases({
                     path: {
-                        packageName: pkg_data.value.name,
+                        fullPackageName: pkg_data.value.fullname,
                     },
                     body: package_release_form_state.value,
                 })
@@ -60,7 +56,7 @@ async function onFormSubmit() {
 
                 // Redirect to the new package page
                 await navigateTo(
-                    `/dashboard/packages/${pkg_data.value.name}/releases/${package_release_form_state.value.versionWithLeiosPatch}`
+                    `/dashboard/packages/${pkg_data.value.fullname}/releases/${package_release_form_state.value.version_with_leios_patch}`
                 );
             } else {
                 throw new Error(
@@ -69,11 +65,11 @@ async function onFormSubmit() {
             }
         } else {
             const result = await useAPI((api) =>
-                api.putDevPackagesByPackageNameReleasesByVersionWithLeiosPatch({
+                api.putPackagesByFullPackageNameReleasesByVersionWithLeiosPatch({
                     path: {
-                        packageName: pkg_data.value.name,
-                        versionWithLeiosPatch:
-                            pkg_release_data.value.versionWithLeiosPatch,
+                        fullPackageName: pkg_data.value.fullname,
+                        version_with_leios_patch:
+                            pkg_release_data.value.version_with_leios_patch,
                     },
                     body: {
                         changelog: package_release_form_state.value.changelog,
@@ -181,11 +177,11 @@ async function uploadDebFile(arch: Architecture | "all") {
 
     try {
         const result = await useAPI((api) =>
-            api.postDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArch({
+            api.postPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArch({
                 path: {
-                    packageName: pkg_data.value.name,
-                    versionWithLeiosPatch:
-                        pkg_release_data.value.versionWithLeiosPatch,
+                    fullPackageName: pkg_data.value.fullname,
+                    version_with_leios_patch:
+                        pkg_release_data.value.version_with_leios_patch,
                     arch: arch,
                 },
                 body: {
@@ -308,13 +304,13 @@ function formatFileSize(bytes: number): string {
                         />
                     </UFormField> -->
 
-                    <UFormField name="versionWithLeiosPatch" label="Version Tag"
+                    <UFormField name="version_with_leios_patch" label="Version Tag"
                         description="The version tag of this package release."
                         class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0" :ui="{
                             root: 'w-full sm:w-auto',
                             container: 'w-full sm:w-auto',
                         }">
-                        <UInput v-model="package_release_form_state.versionWithLeiosPatch
+                        <UInput v-model="package_release_form_state.version_with_leios_patch
                             " :disabled="!pkg_release.isNew" placeholder="Enter package release version tag"
                             class="w-full sm:w-96" />
                     </UFormField>
@@ -412,8 +408,8 @@ function formatFileSize(bytes: number): string {
                                             </div>
                                             <div>
                                                 <p class="text-sm font-medium text-white">
-                                                    {{ pkg_data.name }}_{{
-                                                        pkg_release_data.versionWithLeiosPatch
+                                                        {{ pkg_data.name }}_{{
+                                                        pkg_release_data.version_with_leios_patch
                                                     }}_{{ arch.key }}.deb
                                                 </p>
                                                 <p class="text-xs text-slate-400">

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { DropdownMenuItem, TableColumn } from "#ui/types";
-import type { GetAdminPackagesResponses } from "@/api-client/types.gen";
+import type { GetPackagesResponses } from "@/api-client/types.gen";
 import * as z from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
 
-type AdminPackage = GetAdminPackagesResponses[200]["data"][number];
+type AdminPackage = GetPackagesResponses[200]["data"][number];
 
 definePageMeta({
     layout: "dashboard",
@@ -33,7 +33,7 @@ if (!currentUser || currentUser.value.role !== "admin") {
 const packageColumns: TableColumn<AdminPackage>[] = [
     { accessorKey: "id", header: "ID" },
     { accessorKey: "name", header: "Name" },
-    { accessorKey: "owner_user_id", header: "Owner ID" },
+    { accessorKey: "publisher_id", header: "Publisher ID" },
     { accessorKey: "description", header: "Description" },
     { id: "stable", header: "Stable" },
     { id: "testing", header: "Testing" },
@@ -45,7 +45,7 @@ const {
     loading,
     refresh,
 } = await useAPIAsyncData<AdminPackage[]>("admin-packages-list", async () => {
-    const res = await useAPI((api) => api.getAdminPackages({}));
+    const res = await useAPI((api) => api.getPackages({}));
     if (!res.success) {
         toast.add({
             title: "Failed to load packages",
@@ -70,7 +70,7 @@ function getAdminPackageRowActions(row: {
             {
                 label: "View Releases",
                 icon: "i-lucide-list",
-                to: `/dashboard/admin/packages/${row.original.name}`,
+                to: `/dashboard/admin/packages/${row.original.fullname}`,
             },
         ],
         [
@@ -96,7 +96,8 @@ const createSchema = z.object({
         .string()
         .min(1, "Name is required")
         .regex(/^[a-z0-9-]+$/, "Only lowercase letters, numbers and hyphens"),
-    owner_user_id: z.number().min(1, "Owner ID is required"),
+    display_name: z.string().min(1, "Display name is required"),
+    publisher_id: z.number().min(1, "Publisher ID is required"),
     description: z.string().min(1, "Description is required"),
     homepage_url: z.string().url("Must be a valid URL").or(z.literal("")),
 });
@@ -110,7 +111,7 @@ const editForm = reactive({
 
 async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
     const res = await useAPI((api) =>
-        api.postAdminPackages({ body: event.data })
+        api.postPackages({ body: event.data })
     );
     if (res.success) {
         toast.add({ title: "Package created", color: "success" });
@@ -141,8 +142,8 @@ async function submitEdit() {
     if (!selectedPackage.value) return;
 
     const res = await useAPI((api) =>
-        api.putAdminPackagesByPackageName({
-            path: { packageName: selectedPackage.value!.name },
+        api.putPackagesByFullPackageName({
+            path: { fullPackageName: selectedPackage.value!.fullname },
             body: {
                 description: editForm.description,
                 homepage_url: editForm.homepage_url,
@@ -168,8 +169,8 @@ async function deletePackage() {
     deleting.value = true;
 
     const res = await useAPI((api) =>
-        api.deleteAdminPackagesByPackageName({
-            path: { packageName: packageToDelete.value!.name },
+        api.deletePackagesByFullPackageName({
+            path: { fullPackageName: packageToDelete.value!.fullname },
         })
     );
 
@@ -232,9 +233,9 @@ async function deletePackage() {
                             row.original.name
                         }}</span>
                     </template>
-                    <template #owner_user_id-cell="{ row }">
+                    <template #publisher_id-cell="{ row }">
                         <span class="font-mono text-sm text-slate-400"
-                            >#{{ row.original.owner_user_id }}</span
+                            >#{{ row.original.publisher_id }}</span
                         >
                     </template>
                     <template #description-cell="{ row }">
@@ -345,7 +346,11 @@ async function deletePackage() {
                 <UInput placeholder="my-package" />
             </UFormField>
 
-            <UFormField label="Owner User ID" name="owner_user_id" required>
+            <UFormField label="Display Name" name="display_name" required>
+                <UInput placeholder="My Package" />
+            </UFormField>
+
+            <UFormField label="Publisher ID" name="publisher_id" required>
                 <UInput type="number" placeholder="1" />
             </UFormField>
 

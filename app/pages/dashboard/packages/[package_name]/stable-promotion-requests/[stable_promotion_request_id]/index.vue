@@ -40,9 +40,9 @@ async function onDeleteRequest() {
 
     try {
         const result = await useAPI((api) =>
-            api.deleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestId({
+            api.deletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestId({
                 path: {
-                    packageName: pkg_data.value.name,
+                    fullPackageName: pkg_data.value.fullname,
                     stablePromotionRequestID: request_data.value.id,
                 },
             })

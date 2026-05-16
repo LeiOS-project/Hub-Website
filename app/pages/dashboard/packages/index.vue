@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { TableColumn } from '#ui/types'
-import type { GetDevPackagesResponses } from '@/api-client/types.gen'
+import type { GetPackagesResponses } from '@/api-client/types.gen'
 import { useAPI } from '@/composables/useAPI'
 import DashboardPageBody from '~/components/dashboard/DashboardPageBody.vue'
 
-type DevPackage = GetDevPackagesResponses[200]['data'][number]
+type DevPackage = GetPackagesResponses[200]['data'][number]
 
 definePageMeta({
     layout: 'dashboard'
@@ -30,7 +30,7 @@ const packageTableColumns: TableColumn<DevPackage>[] = [
 const packages = await useAPIAsyncData(
     `/dev/packages`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackages({}));
+        const res = await useAPI((api) => api.getPackages({}));
         if (!res.success) {
             toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
             return [];
@@ -74,7 +74,7 @@ const packages = await useAPIAsyncData(
                 >
                     <template #name-cell="{ row }">
                         <NuxtLink
-                            :to="`/dashboard/packages/${row.original.name}`"
+                            :to="`/dashboard/packages/${row.original.fullname}`"
                             class="font-medium text-sky-400 hover:underline"
                         >
                             {{ row.original.name }}
@@ -182,7 +182,7 @@ const packages = await useAPIAsyncData(
 
                     <template #name-cell="{ row }">
                         <NuxtLink
-                            :to="`/dashboard/packages/${row.original.name}`"
+                            :to="`/dashboard/packages/${row.original.fullname}`"
                             class="font-medium text-sky-400 hover:underline"
                         >
                             {{ row.original.name }}
@@ -239,14 +239,14 @@ const packages = await useAPIAsyncData(
                                 variant="ghost"
                                 color="neutral"
                                 size="xs"
-                                :to="`/dashboard/packages/${row.original.name}?action=upload`"
+                                :to="`/dashboard/packages/${row.original.fullname}?action=upload`"
                             />
                             <UButton
                                 icon="i-lucide-settings"
                                 variant="ghost"
                                 color="neutral"
                                 size="xs"
-                                :to="`/dashboard/packages/${row.original.name}`"
+                                :to="`/dashboard/packages/${row.original.fullname}`"
                             />
                         </div>
                     </template>

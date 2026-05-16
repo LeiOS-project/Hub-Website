@@ -1,13 +1,13 @@
 import type {
     GetAccountApikeysResponses,
     GetAccountResponses,
-    GetDevPackagesByPackageNameReleasesResponses,
-    GetDevPackagesByPackageNameStablePromotionRequestsResponses,
-    GetDevPackagesResponses,
+    GetPackagesByFullPackageNameReleasesResponses,
+    GetPackagesByFullPackageNameStablePromotionRequestsResponses,
+    GetPackagesResponses,
     PostAccountApikeysData,
-    PostDevPackagesData,
-    PostDevPackagesByPackageNameReleasesData,
-    PostDevPackagesByPackageNameStablePromotionRequestsData
+    PostPackagesData,
+    PostPackagesByFullPackageNameReleasesData,
+    PostPackagesByFullPackageNameStablePromotionRequestsData
 } from "~/api-client";
 
 export namespace UtilityTypes {
@@ -19,15 +19,15 @@ export namespace UtilityTypes {
 
 export type UserInfo = GetAccountResponses["200"]["data"];
 
-export type DevPackage = GetDevPackagesResponses["200"]["data"][number];
-export type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
+export type DevPackage = GetPackagesResponses["200"]["data"][number];
+export type NewDevPackage = NonNullable<PostPackagesData["body"]>;
 
-export type DevPackageRelease = GetDevPackagesByPackageNameReleasesResponses["200"]["data"][number];
-export type NewDevPackageRelease = NonNullable<PostDevPackagesByPackageNameReleasesData["body"]>;
+export type DevPackageRelease = GetPackagesByFullPackageNameReleasesResponses["200"]["data"][number];
+export type NewDevPackageRelease = NonNullable<PostPackagesByFullPackageNameReleasesData["body"]>;
 
 
 export type APIKey = GetAccountApikeysResponses["200"]["data"][number];
 export type NewAPIKey = NonNullable<PostAccountApikeysData["body"]>;
 
-export type DevPackageStablePromotionRequest = GetDevPackagesByPackageNameStablePromotionRequestsResponses["200"]["data"][number];
-export type NewDevPackageStablePromotionRequest = NonNullable<PostDevPackagesByPackageNameStablePromotionRequestsData["body"]>;
+export type DevPackageStablePromotionRequest = GetPackagesByFullPackageNameStablePromotionRequestsResponses["200"]["data"][number];
+export type NewDevPackageStablePromotionRequest = NonNullable<PostPackagesByFullPackageNameStablePromotionRequestsData["body"]>;

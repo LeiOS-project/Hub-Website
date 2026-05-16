@@ -1,15 +1,16 @@
 <script lang="ts" setup>
 import type { TableColumn } from '@nuxt/ui';
 import type { 
-    GetDevPackagesByPackageNameResponses, 
-    GetDevPackagesByPackageNameStablePromotionRequestsResponses,
-    GetDevPackagesByPackageNameReleasesResponses 
+    GetPackagesByFullPackageNameResponses, 
+    GetPackagesByFullPackageNameStablePromotionRequestsResponses,
+    GetPackagesByFullPackageNameReleasesResponses 
 } from '~/api-client';
 
 const toast = useToast();
 
-type DevPackage = GetDevPackagesByPackageNameResponses[200]['data'];
-type StablePromotionRequest = GetDevPackagesByPackageNameStablePromotionRequestsResponses[200]['data'][number];
+type DevPackage = GetPackagesByFullPackageNameResponses[200]['data'];
+type StablePromotionRequest = GetPackagesByFullPackageNameStablePromotionRequestsResponses[200]['data'][number];
+type Release = GetPackagesByFullPackageNameReleasesResponses[200]['data'][number];
 
 const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 
@@ -17,9 +18,9 @@ const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 const stablePromotionRequests = await useAPIAsyncData(
     `/dev/packages/${pkgData.value.name}/stable-promotion-requests`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesByPackageNameStablePromotionRequests({
+        const res = await useAPI((api) => api.getPackagesByFullPackageNameStablePromotionRequests({
             path: {
-                packageName: pkgData.value.name
+                fullPackageName: pkgData.value.fullname
             }
         }));
 
@@ -40,9 +41,9 @@ const stablePromotionRequests = await useAPIAsyncData(
 const availableReleases = await useAPIAsyncData(
     `forStablePromotionRequests:/dev/packages/${pkgData.value.name}/releases`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesByPackageNameReleases({
+        const res = await useAPI((api) => api.getPackagesByFullPackageNameReleases({
             path: {
-                packageName: pkgData.value.name
+                fullPackageName: pkgData.value.fullname
             }
         }));
 
@@ -93,9 +94,9 @@ async function submitNewRequest() {
 
     submittingRequest.value = true;
 
-    const res = await useAPI((api) => api.postDevPackagesByPackageNameStablePromotionRequests({
+    const res = await useAPI((api) => api.postPackagesByFullPackageNameStablePromotionRequests({
         path: {
-            packageName: pkgData.value.name
+            fullPackageName: pkgData.value.fullname
         },
         body: {
             package_release_id: selectedRelease.value?.value as number
@@ -132,11 +133,11 @@ function getStatusColor(status: StablePromotionRequest['status']) {
 
 // Computed properties for filtering
 const pendingRequests = computed(() => 
-    stablePromotionRequests.data.value?.filter(r => r.status === 'pending') || []
+    stablePromotionRequests.data.value?.filter((r) => r.status === 'pending') || []
 );
 
 const processedRequests = computed(() => 
-    stablePromotionRequests.data.value?.filter(r => r.status !== 'pending') || []
+    stablePromotionRequests.data.value?.filter((r) => r.status !== 'pending') || []
 );
 
 // Release options for select
@@ -147,8 +148,8 @@ const releaseOptions = computed(() => {
     //     label: release.versionWithLeiosPatch,
     //     value: release.id
     // }));
-    return availableReleases.data.value.map(release => ({
-        label: release.versionWithLeiosPatch,
+    return availableReleases.data.value.map((release: Release) => ({
+        label: release.version_with_leios_patch,
         value: release.id
     }));
 });
