@@ -23,6 +23,11 @@ variables:
   BUN_INSTALL_CACHE_DIR: .bun/install/cache
   NUXT_TELEMETRY_DISABLED: '1'
 
+test:typecheck:
+  stage: test
+  script:
+    - bun run typecheck
+
 test:unit:
   stage: test
   script:
