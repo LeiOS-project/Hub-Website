@@ -76,7 +76,7 @@ const packageReleasesTableColumns: TableColumn<Release>[] = [
 
             <template #header-right>
                 <UButton
-                    :to="`/dashboard/packages/${pkgData.name}/releases/new`"
+                    :to="`/dashboard/packages/${pkgData.fullname}/releases/new`"
                     label="New Release"
                     icon="i-lucide-plus"
                     color="primary"
@@ -114,7 +114,7 @@ const packageReleasesTableColumns: TableColumn<Release>[] = [
 
             <template #empty-actions>
                 <UButton
-                    :to="`/dashboard/packages/${pkgData.name}/releases/new`"
+                    :to="`/dashboard/packages/${pkgData.fullname}/releases/new`"
                     label="New Release"
                     icon="i-lucide-plus"
                     color="primary"

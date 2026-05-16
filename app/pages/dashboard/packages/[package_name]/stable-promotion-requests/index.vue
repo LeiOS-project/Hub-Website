@@ -197,7 +197,7 @@ const releaseOptions = computed(() => {
 
             <template #id-cell="{ row }">
                 <NuxtLink
-                    :to="`/dashboard/packages/${pkgData.name}/stable-promotion-requests/${row.original.id}`"
+                    :to="`/dashboard/packages/${pkgData.fullname}/stable-promotion-requests/${row.original.id}`"
                     class="font-mono text-sm text-primary-400 hover:underline"
                 >
                     #{{ row.original.id }}
@@ -206,7 +206,7 @@ const releaseOptions = computed(() => {
 
             <template #package_release_version-cell="{ row }">
                 <NuxtLink
-                    :to="`/dashboard/packages/${pkgData.name}/releases/${row.original.package_release_version}`"
+                    :to="`/dashboard/packages/${pkgData.fullname}/releases/${row.original.package_release_version}`"
                     class="font-medium text-primary-400 hover:underline"
                 >
                     {{ row.original.package_release_version || 'Unknown Release' }}
@@ -235,7 +235,7 @@ const releaseOptions = computed(() => {
             <template #actions-cell="{ row }">
                 <div class="flex gap-1 justify-end">
                     <UButton
-                        :to="`/dashboard/packages/${pkgData.name}/stable-promotion-requests/${row.original.id}`"
+                        :to="`/dashboard/packages/${pkgData.fullname}/stable-promotion-requests/${row.original.id}`"
                         icon="i-lucide-eye"
                         color="neutral"
                         variant="ghost"

@@ -58,7 +58,7 @@ async function onDeleteRequest() {
 
             // Redirect to the requests list
             await navigateTo(
-                `/dashboard/packages/${pkg_data.value.name}/stable-promotion-requests`
+                `/dashboard/packages/${pkg_data.value.fullname}/stable-promotion-requests`
             );
         } else {
             throw new Error(

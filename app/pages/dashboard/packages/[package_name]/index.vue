@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {
+    GetPublishersResponses,
     GetPackagesByFullPackageNameResponses,
     PostPackagesData,
 } from "@/api-client/types.gen";
@@ -18,6 +19,36 @@ const toast = useToast();
 const pkg = useSubrouterInjectedData<DevPackage, NewDevPackage>("package", true).inject();
 const pkg_data = pkg.data;
 const pkg_loading = pkg.loading;
+
+type Publisher = GetPublishersResponses[200]["data"][number];
+
+const { data: publishers } = await useAPIAsyncData<Publisher[]>(
+    "package-publishers",
+    async () => {
+        if (!pkg.isNew) {
+            return [];
+        }
+
+        const result = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
+        if (!result.success) {
+            toast.add({
+                title: "Failed to load publishers",
+                description: result.message,
+                color: "error",
+            });
+            return [];
+        }
+
+        return result.data;
+    }
+);
+
+const publisherOptions = computed(() =>
+    (publishers.value || []).map((publisher) => ({
+        label: publisher.display_name,
+        value: publisher.id,
+    }))
+);
 
 const headerTexts = computed(() => {
     if (pkg.isNew) {
@@ -43,6 +74,12 @@ const package_form_state = ref<NewDevPackage>({
     requires_patching: pkg_data.value.requires_patching,
 });
 
+watchEffect(() => {
+    if (pkg.isNew && !package_form_state.value.publisher_id && publisherOptions.value.length === 1) {
+        package_form_state.value.publisher_id = publisherOptions.value[0]!.value;
+    }
+});
+
 async function onFormSubmit() {
     try {
         if (pkg.isNew) {
@@ -53,6 +90,21 @@ async function onFormSubmit() {
             );
 
             if (result.success) {
+                const packagesResult = await useAPI((api) => api.getPackages({
+                    query: {
+                        onlyMembershipByMe: true,
+                        publisherID: package_form_state.value.publisher_id,
+                        searchString: package_form_state.value.name,
+                    },
+                }));
+
+                const createdPackage = packagesResult.success
+                    ? packagesResult.data.find((candidate) =>
+                        candidate.publisher_id === package_form_state.value.publisher_id &&
+                        candidate.name === package_form_state.value.name
+                    )
+                    : null;
+
                 toast.add({
                     title: "Package created",
                     description: `The Package has been successfully created.`,
@@ -62,7 +114,7 @@ async function onFormSubmit() {
 
                 // Redirect to the new package page
                 await navigateTo(
-                    `/dashboard/packages/${package_form_state.value.name}`
+                    `/dashboard/packages/${createdPackage?.fullname || package_form_state.value.name}`
                 );
             } else {
                 throw new Error(result.message || "Failed to create package");
@@ -188,6 +240,26 @@ async function onDeletePackage() {
                     </UFormField> -->
 
                     <UFormField
+                        v-if="pkg.isNew"
+                        name="publisher_id"
+                        label="Publisher"
+                        description="Choose the publisher that will own this package."
+                        class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
+                        :ui="{
+                            root: 'w-full sm:w-auto',
+                            container: 'w-full sm:w-auto',
+                        }"
+                    >
+                        <USelect
+                            v-model="package_form_state.publisher_id"
+                            :items="publisherOptions"
+                            placeholder="Select a publisher"
+                            value-key="value"
+                            class="w-full sm:w-96"
+                        />
+                    </UFormField>
+
+                    <UFormField
                         name="name"
                         label="Package Name"
                         description="The name of this package."
@@ -201,6 +273,24 @@ async function onDeletePackage() {
                             v-model="package_form_state.name"
                             :disabled="!pkg.isNew"
                             placeholder="Enter package name"
+                            class="w-full sm:w-96"
+                        />
+                    </UFormField>
+
+                    <UFormField
+                        v-if="pkg.isNew"
+                        name="display_name"
+                        label="Display Name"
+                        description="The human-readable package name shown in the UI."
+                        class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
+                        :ui="{
+                            root: 'w-full sm:w-auto',
+                            container: 'w-full sm:w-auto',
+                        }"
+                    >
+                        <UInput
+                            v-model="package_form_state.display_name"
+                            placeholder="Enter package display name"
                             class="w-full sm:w-96"
                         />
                     </UFormField>

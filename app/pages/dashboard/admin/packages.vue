@@ -3,6 +3,7 @@ import type { DropdownMenuItem, TableColumn } from "#ui/types";
 import type { GetPackagesResponses } from "@/api-client/types.gen";
 import * as z from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
+import { zPostPackagesData } from "~/api-client/zod.gen";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
 
@@ -70,7 +71,7 @@ function getAdminPackageRowActions(row: {
             {
                 label: "View Releases",
                 icon: "i-lucide-list",
-                to: `/dashboard/admin/packages/${row.original.fullname}`,
+                to: `/dashboard/packages/${row.original.fullname}`,
             },
         ],
         [
@@ -91,16 +92,7 @@ const deleting = ref(false);
 const selectedPackage = ref<AdminPackage | null>(null);
 const packageToDelete = ref<AdminPackage | null>(null);
 
-const createSchema = z.object({
-    name: z
-        .string()
-        .min(1, "Name is required")
-        .regex(/^[a-z0-9-]+$/, "Only lowercase letters, numbers and hyphens"),
-    display_name: z.string().min(1, "Display name is required"),
-    publisher_id: z.number().min(1, "Publisher ID is required"),
-    description: z.string().min(1, "Description is required"),
-    homepage_url: z.string().url("Must be a valid URL").or(z.literal("")),
-});
+const createSchema = zPostPackagesData.shape.body;
 
 type CreateSchema = z.output<typeof createSchema>;
 

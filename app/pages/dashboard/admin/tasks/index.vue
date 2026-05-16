@@ -20,8 +20,7 @@ const taskColumns: TableColumn<DevTask>[] = [
     { id: 'status', header: 'Status' },
     { id: 'created', header: 'Created' },
     { id: 'finished', header: 'Finished' },
-    { accessorKey: 'message', header: 'Message' },
-    { id: 'actions', header: '', enableSorting: false, enableHiding: false }
+    { accessorKey: 'message', header: 'Message' }
 ]
 
 const { data: tasks, pending: loading, refresh } = await useAsyncData<DevTask[]>(
@@ -116,16 +115,6 @@ function getStatusIcon(status: DevTask['status']) {
                         <span class="text-slate-400 line-clamp-1 max-w-xs">
                             {{ row.original.message || '—' }}
                         </span>
-                    </template>
-                    <template #actions-cell="{ row }">
-                        <UButton
-                            v-if="row.original.storeLogs"
-                            icon="i-lucide-file-text"
-                            variant="ghost"
-                            color="neutral"
-                            size="xs"
-                            :to="`/dashboard/tasks/${row.original.id}`"
-                        />
                     </template>
                 </UTable>
 

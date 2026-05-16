@@ -168,7 +168,14 @@ export async function useAPI<TReturn>(handler: (api: UseAPITypes.APIClient) => T
 
             const result = await handler(baseAPIClient);
 
-            if ((result as any)?.success === false && (result as any)?.code === 401 && ((result as any)?.message === "Invalid or expired token") || ((result as any)?.message === "Missing or invalid Authorization header")) {
+            if (
+                (result as any)?.success === false &&
+                (result as any)?.code === 401 &&
+                (
+                    (result as any)?.message === "Invalid or expired token" ||
+                    (result as any)?.message === "Missing or invalid Authorization header"
+                )
+            ) {
                 updateAPIClient(null);
                 sessionToken.value = null;
                 if (!disableAuthRedirect) {
