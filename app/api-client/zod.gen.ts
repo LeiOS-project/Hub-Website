@@ -2,13 +2,9 @@
 
 import * as z from 'zod';
 
-export const zPostAuthLoginData = z.object({
-    body: z.object({
-        username: z.string(),
-        password: z.string()
-    }),
-    path: z.never().optional(),
-    query: z.never().optional()
+export const zPostAuthLoginBody = z.object({
+    username: z.string(),
+    password: z.string()
 });
 
 /**
@@ -31,12 +27,6 @@ export const zPostAuthLoginResponse = z.object({
     })
 });
 
-export const zGetAuthSessionData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.never().optional()
-});
-
 /**
  * Session info retrieved successfully
  */
@@ -56,12 +46,6 @@ export const zGetAuthSessionResponse = z.object({
     })
 });
 
-export const zPostAuthLogoutData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.never().optional()
-});
-
 /**
  * Logout successful
  */
@@ -72,13 +56,9 @@ export const zPostAuthLogoutResponse = z.object({
     data: z.null()
 });
 
-export const zPostAuthResetPasswordData = z.object({
-    body: z.object({
-        reset_token: z.string().min(1),
-        new_password: z.string().min(8).max(50).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
-    }),
-    path: z.never().optional(),
-    query: z.never().optional()
+export const zPostAuthResetPasswordBody = z.object({
+    reset_token: z.string().min(1),
+    new_password: z.string().min(8).max(50).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
 });
 
 /**
@@ -91,12 +71,8 @@ export const zPostAuthResetPasswordResponse = z.object({
     data: z.null()
 });
 
-export const zPostAuthResetPasswordRequestData = z.object({
-    body: z.object({
-        email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/)
-    }),
-    path: z.never().optional(),
-    query: z.never().optional()
+export const zPostAuthResetPasswordRequestBody = z.object({
+    email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/)
 });
 
 /**
@@ -109,12 +85,6 @@ export const zPostAuthResetPasswordRequestResponse = z.object({
     data: z.null()
 });
 
-export const zDeleteAccountData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.never().optional()
-});
-
 /**
  * Account deleted successfully
  */
@@ -123,12 +93,6 @@ export const zDeleteAccountResponse = z.object({
     code: z.literal(200),
     message: z.literal('Account deleted successfully'),
     data: z.null()
-});
-
-export const zGetAccountData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.never().optional()
 });
 
 /**
@@ -152,14 +116,10 @@ export const zGetAccountResponse = z.object({
     })
 });
 
-export const zPutAccountData = z.object({
-    body: z.object({
-        username: z.string().min(5).max(40).regex(/^(?!.*[.-]{2})(?!.*--)(?!.*\.\.)[a-z0-9](?:[a-z0-9._-]{3,38}[a-z0-9_])?$/).optional(),
-        display_name: z.string().optional(),
-        email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/).optional()
-    }),
-    path: z.never().optional(),
-    query: z.never().optional()
+export const zPutAccountBody = z.object({
+    username: z.string().min(5).max(40).regex(/^(?!.*[.-]{2})(?!.*--)(?!.*\.\.)[a-z0-9](?:[a-z0-9._-]{3,38}[a-z0-9_])?$/).optional(),
+    display_name: z.string().optional(),
+    email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/).optional()
 });
 
 /**
@@ -172,13 +132,9 @@ export const zPutAccountResponse = z.object({
     data: z.null()
 });
 
-export const zPutAccountPasswordData = z.object({
-    body: z.object({
-        current_password: z.string(),
-        new_password: z.string().min(8).max(50).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
-    }),
-    path: z.never().optional(),
-    query: z.never().optional()
+export const zPutAccountPasswordBody = z.object({
+    current_password: z.string(),
+    new_password: z.string().min(8).max(50).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
 });
 
 /**
@@ -189,12 +145,6 @@ export const zPutAccountPasswordResponse = z.object({
     code: z.literal(200),
     message: z.literal('Password changed successfully'),
     data: z.null()
-});
-
-export const zGetAccountApikeysData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.never().optional()
 });
 
 /**
@@ -212,19 +162,15 @@ export const zGetAccountApikeysResponse = z.object({
     }))
 });
 
-export const zPostAccountApikeysData = z.object({
-    body: z.object({
-        description: z.string().min(1).max(255),
-        expires_at: z.union([
-            z.literal('7d'),
-            z.literal('30d'),
-            z.literal('90d'),
-            z.literal('180d'),
-            z.literal('365d')
-        ]).nullable()
-    }),
-    path: z.never().optional(),
-    query: z.never().optional()
+export const zPostAccountApikeysBody = z.object({
+    description: z.string().min(1).max(255),
+    expires_at: z.union([
+        z.literal('7d'),
+        z.literal('30d'),
+        z.literal('90d'),
+        z.literal('180d'),
+        z.literal('365d')
+    ]).nullable()
 });
 
 /**
@@ -240,12 +186,8 @@ export const zPostAccountApikeysResponse = z.object({
     })
 });
 
-export const zDeleteAccountApikeysByApiKeyIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        apiKeyID: z.string().min(1).max(255)
-    }),
-    query: z.never().optional()
+export const zDeleteAccountApikeysByApiKeyIdPath = z.object({
+    apiKeyID: z.string().min(1).max(255)
 });
 
 /**
@@ -258,12 +200,8 @@ export const zDeleteAccountApikeysByApiKeyIdResponse = z.object({
     data: z.null()
 });
 
-export const zGetAccountApikeysByApiKeyIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        apiKeyID: z.string().min(1).max(255)
-    }),
-    query: z.never().optional()
+export const zGetAccountApikeysByApiKeyIdPath = z.object({
+    apiKeyID: z.string().min(1).max(255)
 });
 
 /**
@@ -281,15 +219,11 @@ export const zGetAccountApikeysByApiKeyIdResponse = z.object({
     })
 });
 
-export const zGetPublishersData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.object({
-        limit: z.int().gte(1).lte(100).optional().default(10),
-        offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
-        searchString: z.string().min(3).optional(),
-        onlyMembershipByMe: z.boolean().optional().default(false)
-    }).optional()
+export const zGetPublishersQuery = z.object({
+    limit: z.int().gte(1).lte(100).optional().default(10),
+    offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
+    searchString: z.string().min(3).optional(),
+    onlyMembershipByMe: z.boolean().optional().default(false)
 });
 
 /**
@@ -309,15 +243,11 @@ export const zGetPublishersResponse = z.object({
     }))
 });
 
-export const zPostPublishersData = z.object({
-    body: z.object({
-        name: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
-        display_name: z.string().min(1).max(200),
-        description: z.string().min(1).max(500),
-        homepage_url: z.url().max(500)
-    }),
-    path: z.never().optional(),
-    query: z.never().optional()
+export const zPostPublishersBody = z.object({
+    name: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
+    display_name: z.string().min(1).max(200),
+    description: z.string().min(1).max(500),
+    homepage_url: z.url().max(500)
 });
 
 /**
@@ -332,12 +262,8 @@ export const zPostPublishersResponse = z.object({
     })
 });
 
-export const zDeletePublishersByPublisherNameData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
-    }),
-    query: z.never().optional()
+export const zDeletePublishersByPublisherNamePath = z.object({
+    publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
 });
 
 /**
@@ -350,12 +276,8 @@ export const zDeletePublishersByPublisherNameResponse = z.object({
     data: z.null()
 });
 
-export const zGetPublishersByPublisherNameData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
-    }),
-    query: z.never().optional()
+export const zGetPublishersByPublisherNamePath = z.object({
+    publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
 });
 
 /**
@@ -375,16 +297,14 @@ export const zGetPublishersByPublisherNameResponse = z.object({
     })
 });
 
-export const zPutPublishersByPublisherNameData = z.object({
-    body: z.object({
-        display_name: z.string().min(1).max(200).optional(),
-        description: z.string().min(1).max(500).optional(),
-        homepage_url: z.url().max(500).optional()
-    }),
-    path: z.object({
-        publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
-    }),
-    query: z.never().optional()
+export const zPutPublishersByPublisherNameBody = z.object({
+    display_name: z.string().min(1).max(200).optional(),
+    description: z.string().min(1).max(500).optional(),
+    homepage_url: z.url().max(500).optional()
+});
+
+export const zPutPublishersByPublisherNamePath = z.object({
+    publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
 });
 
 /**
@@ -397,14 +317,12 @@ export const zPutPublishersByPublisherNameResponse = z.object({
     data: z.null()
 });
 
-export const zPostPublishersByPublisherNameTransferOwnershipData = z.object({
-    body: z.object({
-        new_owner_user_id: z.int().gt(0).lte(9007199254740991)
-    }),
-    path: z.object({
-        publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
-    }),
-    query: z.never().optional()
+export const zPostPublishersByPublisherNameTransferOwnershipBody = z.object({
+    new_owner_user_id: z.int().gt(0).lte(9007199254740991)
+});
+
+export const zPostPublishersByPublisherNameTransferOwnershipPath = z.object({
+    publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
 });
 
 /**
@@ -417,12 +335,8 @@ export const zPostPublishersByPublisherNameTransferOwnershipResponse = z.object(
     data: z.null()
 });
 
-export const zGetPublishersByPublisherNameMembersData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
-    }),
-    query: z.never().optional()
+export const zGetPublishersByPublisherNameMembersPath = z.object({
+    publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
 });
 
 /**
@@ -448,21 +362,19 @@ export const zGetPublishersByPublisherNameMembersResponse = z.object({
     }))
 });
 
-export const zPostPublishersByPublisherNameMembersData = z.object({
-    body: z.object({
-        user_id: z.int().gt(0).lte(9007199254740991),
-        role: z.enum([
-            'ADMIN',
-            'MAINTAINER',
-            'DEVELOPER',
-            'VIEWER'
-        ]),
-        is_publicly_hidden: z.boolean().optional().default(false)
-    }),
-    path: z.object({
-        publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
-    }),
-    query: z.never().optional()
+export const zPostPublishersByPublisherNameMembersBody = z.object({
+    user_id: z.int().gt(0).lte(9007199254740991),
+    role: z.enum([
+        'ADMIN',
+        'MAINTAINER',
+        'DEVELOPER',
+        'VIEWER'
+    ]),
+    is_publicly_hidden: z.boolean().optional().default(false)
+});
+
+export const zPostPublishersByPublisherNameMembersPath = z.object({
+    publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/)
 });
 
 /**
@@ -477,13 +389,9 @@ export const zPostPublishersByPublisherNameMembersResponse = z.object({
     })
 });
 
-export const zDeletePublishersByPublisherNameMembersByUserIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
-        userId: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zDeletePublishersByPublisherNameMembersByUserIdPath = z.object({
+    publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
+    userId: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -496,13 +404,9 @@ export const zDeletePublishersByPublisherNameMembersByUserIdResponse = z.object(
     data: z.null()
 });
 
-export const zGetPublishersByPublisherNameMembersByUserIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
-        userId: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zGetPublishersByPublisherNameMembersByUserIdPath = z.object({
+    publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
+    userId: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -528,21 +432,19 @@ export const zGetPublishersByPublisherNameMembersByUserIdResponse = z.object({
     })
 });
 
-export const zPutPublishersByPublisherNameMembersByUserIdData = z.object({
-    body: z.object({
-        role: z.enum([
-            'ADMIN',
-            'MAINTAINER',
-            'DEVELOPER',
-            'VIEWER'
-        ]).optional(),
-        is_publicly_hidden: z.boolean().optional()
-    }),
-    path: z.object({
-        publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
-        userId: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zPutPublishersByPublisherNameMembersByUserIdBody = z.object({
+    role: z.enum([
+        'ADMIN',
+        'MAINTAINER',
+        'DEVELOPER',
+        'VIEWER'
+    ]).optional(),
+    is_publicly_hidden: z.boolean().optional()
+});
+
+export const zPutPublishersByPublisherNameMembersByUserIdPath = z.object({
+    publisherName: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
+    userId: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -555,17 +457,13 @@ export const zPutPublishersByPublisherNameMembersByUserIdResponse = z.object({
     data: z.null()
 });
 
-export const zGetPackagesData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.object({
-        limit: z.int().gte(1).lte(100).optional().default(10),
-        offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
-        searchString: z.string().min(3).optional(),
-        publisherID: z.int().gte(1).lte(9007199254740991).optional(),
-        publisherName: z.string().min(1).optional(),
-        onlyMembershipByMe: z.boolean().optional().default(false)
-    }).optional()
+export const zGetPackagesQuery = z.object({
+    limit: z.int().gte(1).lte(100).optional().default(10),
+    offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
+    searchString: z.string().min(3).optional(),
+    publisherID: z.int().gte(1).lte(9007199254740991).optional(),
+    publisherName: z.string().min(1).optional(),
+    onlyMembershipByMe: z.boolean().optional().default(false)
 });
 
 /**
@@ -606,17 +504,13 @@ export const zGetPackagesResponse = z.object({
     }))
 });
 
-export const zPostPackagesData = z.object({
-    body: z.object({
-        publisher_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        name: z.string().min(2).max(200).regex(/^[a-z0-9][a-z0-9.-]*[a-z0-9]$/),
-        display_name: z.string().min(1).max(200),
-        description: z.string().min(1).max(500),
-        homepage_url: z.url().max(500),
-        requires_patching: z.boolean().optional().default(false)
-    }),
-    path: z.never().optional(),
-    query: z.never().optional()
+export const zPostPackagesBody = z.object({
+    publisher_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+    name: z.string().min(2).max(200).regex(/^[a-z0-9][a-z0-9.-]*[a-z0-9]$/),
+    display_name: z.string().min(1).max(200),
+    description: z.string().min(1).max(500),
+    homepage_url: z.url().max(500),
+    requires_patching: z.boolean().optional().default(false)
 });
 
 /**
@@ -629,12 +523,8 @@ export const zPostPackagesResponse = z.object({
     data: z.null()
 });
 
-export const zDeletePackagesByFullPackageNameData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        fullPackageName: z.string()
-    }),
-    query: z.never().optional()
+export const zDeletePackagesByFullPackageNamePath = z.object({
+    fullPackageName: z.string()
 });
 
 /**
@@ -647,12 +537,8 @@ export const zDeletePackagesByFullPackageNameResponse = z.object({
     data: z.null()
 });
 
-export const zGetPackagesByFullPackageNameData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        fullPackageName: z.string()
-    }),
-    query: z.never().optional()
+export const zGetPackagesByFullPackageNamePath = z.object({
+    fullPackageName: z.string()
 });
 
 /**
@@ -693,17 +579,15 @@ export const zGetPackagesByFullPackageNameResponse = z.object({
     })
 });
 
-export const zPutPackagesByFullPackageNameData = z.object({
-    body: z.object({
-        display_name: z.string().min(1).max(200).optional(),
-        description: z.string().min(1).max(500).optional(),
-        homepage_url: z.url().max(500).optional(),
-        requires_patching: z.boolean().optional().default(false)
-    }),
-    path: z.object({
-        fullPackageName: z.string()
-    }),
-    query: z.never().optional()
+export const zPutPackagesByFullPackageNameBody = z.object({
+    display_name: z.string().min(1).max(200).optional(),
+    description: z.string().min(1).max(500).optional(),
+    homepage_url: z.url().max(500).optional(),
+    requires_patching: z.boolean().optional().default(false)
+});
+
+export const zPutPackagesByFullPackageNamePath = z.object({
+    fullPackageName: z.string()
 });
 
 /**
@@ -716,12 +600,8 @@ export const zPutPackagesByFullPackageNameResponse = z.object({
     data: z.null()
 });
 
-export const zGetPackagesByFullPackageNameReleasesData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        fullPackageName: z.string()
-    }),
-    query: z.never().optional()
+export const zGetPackagesByFullPackageNameReleasesPath = z.object({
+    fullPackageName: z.string()
 });
 
 /**
@@ -744,15 +624,13 @@ export const zGetPackagesByFullPackageNameReleasesResponse = z.object({
     }))
 });
 
-export const zPostPackagesByFullPackageNameReleasesData = z.object({
-    body: z.object({
-        version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
-        changelog: z.string().min(1).max(10000)
-    }),
-    path: z.object({
-        fullPackageName: z.string()
-    }),
-    query: z.never().optional()
+export const zPostPackagesByFullPackageNameReleasesBody = z.object({
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
+    changelog: z.string().min(1).max(10000)
+});
+
+export const zPostPackagesByFullPackageNameReleasesPath = z.object({
+    fullPackageName: z.string()
 });
 
 /**
@@ -765,13 +643,9 @@ export const zPostPackagesByFullPackageNameReleasesResponse = z.object({
     data: z.null()
 });
 
-export const zDeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        fullPackageName: z.string(),
-        version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
-    }),
-    query: z.never().optional()
+export const zDeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchPath = z.object({
+    fullPackageName: z.string(),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
 });
 
 /**
@@ -784,13 +658,9 @@ export const zDeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchResp
     data: z.null()
 });
 
-export const zGetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        fullPackageName: z.string(),
-        version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
-    }),
-    query: z.never().optional()
+export const zGetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchPath = z.object({
+    fullPackageName: z.string(),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
 });
 
 /**
@@ -813,15 +683,13 @@ export const zGetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchRespons
     })
 });
 
-export const zPutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchData = z.object({
-    body: z.object({
-        changelog: z.string().min(1).max(10000).optional()
-    }),
-    path: z.object({
-        fullPackageName: z.string(),
-        version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
-    }),
-    query: z.never().optional()
+export const zPutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchBody = z.object({
+    changelog: z.string().min(1).max(10000).optional()
+});
+
+export const zPutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchPath = z.object({
+    fullPackageName: z.string(),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
 });
 
 /**
@@ -834,20 +702,18 @@ export const zPutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchRespons
     data: z.null()
 });
 
-export const zPostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchData = z.object({
-    body: z.object({
-        file: z.string().min(1).max(1073741824)
-    }),
-    path: z.object({
-        fullPackageName: z.string(),
-        version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
-        arch: z.enum([
-            'amd64',
-            'arm64',
-            'all'
-        ])
-    }),
-    query: z.never().optional()
+export const zPostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchBody = z.object({
+    file: z.string().min(1).max(1073741824)
+});
+
+export const zPostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchPath = z.object({
+    fullPackageName: z.string(),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
+    arch: z.enum([
+        'amd64',
+        'arm64',
+        'all'
+    ])
 });
 
 /**
@@ -860,18 +726,16 @@ export const zPostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArch
     data: z.null()
 });
 
-export const zGetPackagesByFullPackageNameStablePromotionRequestsData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        fullPackageName: z.string()
-    }),
-    query: z.object({
-        status: z.enum([
-            'pending',
-            'approved',
-            'denied'
-        ]).optional()
-    }).optional()
+export const zGetPackagesByFullPackageNameStablePromotionRequestsPath = z.object({
+    fullPackageName: z.string()
+});
+
+export const zGetPackagesByFullPackageNameStablePromotionRequestsQuery = z.object({
+    status: z.enum([
+        'pending',
+        'approved',
+        'denied'
+    ]).optional()
 });
 
 /**
@@ -915,14 +779,12 @@ export const zGetPackagesByFullPackageNameStablePromotionRequestsResponse = z.ob
     ]))
 });
 
-export const zPostPackagesByFullPackageNameStablePromotionRequestsData = z.object({
-    body: z.object({
-        package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991)
-    }),
-    path: z.object({
-        fullPackageName: z.string()
-    }),
-    query: z.never().optional()
+export const zPostPackagesByFullPackageNameStablePromotionRequestsBody = z.object({
+    package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991)
+});
+
+export const zPostPackagesByFullPackageNameStablePromotionRequestsPath = z.object({
+    fullPackageName: z.string()
 });
 
 /**
@@ -937,13 +799,9 @@ export const zPostPackagesByFullPackageNameStablePromotionRequestsResponse = z.o
     })
 });
 
-export const zDeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        fullPackageName: z.string(),
-        stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zDeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdPath = z.object({
+    fullPackageName: z.string(),
+    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -956,13 +814,9 @@ export const zDeletePackagesByFullPackageNameStablePromotionRequestsByStableProm
     data: z.null()
 });
 
-export const zGetPackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        fullPackageName: z.string(),
-        stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zGetPackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdPath = z.object({
+    fullPackageName: z.string(),
+    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -1006,12 +860,8 @@ export const zGetPackagesByFullPackageNameStablePromotionRequestsByStablePromoti
     ])
 });
 
-export const zGetPackagesByFullPackageNameRoleAssignmentsData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        fullPackageName: z.string()
-    }),
-    query: z.never().optional()
+export const zGetPackagesByFullPackageNameRoleAssignmentsPath = z.object({
+    fullPackageName: z.string()
 });
 
 /**
@@ -1035,20 +885,18 @@ export const zGetPackagesByFullPackageNameRoleAssignmentsResponse = z.object({
     }))
 });
 
-export const zPostPackagesByFullPackageNameRoleAssignmentsData = z.object({
-    body: z.object({
-        user_id: z.int().gt(0).lte(9007199254740991),
-        role: z.enum([
-            'ADMIN',
-            'MAINTAINER',
-            'DEVELOPER',
-            'VIEWER'
-        ])
-    }),
-    path: z.object({
-        fullPackageName: z.string()
-    }),
-    query: z.never().optional()
+export const zPostPackagesByFullPackageNameRoleAssignmentsBody = z.object({
+    user_id: z.int().gt(0).lte(9007199254740991),
+    role: z.enum([
+        'ADMIN',
+        'MAINTAINER',
+        'DEVELOPER',
+        'VIEWER'
+    ])
+});
+
+export const zPostPackagesByFullPackageNameRoleAssignmentsPath = z.object({
+    fullPackageName: z.string()
 });
 
 /**
@@ -1061,13 +909,9 @@ export const zPostPackagesByFullPackageNameRoleAssignmentsResponse = z.object({
     data: z.null()
 });
 
-export const zDeletePackagesByFullPackageNameRoleAssignmentsByUserIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        fullPackageName: z.string(),
-        userId: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zDeletePackagesByFullPackageNameRoleAssignmentsByUserIdPath = z.object({
+    fullPackageName: z.string(),
+    userId: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -1080,20 +924,18 @@ export const zDeletePackagesByFullPackageNameRoleAssignmentsByUserIdResponse = z
     data: z.null()
 });
 
-export const zPutPackagesByFullPackageNameRoleAssignmentsByUserIdData = z.object({
-    body: z.object({
-        role: z.enum([
-            'ADMIN',
-            'MAINTAINER',
-            'DEVELOPER',
-            'VIEWER'
-        ])
-    }),
-    path: z.object({
-        fullPackageName: z.string(),
-        userId: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zPutPackagesByFullPackageNameRoleAssignmentsByUserIdBody = z.object({
+    role: z.enum([
+        'ADMIN',
+        'MAINTAINER',
+        'DEVELOPER',
+        'VIEWER'
+    ])
+});
+
+export const zPutPackagesByFullPackageNameRoleAssignmentsByUserIdPath = z.object({
+    fullPackageName: z.string(),
+    userId: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -1106,19 +948,15 @@ export const zPutPackagesByFullPackageNameRoleAssignmentsByUserIdResponse = z.ob
     data: z.null()
 });
 
-export const zGetAdminUsersData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.object({
-        role: z.enum([
-            'admin',
-            'developer',
-            'user'
-        ]).optional(),
-        search: z.string().min(1).max(64).optional(),
-        limit: z.int().gte(1).lte(100).optional(),
-        offset: z.int().gte(0).lte(9007199254740991).optional()
-    }).optional()
+export const zGetAdminUsersQuery = z.object({
+    role: z.enum([
+        'admin',
+        'developer',
+        'user'
+    ]).optional(),
+    search: z.string().min(1).max(64).optional(),
+    limit: z.int().gte(1).lte(100).optional(),
+    offset: z.int().gte(0).lte(9007199254740991).optional()
 });
 
 /**
@@ -1142,20 +980,16 @@ export const zGetAdminUsersResponse = z.object({
     }))
 });
 
-export const zPostAdminUsersData = z.object({
-    body: z.object({
-        username: z.string().min(5).max(40).regex(/^(?!.*[.-]{2})(?!.*--)(?!.*\.\.)[a-z0-9](?:[a-z0-9._-]{3,38}[a-z0-9_])?$/),
-        display_name: z.string().min(1).max(64),
-        email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/),
-        role: z.enum([
-            'admin',
-            'developer',
-            'user'
-        ]).optional(),
-        password: z.string().min(8).max(128)
-    }),
-    path: z.never().optional(),
-    query: z.never().optional()
+export const zPostAdminUsersBody = z.object({
+    username: z.string().min(5).max(40).regex(/^(?!.*[.-]{2})(?!.*--)(?!.*\.\.)[a-z0-9](?:[a-z0-9._-]{3,38}[a-z0-9_])?$/),
+    display_name: z.string().min(1).max(64),
+    email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/),
+    role: z.enum([
+        'admin',
+        'developer',
+        'user'
+    ]).optional(),
+    password: z.string().min(8).max(128)
 });
 
 /**
@@ -1179,12 +1013,8 @@ export const zPostAdminUsersResponse = z.object({
     })
 });
 
-export const zDeleteAdminUsersByUserIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        userId: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zDeleteAdminUsersByUserIdPath = z.object({
+    userId: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -1197,12 +1027,8 @@ export const zDeleteAdminUsersByUserIdResponse = z.object({
     data: z.null()
 });
 
-export const zGetAdminUsersByUserIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        userId: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zGetAdminUsersByUserIdPath = z.object({
+    userId: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -1226,21 +1052,19 @@ export const zGetAdminUsersByUserIdResponse = z.object({
     })
 });
 
-export const zPutAdminUsersByUserIdData = z.object({
-    body: z.object({
-        username: z.string().optional(),
-        display_name: z.string().optional(),
-        email: z.string().optional(),
-        role: z.enum([
-            'admin',
-            'developer',
-            'user'
-        ]).optional()
-    }),
-    path: z.object({
-        userId: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zPutAdminUsersByUserIdBody = z.object({
+    username: z.string().optional(),
+    display_name: z.string().optional(),
+    email: z.string().optional(),
+    role: z.enum([
+        'admin',
+        'developer',
+        'user'
+    ]).optional()
+});
+
+export const zPutAdminUsersByUserIdPath = z.object({
+    userId: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -1264,14 +1088,12 @@ export const zPutAdminUsersByUserIdResponse = z.object({
     })
 });
 
-export const zPutAdminUsersByUserIdPasswordData = z.object({
-    body: z.object({
-        password: z.string().min(8).max(50).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
-    }),
-    path: z.object({
-        userId: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zPutAdminUsersByUserIdPasswordBody = z.object({
+    password: z.string().min(8).max(50).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
+});
+
+export const zPutAdminUsersByUserIdPasswordPath = z.object({
+    userId: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -1284,14 +1106,10 @@ export const zPutAdminUsersByUserIdPasswordResponse = z.object({
     data: z.null()
 });
 
-export const zGetAdminOsReleasesData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.object({
-        limit: z.int().gte(1).lte(100).optional().default(10),
-        offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
-        order: z.enum(['newest', 'oldest']).optional()
-    }).optional()
+export const zGetAdminOsReleasesQuery = z.object({
+    limit: z.int().gte(1).lte(100).optional().default(10),
+    offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
+    order: z.enum(['newest', 'oldest']).optional().default('newest')
 });
 
 /**
@@ -1317,12 +1135,8 @@ export const zGetAdminOsReleasesResponse = z.object({
     }))
 });
 
-export const zPostAdminOsReleasesData = z.object({
-    body: z.object({
-        changelog: z.string().min(1).max(10000)
-    }),
-    path: z.never().optional(),
-    query: z.never().optional()
+export const zPostAdminOsReleasesBody = z.object({
+    changelog: z.string().min(1).max(10000)
 });
 
 /**
@@ -1348,12 +1162,8 @@ export const zPostAdminOsReleasesResponse = z.object({
     })
 });
 
-export const zGetAdminOsReleasesByVersionData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        version: z.string().regex(/^\d{4}\.\d{2}\.\d{3}$/)
-    }),
-    query: z.never().optional()
+export const zGetAdminOsReleasesByVersionPath = z.object({
+    version: z.string().regex(/^\d{4}\.\d{2}\.\d{3}$/)
 });
 
 /**
@@ -1379,14 +1189,12 @@ export const zGetAdminOsReleasesByVersionResponse = z.object({
     })
 });
 
-export const zPutAdminOsReleasesByVersionData = z.object({
-    body: z.object({
-        changelog: z.string().min(1).max(10000).optional()
-    }),
-    path: z.object({
-        version: z.string().regex(/^\d{4}\.\d{2}\.\d{3}$/)
-    }),
-    query: z.never().optional()
+export const zPutAdminOsReleasesByVersionBody = z.object({
+    changelog: z.string().min(1).max(10000).optional()
+});
+
+export const zPutAdminOsReleasesByVersionPath = z.object({
+    version: z.string().regex(/^\d{4}\.\d{2}\.\d{3}$/)
 });
 
 /**
@@ -1399,12 +1207,8 @@ export const zPutAdminOsReleasesByVersionResponse = z.object({
     data: z.null()
 });
 
-export const zGetAdminOsReleasesByVersionPublishingLogsData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        version: z.string().regex(/^\d{4}\.\d{2}\.\d{3}$/)
-    }),
-    query: z.never().optional()
+export const zGetAdminOsReleasesByVersionPublishingLogsPath = z.object({
+    version: z.string().regex(/^\d{4}\.\d{2}\.\d{3}$/)
 });
 
 /**
@@ -1419,15 +1223,11 @@ export const zGetAdminOsReleasesByVersionPublishingLogsResponse = z.object({
     })
 });
 
-export const zGetAdminTasksData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.object({
-        limit: z.int().gte(1).lte(100).optional().default(10),
-        offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
-        order: z.enum(['newest', 'oldest']).optional(),
-        searchString: z.string().min(3).optional()
-    }).optional()
+export const zGetAdminTasksQuery = z.object({
+    limit: z.int().gte(1).lte(100).optional().default(10),
+    offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
+    order: z.enum(['newest', 'oldest']).optional().default('newest'),
+    searchString: z.string().min(3).optional()
 });
 
 /**
@@ -1462,12 +1262,8 @@ export const zGetAdminTasksResponse = z.object({
     }))
 });
 
-export const zGetAdminTasksByTaskIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        taskID: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zGetAdminTasksByTaskIdPath = z.object({
+    taskID: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -1502,12 +1298,8 @@ export const zGetAdminTasksByTaskIdResponse = z.object({
     })
 });
 
-export const zGetAdminTasksByTaskIdLogsData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        taskID: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zGetAdminTasksByTaskIdLogsPath = z.object({
+    taskID: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -1522,14 +1314,10 @@ export const zGetAdminTasksByTaskIdLogsResponse = z.object({
     })
 });
 
-export const zGetAdminStablePromotionRequestsData = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: z.object({
-        limit: z.int().gte(1).lte(100).optional().default(10),
-        offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
-        order: z.enum(['newest', 'oldest']).optional()
-    }).optional()
+export const zGetAdminStablePromotionRequestsQuery = z.object({
+    limit: z.int().gte(1).lte(100).optional().default(10),
+    offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
+    order: z.enum(['newest', 'oldest']).optional().default('newest')
 });
 
 /**
@@ -1555,12 +1343,8 @@ export const zGetAdminStablePromotionRequestsResponse = z.object({
     }))
 });
 
-export const zGetAdminStablePromotionRequestsByStablePromotionRequestIdData = z.object({
-    body: z.never().optional(),
-    path: z.object({
-        stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zGetAdminStablePromotionRequestsByStablePromotionRequestIdPath = z.object({
+    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
@@ -1586,15 +1370,13 @@ export const zGetAdminStablePromotionRequestsByStablePromotionRequestIdResponse 
     })
 });
 
-export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdDecideData = z.object({
-    body: z.object({
-        status: z.enum(['approved', 'denied']),
-        admin_note: z.string()
-    }),
-    path: z.object({
-        stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
-    }),
-    query: z.never().optional()
+export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdDecideBody = z.object({
+    status: z.enum(['approved', 'denied']),
+    admin_note: z.string()
+});
+
+export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdDecidePath = z.object({
+    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
