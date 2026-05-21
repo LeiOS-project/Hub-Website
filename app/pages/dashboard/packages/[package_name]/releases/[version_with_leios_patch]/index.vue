@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type z from "zod";
-import { zPostPackagesByFullPackageNameReleasesData } from "~/api-client/zod.gen";
+import { zPostPackagesByFullPackageNameReleasesBody } from "~/api-client/zod.gen";
 import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 
 const route = useRoute();
@@ -28,7 +28,7 @@ const headerTexts = computed(() => {
 });
 
 const package_release_form_schema =
-    zPostPackagesByFullPackageNameReleasesData.shape.body;
+    zPostPackagesByFullPackageNameReleasesBody;
 const package_release_form_state = ref<NewDevPackageRelease>({
     version_with_leios_patch: pkg_release_data.value.version_with_leios_patch,
     changelog: pkg_release_data.value.changelog,

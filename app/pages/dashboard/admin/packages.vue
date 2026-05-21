@@ -3,7 +3,7 @@ import type { DropdownMenuItem, TableColumn } from "#ui/types";
 import type { GetPackagesResponses } from "@/api-client/types.gen";
 import * as z from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { zPostPackagesData } from "~/api-client/zod.gen";
+import { zPostPackagesBody } from "~/api-client/zod.gen";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
 
@@ -92,7 +92,7 @@ const deleting = ref(false);
 const selectedPackage = ref<AdminPackage | null>(null);
 const packageToDelete = ref<AdminPackage | null>(null);
 
-const createSchema = zPostPackagesData.shape.body;
+const createSchema = zPostPackagesBody;
 
 type CreateSchema = z.output<typeof createSchema>;
 

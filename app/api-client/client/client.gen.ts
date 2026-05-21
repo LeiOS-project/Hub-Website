@@ -176,9 +176,12 @@ export const createClient = (config: Config = {}): Client => {
 
   const makeSseFn = (method: Uppercase<HttpMethod>) => async (options: RequestOptions) => {
     const { opts, url } = await beforeRequest(options);
+    const unwrappedOpts = unwrapRefs(opts);
+
     return createSseClient({
-      ...unwrapRefs(opts),
+      ...unwrappedOpts,
       body: opts.body as BodyInit | null | undefined,
+      cache: unwrappedOpts.cache === false ? undefined : unwrappedOpts.cache,
       method,
       onRequest: undefined,
       serializedBody: getValidRequestBody(opts) as BodyInit | null | undefined,

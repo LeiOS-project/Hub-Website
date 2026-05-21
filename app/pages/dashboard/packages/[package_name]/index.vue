@@ -6,8 +6,8 @@ import type {
 } from "@/api-client/types.gen";
 import type z from "zod";
 import {
-    zPostPackagesData,
-    zPutPackagesByFullPackageNameData,
+    zPostPackagesBody,
+    zPutPackagesByFullPackageNameBody,
 } from "~/api-client/zod.gen";
 import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 type DevPackage = GetPackagesByFullPackageNameResponses[200]["data"];
@@ -63,7 +63,7 @@ const headerTexts = computed(() => {
     };
 });
 
-const package_form_schema = pkg.isNew ? zPostPackagesData.shape.body : zPutPackagesByFullPackageNameData.shape.body;
+const package_form_schema = pkg.isNew ? zPostPackagesBody : zPutPackagesByFullPackageNameBody;
 type PackageFormSchema = NonNullable<z.infer<typeof package_form_schema>>;
 const package_form_state = ref<NewDevPackage>({
     publisher_id: pkg_data.value.publisher_id,
