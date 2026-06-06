@@ -221,6 +221,26 @@ function getRoutesConfig(): Ref<UseSubrouterPathDynamics.RoutesConfig> {
                     }
                 },
 
+                [`/dashboard/packages/${package_name}/roles`]: {
+                    isNavLink: true,
+                    label: 'Roles',
+                    icon: 'i-lucide-shield',
+                    to: `/dashboard/packages/${package_name}/roles`,
+                    active: useRoute().path.startsWith(`/dashboard/packages/${package_name}/roles`),
+                    getDynamicValues() {
+                        return {
+                            breadcrumbItems: [
+                                { label: package_name, to: `/dashboard/packages/${package_name}` },
+                                { label: 'Roles' }
+                            ],
+                            seoSettings: {
+                                title: 'Roles',
+                                description: `Manage role assignments for the package ${package_name} on LeiOS Hub`
+                            }
+                        };
+                    }
+                },
+
 
                 [`/dashboard/packages/${package_name}/stable-promotion-requests`]: {
                     isNavLink: true,

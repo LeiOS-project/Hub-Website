@@ -23,6 +23,11 @@ const sidebarItems = computed(() => {
             to: "/dashboard/packages",
         },
         {
+            label: "Publishers",
+            icon: "i-lucide-building",
+            to: "/dashboard/publishers",
+        },
+        {
             label: "API Keys",
             icon: "i-lucide-key",
             to: "/dashboard/apikeys",
