@@ -50,6 +50,14 @@ const publishers = await useAPILazyAsyncData<Publisher[]>(
                     :data="publishers.data"
                     :columns="publisherTableColumns"
                     :loading="publishers.loading"
+                    :filters="[
+                        {
+                            column: 'name',
+                            type: 'text',
+                            placeholder: 'Search publishers...',
+                            icon: 'i-lucide-search',
+                        },
+                    ]"
                     empty-title="No publishers"
                     empty-description="Create your first publisher to get started."
                     empty-icon="i-lucide-building"
