@@ -176,12 +176,13 @@ export const createClient = (config: Config = {}): Client => {
 
   const makeSseFn = (method: Uppercase<HttpMethod>) => async (options: RequestOptions) => {
     const { opts, url } = await beforeRequest(options);
-    const unwrappedOpts = unwrapRefs(opts);
-
+    const unwrapped = unwrapRefs(opts);
+    // `cache` from FetchOptions can be `false | RequestCache` which is incompatible
+    // with RequestInit['cache'] (RequestCache only). Strip boolean.
+    if (typeof unwrapped.cache === 'boolean') unwrapped.cache = undefined;
     return createSseClient({
-      ...unwrappedOpts,
+      ...unwrapped,
       body: opts.body as BodyInit | null | undefined,
-      cache: unwrappedOpts.cache === false ? undefined : unwrappedOpts.cache,
       method,
       onRequest: undefined,
       serializedBody: getValidRequestBody(opts) as BodyInit | null | undefined,
