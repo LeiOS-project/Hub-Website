@@ -17,7 +17,7 @@ const toast = useToast()
 
 const taskColumns: TableColumn<DevTask>[] = [
     { accessorKey: 'id', header: 'ID' },
-    { id: 'status', header: 'Status' },
+    { accessorKey: 'status', header: 'Status' },
     { id: 'created', header: 'Created' },
     { id: 'finished', header: 'Finished' },
     { accessorKey: 'message', header: 'Message' }
@@ -88,12 +88,12 @@ const taskStatusOptions = [
                     :columns="taskColumns"
                     :loading="loading"
                     :filters="[
-                        {
+                        /*{
                             column: 'message',
                             type: 'text',
                             placeholder: 'Search messages...',
                             icon: 'i-lucide-search',
-                        },
+                        },*/
                         {
                             column: 'status',
                             type: 'multi-select',
