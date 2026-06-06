@@ -25,7 +25,6 @@ if (!userInfoStore.isValid(currentUser)) {
     throw new Error('User not authenticated but trying to access Admin Users');
 }
 
-
 if (!currentUser || currentUser.value.role !== "admin") {
     navigateTo("/dashboard");
 }
@@ -49,7 +48,7 @@ const {
     data: users,
     loading,
     refresh,
-} = await useAPIAsyncData<AdminUser[]>("admin-users-list", async () => {
+} = await useAPILazyAsyncData<AdminUser[]>("admin-users-list", async () => {
     const res = await useAPI((api) => api.getAdminUsers({}));
     if (!res.success) {
         toast.add({
@@ -137,10 +136,10 @@ function openEdit(user: AdminUser) {
 
 async function submitEdit() {
     if (!selectedUser.value) return;
-
+    const target = selectedUser.value;
     const res = await useAPI((api) =>
         api.putAdminUsersByUserId({
-            path: { userId: selectedUser.value!.id },
+            path: { userId: target.id },
             body: {
                 display_name: editForm.display_name,
                 email: editForm.email,
@@ -168,16 +167,12 @@ function openPassword(user: AdminUser) {
     showPasswordModal.value = true;
 }
 
-function openDelete(user: AdminUser) {
-    deleteUser(user);
-}
-
 async function submitPassword() {
     if (!selectedUser.value) return;
-
+    const target = selectedUser.value;
     const res = await useAPI((api) =>
         api.putAdminUsersByUserIdPassword({
-            path: { userId: selectedUser.value!.id },
+            path: { userId: target.id },
             body: { password: passwordForm.password },
         })
     );
@@ -194,18 +189,25 @@ async function submitPassword() {
     }
 }
 
-async function deleteUser(user: AdminUser) {
-    if (!confirm(`Are you sure you want to delete user "${user.username}"?`))
-        return;
+// Delete with DashboardDeleteModal
+const deleteConfirmOpen = ref(false);
+const deleteTarget = ref<AdminUser | null>(null);
 
+function openDelete(user: AdminUser) {
+    deleteTarget.value = user;
+    deleteConfirmOpen.value = true;
+}
+
+async function onDeleteUser() {
+    if (!deleteTarget.value) return;
+    const target = deleteTarget.value;
     const res = await useAPI((api) =>
-        api.deleteAdminUsersByUserId({
-            path: { userId: user.id },
-        })
+        api.deleteAdminUsersByUserId({ path: { userId: target.id } })
     );
-
     if (res.success) {
         toast.add({ title: "User deleted", color: "success" });
+        deleteConfirmOpen.value = false;
+        deleteTarget.value = null;
         await refresh();
     } else {
         toast.add({
@@ -219,11 +221,11 @@ async function deleteUser(user: AdminUser) {
 function getRoleColor(role: AdminUser["role"]) {
     switch (role) {
         case "admin":
-            return "error";
+            return "error" as const;
         case "developer":
-            return "info";
+            return "info" as const;
         default:
-            return "neutral";
+            return "neutral" as const;
     }
 }
 </script>
@@ -231,50 +233,64 @@ function getRoleColor(role: AdminUser["role"]) {
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar title="Users" icon="i-lucide-users">
-                <template #right>
-                    <UButton
-                        label="New User"
-                        icon="i-lucide-user-plus"
-                        color="primary"
-                        @click="showCreateModal = true"
-                    />
-                </template>
-            </UDashboardNavbar>
+            <DashboardPageHeader
+                title="Users"
+                icon="i-lucide-users"
+                description="Manage users"
+            />
         </template>
 
         <template #body>
-            <div class="space-y-6">
-                <div
-                    v-if="loading"
-                    class="flex items-center justify-center py-12"
-                >
-                    <UIcon
-                        name="i-lucide-loader-2"
-                        class="animate-spin text-3xl text-slate-400"
-                    />
-                </div>
-
-                <UTable
-                    v-else-if="users?.length"
+            <DashboardPageBody>
+                <DashboardDataTable
                     :data="users"
                     :columns="userColumns"
+                    :loading="loading"
+                    :filters="[
+                        {
+                            column: 'username',
+                            type: 'text',
+                            placeholder: 'Search users...',
+                            icon: 'i-lucide-search',
+                        },
+                        {
+                            column: 'role',
+                            type: 'select',
+                            placeholder: 'All Roles',
+                            icon: 'i-lucide-filter',
+                            options: [
+                                { label: 'Admin', value: 'admin' },
+                                { label: 'Developer', value: 'developer' },
+                                { label: 'User', value: 'user' },
+                            ],
+                        },
+                    ]"
+                    empty-title="No users"
+                    empty-description="Create your first user to get started."
+                    empty-icon="i-lucide-users"
+                    @refresh="refresh"
                 >
+                    <template #header-right>
+                        <UButton
+                            label="New User"
+                            icon="i-lucide-user-plus"
+                            color="primary"
+                            @click="showCreateModal = true"
+                        />
+                    </template>
+
                     <template #id-cell="{ row }">
-                        <span class="font-mono text-sm"
-                            >#{{ row.original.id }}</span
-                        >
+                        <span class="font-mono text-sm">#{{ row.original.id }}</span>
                     </template>
+
                     <template #username-cell="{ row }">
-                        <span class="font-medium">{{
-                            row.original.username
-                        }}</span>
+                        <span class="font-medium">{{ row.original.username }}</span>
                     </template>
+
                     <template #email-cell="{ row }">
-                        <span class="text-slate-400">{{
-                            row.original.email
-                        }}</span>
+                        <span class="text-slate-400">{{ row.original.email }}</span>
                     </template>
+
                     <template #role-cell="{ row }">
                         <UBadge
                             :color="getRoleColor(row.original.role)"
@@ -283,6 +299,7 @@ function getRoleColor(role: AdminUser["role"]) {
                             {{ row.original.role }}
                         </UBadge>
                     </template>
+
                     <template #actions-cell="{ row }">
                         <UDropdownMenu
                             :ui="{ viewport: 'main-bg-color' }"
@@ -296,23 +313,16 @@ function getRoleColor(role: AdminUser["role"]) {
                             />
                         </UDropdownMenu>
                     </template>
-                </UTable>
 
-                <UEmpty
-                    v-else
-                    icon="i-lucide-users"
-                    title="No users"
-                    description="Create your first user to get started."
-                >
-                    <template #actions>
+                    <template #empty-actions>
                         <UButton
                             label="Create User"
                             color="primary"
                             @click="showCreateModal = true"
                         />
                     </template>
-                </UEmpty>
-            </div>
+                </DashboardDataTable>
+            </DashboardPageBody>
         </template>
     </UDashboardPanel>
 
@@ -324,23 +334,19 @@ function getRoleColor(role: AdminUser["role"]) {
     >
         <UForm :schema="createSchema" class="space-y-4" @submit="handleCreate">
             <UFormField label="Username" name="username" required>
-                <UInput placeholder="johndoe" />
+                <UInput placeholder="johndoe" class="w-full" />
             </UFormField>
-
             <UFormField label="Display Name" name="display_name" required>
-                <UInput placeholder="John Doe" />
+                <UInput placeholder="John Doe" class="w-full" />
             </UFormField>
-
             <UFormField label="Email" name="email" required>
-                <UInput type="email" placeholder="john@example.com" />
+                <UInput type="email" placeholder="john@example.com" class="w-full" />
             </UFormField>
-
             <UFormField label="Password" name="password" required>
-                <UInput type="password" placeholder="••••••••" />
+                <UInput type="password" placeholder="••••••••" class="w-full" />
             </UFormField>
-
             <UFormField label="Role" name="role" required>
-                <USelect :items="roleOptions" placeholder="Select role" />
+                <USelect :items="roleOptions" placeholder="Select role" class="w-full" />
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">
@@ -363,15 +369,13 @@ function getRoleColor(role: AdminUser["role"]) {
     >
         <div class="space-y-4">
             <UFormField label="Display Name">
-                <UInput v-model="editForm.display_name" />
+                <UInput v-model="editForm.display_name" class="w-full" />
             </UFormField>
-
             <UFormField label="Email">
-                <UInput v-model="editForm.email" type="email" />
+                <UInput v-model="editForm.email" type="email" class="w-full" />
             </UFormField>
-
             <UFormField label="Role">
-                <USelect v-model="editForm.role" :items="roleOptions" />
+                <USelect v-model="editForm.role" :items="roleOptions" class="w-full" />
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">
@@ -399,6 +403,7 @@ function getRoleColor(role: AdminUser["role"]) {
                     v-model="passwordForm.password"
                     type="password"
                     placeholder="••••••••"
+                    class="w-full"
                 />
             </UFormField>
 
@@ -417,4 +422,13 @@ function getRoleColor(role: AdminUser["role"]) {
             </div>
         </div>
     </DashboardModal>
+
+    <!-- Delete User Modal -->
+    <DashboardDeleteModal
+        title="Delete User"
+        :warning-text="`Are you sure you want to delete user &quot;${deleteTarget?.username || ''}&quot;? This action cannot be undone.`"
+        v-model:open="deleteConfirmOpen"
+        :on-delete="onDeleteUser"
+        :prevent-auto-close="true"
+    />
 </template>

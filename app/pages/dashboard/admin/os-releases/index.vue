@@ -91,7 +91,7 @@ const publishingStatusOptions = [
         <template #body>
             <DashboardPageBody>
                 <DashboardDataTable
-                    :data="osReleases || []"
+                    :data="osReleases"
                     :columns="osReleasesTableColumns"
                     :loading="loading"
                     :filters="[

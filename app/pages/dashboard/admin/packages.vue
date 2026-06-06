@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { DropdownMenuItem, TableColumn } from "#ui/types";
 import type { GetPackagesResponses } from "@/api-client/types.gen";
+import type { Publisher } from '~/utils/types';
 import * as z from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { zPostPackagesBody } from "~/api-client/zod.gen";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
-
 
 type AdminPackage = GetPackagesResponses[200]["data"][number];
 
@@ -33,8 +33,8 @@ if (!currentUser || currentUser.value.role !== "admin") {
 
 const packageColumns: TableColumn<AdminPackage>[] = [
     { accessorKey: "id", header: "ID" },
-    { accessorKey: "name", header: "Name" },
-    { accessorKey: "publisher_id", header: "Publisher ID" },
+    { accessorKey: "fullname", header: "Name" },
+    { accessorKey: "publisher_id", header: "Publisher", enableSorting: true },
     { accessorKey: "description", header: "Description" },
     { id: "stable", header: "Stable" },
     { id: "testing", header: "Testing" },
@@ -45,7 +45,7 @@ const {
     data: packages,
     loading,
     refresh,
-} = await useAPIAsyncData<AdminPackage[]>("admin-packages-list", async () => {
+} = await useAPILazyAsyncData<AdminPackage[]>("admin-packages-list", async () => {
     const res = await useAPI((api) => api.getPackages({}));
     if (!res.success) {
         toast.add({
@@ -56,6 +56,31 @@ const {
         return [];
     }
     return res.data;
+});
+
+// Load publishers for filter + display
+const { data: publishers } = await useAPILazyAsyncData<Publisher[]>(
+    'admin-packages-publishers',
+    async () => {
+        const res = await useAPI((api) => api.getPublishers({}));
+        if (!res.success) return [];
+        return res.data;
+    }
+);
+
+const publisherFilterOptions = computed(() =>
+    (publishers.value || []).map(p => ({
+        label: p.display_name,
+        value: p.id,
+    }))
+);
+
+const publisherNameById = computed(() => {
+    const map: Record<number, string> = {};
+    for (const p of (publishers.value || [])) {
+        map[p.id] = p.display_name;
+    }
+    return map;
 });
 
 function getAdminPackageRowActions(row: {
@@ -87,13 +112,9 @@ function getAdminPackageRowActions(row: {
 
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
-const showDeleteModal = ref(false);
-const deleting = ref(false);
 const selectedPackage = ref<AdminPackage | null>(null);
-const packageToDelete = ref<AdminPackage | null>(null);
 
 const createSchema = zPostPackagesBody;
-
 type CreateSchema = z.output<typeof createSchema>;
 
 const editForm = reactive({
@@ -132,10 +153,10 @@ function openDelete(pkg: AdminPackage) {
 
 async function submitEdit() {
     if (!selectedPackage.value) return;
-
+    const target = selectedPackage.value;
     const res = await useAPI((api) =>
         api.putPackagesByFullPackageName({
-            path: { fullPackageName: selectedPackage.value!.fullname },
+            path: { fullPackageName: target.fullname },
             body: {
                 description: editForm.description,
                 homepage_url: editForm.homepage_url,
@@ -156,16 +177,20 @@ async function submitEdit() {
     }
 }
 
+// Delete with DashboardDeleteModal
+const showDeleteModal = ref(false);
+const deleting = ref(false);
+const packageToDelete = ref<AdminPackage | null>(null);
+
 async function deletePackage() {
     if (!packageToDelete.value) return;
+    const target = packageToDelete.value;
     deleting.value = true;
-
     const res = await useAPI((api) =>
         api.deletePackagesByFullPackageName({
-            path: { fullPackageName: packageToDelete.value!.fullname },
+            path: { fullPackageName: target.fullname },
         })
     );
-
     deleting.value = false;
 
     if (res.success) {
@@ -186,117 +211,100 @@ async function deletePackage() {
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar title="All Packages" icon="i-lucide-packages">
-                <template #right>
-                    <UButton
-                        label="New Package"
-                        icon="i-lucide-plus"
-                        color="primary"
-                        @click="showCreateModal = true"
-                    />
-                </template>
-            </UDashboardNavbar>
+            <DashboardPageHeader
+                title="All Packages"
+                icon="i-lucide-package-search"
+                description="Manage all packages"
+            />
         </template>
 
         <template #body>
-            <div class="space-y-6">
-                <div
-                    v-if="loading"
-                    class="flex items-center justify-center py-12"
-                >
-                    <UIcon
-                        name="i-lucide-loader-2"
-                        class="animate-spin text-3xl text-slate-400"
-                    />
-                </div>
-
-                <UTable
-                    v-else-if="packages?.length"
+            <DashboardPageBody>
+                <DashboardDataTable
                     :data="packages"
                     :columns="packageColumns"
+                    :loading="loading"
+                    :filters="[
+                        {
+                            column: 'fullname',
+                            type: 'text',
+                            placeholder: 'Search packages...',
+                            icon: 'i-lucide-search',
+                        },
+                        {
+                            column: 'publisher_id',
+                            type: 'select',
+                            placeholder: 'All Publishers',
+                            icon: 'i-lucide-building',
+                            options: publisherFilterOptions,
+                        },
+                    ]"
+                    empty-title="No packages"
+                    empty-description="Create the first package to get started."
+                    empty-icon="i-lucide-package-x"
+                    @refresh="refresh"
                 >
+                    <template #header-right>
+                        <UButton
+                            label="New Package"
+                            icon="i-lucide-plus"
+                            color="primary"
+                            @click="showCreateModal = true"
+                        />
+                    </template>
+
                     <template #id-cell="{ row }">
-                        <span class="font-mono text-sm"
-                            >#{{ row.original.id }}</span
+                        <span class="font-mono text-sm">#{{ row.original.id }}</span>
+                    </template>
+
+                    <template #fullname-cell="{ row }">
+                        <NuxtLink
+                            :to="`/dashboard/packages/${row.original.fullname}`"
+                            class="font-medium text-sky-400 hover:underline"
                         >
+                            {{ row.original.fullname }}
+                        </NuxtLink>
                     </template>
-                    <template #name-cell="{ row }">
-                        <span class="font-medium text-sky-400">{{
-                            row.original.name
-                        }}</span>
-                    </template>
+
                     <template #publisher_id-cell="{ row }">
-                        <span class="font-mono text-sm text-slate-400"
-                            >#{{ row.original.publisher_id }}</span
-                        >
+                        <span class="text-sm text-slate-400">
+                            {{ publisherNameById[row.original.publisher_id] || `#${row.original.publisher_id}` }}
+                        </span>
                     </template>
+
                     <template #description-cell="{ row }">
                         <span class="text-slate-400 line-clamp-1 max-w-xs">
                             {{ row.original.description || "—" }}
                         </span>
                     </template>
+
                     <template #stable-cell="{ row }">
                         <div class="flex gap-1">
-                            <UBadge
-                                v-if="row.original.latest_stable_release.amd64"
-                                color="success"
-                                variant="soft"
-                                size="sm"
-                            >
+                            <UBadge v-if="row.original.latest_stable_release.amd64" color="success" variant="soft" size="sm">
                                 amd64
                             </UBadge>
-                            <UBadge
-                                v-if="row.original.latest_stable_release.arm64"
-                                color="success"
-                                variant="soft"
-                                size="sm"
-                            >
+                            <UBadge v-if="row.original.latest_stable_release.arm64" color="success" variant="soft" size="sm">
                                 arm64
                             </UBadge>
-                            <span
-                                v-if="
-                                    !row.original.latest_stable_release.amd64 &&
-                                    !row.original.latest_stable_release.arm64
-                                "
-                                class="text-slate-500"
-                                >—</span
-                            >
+                            <span v-if="!row.original.latest_stable_release.amd64 && !row.original.latest_stable_release.arm64" class="text-slate-500">—</span>
                         </div>
                     </template>
+
                     <template #testing-cell="{ row }">
                         <div class="flex gap-1">
-                            <UBadge
-                                v-if="row.original.latest_testing_release.amd64"
-                                color="warning"
-                                variant="soft"
-                                size="sm"
-                            >
+                            <UBadge v-if="row.original.latest_testing_release.amd64" color="warning" variant="soft" size="sm">
                                 amd64
                             </UBadge>
-                            <UBadge
-                                v-if="row.original.latest_testing_release.arm64"
-                                color="warning"
-                                variant="soft"
-                                size="sm"
-                            >
+                            <UBadge v-if="row.original.latest_testing_release.arm64" color="warning" variant="soft" size="sm">
                                 arm64
                             </UBadge>
-                            <span
-                                v-if="
-                                    !row.original
-                                        .latest_testing_release.amd64 &&
-                                    !row.original.latest_testing_release.arm64
-                                "
-                                class="text-slate-500"
-                                >—</span
-                            >
+                            <span v-if="!row.original.latest_testing_release.amd64 && !row.original.latest_testing_release.arm64" class="text-slate-500">—</span>
                         </div>
                     </template>
+
                     <template #actions-cell="{ row }">
                         <UDropdownMenu
-                            :ui="{
-                                viewport: 'main-bg-color',
-                            }"
+                            :ui="{ viewport: 'main-bg-color' }"
                             :items="getAdminPackageRowActions(row)"
                         >
                             <UButton
@@ -307,23 +315,16 @@ async function deletePackage() {
                             />
                         </UDropdownMenu>
                     </template>
-                </UTable>
 
-                <UEmpty
-                    v-else
-                    icon="i-lucide-package-x"
-                    title="No packages"
-                    description="Create the first package to get started."
-                >
-                    <template #actions>
+                    <template #empty-actions>
                         <UButton
                             label="Create Package"
                             color="primary"
                             @click="showCreateModal = true"
                         />
                     </template>
-                </UEmpty>
-            </div>
+                </DashboardDataTable>
+            </DashboardPageBody>
         </template>
     </UDashboardPanel>
 
@@ -335,23 +336,19 @@ async function deletePackage() {
     >
         <UForm :schema="createSchema" class="space-y-4" @submit="handleCreate">
             <UFormField label="Name" name="name" required>
-                <UInput placeholder="my-package" />
+                <UInput placeholder="my-package" class="w-full" />
             </UFormField>
-
             <UFormField label="Display Name" name="display_name" required>
-                <UInput placeholder="My Package" />
+                <UInput placeholder="My Package" class="w-full" />
             </UFormField>
-
             <UFormField label="Publisher ID" name="publisher_id" required>
-                <UInput type="number" placeholder="1" />
+                <UInput type="number" placeholder="1" class="w-full" />
             </UFormField>
-
             <UFormField label="Description" name="description" required>
-                <UTextarea placeholder="A brief description of the package" />
+                <UTextarea placeholder="A brief description of the package" class="w-full" />
             </UFormField>
-
             <UFormField label="Homepage URL" name="homepage_url">
-                <UInput placeholder="https://github.com/..." />
+                <UInput placeholder="https://github.com/..." class="w-full" />
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">
@@ -374,11 +371,10 @@ async function deletePackage() {
     >
         <div class="space-y-4">
             <UFormField label="Description">
-                <UTextarea v-model="editForm.description" />
+                <UTextarea v-model="editForm.description" class="w-full" />
             </UFormField>
-
             <UFormField label="Homepage URL">
-                <UInput v-model="editForm.homepage_url" />
+                <UInput v-model="editForm.homepage_url" class="w-full" />
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">
@@ -397,11 +393,7 @@ async function deletePackage() {
     <DashboardModal
         v-model:open="showDeleteModal"
         title="Delete Package"
-        :description="
-            packageToDelete
-                ? `This will delete ${packageToDelete.name} and all releases.`
-                : ''
-        "
+        :description="packageToDelete ? `This will delete ${packageToDelete.name} and all releases.` : ''"
         icon="i-lucide-alert-triangle"
         icon-color="error"
     >
@@ -418,10 +410,7 @@ async function deletePackage() {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="
-                        showDeleteModal = false;
-                        packageToDelete = null;
-                    "
+                    @click="showDeleteModal = false; packageToDelete = null"
                 />
                 <UButton
                     label="Delete"
