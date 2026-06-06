@@ -213,7 +213,7 @@ const publisherNameById = computed(() => {
                         />
                     </template>
 
-                    <template #name-cell="{ row }">
+                    <template #fullname-cell="{ row }">
                         <NuxtLink
                             :to="`/dashboard/packages/${row.original.fullname}`"
                             class="font-medium text-sky-400 hover:underline"
