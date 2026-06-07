@@ -1947,6 +1947,8 @@ export type GetPackagesByFullPackageNameRoleAssignmentsResponses = {
             user_id: number;
             role: 'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER';
             created_at: number;
+            user_username: string;
+            user_display_name: string | null;
         }>;
     };
 };
@@ -2852,3 +2854,44 @@ export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResp
 };
 
 export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse = PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponses[keyof PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponses];
+
+export type GetUsersSearchData = {
+    body?: never;
+    path?: never;
+    query: {
+        q: string;
+        limit?: number;
+    };
+    url: '/users/search';
+};
+
+export type GetUsersSearchErrors = {
+    /**
+     * Authentication required
+     */
+    401: {
+        success: false;
+        code: 401;
+        message: 'Authentication required';
+    };
+};
+
+export type GetUsersSearchError = GetUsersSearchErrors[keyof GetUsersSearchErrors];
+
+export type GetUsersSearchResponses = {
+    /**
+     * Users retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Users retrieved successfully';
+        data: Array<{
+            id: number;
+            username: string;
+            display_name: string;
+        }>;
+    };
+};
+
+export type GetUsersSearchResponse = GetUsersSearchResponses[keyof GetUsersSearchResponses];

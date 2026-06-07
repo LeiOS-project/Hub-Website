@@ -55,9 +55,63 @@ const addMemberState = reactive({
 });
 const addSubmitting = ref(false);
 
+// --- User Search ---
+const userSearchQuery = ref('');
+const searchResults = ref<Array<{ id: number; username: string; display_name: string | null }>>([]);
+const searchLoading = ref(false);
+const selectedUser = ref<{ id: number; username: string; display_name: string | null } | null>(null);
+let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function onUserSearchInput(value: string) {
+    userSearchQuery.value = value;
+    selectedUser.value = null;
+    addMemberState.user_id = 0;
+
+    if (searchTimeout) clearTimeout(searchTimeout);
+
+    if (value.length < 2) {
+        searchResults.value = [];
+        return;
+    }
+
+    searchTimeout = setTimeout(async () => {
+        searchLoading.value = true;
+        try {
+            const res = await useAPI((api) => api.getUsersSearch({
+                query: { q: value, limit: 10 }
+            }));
+            if (res.success) {
+                searchResults.value = res.data ?? [];
+            } else {
+                searchResults.value = [];
+            }
+        } catch {
+            searchResults.value = [];
+        } finally {
+            searchLoading.value = false;
+        }
+    }, 300);
+}
+
+function selectUser(user: { id: number; username: string; display_name: string | null }) {
+    selectedUser.value = user;
+    addMemberState.user_id = user.id;
+    userSearchQuery.value = user.display_name || user.username;
+    searchResults.value = [];
+}
+
+function resetAddMemberForm() {
+    showAddModal.value = false;
+    addMemberState.user_id = 0;
+    addMemberState.role = 'MAINTAINER';
+    userSearchQuery.value = '';
+    searchResults.value = [];
+    selectedUser.value = null;
+}
+
 async function onAddMember() {
     if (!addMemberState.user_id) {
-        toast.add({ title: 'Error', description: 'User ID is required.', color: 'error' });
+        toast.add({ title: 'Error', description: 'Please select a user.', color: 'error' });
         return;
     }
 
@@ -78,9 +132,7 @@ async function onAddMember() {
                 icon: 'i-lucide-check',
                 color: 'success',
             });
-            showAddModal.value = false;
-            addMemberState.user_id = 0;
-            addMemberState.role = 'MAINTAINER';
+            resetAddMemberForm();
             await members.refresh();
         } else {
             throw new Error(res.message || 'Failed to add member');
@@ -284,13 +336,44 @@ async function onRemoveMember() {
         icon="i-lucide-user-plus"
     >
         <UForm :state="addMemberState" @submit="onAddMember" class="space-y-4">
-            <UFormField label="User ID" name="user_id" required>
-                <UInput
-                    v-model="addMemberState.user_id"
-                    type="number"
-                    placeholder="Enter user ID"
-                    class="w-full"
-                />
+            <UFormField label="User" name="user_search" required>
+                <div class="relative w-full">
+                    <UInput
+                        v-model="userSearchQuery"
+                        placeholder="Search by username or display name..."
+                        class="w-full"
+                        @input="onUserSearchInput(($event.target as HTMLInputElement).value)"
+                    >
+                        <template v-if="searchLoading" #trailing>
+                            <UIcon name="i-lucide-loader-circle" class="animate-spin" />
+                        </template>
+                    </UInput>
+
+                    <!-- Search results dropdown -->
+                    <div
+                        v-if="searchResults.length > 0"
+                        class="absolute z-50 w-full mt-1 rounded-lg border border-slate-700 bg-slate-900 shadow-xl max-h-48 overflow-y-auto"
+                    >
+                        <button
+                            v-for="user in searchResults"
+                            :key="user.id"
+                            type="button"
+                            class="w-full px-3 py-2 text-left text-sm text-slate-200 hover:bg-slate-800 hover:text-white flex items-center gap-2 transition-colors"
+                            @click="selectUser(user)"
+                        >
+                            <UIcon name="i-lucide-user" class="w-4 h-4 shrink-0 text-slate-500" />
+                            <span class="font-medium">{{ user.username }}</span>
+                            <span v-if="user.display_name" class="text-slate-500">({{ user.display_name }})</span>
+                        </button>
+                    </div>
+
+                    <!-- Selected user indicator -->
+                    <p v-if="selectedUser" class="text-xs text-emerald-400 mt-1.5 flex items-center gap-1">
+                        <UIcon name="i-lucide-check-circle" class="w-3.5 h-3.5" />
+                        Selected: <strong>{{ selectedUser.username }}</strong>
+                        <span v-if="selectedUser.display_name" class="text-slate-500">— {{ selectedUser.display_name }}</span>
+                    </p>
+                </div>
             </UFormField>
 
             <UFormField label="Role" name="role" required>
@@ -306,7 +389,7 @@ async function onRemoveMember() {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="showAddModal = false"
+                    @click="resetAddMemberForm()"
                 />
                 <UButton
                     type="submit"

@@ -881,7 +881,9 @@ export const zGetPackagesByFullPackageNameRoleAssignmentsResponse = z.object({
             'DEVELOPER',
             'VIEWER'
         ]),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        user_username: z.string(),
+        user_display_name: z.string().nullable()
     }))
 });
 
@@ -1387,4 +1389,23 @@ export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdDecideRe
     code: z.literal(200),
     message: z.literal('Decided on stable promotion request successfully'),
     data: z.null()
+});
+
+export const zGetUsersSearchQuery = z.object({
+    q: z.string().min(2).max(64),
+    limit: z.int().gte(1).lte(50).optional().default(10)
+});
+
+/**
+ * Users retrieved successfully
+ */
+export const zGetUsersSearchResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Users retrieved successfully'),
+    data: z.array(z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        username: z.string(),
+        display_name: z.string()
+    }))
 });

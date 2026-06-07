@@ -4,6 +4,7 @@ import type { GetAdminUsersResponses } from "@/api-client/types.gen";
 import * as z from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
+import { zPostAdminUsersBody } from "~/api-client/zod.gen";
 
 type AdminUser = GetAdminUsersResponses[200]["data"][number];
 
@@ -91,15 +92,17 @@ const showEditModal = ref(false);
 const showPasswordModal = ref(false);
 const selectedUser = ref<AdminUser | null>(null);
 
-const createSchema = z.object({
-    username: z.string().min(1, "Username is required"),
-    display_name: z.string().min(1, "Display name is required"),
-    email: z.string().email("Must be a valid email"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    role: z.enum(["admin", "developer", "user"]),
-});
+const createSchema = zPostAdminUsersBody;
 
 type CreateSchema = z.output<typeof createSchema>;
+
+const createForm = reactive<CreateSchema>({
+    username: "",
+    display_name: "",
+    email: "",
+    password: "",
+    role: "developer",
+});
 
 const editForm = reactive({
     display_name: "",
@@ -112,12 +115,28 @@ const passwordForm = reactive({
 });
 
 async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
-    const res = await useAPI((api) => api.postAdminUsers({ body: event.data }));
+
+    const res = await useAPI((api) => api.postAdminUsers({
+        body: event.data
+    }));
+
     if (res.success) {
-        toast.add({ title: "User created", color: "success" });
+
         showCreateModal.value = false;
+        createForm.username = "";
+        createForm.display_name = "";
+        createForm.email = "";
+        createForm.password = "";
+        createForm.role = "developer";
+
+        toast.add({
+            title: "User created",
+            color: "success"
+        });
+
         await refresh();
     } else {
+
         toast.add({
             title: "Create failed",
             description: res.message,
@@ -332,21 +351,21 @@ function getRoleColor(role: AdminUser["role"]) {
         title="Create User"
         icon="i-lucide-user-plus"
     >
-        <UForm :schema="createSchema" class="space-y-4" @submit="handleCreate">
+        <UForm :schema="createSchema" :state="createForm" class="space-y-4" @submit="handleCreate">
             <UFormField label="Username" name="username" required>
-                <UInput placeholder="johndoe" class="w-full" />
+                <UInput v-model="createForm.username" placeholder="johndoe" class="w-full" />
             </UFormField>
             <UFormField label="Display Name" name="display_name" required>
-                <UInput placeholder="John Doe" class="w-full" />
+                <UInput v-model="createForm.display_name" placeholder="John Doe" class="w-full" />
             </UFormField>
             <UFormField label="Email" name="email" required>
-                <UInput type="email" placeholder="john@example.com" class="w-full" />
+                <UInput v-model="createForm.email" type="email" placeholder="john@example.com" class="w-full" />
             </UFormField>
             <UFormField label="Password" name="password" required>
-                <UInput type="password" placeholder="••••••••" class="w-full" />
+                <UInput v-model="createForm.password" type="password" placeholder="••••••••" class="w-full" />
             </UFormField>
             <UFormField label="Role" name="role" required>
-                <USelect :items="roleOptions" placeholder="Select role" class="w-full" />
+                <USelect v-model="createForm.role" :items="roleOptions" placeholder="Select role" class="w-full" />
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">
@@ -356,7 +375,11 @@ function getRoleColor(role: AdminUser["role"]) {
                     variant="ghost"
                     @click="showCreateModal = false"
                 />
-                <UButton type="submit" label="Create" color="primary" />
+                <UButton
+                    type="submit"
+                    label="Create"
+                    color="primary"
+                />
             </div>
         </UForm>
     </DashboardModal>
