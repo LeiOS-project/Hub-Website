@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from '#ui/types'
-import type { PackageRoleAssignment } from '~/utils/types'
+import type { PackageRoleAssignment, PublisherMember } from '~/utils/types'
 
 definePageMeta({
     layout: 'dashboard'
@@ -10,13 +10,7 @@ const route = useRoute();
 const toast = useToast();
 
 const fullPackageName = route.params.package_name as string;
-
-const roleOptions = [
-    { label: 'ADMIN', value: 'ADMIN' },
-    { label: 'MAINTAINER', value: 'MAINTAINER' },
-    { label: 'DEVELOPER', value: 'DEVELOPER' },
-    { label: 'VIEWER', value: 'VIEWER' },
-];
+const publisherName = fullPackageName.split('.')[0]!;
 
 const roleBadgeColor: Record<string, 'info' | 'success' | 'warning' | 'neutral'> = {
     ADMIN: 'info',
@@ -25,29 +19,130 @@ const roleBadgeColor: Record<string, 'info' | 'success' | 'warning' | 'neutral'>
     VIEWER: 'neutral',
 };
 
-const roleAssignmentsTableColumns: TableColumn<PackageRoleAssignment>[] = [
+const roleOptions = [
+    { label: 'ADMIN', value: 'ADMIN' },
+    { label: 'MAINTAINER', value: 'MAINTAINER' },
+    { label: 'DEVELOPER', value: 'DEVELOPER' },
+    { label: 'VIEWER', value: 'VIEWER' },
+];
+
+const roleHierarchy: Record<string, number> = {
+    VIEWER: 1,
+    DEVELOPER: 2,
+    MAINTAINER: 3,
+    ADMIN: 4,
+};
+
+function roleOptionsAbove(publisherRole: string | null): typeof roleOptions {
+    if (!publisherRole) return roleOptions;
+    const minLevel = roleHierarchy[publisherRole] ?? 0;
+    return roleOptions.filter(r => (roleHierarchy[r.value] ?? 0) > minLevel);
+}
+
+// ---- Data: publisher members + role overrides ----
+
+interface MemberWithOverride {
+    user_id: number;
+    user_username: string;
+    user_display_name: string | null;
+    publisher_role: string;
+    /** The package-level override role, or the *current* assignment's role if one exists */
+    override_role: string | null;
+    /** The role-assignment DB id (if an override exists) */
+    override_id: number | null;
+}
+
+const searchFilter = ref('');
+const roleFilter = ref<string>('');
+const roleFilterOptions = [
+    { label: 'All', value: '' },
+    { label: 'ADMIN', value: 'ADMIN' },
+    { label: 'MAINTAINER', value: 'MAINTAINER' },
+    { label: 'DEVELOPER', value: 'DEVELOPER' },
+    { label: 'VIEWER', value: 'VIEWER' },
+];
+
+const membersData = ref<MemberWithOverride[]>([]);
+const loading = ref(true);
+
+const filteredMembersData = computed(() => {
+    let data = membersData.value;
+    if (searchFilter.value) {
+        const q = searchFilter.value.toLowerCase();
+        data = data.filter(m =>
+            m.user_username.toLowerCase().includes(q) ||
+            (m.user_display_name ?? '').toLowerCase().includes(q)
+        );
+    }
+    if (roleFilter.value) {
+        data = data.filter(m =>
+            m.override_role === roleFilter.value || m.publisher_role === roleFilter.value
+        );
+    }
+    return data;
+});
+
+async function loadData() {
+    loading.value = true;
+    try {
+        const [membersRes, overridesRes] = await Promise.all([
+            useAPI((api) => api.getPublishersByPublisherNameMembers({ path: { publisherName } })),
+            useAPI((api) => api.getPackagesByFullPackageNameRoleAssignments({ path: { fullPackageName } })),
+        ]);
+
+        const members: PublisherMember[] = membersRes.success ? (membersRes.data ?? []) : [];
+        const overrides: PackageRoleAssignment[] = overridesRes.success ? (overridesRes.data ?? []) : [];
+
+        // Build a lookup from the overrides
+        const overrideByUserId = new Map<number, PackageRoleAssignment>();
+        for (const o of overrides) {
+            overrideByUserId.set(o.user_id, o);
+        }
+
+        // Merge: every member gets a row, enriched with override info if present
+        membersData.value = members.map(m => {
+            const override = overrideByUserId.get(m.user_id);
+            return {
+                user_id: m.user_id,
+                user_username: m.user_username,
+                user_display_name: m.user_display_name ?? null,
+                publisher_role: m.role,
+                override_role: override?.role ?? null,
+                override_id: override?.id ?? null,
+            };
+        });
+
+        // Also add any override-only users (non-members who have a package override)
+        for (const o of overrides) {
+            if (!membersData.value.some(m => m.user_id === o.user_id)) {
+                membersData.value.push({
+                    user_id: o.user_id,
+                    user_username: o.user_username,
+                    user_display_name: o.user_display_name ?? null,
+                    publisher_role: o.publisher_role ?? '(not a member)',
+                    override_role: o.role,
+                    override_id: o.id,
+                });
+            }
+        }
+    } catch (err: any) {
+        toast.add({ title: 'Failed to load data', description: err.message || 'Unexpected error', color: 'error' });
+    } finally {
+        loading.value = false;
+    }
+}
+
+await loadData();
+
+const tableColumns: TableColumn<MemberWithOverride>[] = [
     { accessorKey: 'user_username', header: 'Username' },
     { accessorKey: 'user_display_name', header: 'Display Name' },
-    { accessorKey: 'role', header: 'Role' },
-    { accessorKey: 'created_at', header: 'Assigned At' },
+    { accessorKey: 'publisher_role', header: 'Publisher Role' },
+    { accessorKey: 'override_role', header: 'Package Override' },
     { accessorKey: 'actions', header: '', enableSorting: false, enableHiding: false }
 ];
 
-const roleAssignments = await useAPILazyAsyncData<PackageRoleAssignment[]>(
-    `/packages/${fullPackageName}/role-assignments`,
-    async () => {
-        const res = await useAPI((api) => api.getPackagesByFullPackageNameRoleAssignments({
-            path: { fullPackageName }
-        }));
-        if (!res.success) {
-            toast.add({ title: 'Failed to load role assignments', description: res.message, color: 'error' });
-            return [];
-        }
-        return res.data;
-    }
-);
-
-// --- User Search ---
+// ---- User Search for Add Override ----
 const userSearchQuery = ref('');
 const searchResults = ref<Array<{ id: number; username: string; display_name: string | null }>>([]);
 const searchLoading = ref(false);
@@ -60,23 +155,13 @@ function onUserSearchInput(value: string) {
     addState.user_id = 0;
 
     if (searchTimeout) clearTimeout(searchTimeout);
-
-    if (value.length < 2) {
-        searchResults.value = [];
-        return;
-    }
+    if (value.length < 2) { searchResults.value = []; return; }
 
     searchTimeout = setTimeout(async () => {
         searchLoading.value = true;
         try {
-            const res = await useAPI((api) => api.getUsersSearch({
-                query: { q: value, limit: 10 }
-            }));
-            if (res.success) {
-                searchResults.value = res.data ?? [];
-            } else {
-                searchResults.value = [];
-            }
+            const res = await useAPI((api) => api.getUsersSearch({ query: { q: value, limit: 10 } }));
+            searchResults.value = res.success ? (res.data ?? []) : [];
         } catch {
             searchResults.value = [];
         } finally {
@@ -88,161 +173,128 @@ function onUserSearchInput(value: string) {
 function selectUser(user: { id: number; username: string; display_name: string | null }) {
     selectedUser.value = user;
     addState.user_id = user.id;
+    // Look up their publisher role from our merged data, or from publisher members
+    const existing = membersData.value.find(m => m.user_id === user.id);
+    addStatePublisherRole.value = existing?.publisher_role ?? null;
+    const available = roleOptionsAbove(addStatePublisherRole.value);
+    addState.role = (available[0]?.value ?? 'MAINTAINER') as 'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER';
     userSearchQuery.value = user.display_name || user.username;
     searchResults.value = [];
 }
 
-// --- Add Role Assignment ---
+// ---- Add Override ----
 const showAddModal = ref(false);
 const addState = reactive({
     user_id: 0 as number,
     role: 'MAINTAINER' as 'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER',
 });
+const addStatePublisherRole = ref<string | null>(null);
 const addSubmitting = ref(false);
+const addAvailableRoles = computed(() => roleOptionsAbove(addStatePublisherRole.value));
 
 function resetAddForm() {
     showAddModal.value = false;
     addState.user_id = 0;
     addState.role = 'MAINTAINER';
+    addStatePublisherRole.value = null;
     userSearchQuery.value = '';
     searchResults.value = [];
     selectedUser.value = null;
 }
 
-async function onAddRoleAssignment() {
+async function onAddOverride() {
     if (!addState.user_id) {
         toast.add({ title: 'Error', description: 'Please select a user.', color: 'error' });
         return;
     }
-
     addSubmitting.value = true;
     try {
         const res = await useAPI((api) => api.postPackagesByFullPackageNameRoleAssignments({
             path: { fullPackageName },
-            body: {
-                user_id: addState.user_id,
-                role: addState.role,
-            }
+            body: { user_id: addState.user_id, role: addState.role },
         }));
-
         if (res.success) {
-            toast.add({
-                title: 'Role assignment created',
-                description: 'The role assignment has been created successfully.',
-                icon: 'i-lucide-check',
-                color: 'success',
-            });
+            toast.add({ title: 'Override added', description: `Package role set to ${addState.role}.`, icon: 'i-lucide-check', color: 'success' });
             resetAddForm();
-            await roleAssignments.refresh();
+            await loadData();
         } else {
-            throw new Error(res.message || 'Failed to create role assignment');
+            throw new Error(res.message || 'Failed to add override');
         }
     } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error',
-        });
+        toast.add({ title: 'Error', description: error.message || 'An unexpected error occurred.', icon: 'i-lucide-x-circle', color: 'error' });
     } finally {
         addSubmitting.value = false;
     }
 }
 
-// --- Edit Role Assignment ---
+// ---- Edit Override ----
 const showEditModal = ref(false);
-const editTarget = ref<{ userId: number; role: string } | null>(null);
+const editTarget = ref<{ userId: number; currentRole: string; publisherRole: string | null; username: string } | null>(null);
 const editRole = ref<'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER'>('MAINTAINER');
 const editSubmitting = ref(false);
+const editAvailableRoles = computed(() => roleOptionsAbove(editTarget.value?.publisherRole ?? null));
 
-function openEditRole(assignment: PackageRoleAssignment) {
-    editTarget.value = { userId: assignment.user_id, role: assignment.role };
-    editRole.value = assignment.role as 'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER';
+function openEditOverride(member: MemberWithOverride) {
+    editTarget.value = {
+        userId: member.user_id,
+        currentRole: member.override_role ?? member.publisher_role,
+        publisherRole: member.publisher_role === '(not a member)' ? null : member.publisher_role,
+        username: member.user_username,
+    };
+    editRole.value = (member.override_role ?? member.publisher_role) as 'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER';
     showEditModal.value = true;
 }
 
-async function onEditRoleAssignment() {
+async function onEditOverride() {
     if (!editTarget.value) return;
     const target = editTarget.value;
-
     editSubmitting.value = true;
     try {
         const res = await useAPI((api) => api.putPackagesByFullPackageNameRoleAssignmentsByUserId({
-            path: {
-                fullPackageName: fullPackageName,
-                userId: target.userId,
-            },
-            body: {
-                role: editRole.value,
-            }
+            path: { fullPackageName, userId: target.userId },
+            body: { role: editRole.value },
         }));
-
         if (res.success) {
-            toast.add({
-                title: 'Role updated',
-                description: `Role assignment has been updated to ${editRole.value}.`,
-                icon: 'i-lucide-check',
-                color: 'success',
-            });
+            toast.add({ title: 'Override updated', description: `Role changed to ${editRole.value}.`, icon: 'i-lucide-check', color: 'success' });
             showEditModal.value = false;
             editTarget.value = null;
-            await roleAssignments.refresh();
+            await loadData();
         } else {
-            throw new Error(res.message || 'Failed to update role assignment');
+            throw new Error(res.message || 'Failed to update override');
         }
     } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error',
-        });
+        toast.add({ title: 'Error', description: error.message || 'An unexpected error occurred.', icon: 'i-lucide-x-circle', color: 'error' });
     } finally {
         editSubmitting.value = false;
     }
 }
 
-// --- Remove Role Assignment ---
+// ---- Remove Override ----
 const deleteConfirmOpen = ref(false);
-const deleteTarget = ref<{ userId: number } | null>(null);
+const deleteTarget = ref<{ userId: number; username: string } | null>(null);
 
-function openDeleteAssignment(assignment: PackageRoleAssignment) {
-    deleteTarget.value = { userId: assignment.user_id };
+function openRemoveOverride(member: MemberWithOverride) {
+    deleteTarget.value = { userId: member.user_id, username: member.user_username };
     deleteConfirmOpen.value = true;
 }
 
-async function onRemoveAssignment() {
+async function onRemoveOverride() {
     if (!deleteTarget.value) return;
     const target = deleteTarget.value;
-
     try {
         const res = await useAPI((api) => api.deletePackagesByFullPackageNameRoleAssignmentsByUserId({
-            path: {
-                fullPackageName: fullPackageName,
-                userId: target.userId,
-            }
+            path: { fullPackageName, userId: target.userId },
         }));
-
         if (res.success) {
-            toast.add({
-                title: 'Role assignment removed',
-                description: 'The role assignment has been removed.',
-                icon: 'i-lucide-check',
-                color: 'success',
-            });
+            toast.add({ title: 'Override removed', description: `Reverted to publisher-level role for ${target.username}.`, icon: 'i-lucide-check', color: 'success' });
             deleteConfirmOpen.value = false;
             deleteTarget.value = null;
-            await roleAssignments.refresh();
+            await loadData();
         } else {
-            throw new Error(res.message || 'Failed to remove role assignment');
+            throw new Error(res.message || 'Failed to remove override');
         }
     } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error',
-        });
+        toast.add({ title: 'Error', description: error.message || 'An unexpected error occurred.', icon: 'i-lucide-x-circle', color: 'error' });
     }
 }
 </script>
@@ -250,87 +302,116 @@ async function onRemoveAssignment() {
 <template>
     <div class="space-y-6 w-full lg:w-3xl mx-auto">
         <DashboardDataTable
-            :data="roleAssignments.data"
-            :columns="roleAssignmentsTableColumns"
-            :loading="roleAssignments.loading"
-            empty-title="No role assignments"
-            empty-description="Assign roles to users for this package."
+            :data="filteredMembersData"
+            :columns="tableColumns"
+            :loading="loading"
+            empty-title="No publisher members"
+            empty-description="Add members to the publisher first, then override their role for this package."
             empty-icon="i-lucide-shield"
-            @refresh="roleAssignments.refresh()"
+            @refresh="loadData()"
         >
-            <template #header-right>
-                <UButton
-                    label="Add Assignment"
-                    icon="i-lucide-plus"
-                    color="primary"
-                    @click="showAddModal = true"
-                />
-            </template>
-
-            <template #user_username-cell="{ row }">
-                <span class="font-medium text-sky-400">
-                    {{ row.original.user_username }}
-                </span>
-            </template>
-
-            <template #user_display_name-cell="{ row }">
-                <span class="text-slate-100">
-                    {{ row.original.user_display_name || '—' }}
-                </span>
-            </template>
-
-            <template #role-cell="{ row }">
-                <UBadge
-                    :color="roleBadgeColor[row.original.role] || 'neutral'"
-                    variant="soft"
-                    size="sm"
-                >
-                    {{ row.original.role }}
-                </UBadge>
-            </template>
-
-            <template #created_at-cell="{ row }">
-                <span class="text-sm text-slate-400">
-                    {{ new Date(row.original.created_at).toLocaleDateString() }}
-                </span>
-            </template>
-
-            <template #actions-cell="{ row }">
-                <div class="flex gap-1">
-                    <UButton
-                        icon="i-lucide-pencil"
-                        variant="ghost"
-                        color="neutral"
-                        size="xs"
-                        @click="openEditRole(row.original)"
+            <template #header-left>
+                <div class="flex items-center gap-2 flex-1">
+                    <UInput
+                        v-model="searchFilter"
+                        placeholder="Filter by username or display name..."
+                        class="min-w-64"
+                        leading-icon="i-lucide-search"
                     />
-                    <UButton
-                        icon="i-lucide-x"
-                        variant="ghost"
-                        color="error"
-                        size="xs"
-                        @click="openDeleteAssignment(row.original)"
+                    <USelect
+                        v-model="roleFilter"
+                        :items="roleFilterOptions"
+                        class="min-w-36"
                     />
                 </div>
             </template>
 
-            <template #empty-actions>
-                <UButton
-                    label="Add Assignment"
-                    color="primary"
-                    @click="showAddModal = true"
-                />
+            <template #user_username-cell="{ row }">
+                <span class="font-medium text-sky-400">{{ row.original.user_username }}</span>
             </template>
+
+            <template #user_display_name-cell="{ row }">
+                <span class="text-slate-100">{{ row.original.user_display_name || '—' }}</span>
+            </template>
+
+            <template #publisher_role-cell="{ row }">
+                <UBadge
+                    :color="roleBadgeColor[row.original.publisher_role] || 'neutral'"
+                    variant="outline"
+                    size="sm"
+                >
+                    {{ row.original.publisher_role }}
+                </UBadge>
+            </template>
+
+            <template #override_role-cell="{ row }">
+                <div class="flex items-center gap-1.5">
+                    <template v-if="row.original.override_role">
+                        <UBadge
+                            :color="roleBadgeColor[row.original.override_role] || 'neutral'"
+                            variant="solid"
+                            size="sm"
+                        >
+                            {{ row.original.override_role }}
+                        </UBadge>
+                        <span
+                            v-if="row.original.override_role === row.original.publisher_role"
+                            class="text-xs text-amber-400"
+                            title="Same as publisher role — no effective change"
+                        >(same)</span>
+                        <span
+                            v-else
+                            class="text-xs text-emerald-400"
+                            title="Elevated above publisher role"
+                        >(elevated)</span>
+                    </template>
+                    <span v-else class="text-slate-500 text-sm">—</span>
+                </div>
+            </template>
+
+            <template #actions-cell="{ row }">
+                <div class="flex gap-1">
+                    <template v-if="row.original.override_id">
+                        <UButton
+                            icon="i-lucide-pencil"
+                            variant="ghost"
+                            color="neutral"
+                            size="xs"
+                            title="Edit override"
+                            @click="openEditOverride(row.original)"
+                        />
+                        <UButton
+                            icon="i-lucide-undo-2"
+                            variant="ghost"
+                            color="error"
+                            size="xs"
+                            title="Remove override (revert to publisher role)"
+                            @click="openRemoveOverride(row.original)"
+                        />
+                    </template>
+                    <UButton
+                        v-else
+                        icon="i-lucide-plus"
+                        variant="ghost"
+                        color="primary"
+                        size="xs"
+                        title="Add override for this member"
+                        @click="selectUser({ id: row.original.user_id, username: row.original.user_username, display_name: row.original.user_display_name }); showAddModal = true"
+                    />
+                </div>
+            </template>
+
         </DashboardDataTable>
     </div>
 
-    <!-- Add Role Assignment Modal -->
+    <!-- Add Override Modal -->
     <DashboardModal
         v-model:open="showAddModal"
-        title="Add Role Assignment"
+        title="Add Package Role Override"
+        description="Elevate a user's role specifically for this package. Must be higher than their publisher-level role."
         icon="i-lucide-shield-plus"
     >
-        <UForm :state="addState" @submit="onAddRoleAssignment" class="space-y-4">
+        <UForm @submit="onAddOverride" class="space-y-4">
             <UFormField label="User" name="user_search" required>
                 <div class="relative w-full">
                     <UInput
@@ -344,7 +425,6 @@ async function onRemoveAssignment() {
                         </template>
                     </UInput>
 
-                    <!-- Search results dropdown -->
                     <div
                         v-if="searchResults.length > 0"
                         class="absolute z-50 w-full mt-1 rounded-lg border border-slate-700 bg-slate-900 shadow-xl max-h-48 overflow-y-auto"
@@ -362,84 +442,95 @@ async function onRemoveAssignment() {
                         </button>
                     </div>
 
-                    <!-- Selected user indicator -->
-                    <p v-if="selectedUser" class="text-xs text-emerald-400 mt-1.5 flex items-center gap-1">
-                        <UIcon name="i-lucide-check-circle" class="w-3.5 h-3.5" />
-                        Selected: <strong>{{ selectedUser.username }}</strong>
-                        <span v-if="selectedUser.display_name" class="text-slate-500">— {{ selectedUser.display_name }}</span>
-                    </p>
+                    <div v-if="selectedUser" class="mt-2 space-y-1">
+                        <p class="text-xs text-emerald-400 flex items-center gap-1">
+                            <UIcon name="i-lucide-check-circle" class="w-3.5 h-3.5" />
+                            <strong>{{ selectedUser.username }}</strong>
+                            <span v-if="selectedUser.display_name" class="text-slate-500">— {{ selectedUser.display_name }}</span>
+                        </p>
+                        <p class="text-xs text-slate-400 flex items-center gap-1">
+                            <UIcon name="i-lucide-building" class="w-3.5 h-3.5" />
+                            Publisher role:
+                            <UBadge
+                                v-if="addStatePublisherRole"
+                                :color="roleBadgeColor[addStatePublisherRole] || 'neutral'"
+                                variant="outline"
+                                size="xs"
+                            >
+                                {{ addStatePublisherRole }}
+                            </UBadge>
+                            <span v-else class="text-slate-500 italic">No publisher membership</span>
+                        </p>
+                    </div>
                 </div>
             </UFormField>
 
-            <UFormField label="Role" name="role" required>
+            <UFormField label="Override Role" name="role" required>
                 <USelect
                     v-model="addState.role"
-                    :items="roleOptions"
+                    :items="addAvailableRoles"
                     class="w-full"
                 />
+                <p v-if="addStatePublisherRole" class="text-xs text-slate-500 mt-1">
+                    Must be strictly higher than <strong>{{ addStatePublisherRole }}</strong>.
+                </p>
+                <p v-else class="text-xs text-amber-400 mt-1">
+                    This user is not a publisher member — any role can be assigned.
+                </p>
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">
-                <UButton
-                    label="Cancel"
-                    color="neutral"
-                    variant="ghost"
-                    @click="resetAddForm()"
-                />
-                <UButton
-                    type="submit"
-                    label="Add"
-                    color="primary"
-                    :loading="addSubmitting"
-                    icon="i-lucide-shield-plus"
-                />
+                <UButton label="Cancel" color="neutral" variant="ghost" @click="resetAddForm()" />
+                <UButton type="submit" label="Add Override" color="primary" :loading="addSubmitting" icon="i-lucide-shield-plus" />
             </div>
         </UForm>
     </DashboardModal>
 
-    <!-- Edit Role Modal -->
+    <!-- Edit Override Modal -->
     <DashboardModal
         v-model:open="showEditModal"
-        title="Edit Role Assignment"
+        title="Edit Package Role Override"
         icon="i-lucide-pencil"
     >
         <div class="space-y-4">
-            <p class="text-sm text-slate-400">
-                Update role for <strong class="text-white">{{ roleAssignments.data?.find(a => a.user_id === editTarget?.userId)?.user_username || 'User #' + editTarget?.userId }}</strong>
-            </p>
+            <div class="space-y-1 text-sm">
+                <p class="text-slate-400">
+                    User: <strong class="text-white">{{ editTarget?.username }}</strong>
+                </p>
+                <p class="text-slate-400 flex items-center gap-1">
+                    Publisher role:
+                    <UBadge
+                        v-if="editTarget?.publisherRole"
+                        :color="roleBadgeColor[editTarget.publisherRole] || 'neutral'"
+                        variant="outline"
+                        size="xs"
+                    >
+                        {{ editTarget.publisherRole }}
+                    </UBadge>
+                    <span v-else class="text-slate-500 italic">None</span>
+                </p>
+                <p v-if="editTarget?.publisherRole" class="text-xs text-slate-500">
+                    Override must be strictly higher than <strong>{{ editTarget.publisherRole }}</strong>.
+                </p>
+            </div>
 
-            <UFormField label="Role" name="role" required>
-                <USelect
-                    v-model="editRole"
-                    :items="roleOptions"
-                    class="w-full"
-                />
+            <UFormField label="Override Role" name="role" required>
+                <USelect v-model="editRole" :items="editAvailableRoles" class="w-full" />
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">
-                <UButton
-                    label="Cancel"
-                    color="neutral"
-                    variant="ghost"
-                    @click="showEditModal = false"
-                />
-                <UButton
-                    label="Save"
-                    color="primary"
-                    :loading="editSubmitting"
-                    icon="i-lucide-save"
-                    @click="onEditRoleAssignment"
-                />
+                <UButton label="Cancel" color="neutral" variant="ghost" @click="showEditModal = false" />
+                <UButton label="Save" color="primary" :loading="editSubmitting" icon="i-lucide-save" @click="onEditOverride" />
             </div>
         </div>
     </DashboardModal>
 
-    <!-- Remove Role Assignment Modal -->
+    <!-- Remove Override Modal -->
     <DashboardDeleteModal
-        title="Remove Role Assignment"
-        :warning-text="`Are you sure you want to remove this role assignment?`"
+        title="Remove Package Role Override"
+        :warning-text="`Remove the override for &quot;${deleteTarget?.username || ''}&quot;? They will revert to their publisher-level role for this package.`"
         v-model:open="deleteConfirmOpen"
-        :on-delete="onRemoveAssignment"
+        :on-delete="onRemoveOverride"
         :prevent-auto-close="true"
     />
 </template>

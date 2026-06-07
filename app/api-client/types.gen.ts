@@ -1949,6 +1949,7 @@ export type GetPackagesByFullPackageNameRoleAssignmentsResponses = {
             created_at: number;
             user_username: string;
             user_display_name: string | null;
+            publisher_role: string | null;
         }>;
     };
 };

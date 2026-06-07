@@ -883,7 +883,8 @@ export const zGetPackagesByFullPackageNameRoleAssignmentsResponse = z.object({
         ]),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         user_username: z.string(),
-        user_display_name: z.string().nullable()
+        user_display_name: z.string().nullable(),
+        publisher_role: z.string().nullable()
     }))
 });
 
