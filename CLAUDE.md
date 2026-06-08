@@ -424,5 +424,7 @@ Nuxt and Nuxt UI MCP servers are configured in `.claude/settings.json`. Use them
 
 Custom `/` commands defined in `.claude/settings.json`:
 - **`/verify`** — Run tests then build (standard verification flow)
+- **`/test`** — Run the test suite (`bun test`)
+- **`/typecheck`** — Run the full TypeScript type checker (`bun run typecheck` which runs `nuxt typecheck` + `tsc`)
 - **`/api-client`** — Regenerate the typed API client from OpenAPI spec
 - **`/dev`** — Start or inspect the dev server setup
