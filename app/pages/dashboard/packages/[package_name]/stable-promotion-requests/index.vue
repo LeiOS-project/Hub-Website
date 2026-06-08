@@ -15,7 +15,7 @@ type Release = GetPackagesByFullPackageNameReleasesResponses[200]['data'][number
 const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 
 // Fetch stable promotion requests
-const stablePromotionRequests = await useAPIAsyncData(
+const stablePromotionRequests = await useAPIAsyncData<StablePromotionRequest[]>(
     `/dev/packages/${pkgData.value.name}/stable-promotion-requests`,
     async () => {
         const res = await useAPI((api) => api.getPackagesByFullPackageNameStablePromotionRequests({

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type {
     GetPublishersResponses,
+    GetPackagesResponses,
     GetPackagesByFullPackageNameResponses,
     PostPackagesData,
 } from "@/api-client/types.gen";
@@ -65,14 +66,18 @@ const headerTexts = computed(() => {
 
 const package_form_schema = pkg.isNew ? zPostPackagesBody : zPutPackagesByFullPackageNameBody;
 type PackageFormSchema = NonNullable<z.infer<typeof package_form_schema>>;
-const package_form_state = ref<NewDevPackage>({
-    publisher_id: pkg_data.value.publisher_id,
-    name: pkg_data.value.name,
-    display_name: pkg_data.value.display_name,
-    description: pkg_data.value.description,
-    homepage_url: pkg_data.value.homepage_url,
-    requires_patching: pkg_data.value.requires_patching,
-});
+const package_form_state = ref<NewDevPackage>(
+    pkg.isNew
+        ? { name: '', display_name: '', description: '', homepage_url: '', requires_patching: false } as unknown as NewDevPackage
+        : {
+            publisher_id: (pkg_data.value as DevPackage).publisher_id,
+            name: (pkg_data.value as DevPackage).name,
+            display_name: (pkg_data.value as DevPackage).display_name,
+            description: (pkg_data.value as DevPackage).description,
+            homepage_url: (pkg_data.value as DevPackage).homepage_url,
+            requires_patching: (pkg_data.value as DevPackage).requires_patching,
+        }
+);
 
 watchEffect(() => {
     if (pkg.isNew && !package_form_state.value.publisher_id && publisherOptions.value.length === 1) {
@@ -98,12 +103,13 @@ async function onFormSubmit() {
                     },
                 }));
 
-                const createdPackage = packagesResult.success
-                    ? packagesResult.data.find((candidate) =>
-                        candidate.publisher_id === package_form_state.value.publisher_id &&
-                        candidate.name === package_form_state.value.name
-                    )
+                const packagesData = packagesResult.success
+                    ? (packagesResult.data as GetPackagesResponses["200"]["data"])
                     : null;
+                const createdPackage = packagesData?.find((candidate) =>
+                    candidate.publisher_id === package_form_state.value.publisher_id &&
+                    candidate.name === package_form_state.value.name
+                ) ?? null;
 
                 toast.add({
                     title: "Package created",
