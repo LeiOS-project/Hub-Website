@@ -316,6 +316,11 @@ export type PutAccountData = {
         username?: string;
         display_name?: string;
         email?: string;
+    } & {
+        /**
+         * Current password — required to confirm account changes
+         */
+        current_password: string;
     };
     path?: never;
     query?: never;
