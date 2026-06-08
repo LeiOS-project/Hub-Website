@@ -1,6 +1,17 @@
 <script setup lang="ts">
 import type { TableColumn } from '#ui/types'
+import type { Row } from '@tanstack/vue-table'
 import type { PackageRoleAssignment, PublisherMember } from '~/utils/types'
+
+interface FilterConfig {
+    column: keyof MemberWithOverride;
+    type?: 'text' | 'select' | 'multi-select';
+    placeholder?: string;
+    icon?: string;
+    class?: string;
+    options?: { label: string; value: string }[];
+    filterFn?: (row: Row<any>, columnId: string, filterValue: any) => boolean;
+}
 
 definePageMeta({
     layout: 'dashboard'
@@ -52,35 +63,9 @@ interface MemberWithOverride {
     override_id: number | null;
 }
 
-const searchFilter = ref('');
-const roleFilter = ref<string>('');
-const roleFilterOptions = [
-    { label: 'All', value: '' },
-    { label: 'ADMIN', value: 'ADMIN' },
-    { label: 'MAINTAINER', value: 'MAINTAINER' },
-    { label: 'DEVELOPER', value: 'DEVELOPER' },
-    { label: 'VIEWER', value: 'VIEWER' },
-];
-
 const membersData = ref<MemberWithOverride[]>([]);
 const loading = ref(true);
 
-const filteredMembersData = computed(() => {
-    let data = membersData.value;
-    if (searchFilter.value) {
-        const q = searchFilter.value.toLowerCase();
-        data = data.filter(m =>
-            m.user_username.toLowerCase().includes(q) ||
-            (m.user_display_name ?? '').toLowerCase().includes(q)
-        );
-    }
-    if (roleFilter.value) {
-        data = data.filter(m =>
-            m.override_role === roleFilter.value || m.publisher_role === roleFilter.value
-        );
-    }
-    return data;
-});
 
 async function loadData() {
     loading.value = true;
@@ -302,30 +287,43 @@ async function onRemoveOverride() {
 <template>
     <div class="space-y-6 w-full lg:w-3xl mx-auto">
         <DashboardDataTable
-            :data="filteredMembersData"
+            :data="membersData"
             :columns="tableColumns"
             :loading="loading"
+            :filters="[
+                {
+                    column: 'user_username',
+                    type: 'text',
+                    placeholder: 'Filter by username or display name...',
+                    icon: 'i-lucide-search',
+                    class: 'min-w-64',
+                    filterFn: (row, _columnId, filterValue) => {
+                        if (!filterValue) return true;
+                        const q = String(filterValue).toLowerCase();
+                        const username = String(row.getValue('user_username') ?? '').toLowerCase();
+                        const displayName = String(row.getValue('user_display_name') ?? '').toLowerCase();
+                        return username.includes(q) || displayName.includes(q);
+                    },
+                },
+                {
+                    column: 'publisher_role',
+                    type: 'multi-select',
+                    placeholder: 'All roles',
+                    class: 'min-w-36',
+                    icon: 'i-lucide-shield',
+                    options: [
+                        { label: 'ADMIN', value: 'ADMIN' },
+                        { label: 'MAINTAINER', value: 'MAINTAINER' },
+                        { label: 'DEVELOPER', value: 'DEVELOPER' },
+                        { label: 'VIEWER', value: 'VIEWER' },
+                    ],
+                },
+            ]"
             empty-title="No publisher members"
             empty-description="Add members to the publisher first, then override their role for this package."
             empty-icon="i-lucide-shield"
             @refresh="loadData()"
         >
-            <template #header-left>
-                <div class="flex items-center gap-2 flex-1">
-                    <UInput
-                        v-model="searchFilter"
-                        placeholder="Filter by username or display name..."
-                        class="min-w-64"
-                        leading-icon="i-lucide-search"
-                    />
-                    <USelect
-                        v-model="roleFilter"
-                        :items="roleFilterOptions"
-                        class="min-w-36"
-                    />
-                </div>
-            </template>
-
             <template #user_username-cell="{ row }">
                 <span class="font-medium text-sky-400">{{ row.original.user_username }}</span>
             </template>
@@ -400,7 +398,6 @@ async function onRemoveOverride() {
                     />
                 </div>
             </template>
-
         </DashboardDataTable>
     </div>
 

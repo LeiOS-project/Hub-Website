@@ -258,6 +258,35 @@ async function onRemoveMember() {
             :data="members.data"
             :columns="membersTableColumns"
             :loading="members.loading"
+            :filters="[
+                {
+                    column: 'user_username',
+                    type: 'text',
+                    placeholder: 'Filter by username or display name...',
+                    icon: 'i-lucide-search',
+                    class: 'min-w-64',
+                    filterFn: (row, _columnId, filterValue) => {
+                        if (!filterValue) return true;
+                        const q = String(filterValue).toLowerCase();
+                        const username = String(row.getValue('user_username') ?? '').toLowerCase();
+                        const displayName = String(row.getValue('user_display_name') ?? '').toLowerCase();
+                        return username.includes(q) || displayName.includes(q);
+                    },
+                },
+                {
+                    column: 'role',
+                    type: 'multi-select',
+                    placeholder: 'All roles',
+                    class: 'min-w-36',
+                    icon: 'i-lucide-shield',
+                    options: [
+                        { label: 'ADMIN', value: 'ADMIN' },
+                        { label: 'MAINTAINER', value: 'MAINTAINER' },
+                        { label: 'DEVELOPER', value: 'DEVELOPER' },
+                        { label: 'VIEWER', value: 'VIEWER' },
+                    ],
+                },
+            ]"
             empty-title="No members"
             empty-description="Add members to this publisher."
             empty-icon="i-lucide-users"
