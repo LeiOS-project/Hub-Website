@@ -81,7 +81,7 @@ class SubrouterPathDynamics<Settings extends UseSubrouterPathDynamics.SubrouterP
         }
     }
 
-    async getPathDynamicValues(path: string): Promise<Promise<UseSubrouterPathDynamics.RichPathDynamicValues>> {
+    async getPathDynamicValues(path: string): Promise<UseSubrouterPathDynamics.RichPathDynamicValues> {
         const breadcrumbItems: BreadcrumbItem[] = [...(this.options.basebreadcrumbItems ?? [])];
 
         const routeSettings = await SimpleRouteMatcher.match(path, Object.keys(isRef(this.options.routes) ? this.options.routes.value : this.options.routes));

@@ -34,7 +34,10 @@ const package_release_form_state = ref<NewDevPackageRelease>({
     changelog: pkg_release_data.value.changelog,
 });
 
+const submitting = ref(false);
+
 async function onFormSubmit() {
+    submitting.value = true;
     try {
         if (pkg_release.isNew) {
             const result = await useAPI((api) =>
@@ -100,6 +103,8 @@ async function onFormSubmit() {
             icon: "i-lucide-x-circle",
             color: "error",
         });
+    } finally {
+        submitting.value = false;
     }
 }
 
@@ -325,9 +330,9 @@ function formatFileSize(bytes: number): string {
 
                     <div class="pt-4">
                         <UButton v-if="!pkg_release.isNew" label="Save Changes" color="primary" type="submit"
-                            :loading="pkg_release_loading" icon="i-lucide-save" />
+                            :loading="submitting" icon="i-lucide-save" />
                         <UButton v-else label="Create Package Release" color="primary" type="submit"
-                            :loading="pkg_release_loading" icon="i-lucide-plus-circle" />
+                            :loading="submitting" icon="i-lucide-plus-circle" />
                     </div>
                 </UForm>
             </div>
@@ -366,14 +371,7 @@ function formatFileSize(bytes: number): string {
                         
                         <div class="space-y-2">
 
-                            <div v-for="arch in architecturesLists.filter(a => {
-                                console.log(item.label, a.key);
-                                if (item.label === 'Per Architecture') {
-                                    return a.key !== 'all';
-                                } else {
-                                    return a.key === 'all';
-                                }
-                            })" :key="arch.key"
+                            <div v-for="arch in architecturesLists.filter(a => item.label === 'Per Architecture' ? a.key !== 'all' : a.key === 'all')" :key="arch.key"
                                 class="rounded-lg border border-slate-700 bg-slate-800/40 overflow-hidden">
                                 <!-- Architecture Header -->
                                 <div class="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
@@ -430,16 +428,8 @@ function formatFileSize(bytes: number): string {
                                             :preview="true" layout="list" file-icon="i-lucide-file-archive"
                                             class="w-full min-h-32" @dragover.prevent="
                                                 uploadStates[arch.key].dragOver = true;
-                                            console.log(
-                                                'dragover',
-                                                uploadStates[arch.key].dragOver
-                                            );
                                             " @dragleave.prevent="
                                                 uploadStates[arch.key].dragOver = false;
-                                            console.log(
-                                                'dragover',
-                                                uploadStates[arch.key].dragOver
-                                            );
                                             " :ui="{
                                                 base: 'relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer data-[dragging=true]:border-sky-500 data-[dragging=true]:bg-sky-500/10 data-[dragging=false]:border-slate-700 data-[dragging=false]:hover:border-slate-600 data-[dragging=false]:bg-slate-800 data-[dragging=false]:hover:bg-slate-800/50',
                                                 wrapper: 'py-0',

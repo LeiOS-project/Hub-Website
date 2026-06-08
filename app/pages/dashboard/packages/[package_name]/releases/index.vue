@@ -10,7 +10,7 @@ type Release = GetPackagesByFullPackageNameReleasesResponses[200]['data'][number
 const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 
 const package_releases = await useAPIAsyncData(
-    `/dev/packages/${pkgData.value.name}/releases`,
+    `/dev/packages/${pkgData.value.fullname}/releases`,
     async () => {
         const res = await useAPI((api) => api.getPackagesByFullPackageNameReleases({
             path: {
@@ -37,7 +37,7 @@ const package_releases = await useAPIAsyncData(
         //     });
         // }
 
-        return res.data.reverse();
+        return [...res.data].reverse();
     }
 );
 

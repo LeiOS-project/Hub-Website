@@ -17,7 +17,11 @@ export async function useAwaitedComputed<T, S = T>(
     const state = ref<T>() as { value: T };
 
     let resolveFirst!: () => void;
-    const firstRun = new Promise<void>((r) => (resolveFirst = r));
+    let rejectFirst!: (reason: unknown) => void;
+    const firstRun = new Promise<void>((resolve, reject) => {
+        resolveFirst = resolve;
+        rejectFirst = reject;
+    });
     let initialized = false;
 
     const getter = typeof source === "function" ? source : source.get;
@@ -26,14 +30,21 @@ export async function useAwaitedComputed<T, S = T>(
         let cancelled = false;
         onCleanup(() => (cancelled = true));
 
-        const value = await getter();
-        if (cancelled) return;
+        try {
+            const value = await getter();
+            if (cancelled) return;
 
-        state.value = value;
+            state.value = value;
 
-        if (!initialized) {
-            initialized = true;
-            resolveFirst();
+            if (!initialized) {
+                initialized = true;
+                resolveFirst();
+            }
+        } catch (error) {
+            if (!initialized) {
+                initialized = true;
+                rejectFirst(error);
+            }
         }
     }, debugOptions);
 

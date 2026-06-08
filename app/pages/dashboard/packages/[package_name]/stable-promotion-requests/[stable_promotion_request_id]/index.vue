@@ -239,7 +239,7 @@ async function onDeleteRequest() {
         v-model:open="deleteConfirmOpen"
         title="Delete Stable Promotion Request"
         :warning-text="`Are you sure you want to delete this stable promotion request? This action cannot be undone.`"
-        @delete="onDeleteRequest"
+        :on-delete="onDeleteRequest"
         :prevent-auto-close="true"
     />
 </template>

@@ -5,6 +5,9 @@ const route = useRoute();
 const toast = useToast();
 
 const requestId = parseInt(route.params.stable_promotion_request_id as string);
+if (isNaN(requestId)) {
+    throw createError({ statusCode: 400, statusMessage: 'Invalid stable promotion request ID' });
+}
 
 type AdminStableRequest = GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses[200]['data'];
 

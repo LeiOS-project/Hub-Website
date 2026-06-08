@@ -24,7 +24,7 @@ const repo = ref<'all' | 'leios-archive' | 'leios-testing' | 'leios-stable'>('al
 const packageName = computed(() => route.params.packageName as string)
 
 const { data: packageInfo, pending, refresh } = await useAsyncData<PublicPackage | null>(
-    () => `public-package-${packageName.value}`,
+    `public-package-${packageName.value}`,
     async () => {
         const res = await useAPI(
             (api) =>
@@ -37,7 +37,7 @@ const { data: packageInfo, pending, refresh } = await useAsyncData<PublicPackage
         if (!res.success) {
             toast.add({ title: 'Failed to load package', description: res.message, color: 'error' })
             if (Number(res.code) === 404) {
-                router.push('/explore')
+                await router.push('/explore')
             }
             return null
         }
@@ -47,7 +47,7 @@ const { data: packageInfo, pending, refresh } = await useAsyncData<PublicPackage
 )
 
 const { data: releaseData } = await useAsyncData<PackageRelease[]>(
-    () => `public-package-releases-${packageName.value}`,
+    `public-package-releases-${packageName.value}`,
     async () => {
         const res = await useAPI(
             (api) => api.getPackagesByFullPackageNameReleases({ path: { fullPackageName: packageName.value } }),

@@ -27,8 +27,8 @@ if (!userInfoStore.isValid(currentUser)) {
     throw new Error('User not authenticated but trying to access Admin Packages');
 }
 
-if (!currentUser || currentUser.value.role !== "admin") {
-    navigateTo("/dashboard");
+if (currentUser.value.role !== "admin") {
+    await navigateTo("/dashboard");
 }
 
 const packageColumns: TableColumn<AdminPackage>[] = [
@@ -120,6 +120,14 @@ type CreateSchema = z.output<typeof createSchema>;
 const editForm = reactive({
     description: "",
     homepage_url: "",
+});
+
+const createForm = reactive({
+    name: '',
+    display_name: '',
+    publisher_id: undefined as number | undefined,
+    description: '',
+    homepage_url: '',
 });
 
 async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
@@ -334,21 +342,21 @@ async function deletePackage() {
         title="Create Package"
         icon="i-lucide-package-plus"
     >
-        <UForm :schema="createSchema" class="space-y-4" @submit="handleCreate">
+        <UForm :schema="createSchema" :state="createForm" class="space-y-4" @submit="handleCreate">
             <UFormField label="Name" name="name" required>
-                <UInput placeholder="my-package" class="w-full" />
+                <UInput v-model="createForm.name" placeholder="my-package" class="w-full" />
             </UFormField>
             <UFormField label="Display Name" name="display_name" required>
-                <UInput placeholder="My Package" class="w-full" />
+                <UInput v-model="createForm.display_name" placeholder="My Package" class="w-full" />
             </UFormField>
             <UFormField label="Publisher ID" name="publisher_id" required>
-                <UInput type="number" placeholder="1" class="w-full" />
+                <UInput v-model="createForm.publisher_id" type="number" placeholder="1" class="w-full" />
             </UFormField>
             <UFormField label="Description" name="description" required>
-                <UTextarea placeholder="A brief description of the package" class="w-full" />
+                <UTextarea v-model="createForm.description" placeholder="A brief description of the package" class="w-full" />
             </UFormField>
             <UFormField label="Homepage URL" name="homepage_url">
-                <UInput placeholder="https://github.com/..." class="w-full" />
+                <UInput v-model="createForm.homepage_url" placeholder="https://github.com/..." class="w-full" />
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">

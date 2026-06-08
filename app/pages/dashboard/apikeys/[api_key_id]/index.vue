@@ -316,7 +316,7 @@ const headerTexts = computed(() => {
             title="Delete API Key"
             warning-text="All data associated with this API Key and related information will be permanently deleted. This action cannot be reversed."
             v-model:open="deleteConfirmOpen"
-            @delete="onDeleteApiKey"
+            :on-delete="onDeleteApiKey"
             :prevent-auto-close=true
         >
         </DashboardDeleteModal>

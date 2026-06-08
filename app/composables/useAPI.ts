@@ -162,7 +162,7 @@ export async function useAPI<TReturn>(handler: (api: UseAPITypes.APIClient) => T
             } else {
                 updateAPIClient(null);
                 if (!disableAuthRedirect) {
-                    navigateTo('/auth/login?url=' + encodeURIComponent(useRoute().fullPath));
+                    await navigateTo('/auth/login?url=' + encodeURIComponent(useRoute().fullPath));
                 }
             }
 
@@ -179,7 +179,7 @@ export async function useAPI<TReturn>(handler: (api: UseAPITypes.APIClient) => T
                 updateAPIClient(null);
                 sessionToken.value = null;
                 if (!disableAuthRedirect) {
-                    navigateTo('/auth/login?url=' + encodeURIComponent(useRoute().fullPath));
+                    await navigateTo('/auth/login?url=' + encodeURIComponent(useRoute().fullPath));
                 }
             }
             return result;

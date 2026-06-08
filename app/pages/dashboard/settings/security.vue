@@ -62,8 +62,8 @@ async function onPasswordSubmit(event: FormSubmitEvent<PasswordSchema>) {
 			})
 
 			await useUserInfoStore().clear()
-			useAppCookies().sessionToken.get().value = null;
-			navigateTo('/auth/login')
+			useAppCookies().sessionToken.get()!.value = null;
+			await navigateTo('/auth/login')
 		} else {
 			toast.add({
 				title: 'Error',
@@ -109,8 +109,8 @@ async function onDeleteAccount() {
 			})
 
 			await useUserInfoStore().clear()
-			useAppCookies().sessionToken.get().value = null;
-			navigateTo('/')
+			useAppCookies().sessionToken.get()!.value = null;
+			await navigateTo('/')
 		} else {
 			toast.add({
 				title: 'Error',

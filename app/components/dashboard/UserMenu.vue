@@ -39,7 +39,7 @@ async function logout() {
 
         await userinfoStore.clear();
 
-        useAppCookies().sessionToken.get().value = null;
+        useAppCookies().sessionToken.get()!.value = null;
 
         if (!result.success) {
             toast.add({

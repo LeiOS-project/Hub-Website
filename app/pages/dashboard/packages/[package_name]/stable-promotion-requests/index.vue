@@ -94,31 +94,39 @@ async function submitNewRequest() {
 
     submittingRequest.value = true;
 
-    const res = await useAPI((api) => api.postPackagesByFullPackageNameStablePromotionRequests({
-        path: {
-            fullPackageName: pkgData.value.fullname
-        },
-        body: {
-            package_release_id: selectedRelease.value?.value as number
+    try {
+        const res = await useAPI((api) => api.postPackagesByFullPackageNameStablePromotionRequests({
+            path: {
+                fullPackageName: pkgData.value.fullname
+            },
+            body: {
+                package_release_id: selectedRelease.value?.value as number
+            }
+        }));
+
+        if (res.success) {
+            toast.add({
+                title: 'Success',
+                description: 'Stable promotion request submitted successfully',
+                color: 'success'
+            });
+            newRequestModal.value = false;
+            await stablePromotionRequests.refresh();
+        } else {
+            toast.add({
+                title: 'Error',
+                description: res.message,
+                color: 'error'
+            });
         }
-    }));
-
-    submittingRequest.value = false;
-
-    if (res.success) {
-        toast.add({
-            title: 'Success',
-            description: 'Stable promotion request submitted successfully',
-            color: 'success'
-        });
-        newRequestModal.value = false;
-        await stablePromotionRequests.refresh();
-    } else {
+    } catch {
         toast.add({
             title: 'Error',
-            description: res.message,
+            description: 'An unexpected error occurred.',
             color: 'error'
         });
+    } finally {
+        submittingRequest.value = false;
     }
 }
 

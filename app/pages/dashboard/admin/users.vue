@@ -26,8 +26,8 @@ if (!userInfoStore.isValid(currentUser)) {
     throw new Error('User not authenticated but trying to access Admin Users');
 }
 
-if (!currentUser || currentUser.value.role !== "admin") {
-    navigateTo("/dashboard");
+if (currentUser.value.role !== "admin") {
+    await navigateTo("/dashboard");
 }
 
 const userColumns: TableColumn<AdminUser>[] = [
