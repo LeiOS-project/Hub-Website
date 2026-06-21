@@ -4,7 +4,14 @@ import { useGravatarURL } from '~/composables/useGravatarURL';
 
 const props = defineProps<Omit<AvatarProps, 'src'> & { email?: string }>();
 
-const avatarSrc = props.email ? await useGravatarURL(props.email) : undefined;
+const avatarSrc = ref<string | undefined>(undefined);
+
+if (props.email) {
+    useGravatarURL(props.email).then((url) => {
+        avatarSrc.value = url;
+    });
+    // On failure, avatarSrc stays undefined — component renders without image
+}
 
 </script>
 
@@ -16,4 +23,3 @@ const avatarSrc = props.email ? await useGravatarURL(props.email) : undefined;
         <slot />
     </UAvatar>
 </template>
-

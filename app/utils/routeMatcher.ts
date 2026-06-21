@@ -11,22 +11,22 @@ export class SimpleRouteMatcher {
         protected readonly routes: string[]
     ) {}
 
-    async match(path: string): Promise<RouteMatch> {
+    match(path: string): RouteMatch {
         return SimpleRouteMatcher.match(path, this.routes);
     }
 
-    async addRoute(route: string): Promise<void> {
+    addRoute(route: string): void {
         this.routes.push(route);
     }
 
-    async removeRoute(route: string): Promise<void> {
+    removeRoute(route: string): void {
         const index = this.routes.indexOf(route);
         if (index !== -1) {
             this.routes.splice(index, 1);
         }
     }
 
-    static async match(path: string, routes: string[]): Promise<RouteMatch | null> {
+    static match(path: string, routes: string[]): RouteMatch | null {
         const normalizedPath = path.replace(/\/+$/, '') || '/';
 
         const staticRoutes: string[] = [];

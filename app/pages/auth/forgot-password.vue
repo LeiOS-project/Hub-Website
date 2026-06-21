@@ -32,45 +32,13 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-async function onSubmit(payload: FormSubmitEvent<Schema>) {
-    // @TODO: Implement forgot password when backend is implemented
+async function onSubmit(_payload: FormSubmitEvent<Schema>) {
     toast.add({
-        title: "Feature Not Implemented",
-        description: "The forgot password feature is not yet implemented.",
+        title: "Coming Soon",
+        description: "The password reset request feature is not yet implemented.",
+        icon: "i-lucide-info",
+        color: "warning",
     });
-
-    // const result = await useAPI().postAuthLogin({ body: payload.data });
-
-    // if (result.success) {
-
-    //     updateAPIClient(result.data.token);
-
-    //     const sessionToken = useCookie("leioshub_session_token", {
-    //         path:     '/',
-    //         secure:   true,
-    //         sameSite: 'strict',
-    //         httpOnly: false,
-    //         maxAge:   604800,
-    //     });
-
-    //     sessionToken.value = result.data.token;
-
-    //     await useUserInfoStore().refreshIfNeeded();
-
-    //     toast.add({
-    //         title: 'Login Successful',
-    //         description: 'You have been logged in successfully.'
-    //     });
-
-    //     await navigateTo(redirectUrl.toString());
-    //     return;
-
-    // } else {
-    //     toast.add({
-    //         title: 'Login Failed',
-    //         description: 'An error occurred during login.'
-    //     });
-    // }
 }
 </script>
 

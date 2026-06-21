@@ -18,7 +18,7 @@ const publisherTableColumns: TableColumn<Publisher>[] = [
     { accessorKey: 'display_name', header: 'Display Name' },
     { accessorKey: 'description', header: 'Description' },
     { accessorKey: 'created_at', header: 'Created At' },
-    { accessorKey: 'actions', header: '', enableSorting: false, enableHiding: false }
+    { id: 'actions', header: '', enableSorting: false, enableHiding: false }
 ];
 
 const publishers = await useAPILazyAsyncData<Publisher[]>(

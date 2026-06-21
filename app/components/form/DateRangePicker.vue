@@ -8,7 +8,6 @@ interface Range {
 
 interface Props {
     icon?: string
-    class?: string
 }
 
 withDefaults(defineProps<Props>(), {
@@ -62,7 +61,7 @@ const resetRange = () => {
 </script>
 
 <template>
-    <UPopover :content="{ align: 'start' }" :modal="true" :class="$props.class">
+    <UPopover :content="{ align: 'start' }" :modal="true" :class="$attrs.class">
         <UInput color="neutral" variant="outline" :icon="$props.icon" :model-value="inputValue" class="data-[state=open]:bg-elevated group">
             <template #trailing>
                 <UIcon name="i-lucide-chevron-down" class="shrink-0 text-dimmed size-5 group-data-[state=open]:rotate-180 transition-transform duration-200" />

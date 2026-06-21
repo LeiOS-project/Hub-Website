@@ -106,7 +106,7 @@ async function onSubmit(payload: FormSubmitEvent<NewPasswordSchema>) {
         <UAuthForm
             :schema="schema"
             title="Reset Password"
-            description="Reset your password by entering your email address below."
+            description="Enter your new password below to reset it."
             icon="i-lucide-mail"
             :fields="fields"
             @submit="onSubmit"

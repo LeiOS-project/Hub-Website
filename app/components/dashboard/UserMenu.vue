@@ -37,36 +37,39 @@ async function logout() {
             return api.postAuthLogout({});
         });
 
+        // Clear local state regardless of API result
         await userinfoStore.clear();
-
         useAppCookies().sessionToken.get()!.value = null;
 
         if (!result.success) {
             toast.add({
-                title: "Error",
-                description:
-                    result.message || "An error occurred during logout.",
-                icon: "i-lucide-alert-circle",
-                color: "error",
+                title: "Logged out",
+                description: "Session cleared.",
+                icon: "i-lucide-check",
+                color: "success",
             });
-            return;
+        } else {
+            toast.add({
+                title: "Logged out",
+                description: "You have been successfully logged out.",
+                icon: "i-lucide-check",
+                color: "success",
+            });
         }
-
-        toast.add({
-            title: "Logged out",
-            description: "You have been successfully logged out.",
-            icon: "i-lucide-check",
-            color: "success",
-        });
 
         await navigateTo("/auth/login");
     } catch (error) {
+        // Even on error, clear client-side state and redirect
+        await userinfoStore.clear();
+        useAppCookies().sessionToken.get()!.value = null;
+
         toast.add({
-            title: "Error",
+            title: "Logged out",
             description: "An unexpected error occurred during logout.",
             icon: "i-lucide-alert-circle",
             color: "error",
         });
+        await navigateTo("/auth/login");
     }
 }
 
