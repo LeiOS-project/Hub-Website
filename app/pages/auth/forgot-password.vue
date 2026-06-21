@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as z from "zod";
 import type { FormSubmitEvent, AuthFormField } from "@nuxt/ui";
-import { ref } from "vue";
 
 definePageMeta({
     layout: 'auth'
@@ -31,11 +30,18 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const submitted = ref(false);
+const loading = ref(false);
 
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
+    if (loading.value) return;
+
+    loading.value = true;
+
     const result = await useAPI((api) => {
         return api.postAuthResetPasswordRequest({ body: payload.data });
     });
+
+    loading.value = false;
 
     if (result.success) {
         submitted.value = true;
@@ -60,7 +66,9 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
             :fields="fields"
             @submit="onSubmit"
             :submit="{
-                label: 'Send Reset Link',
+                label: loading ? 'Sending...' : 'Send Reset Link',
+                loading: loading,
+                disabled: loading,
             }"
         >
             <template #footer>
