@@ -49,12 +49,6 @@ const redirectQuery = computed(() => encodeURIComponent(route.fullPath))
                     <span>/</span>
                     <span>Hub</span>
                 </NuxtLink>
-                <!-- <NuxtLink to="/" class="flex items-center gap-1.5">
-                    <LeiOSLogo v-if="!collapsed" class="ms-2.5 h-6 w-auto flex-none" />
-                    <span v-if="!collapsed" class="text-lg font-semibold">/</span>
-                    <span v-if="!collapsed" class="text-lg font-semibold">Hub</span>
-                    <LeiOSIcon v-else class="h-8 w-8" />
-                </NuxtLink> -->
             </div>
         </template>
 

@@ -232,7 +232,7 @@ async function onDeleteApiKey() {
         title="Delete API Key"
         warning-text="Are you sure you want to delete this API key? This action cannot be undone."
         v-model:open="deleteConfirmOpen"
-        @delete="onDeleteApiKey"
+        :on-delete="onDeleteApiKey"
         :prevent-auto-close=true
     />
 </template>

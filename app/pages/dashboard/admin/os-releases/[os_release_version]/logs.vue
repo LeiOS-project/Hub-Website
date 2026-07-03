@@ -22,7 +22,7 @@ const {
     data: os_release_publishing_logs,
     refresh: os_release_publishing_logs_refresh,
     loading: os_release_publishing_logs_loading,
-} = await useAPIAsyncData(`admin-os-release:${os_release.data.value.version}:logs`, async () => {
+} = await useAPIAsyncData<OSReleasePublishingLogs>(`admin-os-release:${os_release.data.value.version}:logs`, async () => {
     const res = await useAPI((api) => api.getAdminOsReleasesByVersionPublishingLogs({
         path: {
             version: os_release.data.value.version

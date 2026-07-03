@@ -2,6 +2,7 @@
 import type { TableColumn } from '@nuxt/ui'
 import type { Row, ColumnFiltersState, FilterFn, HeaderContext, CellContext } from '@tanstack/vue-table'
 import { getPaginationRowModel } from '@tanstack/table-core'
+import { isRef } from 'vue'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import DateRangePicker from '../form/DateRangePicker.vue';
 
@@ -124,15 +125,18 @@ const allFilters = computed<FilterConfig[]>(() => props.filters ?? [])
 // Column filters state
 const columnFilters = ref<ColumnFiltersState>([])
 
-// Initialize filters for all specified columns
+// Initialize filters for all specified columns, cleanup stale ones
 watchEffect(() => {
-    const filterColumns = allFilters.value.map(f => f.column)
+    const filterColumns = allFilters.value.map(f => f.column as string)
+    // Remove filters for columns no longer in allFilters
+    columnFilters.value = columnFilters.value.filter(f => filterColumns.includes(f.id))
+    // Add filters for new columns
     for (const col of filterColumns) {
         const existingFilter = columnFilters.value.find(f => f.id === col)
         if (!existingFilter) {
             const filter = allFilters.value.find(f => f.column === col)
             const initialValue = filter?.type === 'multi-select' ? [] : ''
-            columnFilters.value.push({ id: col as string, value: initialValue })
+            columnFilters.value.push({ id: col, value: initialValue })
         }
     }
 })
@@ -405,7 +409,7 @@ defineExpose({
             </slot>
         </template>
 
-        <template v-if="!(isRef(loading) ? loading.value : loading) && ((isRef(data) ? data.value : data))?.length && (showPagination || showPageSizeSelector)" #footer>
+        <template v-if="!(isRef(loading) ? loading.value : loading) && (isRef(data) ? data.value : data)?.length && (showPagination || showPageSizeSelector)" #footer>
             <div class="flex items-center gap-3" :class="showPageSizeSelector && !isMobile ? 'justify-between' : 'justify-center'">
                 <div v-if="showPageSizeSelector && !isMobile" class="flex items-center gap-3 text-sm text-muted">
                     <slot name="footer-left">

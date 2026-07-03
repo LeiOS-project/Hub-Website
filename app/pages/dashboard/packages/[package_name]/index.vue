@@ -1,23 +1,53 @@
 <script setup lang="ts">
 import type {
-    GetDevPackagesByPackageNameResponses,
-    PostDevPackagesData,
+    GetPublishersResponses,
+    GetPackagesResponses,
+    GetPackagesByFullPackageNameResponses,
+    PostPackagesData,
 } from "@/api-client/types.gen";
 import type z from "zod";
 import {
-    zPostDevPackagesData,
-    zPutDevPackagesByPackageNameData,
+    zPostPackagesBody,
+    zPutPackagesByFullPackageNameBody,
 } from "~/api-client/zod.gen";
-import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
-type DevPackage = GetDevPackagesByPackageNameResponses[200]["data"];
-type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
+type DevPackage = GetPackagesByFullPackageNameResponses[200]["data"];
+type NewDevPackage = NonNullable<PostPackagesData["body"]>;
 
-const route = useRoute();
 const toast = useToast();
 
 const pkg = useSubrouterInjectedData<DevPackage, NewDevPackage>("package", true).inject();
 const pkg_data = pkg.data;
 const pkg_loading = pkg.loading;
+
+type Publisher = GetPublishersResponses[200]["data"][number];
+
+const { data: publishers } = await useAPIAsyncData<Publisher[]>(
+    "package-publishers",
+    async () => {
+        if (!pkg.isNew) {
+            return [];
+        }
+
+        const result = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
+        if (!result.success) {
+            toast.add({
+                title: "Failed to load publishers",
+                description: result.message,
+                color: "error",
+            });
+            return [];
+        }
+
+        return result.data;
+    }
+);
+
+const publisherOptions = computed(() =>
+    (publishers.value || []).map((publisher) => ({
+        label: publisher.display_name,
+        value: publisher.id,
+    }))
+);
 
 const headerTexts = computed(() => {
     if (pkg.isNew) {
@@ -32,25 +62,53 @@ const headerTexts = computed(() => {
     };
 });
 
-const package_form_schema = zPostDevPackagesData.shape.body;
+const package_form_schema = pkg.isNew ? zPostPackagesBody : zPutPackagesByFullPackageNameBody;
 type PackageFormSchema = NonNullable<z.infer<typeof package_form_schema>>;
-const package_form_state = ref<NewDevPackage>({
-    name: pkg_data.value.name,
-    description: pkg_data.value.description,
-    homepage_url: pkg_data.value.homepage_url,
-    requires_patching: pkg_data.value.requires_patching,
+const package_form_state = ref<NewDevPackage>(
+    pkg.isNew
+        ? { name: '', display_name: '', description: '', homepage_url: '', requires_patching: false } as unknown as NewDevPackage
+        : {
+            publisher_id: (pkg_data.value as DevPackage).publisher_id,
+            name: (pkg_data.value as DevPackage).name,
+            display_name: (pkg_data.value as DevPackage).display_name,
+            description: (pkg_data.value as DevPackage).description,
+            homepage_url: (pkg_data.value as DevPackage).homepage_url,
+            requires_patching: (pkg_data.value as DevPackage).requires_patching,
+        }
+);
+
+watchEffect(() => {
+    if (pkg.isNew && !package_form_state.value.publisher_id && publisherOptions.value.length === 1) {
+        package_form_state.value.publisher_id = publisherOptions.value[0]!.value;
+    }
 });
 
 async function onFormSubmit() {
     try {
         if (pkg.isNew) {
             const result = await useAPI((api) =>
-                api.postDevPackages({
+                api.postPackages({
                     body: package_form_state.value,
                 })
             );
 
             if (result.success) {
+                const packagesResult = await useAPI((api) => api.getPackages({
+                    query: {
+                        onlyMembershipByMe: true,
+                        publisherID: package_form_state.value.publisher_id,
+                        searchString: package_form_state.value.name,
+                    },
+                }));
+
+                const packagesData = packagesResult.success
+                    ? (packagesResult.data as GetPackagesResponses["200"]["data"])
+                    : null;
+                const createdPackage = packagesData?.find((candidate) =>
+                    candidate.publisher_id === package_form_state.value.publisher_id &&
+                    candidate.name === package_form_state.value.name
+                ) ?? null;
+
                 toast.add({
                     title: "Package created",
                     description: `The Package has been successfully created.`,
@@ -60,18 +118,19 @@ async function onFormSubmit() {
 
                 // Redirect to the new package page
                 await navigateTo(
-                    `/dashboard/packages/${package_form_state.value.name}`
+                    `/dashboard/packages/${createdPackage?.fullname || package_form_state.value.name}`
                 );
             } else {
                 throw new Error(result.message || "Failed to create package");
             }
         } else {
             const result = await useAPI((api) =>
-                api.putDevPackagesByPackageName({
+                api.putPackagesByFullPackageName({
                     path: {
-                        packageName: pkg_data.value.name,
+                        fullPackageName: (pkg_data.value as DevPackage).fullname,
                     },
                     body: {
+                        display_name: package_form_state.value.display_name,
                         description: package_form_state.value.description,
                         homepage_url: package_form_state.value.homepage_url,
                         requires_patching:
@@ -81,7 +140,10 @@ async function onFormSubmit() {
             );
 
             if (result.success) {
-                pkg_data.value = package_form_state.value;
+                pkg_data.value = {
+                    ...pkg_data.value,
+                    ...package_form_state.value,
+                };
 
                 toast.add({
                     title: "Package updated",
@@ -103,18 +165,8 @@ async function onFormSubmit() {
     }
 }
 
-const deleteConfirmOpen = ref(false);
-
 async function onDeletePackage() {
-
-    toast.add({
-        title: "Package deletion is not yet implemented.",
-        description: "This feature is coming soon.",
-        icon: "i-lucide-info",
-        color: "info",
-    });
-
-	deleteConfirmOpen.value = false;
+    console.warn("Package deletion is not yet implemented.");
 }
 </script>
 
@@ -146,10 +198,10 @@ async function onDeletePackage() {
                     </div>
                     <div>
                         <h3 class="font-medium text-white">
-                            Release Information
+                            Package Information
                         </h3>
                         <p class="text-sm text-slate-400">
-                            View and manage the details of this OS Release.
+                            View and manage the details of this package.
                         </p>
                     </div>
                 </div>
@@ -163,23 +215,25 @@ async function onDeletePackage() {
                     :state="package_form_state"
                     @submit="onFormSubmit()"
                 >
-                    <!-- <UFormField
-                        name="name"
-                        label="Package Name"
-                        description="The name of this package."
-                        required
+                    <UFormField
+                        v-if="pkg.isNew"
+                        name="publisher_id"
+                        label="Publisher"
+                        description="Choose the publisher that will own this package."
                         class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
+                        :ui="{
+                            root: 'w-full sm:w-auto',
+                            container: 'w-full sm:w-auto',
+                        }"
                     >
-                        <UInput
-                            :model-value="package_form_state.name"
-                            :disabled="!pkg.isNew"
-                            variant="none"
-                            placeholder="Enter package name"
-                            :ui="{
-                                base: 'w-full text-end sm:text-center sm:w-96 font-bold text-xl px-0 text-info',
-                            }"
+                        <USelect
+                            v-model="package_form_state.publisher_id"
+                            :items="publisherOptions"
+                            placeholder="Select a publisher"
+                            value-key="value"
+                            class="w-full sm:w-96"
                         />
-                    </UFormField> -->
+                    </UFormField>
 
                     <UFormField
                         name="name"
@@ -195,6 +249,23 @@ async function onDeletePackage() {
                             v-model="package_form_state.name"
                             :disabled="!pkg.isNew"
                             placeholder="Enter package name"
+                            class="w-full sm:w-96"
+                        />
+                    </UFormField>
+
+                    <UFormField
+                        name="display_name"
+                        label="Display Name"
+                        description="The human-readable package name shown in the UI."
+                        class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
+                        :ui="{
+                            root: 'w-full sm:w-auto',
+                            container: 'w-full sm:w-auto',
+                        }"
+                    >
+                        <UInput
+                            v-model="package_form_state.display_name"
+                            placeholder="Enter package display name"
                             class="w-full sm:w-96"
                         />
                     </UFormField>
@@ -305,81 +376,18 @@ async function onDeletePackage() {
                             associated data. This action cannot be undone.
                         </p>
                     </div>
-                    <UButton
-                        label="Delete Package"
-                        color="error"
-                        variant="soft"
-                        icon="i-lucide-trash-2"
-                        @click="deleteConfirmOpen = true"
-                    />
+                    <UTooltip text="Coming soon — deletion is not yet implemented">
+                        <UButton
+                            label="Delete Package"
+                            color="error"
+                            variant="soft"
+                            icon="i-lucide-trash-2"
+                            disabled
+                        />
+                    </UTooltip>
                 </div>
             </div>
         </div>
 
-        <!-- Delete Confirmation Modal -->
-        <DashboardDeleteModal
-            v-if="!pkg.isNew"
-            title="Delete Package"
-            warning-text="All data associated with this package and related information will be permanently deleted. This action cannot be reversed."
-            v-model:open="deleteConfirmOpen"
-            :onDelete="onDeletePackage"
-            :prevent-auto-close=true
-        >
-        </DashboardDeleteModal>
-        <!-- <DashboardModal
-            v-if="!pkg.isNew"
-            v-model:open="deleteConfirmOpen"
-            title="Delete Package"
-            description="This action is permanent"
-            icon="i-lucide-alert-triangle"
-            icon-color="error"
-        >
-            <div class="space-y-4">
-                <div
-                    class="p-4 rounded-lg bg-red-950/50 border border-red-900/50"
-                >
-                    <p class="text-sm text-red-300">
-                        <strong>Warning:</strong> All data associated with this
-                        package and related information
-                        will be permanently deleted. This action cannot be
-                        reversed.
-                    </p>
-                </div>
-
-                <div>
-                    <label
-                        class="block text-sm font-medium text-slate-300 mb-2"
-                    >
-                        Type <span class="text-red-400">DELETE</span> to confirm
-                    </label>
-                    <UInput
-                        v-model="deleteConfirmText"
-                        type="text"
-                        placeholder="Type DELETE"
-                        class="w-full"
-                    />
-                </div>
-
-                <div class="flex justify-end gap-3 pt-2">
-                    <UButton
-                        label="Cancel"
-                        color="neutral"
-                        variant="ghost"
-                        @click="
-                            deleteConfirmOpen = false;
-                            deleteConfirmText = '';
-                        "
-                    />
-                    <UButton
-                        label="Delete Package"
-                        color="error"
-                        :loading="deleteLoading"
-                        :disabled="deleteConfirmText !== 'DELETE'"
-                        icon="i-lucide-trash-2"
-                        @click="onDeletePackage"
-                    />
-                </div>
-            </div>
-        </DashboardModal> -->
     </div>
 </template>

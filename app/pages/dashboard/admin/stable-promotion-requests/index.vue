@@ -126,41 +126,33 @@ function getStatusColor(status: AdminStableRequest['status']) {
                     :loading="stablePromotionRequests.loading"
                     :filters="[
                         {
+                            column: 'package_name',
+                            type: 'text',
+                            placeholder: 'Search package...',
+                            icon: 'i-lucide-search'
+                        },
+                        {
                             column: 'status',
                             type: 'select',
                             placeholder: 'Filter by status...',
+                            icon: 'i-lucide-filter',
                             options: [
                                 { label: 'Pending', value: 'pending', color: 'warning' },
                                 { label: 'Approved', value: 'approved', color: 'success' },
                                 { label: 'Denied', value: 'denied', color: 'error' }
                             ]
                         },
-                        {
-                            column: 'package_name',
-                            type: 'text',
-                            placeholder: 'Search package...'
-                        },
-                        {
-                            column: 'created_at',
-                            type: 'date',
-                            placeholder: 'Filter by date'
-                        }
+                        // {
+                        //     column: 'created_at',
+                        //     type: 'date',
+                        //     placeholder: 'Filter by date'
+                        // }
                     ]"
                     empty-title="No stable promotion requests"
                     empty-description="No requests have been submitted yet."
                     empty-icon="i-lucide-inbox"
                     @refresh="stablePromotionRequests.refresh()"
                 >
-
-                    <template #header-right>
-                        <UButton
-                            label="Refresh"
-                            icon="i-lucide-refresh-cw"
-                            color="neutral"
-                            variant="ghost"
-                            @click="stablePromotionRequests.refresh()"
-                        />
-                    </template>
 
                     <template #id-cell="{ row }">
                         <NuxtLink

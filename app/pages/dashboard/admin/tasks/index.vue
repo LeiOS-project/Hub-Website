@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { TableColumn } from '#ui/types'
-import type { GetDevTasksResponses } from '@/api-client/types.gen'
+import type { GetAdminTasksResponses } from '@/api-client/types.gen'
 
-type DevTask = GetDevTasksResponses[200]['data'][number]
+type DevTask = GetAdminTasksResponses[200]['data'][number]
 
 definePageMeta({
     layout: 'dashboard'
@@ -10,44 +10,43 @@ definePageMeta({
 
 useSeoMeta({
     title: 'Tasks | LeiOS Hub',
-    description: 'View your scheduled tasks'
+    description: 'View scheduled tasks'
 })
 
 const toast = useToast()
 
 const taskColumns: TableColumn<DevTask>[] = [
     { accessorKey: 'id', header: 'ID' },
-    { id: 'status', header: 'Status' },
+    { accessorKey: 'status', header: 'Status' },
     { id: 'created', header: 'Created' },
     { id: 'finished', header: 'Finished' },
-    { accessorKey: 'message', header: 'Message' },
-    { id: 'actions', header: '', enableSorting: false, enableHiding: false }
+    { accessorKey: 'message', header: 'Message' }
 ]
 
-const { data: tasks, pending: loading, refresh } = await useAsyncData<DevTask[]>(
-    'dev-tasks-list',
+const { data: tasks, loading, refresh } = await useAPIAsyncData<DevTask[]>(
+    'admin-tasks-list',
     async () => {
-        const res = await useAPI((api) => api.getDevTasks({}))
+        const res = await useAPI((api) => api.getAdminTasks({}))
         if (!res.success) {
             toast.add({ title: 'Failed to load tasks', description: res.message, color: 'error' })
             return []
         }
-        return res.data
+        return res.data;
     }
 )
 
 function formatDate(timestamp: number | null) {
-    if (!timestamp) return '—'
-    return new Date(timestamp * 1000).toLocaleString()
+    if (!timestamp) return '—';
+    return new Date(timestamp).toLocaleString();
 }
 
 function getStatusColor(status: DevTask['status']) {
     switch (status) {
-        case 'completed': return 'success'
-        case 'running': return 'info'
-        case 'failed': return 'error'
-        case 'paused': return 'warning'
-        default: return 'neutral'
+        case 'completed': return 'success' as const
+        case 'running': return 'info' as const
+        case 'failed': return 'error' as const
+        case 'paused': return 'warning' as const
+        default: return 'neutral' as const
     }
 }
 
@@ -60,38 +59,58 @@ function getStatusIcon(status: DevTask['status']) {
         default: return 'i-lucide-clock'
     }
 }
+
+const taskStatusOptions = [
+    { label: 'Pending', value: 'pending' },
+    { label: 'Running', value: 'running' },
+    { label: 'Paused', value: 'paused' },
+    { label: 'Completed', value: 'completed' },
+    { label: 'Failed', value: 'failed' },
+]
+
 </script>
 
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar title="Tasks" icon="i-lucide-list-checks">
-                <template #right>
-                    <UButton
-                        label="Refresh"
-                        icon="i-lucide-refresh-cw"
-                        color="neutral"
-                        variant="ghost"
-                        @click="refresh()"
-                    />
-                </template>
-            </UDashboardNavbar>
+            <DashboardPageHeader
+                title="Tasks"
+                icon="i-lucide-list-checks"
+                description="View scheduled tasks"
+            />
         </template>
 
         <template #body>
-            <div class="space-y-6">
-                <div v-if="loading" class="flex items-center justify-center py-12">
-                    <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
-                </div>
+            <DashboardPageBody>
 
-                <UTable
-                    v-else-if="tasks?.length"
+                <DashboardDataTable
                     :data="tasks"
                     :columns="taskColumns"
+                    :loading="loading"
+                    :filters="[
+                        /*{
+                            column: 'message',
+                            type: 'text',
+                            placeholder: 'Search messages...',
+                            icon: 'i-lucide-search',
+                        },*/
+                        {
+                            column: 'status',
+                            type: 'multi-select',
+                            placeholder: 'All Statuses',
+                            icon: 'i-lucide-filter',
+                            options: taskStatusOptions,
+                        },
+                    ]"
+                    empty-title="No tasks"
+                    empty-description="Tasks will appear here when you upload releases or perform other operations."
+                    empty-icon="i-lucide-clipboard-list"
+                    @refresh="refresh()"
                 >
                     <template #id-cell="{ row }">
                         <span class="font-mono text-sm">#{{ row.original.id }}</span>
                     </template>
+
                     <template #status-cell="{ row }">
                         <UBadge :color="getStatusColor(row.original.status)" variant="soft">
                             <UIcon
@@ -102,40 +121,27 @@ function getStatusIcon(status: DevTask['status']) {
                             {{ row.original.status }}
                         </UBadge>
                     </template>
+
                     <template #created-cell="{ row }">
                         <span class="text-sm text-slate-400">
                             {{ formatDate(row.original.created_at) }}
                         </span>
                     </template>
+
                     <template #finished-cell="{ row }">
                         <span class="text-sm text-slate-400">
                             {{ formatDate(row.original.finished_at) }}
                         </span>
                     </template>
+
                     <template #message-cell="{ row }">
                         <span class="text-slate-400 line-clamp-1 max-w-xs">
                             {{ row.original.message || '—' }}
                         </span>
                     </template>
-                    <template #actions-cell="{ row }">
-                        <UButton
-                            v-if="row.original.storeLogs"
-                            icon="i-lucide-file-text"
-                            variant="ghost"
-                            color="neutral"
-                            size="xs"
-                            :to="`/dashboard/tasks/${row.original.id}`"
-                        />
-                    </template>
-                </UTable>
 
-                <UEmpty
-                    v-else
-                    icon="i-lucide-clipboard-list"
-                    title="No tasks"
-                    description="Tasks will appear here when you upload releases or perform other operations."
-                />
-            </div>
+                </DashboardDataTable>
+            </DashboardPageBody>
         </template>
     </UDashboardPanel>
 </template>

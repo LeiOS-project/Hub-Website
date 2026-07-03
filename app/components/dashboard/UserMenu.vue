@@ -32,42 +32,41 @@ const user = computed(() => {
 });
 
 async function logout() {
+    let logoutError: unknown = null;
+
     try {
         const result = await useAPI((api) => {
             return api.postAuthLogout({});
         });
 
-        await userinfoStore.clear();
-
-        useAppCookies().sessionToken.get().value = null;
-
         if (!result.success) {
-            toast.add({
-                title: "Error",
-                description:
-                    result.message || "An error occurred during logout.",
-                icon: "i-lucide-alert-circle",
-                color: "error",
-            });
-            return;
+            logoutError = new Error(result.message || "Server logout failed");
         }
+    } catch (error) {
+        logoutError = error;
+    } finally {
+        // Clear local state regardless of API result
+        await userinfoStore.clear();
+        useAppCookies().sessionToken.get()!.value = null;
+    }
 
+    if (logoutError) {
+        toast.add({
+            title: "Logged out",
+            description: "An unexpected error occurred during logout.",
+            icon: "i-lucide-alert-circle",
+            color: "error",
+        });
+    } else {
         toast.add({
             title: "Logged out",
             description: "You have been successfully logged out.",
             icon: "i-lucide-check",
             color: "success",
         });
-
-        await navigateTo("/auth/login");
-    } catch (error) {
-        toast.add({
-            title: "Error",
-            description: "An unexpected error occurred during logout.",
-            icon: "i-lucide-alert-circle",
-            color: "error",
-        });
     }
+
+    await navigateTo("/auth/login");
 }
 
 const items = computed<DropdownMenuItem[][]>(() => [

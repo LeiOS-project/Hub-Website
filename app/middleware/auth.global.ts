@@ -9,9 +9,15 @@ export default defineNuxtRouteMiddleware(async(to) => {
             return;
         }
 
-        await useUserInfoStore().refreshIfNeeded();
+        const user = await useUserInfoStore().use();
 
-        return navigateTo('/dashboard');
+        if (user.value) {
+            return navigateTo('/dashboard');
+        }
+
+        // Token exists but is invalid — clear it and stay on auth page
+        useCookie("leioshub_session_token").value = null;
+        return;
     }
 
     if (to.path.startsWith('/dashboard')) {
@@ -20,11 +26,18 @@ export default defineNuxtRouteMiddleware(async(to) => {
             return navigateTo('/auth/login?url=' + encodeURIComponent(to.fullPath));
         }
 
-        const user = await useUserInfoStore().use();
+        const store = useUserInfoStore();
+        const user = await store.use();
+
+        if (!store.isValid(user)) {
+            // Token exists but is invalid/expired — clear and redirect to login
+            useCookie("leioshub_session_token").value = null;
+            return navigateTo('/auth/login?url=' + encodeURIComponent(to.fullPath));
+        }
 
         if (to.path.startsWith('/dashboard/admin')) {
             // Check admin access
-            if (!user.value || user.value.role !== 'admin') {
+            if (user.value.role !== 'admin') {
                 return navigateTo('/dashboard');
             }
         }

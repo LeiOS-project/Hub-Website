@@ -40,9 +40,9 @@ async function onDeleteRequest() {
 
     try {
         const result = await useAPI((api) =>
-            api.deleteDevPackagesByPackageNameStablePromotionRequestsByStablePromotionRequestId({
+            api.deletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestId({
                 path: {
-                    packageName: pkg_data.value.name,
+                    fullPackageName: pkg_data.value.fullname,
                     stablePromotionRequestID: request_data.value.id,
                 },
             })
@@ -58,7 +58,7 @@ async function onDeleteRequest() {
 
             // Redirect to the requests list
             await navigateTo(
-                `/dashboard/packages/${pkg_data.value.name}/stable-promotion-requests`
+                `/dashboard/packages/${pkg_data.value.fullname}/stable-promotion-requests`
             );
         } else {
             throw new Error(
@@ -239,7 +239,7 @@ async function onDeleteRequest() {
         v-model:open="deleteConfirmOpen"
         title="Delete Stable Promotion Request"
         :warning-text="`Are you sure you want to delete this stable promotion request? This action cannot be undone.`"
-        @delete="onDeleteRequest"
+        :on-delete="onDeleteRequest"
         :prevent-auto-close="true"
     />
 </template>

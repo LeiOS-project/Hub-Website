@@ -31,12 +31,17 @@ const loading = ref(false);
 async function onDeleteWrapper() {
     loading.value = true;
 
-    await props.onDelete();
+    try {
+        await props.onDelete();
 
-    loading.value = false;
-
-    if (!props.preventAutoClose) {
-        emit('update:open', false);
+        if (!props.preventAutoClose) {
+            emit('update:open', false);
+        }
+    } catch (error) {
+        // Delete operation failed — error toast is handled by the caller
+        console.error('Delete operation failed:', error);
+    } finally {
+        loading.value = false;
     }
 }
 

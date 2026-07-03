@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { TableColumn } from '#ui/types';
 import type {
-    GetDevPackagesResponses,
-    GetDevTasksResponses
+    GetAdminTasksResponses,
+    GetPackagesResponses
 } from '@/api-client/types.gen';
 import { useUserInfoStore } from '~/composables/stores/useUserStore';
 
-type DevPackage = GetDevPackagesResponses[200]['data'][number];
-type DevTask = GetDevTasksResponses[200]['data'][number];
+type DevPackage = GetPackagesResponses[200]['data'][number];
+type DevTask = GetAdminTasksResponses[200]['data'][number];
 
 definePageMeta({
     layout: 'dashboard',
@@ -32,7 +32,7 @@ const isAdmin = computed(() => user.value.role === 'admin')
 const { data: devPackages, loading: loadingPackages } = await useAPIAsyncData<DevPackage[]>(
     'dev-packages',
     async () => {
-        const res = await useAPI((api) => api.getDevPackages({}))
+        const res = await useAPI((api) => api.getPackages({ query: { onlyMembershipByMe: true } }))
         if (!res.success) {
             toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
             return []
@@ -45,7 +45,11 @@ const { data: devPackages, loading: loadingPackages } = await useAPIAsyncData<De
 const { data: devTasks, loading: loadingTasks } = await useAPIAsyncData<DevTask[]>(
     'dev-tasks',
     async () => {
-        const res = await useAPI((api) => api.getDevTasks({}))
+        if (!isAdmin.value) {
+            return []
+        }
+
+        const res = await useAPI((api) => api.getAdminTasks({}))
         if (!res.success) {
             return []
         }
@@ -69,18 +73,20 @@ const stats = computed(() => [
         icon: 'i-lucide-package',
         color: 'text-sky-400'
     },
-    {
-        label: 'Pending Tasks',
-        value: recentTasks.value.filter((t) => t.status === 'pending').length,
-        icon: 'i-lucide-clock',
-        color: 'text-amber-400'
-    },
-    {
-        label: 'Running Tasks',
-        value: recentTasks.value.filter((t) => t.status === 'running').length,
-        icon: 'i-lucide-loader',
-        color: 'text-emerald-400'
-    }
+    ...(isAdmin.value ? [
+        {
+            label: 'Pending Tasks',
+            value: recentTasks.value.filter((t) => t.status === 'pending').length,
+            icon: 'i-lucide-clock',
+            color: 'text-amber-400'
+        },
+        {
+            label: 'Running Tasks',
+            value: recentTasks.value.filter((t) => t.status === 'running').length,
+            icon: 'i-lucide-loader',
+            color: 'text-emerald-400'
+        }
+    ] : [])
 ]);
 </script>
 
@@ -118,7 +124,7 @@ const stats = computed(() => [
                 </div>
 
                 <!-- Stats Cards -->
-                <div class="grid gap-4 sm:grid-cols-3">
+                <div :class="isAdmin ? 'grid gap-4 sm:grid-cols-3' : 'grid gap-4 sm:grid-cols-1'">
                     <UCard
                         v-for="stat in stats"
                         :key="stat.label"
@@ -137,7 +143,7 @@ const stats = computed(() => [
                 </div>
 
                 <!-- Recent Packages -->
-                <UCard class="border-slate-800 bg-slate-900/60">
+                <UCard v-if="isAdmin" class="border-slate-800 bg-slate-900/60">
                     <template #header>
                         <div class="flex items-center justify-between">
                             <h2 class="text-lg font-semibold flex items-center gap-2">
@@ -166,7 +172,7 @@ const stats = computed(() => [
                     >
                         <template #name-cell="{ row }">
                             <NuxtLink
-                                :to="`/dashboard/packages/${row.original.name}`"
+                                :to="`/dashboard/packages/${row.original.fullname}`"
                                 class="font-medium text-sky-400 hover:underline"
                             >
                                 {{ row.original.name }}
@@ -183,7 +189,7 @@ const stats = computed(() => [
                                 variant="ghost"
                                 color="neutral"
                                 size="xs"
-                                :to="`/dashboard/packages/${row.original.name}`"
+                                :to="`/dashboard/packages/${row.original.fullname}`"
                             />
                         </template>
                     </UTable>
@@ -217,7 +223,7 @@ const stats = computed(() => [
                                 variant="ghost"
                                 color="neutral"
                                 size="sm"
-                                to="/dashboard/tasks"
+                                to="/dashboard/admin/tasks"
                                 trailing-icon="i-lucide-arrow-right"
                             />
                         </div>

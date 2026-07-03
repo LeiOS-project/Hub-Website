@@ -1,25 +1,26 @@
 <script lang="ts" setup>
 import type { TableColumn } from '@nuxt/ui';
 import type { 
-    GetDevPackagesByPackageNameResponses, 
-    GetDevPackagesByPackageNameStablePromotionRequestsResponses,
-    GetDevPackagesByPackageNameReleasesResponses 
+    GetPackagesByFullPackageNameResponses, 
+    GetPackagesByFullPackageNameStablePromotionRequestsResponses,
+    GetPackagesByFullPackageNameReleasesResponses 
 } from '~/api-client';
 
 const toast = useToast();
 
-type DevPackage = GetDevPackagesByPackageNameResponses[200]['data'];
-type StablePromotionRequest = GetDevPackagesByPackageNameStablePromotionRequestsResponses[200]['data'][number];
+type DevPackage = GetPackagesByFullPackageNameResponses[200]['data'];
+type StablePromotionRequest = GetPackagesByFullPackageNameStablePromotionRequestsResponses[200]['data'][number];
+type Release = GetPackagesByFullPackageNameReleasesResponses[200]['data'][number];
 
 const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 
 // Fetch stable promotion requests
-const stablePromotionRequests = await useAPIAsyncData(
+const stablePromotionRequests = await useAPIAsyncData<StablePromotionRequest[]>(
     `/dev/packages/${pkgData.value.name}/stable-promotion-requests`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesByPackageNameStablePromotionRequests({
+        const res = await useAPI((api) => api.getPackagesByFullPackageNameStablePromotionRequests({
             path: {
-                packageName: pkgData.value.name
+                fullPackageName: pkgData.value.fullname
             }
         }));
 
@@ -40,9 +41,9 @@ const stablePromotionRequests = await useAPIAsyncData(
 const availableReleases = await useAPIAsyncData(
     `forStablePromotionRequests:/dev/packages/${pkgData.value.name}/releases`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesByPackageNameReleases({
+        const res = await useAPI((api) => api.getPackagesByFullPackageNameReleases({
             path: {
-                packageName: pkgData.value.name
+                fullPackageName: pkgData.value.fullname
             }
         }));
 
@@ -93,31 +94,39 @@ async function submitNewRequest() {
 
     submittingRequest.value = true;
 
-    const res = await useAPI((api) => api.postDevPackagesByPackageNameStablePromotionRequests({
-        path: {
-            packageName: pkgData.value.name
-        },
-        body: {
-            package_release_id: selectedRelease.value?.value as number
+    try {
+        const res = await useAPI((api) => api.postPackagesByFullPackageNameStablePromotionRequests({
+            path: {
+                fullPackageName: pkgData.value.fullname
+            },
+            body: {
+                package_release_id: selectedRelease.value?.value as number
+            }
+        }));
+
+        if (res.success) {
+            toast.add({
+                title: 'Success',
+                description: 'Stable promotion request submitted successfully',
+                color: 'success'
+            });
+            newRequestModal.value = false;
+            await stablePromotionRequests.refresh();
+        } else {
+            toast.add({
+                title: 'Error',
+                description: res.message,
+                color: 'error'
+            });
         }
-    }));
-
-    submittingRequest.value = false;
-
-    if (res.success) {
-        toast.add({
-            title: 'Success',
-            description: 'Stable promotion request submitted successfully',
-            color: 'success'
-        });
-        newRequestModal.value = false;
-        await stablePromotionRequests.refresh();
-    } else {
+    } catch {
         toast.add({
             title: 'Error',
-            description: res.message,
+            description: 'An unexpected error occurred.',
             color: 'error'
         });
+    } finally {
+        submittingRequest.value = false;
     }
 }
 
@@ -132,11 +141,11 @@ function getStatusColor(status: StablePromotionRequest['status']) {
 
 // Computed properties for filtering
 const pendingRequests = computed(() => 
-    stablePromotionRequests.data.value?.filter(r => r.status === 'pending') || []
+    stablePromotionRequests.data.value?.filter((r) => r.status === 'pending') || []
 );
 
 const processedRequests = computed(() => 
-    stablePromotionRequests.data.value?.filter(r => r.status !== 'pending') || []
+    stablePromotionRequests.data.value?.filter((r) => r.status !== 'pending') || []
 );
 
 // Release options for select
@@ -147,8 +156,8 @@ const releaseOptions = computed(() => {
     //     label: release.versionWithLeiosPatch,
     //     value: release.id
     // }));
-    return availableReleases.data.value.map(release => ({
-        label: release.versionWithLeiosPatch,
+    return availableReleases.data.value.map((release: Release) => ({
+        label: release.version_with_leios_patch,
         value: release.id
     }));
 });
@@ -196,7 +205,7 @@ const releaseOptions = computed(() => {
 
             <template #id-cell="{ row }">
                 <NuxtLink
-                    :to="`/dashboard/packages/${pkgData.name}/stable-promotion-requests/${row.original.id}`"
+                    :to="`/dashboard/packages/${pkgData.fullname}/stable-promotion-requests/${row.original.id}`"
                     class="font-mono text-sm text-primary-400 hover:underline"
                 >
                     #{{ row.original.id }}
@@ -205,7 +214,7 @@ const releaseOptions = computed(() => {
 
             <template #package_release_version-cell="{ row }">
                 <NuxtLink
-                    :to="`/dashboard/packages/${pkgData.name}/releases/${row.original.package_release_version}`"
+                    :to="`/dashboard/packages/${pkgData.fullname}/releases/${row.original.package_release_version}`"
                     class="font-medium text-primary-400 hover:underline"
                 >
                     {{ row.original.package_release_version || 'Unknown Release' }}
@@ -234,7 +243,7 @@ const releaseOptions = computed(() => {
             <template #actions-cell="{ row }">
                 <div class="flex gap-1 justify-end">
                     <UButton
-                        :to="`/dashboard/packages/${pkgData.name}/stable-promotion-requests/${row.original.id}`"
+                        :to="`/dashboard/packages/${pkgData.fullname}/stable-promotion-requests/${row.original.id}`"
                         icon="i-lucide-eye"
                         color="neutral"
                         variant="ghost"

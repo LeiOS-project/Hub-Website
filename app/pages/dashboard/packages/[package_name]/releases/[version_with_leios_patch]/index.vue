@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import type {
-    GetDevPackagesByPackageNameResponses,
-    PostDevPackagesData,
-} from "@/api-client/types.gen";
 import type z from "zod";
-import { zPostDevPackagesByPackageNameReleasesData } from "~/api-client/zod.gen";
+import { zPostPackagesByFullPackageNameReleasesBody } from "~/api-client/zod.gen";
 import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 
 const route = useRoute();
@@ -26,25 +22,28 @@ const headerTexts = computed(() => {
         };
     }
     return {
-        title: `Package Release: ${pkg_release_data.value.versionWithLeiosPatch}`,
+        title: `Package Release: ${pkg_release_data.value.version_with_leios_patch}`,
         description: "View and manage the details of the package.",
     };
 });
 
 const package_release_form_schema =
-    zPostDevPackagesByPackageNameReleasesData.shape.body;
+    zPostPackagesByFullPackageNameReleasesBody;
 const package_release_form_state = ref<NewDevPackageRelease>({
-    versionWithLeiosPatch: pkg_release_data.value.versionWithLeiosPatch,
+    version_with_leios_patch: pkg_release_data.value.version_with_leios_patch,
     changelog: pkg_release_data.value.changelog,
 });
 
+const submitting = ref(false);
+
 async function onFormSubmit() {
+    submitting.value = true;
     try {
         if (pkg_release.isNew) {
             const result = await useAPI((api) =>
-                api.postDevPackagesByPackageNameReleases({
+                api.postPackagesByFullPackageNameReleases({
                     path: {
-                        packageName: pkg_data.value.name,
+                        fullPackageName: pkg_data.value.fullname,
                     },
                     body: package_release_form_state.value,
                 })
@@ -60,7 +59,7 @@ async function onFormSubmit() {
 
                 // Redirect to the new package page
                 await navigateTo(
-                    `/dashboard/packages/${pkg_data.value.name}/releases/${package_release_form_state.value.versionWithLeiosPatch}`
+                    `/dashboard/packages/${pkg_data.value.fullname}/releases/${package_release_form_state.value.version_with_leios_patch}`
                 );
             } else {
                 throw new Error(
@@ -69,11 +68,11 @@ async function onFormSubmit() {
             }
         } else {
             const result = await useAPI((api) =>
-                api.putDevPackagesByPackageNameReleasesByVersionWithLeiosPatch({
+                api.putPackagesByFullPackageNameReleasesByVersionWithLeiosPatch({
                     path: {
-                        packageName: pkg_data.value.name,
-                        versionWithLeiosPatch:
-                            pkg_release_data.value.versionWithLeiosPatch,
+                        fullPackageName: pkg_data.value.fullname,
+                        version_with_leios_patch:
+                            pkg_release_data.value.version_with_leios_patch,
                     },
                     body: {
                         changelog: package_release_form_state.value.changelog,
@@ -104,6 +103,8 @@ async function onFormSubmit() {
             icon: "i-lucide-x-circle",
             color: "error",
         });
+    } finally {
+        submitting.value = false;
     }
 }
 
@@ -181,11 +182,11 @@ async function uploadDebFile(arch: Architecture | "all") {
 
     try {
         const result = await useAPI((api) =>
-            api.postDevPackagesByPackageNameReleasesByVersionWithLeiosPatchByArch({
+            api.postPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArch({
                 path: {
-                    packageName: pkg_data.value.name,
-                    versionWithLeiosPatch:
-                        pkg_release_data.value.versionWithLeiosPatch,
+                    fullPackageName: pkg_data.value.fullname,
+                    version_with_leios_patch:
+                        pkg_release_data.value.version_with_leios_patch,
                     arch: arch,
                 },
                 body: {
@@ -308,13 +309,13 @@ function formatFileSize(bytes: number): string {
                         />
                     </UFormField> -->
 
-                    <UFormField name="versionWithLeiosPatch" label="Version Tag"
+                    <UFormField name="version_with_leios_patch" label="Version Tag"
                         description="The version tag of this package release."
                         class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0" :ui="{
                             root: 'w-full sm:w-auto',
                             container: 'w-full sm:w-auto',
                         }">
-                        <UInput v-model="package_release_form_state.versionWithLeiosPatch
+                        <UInput v-model="package_release_form_state.version_with_leios_patch
                             " :disabled="!pkg_release.isNew" placeholder="Enter package release version tag"
                             class="w-full sm:w-96" />
                     </UFormField>
@@ -329,9 +330,9 @@ function formatFileSize(bytes: number): string {
 
                     <div class="pt-4">
                         <UButton v-if="!pkg_release.isNew" label="Save Changes" color="primary" type="submit"
-                            :loading="pkg_release_loading" icon="i-lucide-save" />
+                            :loading="submitting" icon="i-lucide-save" />
                         <UButton v-else label="Create Package Release" color="primary" type="submit"
-                            :loading="pkg_release_loading" icon="i-lucide-plus-circle" />
+                            :loading="submitting" icon="i-lucide-plus-circle" />
                     </div>
                 </UForm>
             </div>
@@ -370,14 +371,7 @@ function formatFileSize(bytes: number): string {
                         
                         <div class="space-y-2">
 
-                            <div v-for="arch in architecturesLists.filter(a => {
-                                console.log(item.label, a.key);
-                                if (item.label === 'Per Architecture') {
-                                    return a.key !== 'all';
-                                } else {
-                                    return a.key === 'all';
-                                }
-                            })" :key="arch.key"
+                            <div v-for="arch in architecturesLists.filter(a => item.label === 'Per Architecture' ? a.key !== 'all' : a.key === 'all')" :key="arch.key"
                                 class="rounded-lg border border-slate-700 bg-slate-800/40 overflow-hidden">
                                 <!-- Architecture Header -->
                                 <div class="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
@@ -412,8 +406,8 @@ function formatFileSize(bytes: number): string {
                                             </div>
                                             <div>
                                                 <p class="text-sm font-medium text-white">
-                                                    {{ pkg_data.name }}_{{
-                                                        pkg_release_data.versionWithLeiosPatch
+                                                        {{ pkg_data.name }}_{{
+                                                        pkg_release_data.version_with_leios_patch
                                                     }}_{{ arch.key }}.deb
                                                 </p>
                                                 <p class="text-xs text-slate-400">
@@ -434,16 +428,8 @@ function formatFileSize(bytes: number): string {
                                             :preview="true" layout="list" file-icon="i-lucide-file-archive"
                                             class="w-full min-h-32" @dragover.prevent="
                                                 uploadStates[arch.key].dragOver = true;
-                                            console.log(
-                                                'dragover',
-                                                uploadStates[arch.key].dragOver
-                                            );
                                             " @dragleave.prevent="
                                                 uploadStates[arch.key].dragOver = false;
-                                            console.log(
-                                                'dragover',
-                                                uploadStates[arch.key].dragOver
-                                            );
                                             " :ui="{
                                                 base: 'relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer data-[dragging=true]:border-sky-500 data-[dragging=true]:bg-sky-500/10 data-[dragging=false]:border-slate-700 data-[dragging=false]:hover:border-slate-600 data-[dragging=false]:bg-slate-800 data-[dragging=false]:hover:bg-slate-800/50',
                                                 wrapper: 'py-0',

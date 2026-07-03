@@ -23,9 +23,9 @@ const sidebarItems = computed(() => {
             to: "/dashboard/packages",
         },
         {
-            label: "Tasks",
-            icon: "i-lucide-list-checks",
-            to: "/dashboard/tasks",
+            label: "Publishers",
+            icon: "i-lucide-building",
+            to: "/dashboard/publishers",
         },
         {
             label: "API Keys",

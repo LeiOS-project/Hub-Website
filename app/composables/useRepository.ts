@@ -1,9 +1,8 @@
 /**
  * Repository API Service
- * Bietet Funktionen für die Interaktion mit dem Repository-API
- * 
- * Hinweis: Diese Composable ist vorbereitet für den generierten API-Client.
- * Um den API-Client zu generieren, führen Sie aus: bun run api-client:generate
+ *
+ * NOTE: This composable is a stub — it's prepared for the generated API client.
+ * To generate the API client, run: bun run api-client:generate
  */
 
 interface RepositoryItem {
@@ -25,76 +24,35 @@ interface FileContent {
 
 export const useRepositoryAPI = () => {
   /**
-   * Ruft eine Liste von Repository-Elementen ab
+   * Fetches a list of repository items
    */
-  const listItems = async (path: string = '/'): Promise<RepositoryItem[]> => {
-    try {
-      // API-Endpoint wird nach API-Client-Generierung verfügbar sein
-      const data = await useAPI(async () => {
-        return {
-          success: true,
-          data: [] as RepositoryItem[]
-        }
-      })
-      return data.data || []
-    } catch (error) {
-      console.error('Fehler beim Abrufen der Repository-Elemente:', error)
-      return []
-    }
+  const listItems = async (_path: string = '/'): Promise<RepositoryItem[]> => {
+    // TODO: Replace with real API call once backend endpoint is available
+    return []
   }
 
   /**
-   * Ruft den Inhalt einer Datei ab
+   * Fetches the content of a file
    */
-  const getFile = async (path: string): Promise<FileContent | null> => {
-    try {
-      const data = await useAPI(async () => {
-        return {
-          success: true,
-          data: null
-        }
-      })
-      return data.data || null
-    } catch (error) {
-      console.error('Fehler beim Abrufen der Datei:', error)
-      return null
-    }
+  const getFile = async (_path: string): Promise<FileContent | null> => {
+    // TODO: Replace with real API call once backend endpoint is available
+    return null
   }
 
   /**
-   * Ruft Repository-Statistiken ab
+   * Fetches repository statistics
    */
   const getStats = async () => {
-    try {
-      const data = await useAPI(async () => {
-        return {
-          success: true,
-          data: null
-        }
-      })
-      return data.data || null
-    } catch (error) {
-      console.error('Fehler beim Abrufen der Statistiken:', error)
-      return null
-    }
+    // TODO: Replace with real API call once backend endpoint is available
+    return null
   }
 
   /**
-   * Durchsucht das Repository
+   * Searches the repository
    */
-  const search = async (query: string) => {
-    try {
-      const data = await useAPI(async () => {
-        return {
-          success: true,
-          data: []
-        }
-      })
-      return data.data || []
-    } catch (error) {
-      console.error('Fehler bei der Suche:', error)
-      return []
-    }
+  const search = async (_query: string) => {
+    // TODO: Replace with real API call once backend endpoint is available
+    return []
   }
 
   return {

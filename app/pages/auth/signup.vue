@@ -99,45 +99,13 @@ const validate = (state: Partial<SingupSchema>): FormError[] => {
     return errors;
 };
 
-async function onSubmit(payload: FormSubmitEvent<SingupSchema>) {
-    // @TODO: Implement signup when backend is implemented
+async function onSubmit(_payload: FormSubmitEvent<SingupSchema>) {
     toast.add({
-        title: "Feature Not Implemented",
+        title: "Coming Soon",
         description: "The signup feature is not yet implemented.",
+        icon: "i-lucide-info",
+        color: "warning",
     });
-
-    // const result = await useAPI().postAuthLogin({ body: payload.data });
-
-    // if (result.success) {
-
-    //     updateAPIClient(result.data.token);
-
-    //     const sessionToken = useCookie("leioshub_session_token", {
-    //         path:     '/',
-    //         secure:   true,
-    //         sameSite: 'strict',
-    //         httpOnly: false,
-    //         maxAge:   604800,
-    //     });
-
-    //     sessionToken.value = result.data.token;
-
-    //     await useUserInfoStore().refreshIfNeeded();
-
-    //     toast.add({
-    //         title: 'Login Successful',
-    //         description: 'You have been logged in successfully.'
-    //     });
-
-    //     await navigateTo(redirectUrl.toString());
-    //     return;
-
-    // } else {
-    //     toast.add({
-    //         title: 'Login Failed',
-    //         description: 'An error occurred during login.'
-    //     });
-    // }
 }
 </script>
 
@@ -165,6 +133,14 @@ async function onSubmit(payload: FormSubmitEvent<SingupSchema>) {
                     Login here
                 </NuxtLink>
             </div>
+            <UAlert
+                color="warning"
+                variant="subtle"
+                title="Coming Soon"
+                description="Signup is not yet available. Contact an admin to create your account."
+                icon="i-lucide-construction"
+                class="mt-4"
+            />
         </template>
     </UAuthForm>
 </template>

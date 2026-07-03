@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import type { TableColumn } from '#ui/types'
+import type {
+    GetPackagesByFullPackageNameReleasesResponses,
+    GetPackagesByFullPackageNameResponses
+} from '~/api-client'
 
 const toast = useToast()
 const route = useRoute()
 const router = useRouter()
+
+type PublicPackage = GetPackagesByFullPackageNameResponses[200]['data']
+type PackageRelease = GetPackagesByFullPackageNameReleasesResponses[200]['data'][number]
 
 const repoOptions = [
     { label: 'All repositories', value: 'all' },
@@ -14,14 +21,15 @@ const repoOptions = [
 
 const repo = ref<'all' | 'leios-archive' | 'leios-testing' | 'leios-stable'>('all')
 
-const { data: pkgData, pending, refresh } = await useAsyncData(
-    () => `public-package-${route.params.packageName}-${repo.value}`,
+const packageName = computed(() => route.params.packageName as string)
+
+const { data: packageInfo, pending, refresh } = await useAsyncData<PublicPackage | null>(
+    `public-package-${packageName.value}`,
     async () => {
         const res = await useAPI(
             (api) =>
-                api.getPublicPackagesByPackageName({
-                    path: { packageName: route.params.packageName as string },
-                    ...(repo.value === 'all' ? {} : { query: { repo: repo.value } })
+                api.getPackagesByFullPackageName({
+                    path: { fullPackageName: packageName.value }
                 }),
             true
         )
@@ -29,59 +37,64 @@ const { data: pkgData, pending, refresh } = await useAsyncData(
         if (!res.success) {
             toast.add({ title: 'Failed to load package', description: res.message, color: 'error' })
             if (Number(res.code) === 404) {
-                router.push('/explore')
+                await router.push('/explore')
             }
             return null
         }
         return res.data
     },
-    { watch: [repo] }
+    { watch: [packageName] }
 )
 
-const packageInfo = computed(() => pkgData.value?.package)
-const packageTitle = computed(() => packageInfo.value?.name || (route.params.packageName as string))
+const { data: releaseData } = await useAsyncData<PackageRelease[]>(
+    `public-package-releases-${packageName.value}`,
+    async () => {
+        const res = await useAPI(
+            (api) => api.getPackagesByFullPackageNameReleases({ path: { fullPackageName: packageName.value } }),
+            true
+        )
+
+        if (!res.success) {
+            return []
+        }
+
+        return res.data
+    },
+    { watch: [packageName] }
+)
+
+const packageTitle = computed(() => packageInfo.value?.display_name || packageInfo.value?.name || packageName.value)
 
 const releases = computed(() => {
-    if (!pkgData.value?.releases) return []
-    const reposToShow = repo.value === 'all' ? Object.keys(pkgData.value.releases) : [repo.value]
-    const rows: ReleaseRow[] = []
+    return (releaseData.value || []).flatMap((release) => {
+        const rows: ReleaseRow[] = []
 
-    for (const repoName of reposToShow) {
-        const versions = (pkgData.value.releases as any)[repoName] || {}
-        for (const versionKey of Object.keys(versions)) {
-            const arches = versions[versionKey]
-            for (const arch of ['amd64', 'arm64'] as const) {
-                const build = arches?.[arch]
-                if (build) {
-                    rows.push({
-                        repo: repoName,
-                        version: build.version,
-                        arch: build.architecture,
-                        description: build.description,
-                        maintainer: build.maintainer
-                    })
-                }
-            }
+        if (release.architectures.amd64) {
+            rows.push({ version: release.version_with_leios_patch, arch: 'amd64', changelog: release.changelog })
         }
-    }
 
-    return rows
+        if (release.architectures.arm64) {
+            rows.push({ version: release.version_with_leios_patch, arch: 'arm64', changelog: release.changelog })
+        }
+
+        if (release.architectures.is_all) {
+            rows.push({ version: release.version_with_leios_patch, arch: 'all', changelog: release.changelog })
+        }
+
+        return rows
+    })
 })
 
 type ReleaseRow = {
-    repo: string
     version: string
     arch: string
-    description?: string
-    maintainer?: string
+    changelog: string
 }
 
 const releaseColumns: TableColumn<ReleaseRow>[] = [
-    { accessorKey: 'repo', header: 'Repository' },
     { accessorKey: 'version', header: 'Version' },
     { accessorKey: 'arch', header: 'Arch' },
-    { accessorKey: 'description', header: 'Description' },
-    { accessorKey: 'maintainer', header: 'Maintainer' }
+    { accessorKey: 'changelog', header: 'Changelog' }
 ]
 </script>
 
@@ -119,7 +132,7 @@ const releaseColumns: TableColumn<ReleaseRow>[] = [
                                 <h2 class="text-2xl font-semibold">{{ packageInfo.name }}</h2>
                                 <p class="text-slate-400">{{ packageInfo.description || 'No description provided.' }}</p>
                                 <div class="flex flex-wrap gap-2">
-                                    <UBadge color="neutral" variant="soft">owner #{{ packageInfo.owner_user_id }}</UBadge>
+                                    <UBadge color="neutral" variant="soft">publisher #{{ packageInfo.publisher_id }}</UBadge>
                                     <UButton v-if="packageInfo.homepage_url" size="sm" variant="ghost" color="neutral" :to="packageInfo.homepage_url" target="_blank" icon="i-lucide-external-link">Homepage</UButton>
                                 </div>
                             </div>

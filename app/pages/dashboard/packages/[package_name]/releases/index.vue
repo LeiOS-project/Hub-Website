@@ -1,20 +1,20 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem, TableColumn } from '@nuxt/ui';
-import type { GetDevPackagesByPackageNameReleasesResponses, GetDevPackagesByPackageNameResponses } from '~/api-client';
+import type { GetPackagesByFullPackageNameReleasesResponses, GetPackagesByFullPackageNameResponses } from '~/api-client';
 
 const toast = useToast();
 
-type DevPackage = GetDevPackagesByPackageNameResponses[200]['data'];
-type Release = GetDevPackagesByPackageNameReleasesResponses[200]['data'][number];
+type DevPackage = GetPackagesByFullPackageNameResponses[200]['data'];
+type Release = GetPackagesByFullPackageNameReleasesResponses[200]['data'][number];
 
 const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 
 const package_releases = await useAPIAsyncData(
-    `/dev/packages/${pkgData.value.name}/releases`,
+    `/dev/packages/${pkgData.value.fullname}/releases`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesByPackageNameReleases({
+        const res = await useAPI((api) => api.getPackagesByFullPackageNameReleases({
             path: {
-                packageName: pkgData.value.name
+                fullPackageName: pkgData.value.fullname
             }
         }));
 
@@ -37,12 +37,12 @@ const package_releases = await useAPIAsyncData(
         //     });
         // }
 
-        return res.data.reverse();
+        return [...res.data].reverse();
     }
 );
 
 const packageReleasesTableColumns: TableColumn<Release>[] = [
-    { accessorKey: 'versionWithLeiosPatch', header: 'Version' },
+    { accessorKey: 'version_with_leios_patch', header: 'Version' },
     { accessorKey: 'created_at', header: 'Created At' },
     { accessorKey: 'architectures', header: 'Architectures' }
 ]
@@ -58,7 +58,7 @@ const packageReleasesTableColumns: TableColumn<Release>[] = [
             :loading="package_releases.loading"
             :filters="[
                 {
-                    column: 'versionWithLeiosPatch',
+                    column: 'version_with_leios_patch',
                     type: 'text',
                     placeholder: 'Search version...'
                 },
@@ -76,19 +76,19 @@ const packageReleasesTableColumns: TableColumn<Release>[] = [
 
             <template #header-right>
                 <UButton
-                    :to="`/dashboard/packages/${pkgData.name}/releases/new`"
+                    :to="`/dashboard/packages/${pkgData.fullname}/releases/new`"
                     label="New Release"
                     icon="i-lucide-plus"
                     color="primary"
                 />
             </template>
 
-            <template #versionWithLeiosPatch-cell="{ row }">
+            <template #version_with_leios_patch-cell="{ row }">
                 <NuxtLink
-                    :to="`/dashboard/packages/${pkgData.name}/releases/${row.original.versionWithLeiosPatch}`"
+                    :to="`/dashboard/packages/${pkgData.fullname}/releases/${row.original.version_with_leios_patch}`"
                     class="font-medium text-primary-400 hover:underline"
                 >
-                    {{ row.original.versionWithLeiosPatch }}
+                    {{ row.original.version_with_leios_patch }}
                 </NuxtLink>
             </template>
 
@@ -114,7 +114,7 @@ const packageReleasesTableColumns: TableColumn<Release>[] = [
 
             <template #empty-actions>
                 <UButton
-                    :to="`/dashboard/packages/${pkgData.name}/releases/new`"
+                    :to="`/dashboard/packages/${pkgData.fullname}/releases/new`"
                     label="New Release"
                     icon="i-lucide-plus"
                     color="primary"
