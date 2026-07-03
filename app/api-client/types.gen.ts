@@ -166,14 +166,6 @@ export type PostAuthResetPasswordErrors = {
         code: 401;
         message: 'You are already authenticated';
     };
-    /**
-     * User for reset token not found
-     */
-    500: {
-        success: false;
-        code: 500;
-        message: 'User for reset token not found';
-    };
 };
 
 export type PostAuthResetPasswordError = PostAuthResetPasswordErrors[keyof PostAuthResetPasswordErrors];
