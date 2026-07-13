@@ -263,8 +263,15 @@ async function onDeletePackage() {
                     >
                         <div class="w-full sm:w-96 space-y-2">
                             <UInput
+                                v-if="pkg.isNew"
+                                v-model="package_form_state.name"
+                                placeholder="Enter package name"
+                                class="w-full"
+                            />
+                            <UInput
+                                v-else
                                 v-model="(pkg_data as DevPackage).fullname"
-                                :disabled="!pkg.isNew"
+                                disabled
                                 class="w-full"
                             />
                             <div
