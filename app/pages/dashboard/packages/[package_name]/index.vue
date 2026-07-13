@@ -49,6 +49,22 @@ const publisherOptions = computed(() =>
     }))
 );
 
+const publisherNameById = computed(() => {
+    const map: Record<number, string> = {};
+    for (const p of (publishers.value || [])) {
+        map[p.id] = p.name;
+    }
+    return map;
+});
+
+const fullPackageNamePreview = computed(() => {
+    if (!pkg.isNew) return null;
+    const publisherName = publisherNameById.value[package_form_state.value.publisher_id];
+    const shortName = package_form_state.value.name;
+    if (!publisherName || !shortName) return null;
+    return `${publisherName}.${shortName}`;
+});
+
 const headerTexts = computed(() => {
     if (pkg.isNew) {
         return {
@@ -245,12 +261,24 @@ async function onDeletePackage() {
                             container: 'w-full sm:w-auto',
                         }"
                     >
-                        <UInput
-                            v-model="package_form_state.name"
-                            :disabled="!pkg.isNew"
-                            placeholder="Enter package name"
-                            class="w-full sm:w-96"
-                        />
+                        <div class="w-full sm:w-96 space-y-2">
+                            <UInput
+                                v-model="package_form_state.name"
+                                :disabled="!pkg.isNew"
+                                placeholder="Enter package name"
+                                class="w-full"
+                            />
+                            <div
+                                v-if="pkg.isNew && fullPackageNamePreview"
+                                class="flex items-center gap-1.5 text-xs text-slate-400"
+                            >
+                                <UIcon name="i-lucide-info" class="w-3.5 h-3.5 shrink-0" />
+                                <span>
+                                    Full package identifier:
+                                    <code class="text-sky-400 font-mono">{{ fullPackageNamePreview }}</code>
+                                </span>
+                            </div>
+                        </div>
                     </UFormField>
 
                     <UFormField
