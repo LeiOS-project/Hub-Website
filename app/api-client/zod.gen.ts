@@ -241,7 +241,9 @@ export const zGetPublishersResponse = z.object({
         display_name: z.string(),
         description: z.string(),
         homepage_url: z.string(),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        maintainer_contact_name: z.string(),
+        maintainer_contact_email: z.string()
     }))
 });
 
@@ -249,7 +251,9 @@ export const zPostPublishersBody = z.object({
     name: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
     display_name: z.string().min(1).max(200),
     description: z.string().min(1).max(500),
-    homepage_url: z.url().max(500)
+    homepage_url: z.url().max(500),
+    maintainer_contact_name: z.string().min(1).max(254),
+    maintainer_contact_email: z.string().email().max(254)
 });
 
 /**
@@ -295,14 +299,18 @@ export const zGetPublishersByPublisherNameResponse = z.object({
         display_name: z.string(),
         description: z.string(),
         homepage_url: z.string(),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        maintainer_contact_name: z.string(),
+        maintainer_contact_email: z.string()
     })
 });
 
 export const zPutPublishersByPublisherNameBody = z.object({
     display_name: z.string().min(1).max(200).optional(),
     description: z.string().min(1).max(500).optional(),
-    homepage_url: z.url().max(500).optional()
+    homepage_url: z.url().max(500).optional(),
+    maintainer_contact_name: z.string().min(1).max(254).optional(),
+    maintainer_contact_email: z.string().email().max(254).optional()
 });
 
 export const zPutPublishersByPublisherNamePath = z.object({

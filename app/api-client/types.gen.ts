@@ -596,6 +596,8 @@ export type GetPublishersResponses = {
             description: string;
             homepage_url: string;
             created_at: number;
+            maintainer_contact_name: string;
+            maintainer_contact_email: string;
         }>;
     };
 };
@@ -608,6 +610,8 @@ export type PostPublishersData = {
         display_name: string;
         description: string;
         homepage_url: string;
+        maintainer_contact_name: string;
+        maintainer_contact_email: string;
     };
     path?: never;
     query?: never;
@@ -748,6 +752,8 @@ export type GetPublishersByPublisherNameResponses = {
             description: string;
             homepage_url: string;
             created_at: number;
+            maintainer_contact_name: string;
+            maintainer_contact_email: string;
         };
     };
 };
@@ -759,6 +765,8 @@ export type PutPublishersByPublisherNameData = {
         display_name?: string;
         description?: string;
         homepage_url?: string;
+        maintainer_contact_name?: string;
+        maintainer_contact_email?: string;
     };
     path: {
         publisherName: string;

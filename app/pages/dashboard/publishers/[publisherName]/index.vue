@@ -33,6 +33,8 @@ const publisher_form_state = ref<NewPublisher>({
     display_name: pub_data.value.display_name || '',
     description: pub_data.value.description || '',
     homepage_url: pub_data.value.homepage_url || '',
+    maintainer_contact_name: pub_data.value.maintainer_contact_name || '',
+    maintainer_contact_email: pub_data.value.maintainer_contact_email || '',
 });
 
 const submitting = ref(false);
@@ -48,6 +50,8 @@ async function onFormSubmit() {
                         display_name: publisher_form_state.value.display_name,
                         description: publisher_form_state.value.description,
                         homepage_url: publisher_form_state.value.homepage_url,
+                        maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
+                        maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
                     }
                 })
             );
@@ -74,6 +78,8 @@ async function onFormSubmit() {
                         display_name: publisher_form_state.value.display_name,
                         description: publisher_form_state.value.description,
                         homepage_url: publisher_form_state.value.homepage_url,
+                        maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
+                        maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
                     }
                 })
             );
@@ -84,6 +90,8 @@ async function onFormSubmit() {
                     display_name: publisher_form_state.value.display_name,
                     description: publisher_form_state.value.description,
                     homepage_url: publisher_form_state.value.homepage_url,
+                    maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
+                    maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
                 };
 
                 toast.add({
@@ -238,6 +246,35 @@ watchEffect(() => {
                         <UInput
                             v-model="publisher_form_state.homepage_url"
                             placeholder="https://..."
+                            class="w-full sm:w-96"
+                        />
+                    </UFormField>
+
+                    <UFormField
+                        name="maintainer_contact_name"
+                        label="Maintainer Contact Name"
+                        description="The name of the person or team responsible for maintaining this publisher's packages."
+                        class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
+                        :ui="{ root: 'w-full sm:w-auto', container: 'w-full sm:w-auto' }"
+                    >
+                        <UInput
+                            v-model="publisher_form_state.maintainer_contact_name"
+                            placeholder="Enter maintainer name"
+                            class="w-full sm:w-96"
+                        />
+                    </UFormField>
+
+                    <UFormField
+                        name="maintainer_contact_email"
+                        label="Maintainer Contact Email"
+                        description="The email address for maintainer contact. Used in package metadata."
+                        class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
+                        :ui="{ root: 'w-full sm:w-auto', container: 'w-full sm:w-auto' }"
+                    >
+                        <UInput
+                            v-model="publisher_form_state.maintainer_contact_email"
+                            placeholder="maintainer@example.com"
+                            type="email"
                             class="w-full sm:w-96"
                         />
                     </UFormField>

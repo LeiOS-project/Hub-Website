@@ -17,6 +17,7 @@ const publisherTableColumns: TableColumn<Publisher>[] = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'display_name', header: 'Display Name' },
     { accessorKey: 'description', header: 'Description' },
+    { accessorKey: 'maintainer_contact_name', header: 'Maintainer' },
     { accessorKey: 'created_at', header: 'Created At' },
     { id: 'actions', header: '', enableSorting: false, enableHiding: false }
 ];
@@ -90,6 +91,12 @@ const publishers = await useAPILazyAsyncData<Publisher[]>(
                     <template #description-cell="{ row }">
                         <span class="text-slate-400 line-clamp-1 max-w-xs">
                             {{ row.original.description || '—' }}
+                        </span>
+                    </template>
+
+                    <template #maintainer_contact_name-cell="{ row }">
+                        <span class="text-slate-300 text-sm">
+                            {{ row.original.maintainer_contact_name || '—' }}
                         </span>
                     </template>
 

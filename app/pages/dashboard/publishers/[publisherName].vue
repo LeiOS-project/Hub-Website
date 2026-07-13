@@ -21,6 +21,8 @@ if (publisherName === "new") {
         display_name: "",
         description: "",
         homepage_url: "",
+        maintainer_contact_name: "",
+        maintainer_contact_email: "",
     });
 
     useSubrouterInjectedData<FullPublisher, NewPub>("publisher", true).provide({
