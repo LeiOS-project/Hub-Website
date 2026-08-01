@@ -41,6 +41,15 @@ const { data: stablePromotionRequestData, refresh } = await useAPIAsyncData<Stab
 const stablePromotionRequest = computed(() => stablePromotionRequestData.value);
 const submittingRequest = ref(false);
 
+const hasUploadedPackage = computed(() => {
+    const data = pkgReleaseData.value;
+    if ('architectures' in data) {
+        const arch = data.architectures;
+        return arch.amd64 || arch.arm64 || arch.is_all;
+    }
+    return false;
+});
+
 async function submitNewRequest() {
     submittingRequest.value = true;
 
@@ -81,12 +90,15 @@ async function submitNewRequest() {
 async function onDeleteRequest() {
     if (!stablePromotionRequest.value) return;
 
+    const request = stablePromotionRequest.value;
+    if (!request) return;
+
     try {
         const res = await useAPI((api) => api.deleteReleaseStablePromotionRequest({
             path: {
                 fullPackageName: fullPackageName.value,
                 version_with_leios_patch: versionWithLeiosPatch.value,
-                stablePromotionRequestID: stablePromotionRequest.value.id
+                stablePromotionRequestID: request.id
             }
         }));
 
@@ -158,7 +170,19 @@ function getStatusIcon(status: StablePromotionRequest['status']) {
                     Once submitted, an administrator will review the request.
                 </p>
 
-                <div class="rounded-lg bg-amber-500/10 border border-amber-500/20 p-4">
+                <div v-if="!hasUploadedPackage" class="rounded-lg bg-red-500/10 border border-red-500/20 p-4">
+                    <div class="flex gap-3">
+                        <UIcon name="i-lucide-alert-triangle" class="text-red-400 mt-0.5 shrink-0" />
+                        <div class="text-sm text-red-300/90">
+                            <p class="font-medium mb-1">Missing Package Files</p>
+                            <p class="text-xs text-red-400/70">
+                                You must upload at least one .deb package for this release before requesting a stable promotion.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-else class="rounded-lg bg-amber-500/10 border border-amber-500/20 p-4">
                     <div class="flex gap-3">
                         <UIcon name="i-lucide-info" class="text-amber-400 mt-0.5 shrink-0" />
                         <div class="text-sm text-amber-300/90">
@@ -176,6 +200,7 @@ function getStatusIcon(status: StablePromotionRequest['status']) {
                         icon="i-lucide-send"
                         color="primary"
                         :loading="submittingRequest"
+                        :disabled="!hasUploadedPackage"
                         @click="submitNewRequest"
                     />
                 </div>

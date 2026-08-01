@@ -47,6 +47,11 @@ const { data: stablePromotionRequestData } = await useAPILazyAsyncData<StablePro
 
 const stablePromotionRequest = computed(() => stablePromotionRequestData.value);
 
+const hasUploadedPackage = computed(() => {
+    const arch = (pkg_release_data.value as DevPackageRelease)?.architectures || {};
+    return arch.amd64 || arch.arm64 || arch.is_all;
+});
+
 const package_release_form_schema =
     zPostPackagesByFullPackageNameReleasesBody;
 const package_release_form_state = ref<NewDevPackageRelease>({
@@ -584,7 +589,10 @@ function formatFileSize(bytes: number): string {
                     <div class="flex-1">
                         <div v-if="!stablePromotionRequest" class="space-y-1">
                             <h4 class="font-medium text-white">No promotion request</h4>
-                            <p class="text-sm text-slate-400">
+                            <p v-if="!hasUploadedPackage" class="text-sm text-slate-400">
+                                Upload at least one .deb package to enable stable promotion requests.
+                            </p>
+                            <p v-else class="text-sm text-slate-400">
                                 Submit a request when the release is ready for the stable repository.
                             </p>
                         </div>
@@ -612,6 +620,7 @@ function formatFileSize(bytes: number): string {
                         label="Request Stable Promotion"
                         icon="i-lucide-send"
                         color="primary"
+                        :disabled="!hasUploadedPackage"
                         :to="`/dashboard/packages/${pkg_data.fullname}/releases/${pkg_release_data.version_with_leios_patch}/stable-promotion-requests`"
                     />
                     <UButton
