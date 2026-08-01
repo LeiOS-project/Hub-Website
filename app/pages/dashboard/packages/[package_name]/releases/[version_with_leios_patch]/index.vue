@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type z from "zod";
+import type { ListReleaseStablePromotionRequestsResponses } from '~/api-client';
 import { zPostPackagesByFullPackageNameReleasesBody } from "~/api-client/zod.gen";
 import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 
@@ -26,6 +27,25 @@ const headerTexts = computed(() => {
         description: "View and manage the details of the package.",
     };
 });
+
+type StablePromotionRequest = ListReleaseStablePromotionRequestsResponses[200]['data'][number];
+
+const { data: stablePromotionRequestData } = await useAPILazyAsyncData<StablePromotionRequest | null>(
+    `release-stable-promotion-request:${pkg_data.value.fullname}:${pkg_release_data.value.version_with_leios_patch}`,
+    async () => {
+        const res = await useAPI((api) => api.listReleaseStablePromotionRequests({
+            path: {
+                fullPackageName: pkg_data.value.fullname,
+                version_with_leios_patch: pkg_release_data.value.version_with_leios_patch
+            }
+        }));
+
+        if (!res.success) return null;
+        return res.data[0] ?? null;
+    }
+);
+
+const stablePromotionRequest = computed(() => stablePromotionRequestData.value);
 
 const package_release_form_schema =
     zPostPackagesByFullPackageNameReleasesBody;
@@ -120,6 +140,24 @@ async function onDeletePackage() {
     });
 
     deleteConfirmOpen.value = false;
+}
+
+function getStatusColor(status: StablePromotionRequest['status']) {
+    switch (status) {
+        case 'approved': return 'success';
+        case 'denied': return 'error';
+        case 'pending': return 'warning';
+        default: return 'neutral';
+    }
+}
+
+function getStatusIcon(status: StablePromotionRequest['status']) {
+    switch (status) {
+        case 'approved': return 'i-lucide-check-circle';
+        case 'denied': return 'i-lucide-x-circle';
+        case 'pending': return 'i-lucide-clock';
+        default: return 'i-lucide-help-circle';
+    }
 }
 
 // Architecture types
@@ -520,6 +558,70 @@ function formatFileSize(bytes: number): string {
                             can request a promotion to the stable repository.
                         </p>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stable Promotion Card -->
+        <div v-if="!pkg_release.isNew"
+            class="rounded-xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center">
+                        <UIcon name="i-lucide-git-pull-request" class="w-5 h-5 text-sky-400" />
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-white">Stable Promotion</h3>
+                        <p class="text-sm text-slate-400">
+                            Request this release to be promoted to stable.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <div class="flex-1">
+                        <div v-if="!stablePromotionRequest" class="space-y-1">
+                            <h4 class="font-medium text-white">No promotion request</h4>
+                            <p class="text-sm text-slate-400">
+                                Submit a request when the release is ready for the stable repository.
+                            </p>
+                        </div>
+                        <div v-else class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <UIcon :name="getStatusIcon(stablePromotionRequest.status)" :class="{
+                                    'text-amber-400': stablePromotionRequest.status === 'pending',
+                                    'text-green-400': stablePromotionRequest.status === 'approved',
+                                    'text-red-400': stablePromotionRequest.status === 'denied'
+                                }" />
+                                <h4 class="font-medium text-white">
+                                    Request #{{ stablePromotionRequest.id }}
+                                </h4>
+                                <UBadge :color="getStatusColor(stablePromotionRequest.status)" variant="soft" size="sm">
+                                    {{ stablePromotionRequest.status }}
+                                </UBadge>
+                            </div>
+                            <p class="text-sm text-slate-400">
+                                Created {{ new Date(stablePromotionRequest.created_at).toLocaleString() }}.
+                            </p>
+                        </div>
+                    </div>
+                    <UButton
+                        v-if="!stablePromotionRequest"
+                        label="Request Stable Promotion"
+                        icon="i-lucide-send"
+                        color="primary"
+                        :to="`/dashboard/packages/${pkg_data.fullname}/releases/${pkg_release_data.version_with_leios_patch}/stable-promotion-requests`"
+                    />
+                    <UButton
+                        v-else
+                        label="View Request"
+                        icon="i-lucide-eye"
+                        color="neutral"
+                        variant="soft"
+                        :to="`/dashboard/packages/${pkg_data.fullname}/releases/${pkg_release_data.version_with_leios_patch}/stable-promotion-requests`"
+                    />
                 </div>
             </div>
         </div>

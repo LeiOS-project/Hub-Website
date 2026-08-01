@@ -1493,6 +1493,206 @@ export type PostPackagesByFullPackageNameReleasesResponses = {
 
 export type PostPackagesByFullPackageNameReleasesResponse = PostPackagesByFullPackageNameReleasesResponses[keyof PostPackagesByFullPackageNameReleasesResponses];
 
+export type ListReleaseStablePromotionRequestsData = {
+    body?: never;
+    path: {
+        fullPackageName: string;
+        version_with_leios_patch: string;
+    };
+    query?: {
+        status?: 'pending' | 'approved' | 'denied';
+    };
+    url: '/packages/{fullPackageName}/releases/{version_with_leios_patch}/stable-promotion-requests';
+};
+
+export type ListReleaseStablePromotionRequestsResponses = {
+    /**
+     * Stable promotion requests retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable promotion requests retrieved successfully';
+        data: Array<{
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'pending';
+            created_at: number;
+            admin_note: null;
+            package_name: string;
+            package_release_version: string;
+        } | {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'approved';
+            created_at: number;
+            admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
+        } | {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'denied';
+            created_at: number;
+            admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
+        }>;
+    };
+};
+
+export type ListReleaseStablePromotionRequestsResponse = ListReleaseStablePromotionRequestsResponses[keyof ListReleaseStablePromotionRequestsResponses];
+
+export type CreateReleaseStablePromotionRequestData = {
+    body: {
+        [key: string]: never;
+    };
+    path: {
+        fullPackageName: string;
+        version_with_leios_patch: string;
+    };
+    query?: never;
+    url: '/packages/{fullPackageName}/releases/{version_with_leios_patch}/stable-promotion-requests';
+};
+
+export type CreateReleaseStablePromotionRequestErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * You do not have permission to request stable promotions for this package
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'You do not have permission to request stable promotions for this package';
+    };
+    /**
+     * A request already exists for this release or the release is already stable
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'A request already exists for this release or the release is already stable';
+    };
+};
+
+export type CreateReleaseStablePromotionRequestError = CreateReleaseStablePromotionRequestErrors[keyof CreateReleaseStablePromotionRequestErrors];
+
+export type CreateReleaseStablePromotionRequestResponses = {
+    /**
+     * Stable promotion request submitted
+     */
+    201: {
+        success: true;
+        code: 201;
+        message: 'Stable promotion request submitted';
+        data: {
+            id: number;
+        };
+    };
+};
+
+export type CreateReleaseStablePromotionRequestResponse = CreateReleaseStablePromotionRequestResponses[keyof CreateReleaseStablePromotionRequestResponses];
+
+export type DeleteReleaseStablePromotionRequestData = {
+    body?: never;
+    path: {
+        fullPackageName: string;
+        version_with_leios_patch: string;
+        stablePromotionRequestID: number;
+    };
+    query?: never;
+    url: '/packages/{fullPackageName}/releases/{version_with_leios_patch}/stable-promotion-requests/{stablePromotionRequestID}';
+};
+
+export type DeleteReleaseStablePromotionRequestErrors = {
+    /**
+     * You do not have permission to delete stable promotion requests for this package
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'You do not have permission to delete stable promotion requests for this package';
+    };
+};
+
+export type DeleteReleaseStablePromotionRequestError = DeleteReleaseStablePromotionRequestErrors[keyof DeleteReleaseStablePromotionRequestErrors];
+
+export type DeleteReleaseStablePromotionRequestResponses = {
+    /**
+     * Stable promotion request deleted successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable promotion request deleted successfully';
+        data: null;
+    };
+};
+
+export type DeleteReleaseStablePromotionRequestResponse = DeleteReleaseStablePromotionRequestResponses[keyof DeleteReleaseStablePromotionRequestResponses];
+
+export type GetReleaseStablePromotionRequestData = {
+    body?: never;
+    path: {
+        fullPackageName: string;
+        version_with_leios_patch: string;
+        stablePromotionRequestID: number;
+    };
+    query?: never;
+    url: '/packages/{fullPackageName}/releases/{version_with_leios_patch}/stable-promotion-requests/{stablePromotionRequestID}';
+};
+
+export type GetReleaseStablePromotionRequestResponses = {
+    /**
+     * Stable promotion request retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable promotion request retrieved successfully';
+        data: {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'pending';
+            created_at: number;
+            admin_note: null;
+            package_name: string;
+            package_release_version: string;
+        } | {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'approved';
+            created_at: number;
+            admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
+        } | {
+            id: number;
+            package_id: number;
+            package_release_id: number;
+            status: 'denied';
+            created_at: number;
+            admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
+        };
+    };
+};
+
+export type GetReleaseStablePromotionRequestResponse = GetReleaseStablePromotionRequestResponses[keyof GetReleaseStablePromotionRequestResponses];
+
 export type DeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchData = {
     body?: never;
     path: {
@@ -1711,210 +1911,6 @@ export type PostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchRe
 };
 
 export type PostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchResponse = PostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchResponses[keyof PostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchResponses];
-
-export type GetPackagesByFullPackageNameStablePromotionRequestsData = {
-    body?: never;
-    path: {
-        fullPackageName: string;
-    };
-    query?: {
-        status?: 'pending' | 'approved' | 'denied';
-    };
-    url: '/packages/{fullPackageName}/stable-promotion-requests';
-};
-
-export type GetPackagesByFullPackageNameStablePromotionRequestsResponses = {
-    /**
-     * Stable promotion requests retrieved successfully
-     */
-    200: {
-        success: true;
-        code: 200;
-        message: 'Stable promotion requests retrieved successfully';
-        data: Array<{
-            id: number;
-            package_id: number;
-            package_release_id: number;
-            status: 'pending';
-            created_at: number;
-            admin_note: null;
-            package_name: string;
-            package_release_version: string;
-        } | {
-            id: number;
-            package_id: number;
-            package_release_id: number;
-            status: 'approved';
-            created_at: number;
-            admin_note: string | null;
-            package_name: string;
-            package_release_version: string;
-        } | {
-            id: number;
-            package_id: number;
-            package_release_id: number;
-            status: 'denied';
-            created_at: number;
-            admin_note: string | null;
-            package_name: string;
-            package_release_version: string;
-        }>;
-    };
-};
-
-export type GetPackagesByFullPackageNameStablePromotionRequestsResponse = GetPackagesByFullPackageNameStablePromotionRequestsResponses[keyof GetPackagesByFullPackageNameStablePromotionRequestsResponses];
-
-export type PostPackagesByFullPackageNameStablePromotionRequestsData = {
-    body: {
-        package_release_id: number;
-    };
-    path: {
-        fullPackageName: string;
-    };
-    query?: never;
-    url: '/packages/{fullPackageName}/stable-promotion-requests';
-};
-
-export type PostPackagesByFullPackageNameStablePromotionRequestsErrors = {
-    /**
-     * Bad Request: Syntax or validation error in request
-     */
-    400: {
-        success: false;
-        code: 400;
-        message: 'Bad Request: Syntax or validation error in request';
-    };
-    /**
-     * You do not have permission to request stable promotions for this package
-     */
-    403: {
-        success: false;
-        code: 403;
-        message: 'You do not have permission to request stable promotions for this package';
-    };
-    /**
-     * Release not found in archive repository
-     */
-    404: {
-        success: false;
-        code: 404;
-        message: 'Release not found in archive repository';
-    };
-    /**
-     * A request already for this release already exists or the release is already stable
-     */
-    409: {
-        success: false;
-        code: 409;
-        message: 'A request already for this release already exists or the release is already stable';
-    };
-};
-
-export type PostPackagesByFullPackageNameStablePromotionRequestsError = PostPackagesByFullPackageNameStablePromotionRequestsErrors[keyof PostPackagesByFullPackageNameStablePromotionRequestsErrors];
-
-export type PostPackagesByFullPackageNameStablePromotionRequestsResponses = {
-    /**
-     * Stable promotion request submitted
-     */
-    201: {
-        success: true;
-        code: 201;
-        message: 'Stable promotion request submitted';
-        data: {
-            id: number;
-        };
-    };
-};
-
-export type PostPackagesByFullPackageNameStablePromotionRequestsResponse = PostPackagesByFullPackageNameStablePromotionRequestsResponses[keyof PostPackagesByFullPackageNameStablePromotionRequestsResponses];
-
-export type DeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdData = {
-    body?: never;
-    path: {
-        fullPackageName: string;
-        stablePromotionRequestID: number;
-    };
-    query?: never;
-    url: '/packages/{fullPackageName}/stable-promotion-requests/{stablePromotionRequestID}';
-};
-
-export type DeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdErrors = {
-    /**
-     * You do not have permission to delete stable promotion requests for this package
-     */
-    403: {
-        success: false;
-        code: 403;
-        message: 'You do not have permission to delete stable promotion requests for this package';
-    };
-};
-
-export type DeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdError = DeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdErrors[keyof DeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdErrors];
-
-export type DeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses = {
-    /**
-     * Stable promotion request deleted successfully
-     */
-    200: {
-        success: true;
-        code: 200;
-        message: 'Stable promotion request deleted successfully';
-        data: null;
-    };
-};
-
-export type DeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = DeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses[keyof DeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses];
-
-export type GetPackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdData = {
-    body?: never;
-    path: {
-        fullPackageName: string;
-        stablePromotionRequestID: number;
-    };
-    query?: never;
-    url: '/packages/{fullPackageName}/stable-promotion-requests/{stablePromotionRequestID}';
-};
-
-export type GetPackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses = {
-    /**
-     * Stable promotion request retrieved successfully
-     */
-    200: {
-        success: true;
-        code: 200;
-        message: 'Stable promotion request retrieved successfully';
-        data: {
-            id: number;
-            package_id: number;
-            package_release_id: number;
-            status: 'pending';
-            created_at: number;
-            admin_note: null;
-            package_name: string;
-            package_release_version: string;
-        } | {
-            id: number;
-            package_id: number;
-            package_release_id: number;
-            status: 'approved';
-            created_at: number;
-            admin_note: string | null;
-            package_name: string;
-            package_release_version: string;
-        } | {
-            id: number;
-            package_id: number;
-            package_release_id: number;
-            status: 'denied';
-            created_at: number;
-            admin_note: string | null;
-            package_name: string;
-            package_release_version: string;
-        };
-    };
-};
-
-export type GetPackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = GetPackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses[keyof GetPackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdResponses];
 
 export type GetPackagesByFullPackageNameRoleAssignmentsData = {
     body?: never;

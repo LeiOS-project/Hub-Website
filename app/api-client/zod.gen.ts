@@ -253,7 +253,7 @@ export const zPostPublishersBody = z.object({
     description: z.string().min(1).max(500),
     homepage_url: z.url().max(500),
     maintainer_contact_name: z.string().min(1).max(254),
-    maintainer_contact_email: z.string().email().max(254)
+    maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/)
 });
 
 /**
@@ -310,7 +310,7 @@ export const zPutPublishersByPublisherNameBody = z.object({
     description: z.string().min(1).max(500).optional(),
     homepage_url: z.url().max(500).optional(),
     maintainer_contact_name: z.string().min(1).max(254).optional(),
-    maintainer_contact_email: z.string().email().max(254).optional()
+    maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/).optional()
 });
 
 export const zPutPublishersByPublisherNamePath = z.object({
@@ -653,6 +653,142 @@ export const zPostPackagesByFullPackageNameReleasesResponse = z.object({
     data: z.null()
 });
 
+export const zListReleaseStablePromotionRequestsPath = z.object({
+    fullPackageName: z.string(),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
+});
+
+export const zListReleaseStablePromotionRequestsQuery = z.object({
+    status: z.enum([
+        'pending',
+        'approved',
+        'denied'
+    ]).optional()
+});
+
+/**
+ * Stable promotion requests retrieved successfully
+ */
+export const zListReleaseStablePromotionRequestsResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Stable promotion requests retrieved successfully'),
+    data: z.array(z.union([
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('pending'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.null(),
+            package_name: z.string(),
+            package_release_version: z.string()
+        }),
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('approved'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.string().nullable(),
+            package_name: z.string(),
+            package_release_version: z.string()
+        }),
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('denied'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.string().nullable(),
+            package_name: z.string(),
+            package_release_version: z.string()
+        })
+    ]))
+});
+
+export const zCreateReleaseStablePromotionRequestBody = z.record(z.string(), z.never());
+
+export const zCreateReleaseStablePromotionRequestPath = z.object({
+    fullPackageName: z.string(),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
+});
+
+/**
+ * Stable promotion request submitted
+ */
+export const zCreateReleaseStablePromotionRequestResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(201),
+    message: z.literal('Stable promotion request submitted'),
+    data: z.object({
+        id: z.number()
+    })
+});
+
+export const zDeleteReleaseStablePromotionRequestPath = z.object({
+    fullPackageName: z.string(),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
+    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Stable promotion request deleted successfully
+ */
+export const zDeleteReleaseStablePromotionRequestResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Stable promotion request deleted successfully'),
+    data: z.null()
+});
+
+export const zGetReleaseStablePromotionRequestPath = z.object({
+    fullPackageName: z.string(),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
+    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Stable promotion request retrieved successfully
+ */
+export const zGetReleaseStablePromotionRequestResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Stable promotion request retrieved successfully'),
+    data: z.union([
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('pending'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.null(),
+            package_name: z.string(),
+            package_release_version: z.string()
+        }),
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('approved'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.string().nullable(),
+            package_name: z.string(),
+            package_release_version: z.string()
+        }),
+        z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.literal('denied'),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.string().nullable(),
+            package_name: z.string(),
+            package_release_version: z.string()
+        })
+    ])
+});
+
 export const zDeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchPath = z.object({
     fullPackageName: z.string(),
     version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
@@ -734,140 +870,6 @@ export const zPostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArch
     code: z.literal(201),
     message: z.literal('Package release file uploaded successfully'),
     data: z.null()
-});
-
-export const zGetPackagesByFullPackageNameStablePromotionRequestsPath = z.object({
-    fullPackageName: z.string()
-});
-
-export const zGetPackagesByFullPackageNameStablePromotionRequestsQuery = z.object({
-    status: z.enum([
-        'pending',
-        'approved',
-        'denied'
-    ]).optional()
-});
-
-/**
- * Stable promotion requests retrieved successfully
- */
-export const zGetPackagesByFullPackageNameStablePromotionRequestsResponse = z.object({
-    success: z.literal(true),
-    code: z.literal(200),
-    message: z.literal('Stable promotion requests retrieved successfully'),
-    data: z.array(z.union([
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('pending'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.null(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        }),
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('approved'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string().nullable(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        }),
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('denied'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string().nullable(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        })
-    ]))
-});
-
-export const zPostPackagesByFullPackageNameStablePromotionRequestsBody = z.object({
-    package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991)
-});
-
-export const zPostPackagesByFullPackageNameStablePromotionRequestsPath = z.object({
-    fullPackageName: z.string()
-});
-
-/**
- * Stable promotion request submitted
- */
-export const zPostPackagesByFullPackageNameStablePromotionRequestsResponse = z.object({
-    success: z.literal(true),
-    code: z.literal(201),
-    message: z.literal('Stable promotion request submitted'),
-    data: z.object({
-        id: z.number()
-    })
-});
-
-export const zDeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdPath = z.object({
-    fullPackageName: z.string(),
-    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
-});
-
-/**
- * Stable promotion request deleted successfully
- */
-export const zDeletePackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = z.object({
-    success: z.literal(true),
-    code: z.literal(200),
-    message: z.literal('Stable promotion request deleted successfully'),
-    data: z.null()
-});
-
-export const zGetPackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdPath = z.object({
-    fullPackageName: z.string(),
-    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
-});
-
-/**
- * Stable promotion request retrieved successfully
- */
-export const zGetPackagesByFullPackageNameStablePromotionRequestsByStablePromotionRequestIdResponse = z.object({
-    success: z.literal(true),
-    code: z.literal(200),
-    message: z.literal('Stable promotion request retrieved successfully'),
-    data: z.union([
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('pending'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.null(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        }),
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('approved'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string().nullable(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        }),
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('denied'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string().nullable(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        })
-    ])
 });
 
 export const zGetPackagesByFullPackageNameRoleAssignmentsPath = z.object({

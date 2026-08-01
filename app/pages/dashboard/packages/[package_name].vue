@@ -221,6 +221,24 @@ function getRoutesConfig(): Ref<UseSubrouterPathDynamics.RoutesConfig> {
                     }
                 },
 
+                [`/dashboard/packages/${package_name}/releases/[version_with_leios_patch]/stable-promotion-requests`]: {
+                    isNavLink: false,
+                    getDynamicValues(params) {
+                        return {
+                            breadcrumbItems: [
+                                { label: package_name, to: `/dashboard/packages/${package_name}` },
+                                { label: 'Releases', to: `/dashboard/packages/${package_name}/releases` },
+                                { label: params.version_with_leios_patch, to: `/dashboard/packages/${package_name}/releases/${params.version_with_leios_patch}` },
+                                { label: 'Stable Promotion Request' }
+                            ],
+                            seoSettings: {
+                                title: `Stable Promotion Request | Release ${params.version_with_leios_patch}`,
+                                description: `Manage stable promotion request for release ${params.version_with_leios_patch} of package ${package_name} on LeiOS Hub`
+                            }
+                        };
+                    }
+                },
+
                 [`/dashboard/packages/${package_name}/roles`]: {
                     isNavLink: true,
                     label: 'Roles',
@@ -242,42 +260,6 @@ function getRoutesConfig(): Ref<UseSubrouterPathDynamics.RoutesConfig> {
                 },
 
 
-                [`/dashboard/packages/${package_name}/stable-promotion-requests`]: {
-                    isNavLink: true,
-                    label: 'Stable Promotion Requests',
-                    icon: 'i-lucide-git-pull-request',
-                    to: `/dashboard/packages/${package_name}/stable-promotion-requests`,
-                    active: useRoute().path.startsWith(`/dashboard/packages/${package_name}/stable-promotion-requests`),
-                    getDynamicValues() {
-                        return {
-                            breadcrumbItems: [
-                                { label: package_name, to: `/dashboard/packages/${package_name}` },
-                                { label: 'Stable Promotion Requests' }
-                            ],
-                            seoSettings: {
-                                title: `Stable Promotion Requests`,
-                                description: `Manage stable promotion requests for the package ${package_name} on LeiOS Hub`
-                            }
-                        };
-                    }
-                },
-
-                [`/dashboard/packages/${package_name}/stable-promotion-requests/[stable_promotion_request_id]`]: {
-                    isNavLink: false,
-                    getDynamicValues(params) {
-                        return {
-                            breadcrumbItems: [
-                                { label: package_name, to: `/dashboard/packages/${package_name}` },
-                                { label: 'Stable Promotion Requests', to: `/dashboard/packages/${package_name}/stable-promotion-requests` },
-                                { label: `#${params.stable_promotion_request_id}` }
-                            ],
-                            seoSettings: {
-                                title: `Stable Promotion Request #${params.stable_promotion_request_id}`,
-                                description: `Manage stable promotion request #${params.stable_promotion_request_id} for the package ${package_name} on LeiOS Hub`
-                            }
-                        };
-                    }
-                },
             }
         }
     });

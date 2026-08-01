@@ -4,13 +4,12 @@ import type {
     GetPackagesByFullPackageNameReleasesResponses,
     GetPackagesByFullPackageNameResponses,
     GetPackagesByFullPackageNameRoleAssignmentsResponses,
-    GetPackagesByFullPackageNameStablePromotionRequestsResponses,
     GetPackagesResponses,
     GetPublishersByPublisherNameMembersResponses,
     GetPublishersResponses,
+    ListReleaseStablePromotionRequestsResponses,
     PostAccountApikeysData,
     PostPackagesByFullPackageNameReleasesData,
-    PostPackagesByFullPackageNameStablePromotionRequestsData,
     PostPackagesData,
     PostPublishersData,
 } from "~/api-client";
@@ -35,8 +34,8 @@ export type NewDevPackageRelease = NonNullable<PostPackagesByFullPackageNameRele
 export type APIKey = GetAccountApikeysResponses["200"]["data"][number];
 export type NewAPIKey = NonNullable<PostAccountApikeysData["body"]>;
 
-export type DevPackageStablePromotionRequest = GetPackagesByFullPackageNameStablePromotionRequestsResponses["200"]["data"][number];
-export type NewDevPackageStablePromotionRequest = NonNullable<PostPackagesByFullPackageNameStablePromotionRequestsData["body"]>;
+export type DevPackageStablePromotionRequest = ListReleaseStablePromotionRequestsResponses["200"]["data"][number];
+export type NewDevPackageStablePromotionRequest = Record<string, never>;
 
 export type Publisher = GetPublishersResponses["200"]["data"][number];
 export type NewPublisher = NonNullable<PostPublishersData["body"]>;
