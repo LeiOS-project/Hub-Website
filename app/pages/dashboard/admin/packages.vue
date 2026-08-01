@@ -257,7 +257,7 @@ async function deletePackage() {
                             label="New Package"
                             icon="i-lucide-plus"
                             color="primary"
-                            @click="showCreateModal = true"
+                            @click="showCreateModal = true;"
                         />
                     </template>
 
@@ -289,10 +289,10 @@ async function deletePackage() {
                     <template #stable-cell="{ row }">
                         <div class="flex gap-1">
                             <UBadge v-if="row.original.latest_stable_release.amd64" color="success" variant="soft" size="sm">
-                                amd64
+                                {{ row.original.latest_stable_release.amd64 }}
                             </UBadge>
                             <UBadge v-if="row.original.latest_stable_release.arm64" color="success" variant="soft" size="sm">
-                                arm64
+                                {{ row.original.latest_stable_release.arm64 }}
                             </UBadge>
                             <span v-if="!row.original.latest_stable_release.amd64 && !row.original.latest_stable_release.arm64" class="text-slate-500">—</span>
                         </div>
@@ -301,10 +301,10 @@ async function deletePackage() {
                     <template #testing-cell="{ row }">
                         <div class="flex gap-1">
                             <UBadge v-if="row.original.latest_testing_release.amd64" color="warning" variant="soft" size="sm">
-                                amd64
+                                {{ row.original.latest_testing_release.amd64 }}
                             </UBadge>
                             <UBadge v-if="row.original.latest_testing_release.arm64" color="warning" variant="soft" size="sm">
-                                arm64
+                                {{ row.original.latest_testing_release.arm64 }}
                             </UBadge>
                             <span v-if="!row.original.latest_testing_release.amd64 && !row.original.latest_testing_release.arm64" class="text-slate-500">—</span>
                         </div>
@@ -328,7 +328,7 @@ async function deletePackage() {
                         <UButton
                             label="Create Package"
                             color="primary"
-                            @click="showCreateModal = true"
+                            @click="showCreateModal = true;"
                         />
                     </template>
                 </DashboardDataTable>
@@ -364,7 +364,7 @@ async function deletePackage() {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="showCreateModal = false"
+                    @click="showCreateModal = false;"
                 />
                 <UButton type="submit" label="Create" color="primary" />
             </div>
@@ -390,7 +390,7 @@ async function deletePackage() {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="showEditModal = false"
+                    @click="showEditModal = false;"
                 />
                 <UButton label="Save" color="primary" @click="submitEdit" />
             </div>

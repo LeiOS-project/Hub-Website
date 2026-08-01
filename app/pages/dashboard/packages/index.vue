@@ -149,10 +149,10 @@ const publisherNameById = computed(() => {
                     <template #stable-cell="{ row }">
                         <div class="flex gap-1">
                             <UBadge v-if="row.original.latest_stable_release.amd64" color="success" variant="soft" size="sm">
-                                amd64
+                                {{ row.original.latest_stable_release.amd64 }}
                             </UBadge>
                             <UBadge v-if="row.original.latest_stable_release.arm64" color="success" variant="soft" size="sm">
-                                arm64
+                                {{ row.original.latest_stable_release.arm64 }}
                             </UBadge>
                             <span v-if="!row.original.latest_stable_release.amd64 && !row.original.latest_stable_release.arm64" class="text-slate-500">—</span>
                         </div>
@@ -161,10 +161,10 @@ const publisherNameById = computed(() => {
                     <template #testing-cell="{ row }">
                         <div class="flex gap-1">
                             <UBadge v-if="row.original.latest_testing_release.amd64" color="warning" variant="soft" size="sm">
-                                amd64
+                                {{ row.original.latest_testing_release.amd64 }}
                             </UBadge>
                             <UBadge v-if="row.original.latest_testing_release.arm64" color="warning" variant="soft" size="sm">
-                                arm64
+                                {{ row.original.latest_testing_release.arm64 }}
                             </UBadge>
                             <span v-if="!row.original.latest_testing_release.amd64 && !row.original.latest_testing_release.arm64" class="text-slate-500">—</span>
                         </div>
@@ -172,13 +172,6 @@ const publisherNameById = computed(() => {
 
                     <template #actions-cell="{ row }">
                         <div class="flex gap-1">
-                            <UButton
-                                icon="i-lucide-upload"
-                                variant="ghost"
-                                color="neutral"
-                                size="xs"
-                                :to="`/dashboard/packages/${row.original.fullname}?action=upload`"
-                            />
                             <UButton
                                 icon="i-lucide-settings"
                                 variant="ghost"
