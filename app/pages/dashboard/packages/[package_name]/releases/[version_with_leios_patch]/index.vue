@@ -528,12 +528,12 @@ function formatFileSize(bytes: number): string {
                                             </div>
                                             <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="sm"
                                                 :disabled="uploadStates[arch.key].uploading"
-                                                @click="uploadStates[arch.key].file = null" />
+                                                @click="uploadStates[arch.key].file = null;" />
                                         </div>
                                         <div class="flex justify-end gap-2">
                                             <UButton label="Cancel" color="neutral" variant="ghost"
                                                 :disabled="uploadStates[arch.key].uploading"
-                                                @click="uploadStates[arch.key].file = null" />
+                                                @click="uploadStates[arch.key].file = null;" />
                                             <UButton label="Upload" color="primary" icon="i-lucide-upload"
                                                 :loading="uploadStates[arch.key].uploading"
                                                 @click="uploadDebFile(arch.key)" />
@@ -664,7 +664,7 @@ function formatFileSize(bytes: number): string {
                         </p>
                     </div>
                     <UButton label="Delete Package Release" color="error" variant="soft" icon="i-lucide-trash-2"
-                        @click="deleteConfirmOpen = true" />
+                        @click="deleteConfirmOpen = true;" />
                 </div>
             </div>
         </div>
