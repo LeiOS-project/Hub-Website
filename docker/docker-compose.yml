@@ -1,0 +1,16 @@
+# Runs the registry image — CI (.gitlab/ci/build.yml) builds and pushes $CI_REGISTRY_IMAGE:latest
+# from the default branch.
+services:
+
+  leios-hub-web:
+    image: gcr.leicraftmc.de/leios/hub-website:latest
+    container_name: leios-hub-web
+    restart: unless-stopped
+    ports:
+      - "12153:12153"
+    environment:
+      # Origin of the LeiOS API-Server (without /v1).
+      LEIOS_HUB_API_URL: http://localhost:12151
+      # Public URL of this Hub (canonical URLs, OpenGraph).
+      LEIOS_HUB_APP_URL: http://localhost:12153
+      LEIOS_HUB_ENABLE_SIGNUP: "false"
