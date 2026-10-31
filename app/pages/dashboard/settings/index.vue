@@ -16,14 +16,18 @@ if (!userInfoStore.isValid(userInfo)) {
 	throw createError({ statusCode: 401, statusMessage: "Not authenticated" });
 }
 
+// Same rules as the API's UserDataPolicies.Username (see zPostAuthSignupBody), with readable messages.
 const profileSchema = z.object({
 	username: z
 		.string()
 		.trim()
 		.min(5, "Must be at least 5 characters")
-		.max(30, "Must be at most 30 characters")
-		.regex(/^[a-zA-Z0-9_]+$/, "Only alphanumeric characters and underscores are allowed"),
-	display_name: z.string().trim().max(50, "Must be at most 50 characters").optional(),
+		.max(40, "Must be at most 40 characters")
+		.regex(
+			/^(?!.*[.-]{2})[a-z0-9](?:[a-z0-9._-]{3,38}[a-z0-9_])?$/,
+			"Lowercase letters, numbers, dots, underscores and hyphens; must start with a letter or number",
+		),
+	display_name: z.string().trim().max(64, "Must be at most 64 characters").optional(),
 	email: z.email("Invalid email").trim(),
 	current_password: z.string().min(1, "Current password is required to save changes"),
 });
@@ -56,16 +60,17 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
 	loading.value = false;
 
 	if (result.success) {
-		await userInfoStore.update({
-			username: event.data.username,
-			display_name: event.data.display_name || undefined,
-			email: event.data.email,
-		});
+		const emailChanged = event.data.email !== userInfo.value?.email;
+
+		// Refetch: a changed email address is unconfirmed again (email_verified_at is reset).
+		await userInfoStore.refresh();
 		profile.current_password = "";
 
 		toast.add({
 			title: "Profile updated",
-			description: "Your profile has been successfully updated.",
+			description: emailChanged
+				? `We sent a confirmation link to ${event.data.email}.`
+				: "Your profile has been successfully updated.",
 			icon: "i-lucide-check",
 			color: "success",
 		});
@@ -86,6 +91,8 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
 			<h2 class="text-xl font-semibold text-white">Profile Settings</h2>
 			<p class="mt-1 text-sm text-slate-400">Manage your public profile information</p>
 		</div>
+
+		<DashboardEmailVerificationNotice />
 
 		<DashboardSectionCard
 			title="Profile Information"

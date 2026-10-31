@@ -46,6 +46,10 @@ const publishers = await useAPILazyAsyncData<Publisher[]>("/dashboard/publishers
 
         <template #body>
             <DashboardPageBody>
+                <DashboardEmailVerificationNotice
+                    reason="You need a confirmed address to create a publisher."
+                />
+
                 <DashboardDataTable
                     :data="publishers.data"
                     :columns="publisherTableColumns"

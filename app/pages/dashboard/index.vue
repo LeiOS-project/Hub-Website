@@ -120,6 +120,10 @@ const stats = computed<StatCard[]>(() => [
         <template #body>
             <!-- Welcome Section -->
             <DashboardPageBody>
+                <DashboardEmailVerificationNotice
+                    reason="Creating publishers and reporting packages need a confirmed address."
+                />
+
                 <div class="flex items-center justify-between">
                     <div>
                         <h1 class="text-2xl font-bold">
