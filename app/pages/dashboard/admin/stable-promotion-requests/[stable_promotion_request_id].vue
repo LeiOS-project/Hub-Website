@@ -336,7 +336,7 @@ async function submitDecision() {
         v-model:open="decisionModal"
         :title="`Review Request #${requestData.id}`"
         icon="i-lucide-git-pull-request"
-        icon-color="sky"
+        icon-color="primary"
         :loading="submittingDecision"
     >
         <div class="space-y-4">

@@ -316,6 +316,8 @@ const headerTexts = computed(() => {
 			description="Make sure to copy your new API Key now. You won't be able to see it again!"
 			icon="i-lucide-check-circle"
 			icon-color="emerald"
+			:dismissible="false"
+			:close="false"
 		>
 			<div class="space-y-4">
 				<div class="p-4 rounded-lg bg-red-950/50 border border-red-900/50">
@@ -367,17 +369,6 @@ const headerTexts = computed(() => {
 						@click="onAPIKeyReveal()"
 					/>
 				</div>
-			</template>
-
-			<template #close>
-				<UButton
-                    :icon="'i-lucide-x'"
-                    color="neutral"
-                    variant="ghost"
-                    data-slot="close"
-					class="absolute top-4 end-4"
-					@click="onAPIKeyReveal()"
-                />
 			</template>
 
 		</DashboardModal>

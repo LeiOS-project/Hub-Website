@@ -245,7 +245,7 @@ function getStatusColor(status: AdminStableRequest["status"]) {
         v-model:open="decisionModal"
         :title="`Review Request #${selectedRequest?.id}`"
         icon="i-lucide-git-pull-request"
-        icon-color="sky"
+        icon-color="primary"
         :loading="submittingDecision"
     >
         <div class="space-y-4">

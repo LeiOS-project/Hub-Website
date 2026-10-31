@@ -3,7 +3,6 @@ import type { FormError, NavigationMenuItem } from "@nuxt/ui";
 import z from "zod";
 import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from "~/api-client";
 import { zPostAdminOsReleasesBody, zPutAdminOsReleasesByVersionBody } from "~/api-client/zod.gen";
-import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 
 const toast = useToast();
 const route = useRoute();

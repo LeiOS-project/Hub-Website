@@ -2,7 +2,6 @@
 import type z from "zod";
 import type { ListReleaseStablePromotionRequestsResponses } from "~/api-client";
 import { zPostPackagesByFullPackageNameReleasesBody } from "~/api-client/zod.gen";
-import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 
 const route = useRoute();
 const toast = useToast();

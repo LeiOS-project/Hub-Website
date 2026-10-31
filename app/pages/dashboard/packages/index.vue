@@ -2,7 +2,6 @@
 import type { TableColumn } from "#ui/types";
 import type { GetPackagesResponses } from "@/api-client/types.gen";
 import { useAPI } from "@/composables/useAPI";
-import DashboardPageBody from "~/components/dashboard/DashboardPageBody.vue";
 import type { Publisher } from "~/utils/types";
 
 type DevPackage = GetPackagesResponses[200]["data"][number];

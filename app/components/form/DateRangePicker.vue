@@ -6,13 +6,14 @@ interface Range {
 	end: Date | null;
 }
 
-interface Props {
-	icon?: string;
-}
-
-withDefaults(defineProps<Props>(), {
-	icon: "i-lucide-calendar",
-});
+withDefaults(
+	defineProps<{
+		icon?: string;
+	}>(),
+	{
+		icon: "i-lucide-calendar",
+	},
+);
 
 const df = new DateFormatter("en-US", {
 	dateStyle: "medium",
@@ -20,9 +21,9 @@ const df = new DateFormatter("en-US", {
 
 const selected = defineModel<Range>({ required: true });
 
-const toCalendarDate = (date: Date) => {
+function toCalendarDate(date: Date) {
 	return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
-};
+}
 
 const calendarRange = computed({
 	get: () => ({
@@ -39,38 +40,43 @@ const calendarRange = computed({
 
 const inputValue = computed(() => {
 	const { start, end } = selected.value;
-
 	if (!start) return "Pick a date";
 	if (!end) return df.format(start);
-
 	return `${df.format(start)} - ${df.format(end)}`;
 });
 
-const resetRange = () => {
+function resetRange() {
 	selected.value = {
 		start: null,
 		end: null,
 	};
-};
+}
 </script>
 
 <template>
-    <UPopover :content="{ align: 'start' }" :modal="true" :class="$attrs.class">
-        <UInput color="neutral" variant="outline" :icon="$props.icon" :model-value="inputValue" class="data-[state=open]:bg-elevated group">
-            <template #trailing>
-                <UIcon name="i-lucide-chevron-down" class="shrink-0 text-dimmed size-5 group-data-[state=open]:rotate-180 transition-transform duration-200" />
-            </template>
-        </UInput>
+	<UPopover :content="{ align: 'start' }" :modal="true" :class="$attrs.class">
+		<UInput
+			color="neutral"
+			variant="outline"
+			:icon="$props.icon"
+			:model-value="inputValue"
+			class="group data-[state=open]:bg-elevated"
+		>
+			<template #trailing>
+				<UIcon
+					name="i-lucide-chevron-down"
+					class="size-5 shrink-0 text-dimmed transition-transform duration-200 group-data-[state=open]:rotate-180"
+				/>
+			</template>
+		</UInput>
 
-        <template #content>
-            <div class="flex flex-col gap-2">
-                <UCalendar v-model="calendarRange" class="p-2" :number-of-months="2" range />
-                <div class="px-2 pb-2">
-                    <UButton variant="ghost" color="primary" @click="resetRange" block>
-                        Reset
-                    </UButton>
-                </div>
-            </div>
-        </template>
-    </UPopover>
+		<template #content>
+			<div class="flex flex-col gap-2">
+				<UCalendar v-model="calendarRange" class="p-2" :number-of-months="2" range />
+				<div class="px-2 pb-2">
+					<UButton variant="ghost" color="primary" block @click="resetRange">Reset</UButton>
+				</div>
+			</div>
+		</template>
+	</UPopover>
 </template>
