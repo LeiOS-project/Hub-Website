@@ -43,6 +43,20 @@ const loginRoute = computed(() =>
 
 		<template #body>
 			<UNavigationMenu :items="links" orientation="vertical" class="w-full" />
+
+			<HubMetaProvider v-if="!user" v-slot="{ signupEnabled }">
+				<UButton
+					v-if="signupEnabled"
+					icon="i-lucide-user-plus"
+					to="/auth/signup"
+					color="primary"
+					variant="solid"
+					block
+					class="mt-4 sm:hidden"
+				>
+					Sign up
+				</UButton>
+			</HubMetaProvider>
 		</template>
 
 		<template #right>
@@ -63,9 +77,27 @@ const loginRoute = computed(() =>
 					</UButton>
 				</template>
 
-				<UButton v-else icon="i-lucide-log-in" :to="loginRoute" color="primary" variant="solid">
-					Login
-				</UButton>
+				<HubMetaProvider v-else v-slot="{ signupEnabled }">
+					<UButton
+						icon="i-lucide-log-in"
+						:to="loginRoute"
+						:color="signupEnabled ? 'neutral' : 'primary'"
+						:variant="signupEnabled ? 'ghost' : 'solid'"
+					>
+						Log in
+					</UButton>
+					<!-- Below `sm` the sign-up button moves into the mobile menu (#body). -->
+					<UButton
+						v-if="signupEnabled"
+						icon="i-lucide-user-plus"
+						to="/auth/signup"
+						color="primary"
+						variant="solid"
+						class="max-sm:hidden"
+					>
+						Sign up
+					</UButton>
+				</HubMetaProvider>
 			</div>
 		</template>
 	</UHeader>

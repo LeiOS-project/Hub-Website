@@ -20,7 +20,6 @@ export default defineNuxtConfig({
 					const mappings = {
 						LEIOS_HUB_API_URL: "API_URL",
 						LEIOS_HUB_APP_URL: "APP_URL",
-						LEIOS_HUB_ENABLE_SIGNUP: "IS_SIGNUP_ENABLED",
 					};
 
 					const bannerCode = `
@@ -52,8 +51,6 @@ export default defineNuxtConfig({
 			// Origin of the LeiOS API-Server, without `/v1` (updateAPIClient appends it).
 			apiUrl: process.env.LEIOS_HUB_API_URL || "http://localhost:12151",
 			appUrl: process.env.LEIOS_HUB_APP_URL || "http://localhost:12153",
-			// Temporary switch for the signup UI; to be replaced by a flag from the API.
-			isSignupEnabled: process.env.LEIOS_HUB_ENABLE_SIGNUP === "true",
 		},
 	},
 

@@ -51,11 +51,6 @@ const schema = z.object({
 
 type NewPasswordSchema = z.output<typeof schema>;
 
-const formState = reactive<NewPasswordSchema>({
-	password: "",
-	confirm_password: "",
-});
-
 const validate = (state: Partial<NewPasswordSchema>): FormError[] => {
 	const errors: FormError[] = [];
 	if (state.password && state.confirm_password && state.password !== state.confirm_password) {
@@ -87,7 +82,9 @@ async function onSubmit(payload: FormSubmitEvent<NewPasswordSchema>) {
 	} else {
 		toast.add({
 			title: "Password Reset Failed",
-			description: "An error occurred during password reset.",
+			description: result.message || "An error occurred during password reset.",
+			icon: "i-lucide-alert-circle",
+			color: "error",
 		});
 	}
 }
@@ -97,7 +94,6 @@ async function onSubmit(payload: FormSubmitEvent<NewPasswordSchema>) {
     <template v-if="reset_token">
         <UAuthForm
             :schema="schema"
-            :state="formState"
             :validate="validate"
             title="Reset Password"
             description="Enter your new password below to reset it."

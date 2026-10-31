@@ -3,8 +3,6 @@ import type { AuthFormField, FormSubmitEvent } from "@nuxt/ui";
 import * as z from "zod";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
-const isSignupEnabled = useRuntimeAppConfigs().isSignupEnabled;
-
 definePageMeta({
 	layout: "auth",
 });
@@ -69,9 +67,17 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 	loading.value = false;
 
 	if (!result.success) {
-		const invalidCredentials = (result.code as number) === 401;
+		const code = result.code as number;
+		const invalidCredentials = code === 401;
+		// 403 is a suspended account (or a session that is already signed in), 429 the rate limit;
+		// the API's message says which.
+		const titles: Record<number, string> = {
+			401: "Invalid Username or Password",
+			403: "Login Not Possible",
+			429: "Too Many Attempts",
+		};
 		toast.add({
-			title: invalidCredentials ? "Invalid Username or Password" : "Login Failed",
+			title: titles[code] ?? "Login Failed",
 			description: invalidCredentials
 				? "Please check your credentials and try again."
 				: result.message || "An error occurred during login. Please try again later.",
@@ -117,10 +123,12 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 					Reset here
 				</NuxtLink>
 			</div>
-			<div v-if="isSignupEnabled" class="mt-2 text-center text-sm">
-				Don't have an account?
-				<NuxtLink to="/auth/signup" class="text-primary hover:underline">Sign up</NuxtLink>
-			</div>
+			<HubMetaProvider v-slot="{ signupEnabled }">
+				<div v-if="signupEnabled" class="mt-2 text-center text-sm">
+					Don't have an account?
+					<NuxtLink to="/auth/signup" class="text-primary hover:underline">Sign up</NuxtLink>
+				</div>
+			</HubMetaProvider>
 		</template>
 	</UAuthForm>
 </template>

@@ -35,8 +35,9 @@ Follow the LeiCraftMC Style Guide: https://git.leicraftmc.de/LeiCraftMC/Style-Gu
   - `LEIOS_HUB_API_URL` — API-Server origin **without** `/v1` (default `http://localhost:12151`;
     `updateAPIClient` appends `/v1`).
   - `LEIOS_HUB_APP_URL` — public URL of the Hub (default `http://localhost:12153`).
-  - `LEIOS_HUB_ENABLE_SIGNUP` — temporary switch for the UI-only signup page; to be replaced by a
-    flag from the API.
+- **Signup** has no Hub switch: the Hub reads `signup_enabled` from the API's `GET /v1/meta`
+  (`HubMetaProvider` in `app/components/hub/`) and shows or hides the signup page and links. The
+  API-Server opens signup with `LRA_SIGNUP_ENABLED` plus a working SMTP setup.
 - **Session cookie:** `lra_session_token` — matches the API's `lra_` token prefix
   (`lra_sess_…`, `lra_apikey_…`).
 - **Routing:** `/dashboard/**` and `/auth/**` render client-side (`routeRules` in `nuxt.config.ts`);
