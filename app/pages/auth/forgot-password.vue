@@ -39,7 +39,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 
     const result = await useAPI((api) => {
         return api.postAuthResetPasswordRequest({ body: payload.data });
-    });
+    }, true);
 
     loading.value = false;
 

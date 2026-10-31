@@ -66,7 +66,7 @@ type Schema = z.output<typeof schema>;
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
     const result = await useAPI((api) => {
         return api.postAuthLogin({ body: payload.data });
-    });
+    }, true);
 
     if (result.success) {
         updateAPIClient(result.data.token);

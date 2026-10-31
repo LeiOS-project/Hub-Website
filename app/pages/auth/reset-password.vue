@@ -79,7 +79,7 @@ async function onSubmit(payload: FormSubmitEvent<NewPasswordSchema>) {
                 new_password: payload.data.password,
             }
         });
-    });
+    }, true);
 
 
     if (result.success) {
