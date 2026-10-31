@@ -10,22 +10,18 @@ class UserInfoStore extends ModifiableAbstractStore<UserInfo, Partial<UserInfo>>
     }
     
     protected override async fetchData() {
-        try {
-            if (!useAppCookies().sessionToken.get().value) {
-                return null;
-            }
-            const response = await useAPI((api) => api.getAccount({}));
-
-            if (!response.success) {
-                return null;
-            }
-
-            return response.data satisfies UserInfo;
-
-        } catch (error) {
-            console.error("Error fetching user info:", error);
+        if (!useAppCookies().sessionToken.get().value) {
             return null;
         }
+
+        // `true` = no auth redirect; auth.global.ts decides where to send the user.
+        // useAPI never throws, so no try/catch is needed.
+        const response = await useAPI((api) => api.getAccount({}), true);
+        if (!response.success) {
+            return null;
+        }
+
+        return response.data satisfies UserInfo;
     }
 
     
