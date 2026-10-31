@@ -233,17 +233,6 @@ async function onDeleteUser() {
 		});
 	}
 }
-
-function getRoleColor(role: AdminUser["role"]) {
-	switch (role) {
-		case "admin":
-			return "error" as const;
-		case "developer":
-			return "info" as const;
-		default:
-			return "neutral" as const;
-	}
-}
 </script>
 
 <template>

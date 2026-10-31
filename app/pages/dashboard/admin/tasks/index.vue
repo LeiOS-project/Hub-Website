@@ -36,11 +36,6 @@ const {
 	return res.data;
 });
 
-function formatDate(timestamp: number | null) {
-	if (!timestamp) return "—";
-	return new Date(timestamp).toLocaleString();
-}
-
 function getStatusColor(status: DevTask["status"]) {
 	switch (status) {
 		case "completed":

@@ -190,7 +190,7 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
 				<div class="ml-auto">
 					<UBadge 
 						:label="userInfo.role" 
-						:color="userInfo.role === 'admin' ? 'error' : userInfo.role === 'developer' ? 'primary' : 'neutral'"
+						:color="getRoleColor(userInfo.role)"
 						size="sm"
 					/>
 				</div>
