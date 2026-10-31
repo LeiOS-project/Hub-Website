@@ -3,13 +3,12 @@ import type { FormError, FormSubmitEvent } from "@nuxt/ui";
 import * as z from "zod";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
-const toast = useToast();
-const overlay = useOverlay();
+useSeoMeta({
+	title: "Security | Settings | LeiOS Hub",
+	description: "Manage your password and account security",
+});
 
-const passwordLoading = ref(false);
-const deleteLoading = ref(false);
-const deleteConfirmOpen = ref(false);
-const deleteConfirmText = ref("");
+const toast = useToast();
 
 const passwordSchema = z.object({
 	current_password: z
@@ -39,7 +38,7 @@ const password = reactive<Partial<PasswordSchema>>({
 	confirm_password: undefined,
 });
 
-const validate = (state: Partial<PasswordSchema>): FormError[] => {
+function validate(state: Partial<PasswordSchema>): FormError[] {
 	const errors: FormError[] = [];
 	if (
 		state.current_password &&
@@ -59,263 +58,182 @@ const validate = (state: Partial<PasswordSchema>): FormError[] => {
 		errors.push({ name: "confirm_password", message: "Passwords do not match" });
 	}
 	return errors;
-};
+}
+
+const passwordLoading = ref(false);
+
+/** Drop the local session after the server invalidated it. */
+async function endSession(redirectTo: string) {
+	await useUserInfoStore().clear();
+	useAppCookies().sessionToken.set(null);
+	await navigateTo(redirectTo);
+}
 
 async function onPasswordSubmit(event: FormSubmitEvent<PasswordSchema>) {
 	passwordLoading.value = true;
 
-	try {
-		const result = await useAPI((api) =>
-			api.putAccountPassword({
-				body: {
-					current_password: event.data.current_password,
-					new_password: event.data.new_password,
-				},
-			}),
-		);
+	const result = await useAPI((api) =>
+		api.putAccountPassword({
+			body: {
+				current_password: event.data.current_password,
+				new_password: event.data.new_password,
+			},
+		}),
+	);
 
-		if (result.success) {
-			toast.add({
-				title: "Password updated",
-				description: "Your password has been successfully updated. Please log in again.",
-				icon: "i-lucide-check",
-				color: "success",
-			});
+	passwordLoading.value = false;
 
-			await useUserInfoStore().clear();
-			useAppCookies().sessionToken.set(null);
-			await navigateTo("/auth/login");
-		} else {
-			toast.add({
-				title: "Error",
-				description: result.message || "An error occurred while updating your password.",
-				icon: "i-lucide-alert-circle",
-				color: "error",
-			});
-		}
-	} catch (error) {
+	if (result.success) {
+		toast.add({
+			title: "Password updated",
+			description: "Your password has been successfully updated. Please log in again.",
+			icon: "i-lucide-check",
+			color: "success",
+		});
+		await endSession("/auth/login");
+	} else {
 		toast.add({
 			title: "Error",
-			description: "An unexpected error occurred.",
+			description: result.message || "An error occurred while updating your password.",
 			icon: "i-lucide-alert-circle",
 			color: "error",
 		});
-	} finally {
-		passwordLoading.value = false;
 	}
 }
 
+const deleteConfirmOpen = ref(false);
+
 async function onDeleteAccount() {
-	if (deleteConfirmText.value !== "DELETE") {
-		toast.add({
-			title: "Confirmation required",
-			description: "Please type DELETE to confirm account deletion.",
-			icon: "i-lucide-alert-triangle",
-			color: "warning",
-		});
-		return;
-	}
+	const result = await useAPI((api) => api.deleteAccount({}));
 
-	deleteLoading.value = true;
-
-	try {
-		const result = await useAPI((api) => api.deleteAccount({}));
-
-		if (result.success) {
-			toast.add({
-				title: "Account deleted",
-				description: "Your account has been permanently deleted.",
-				icon: "i-lucide-check",
-				color: "success",
-			});
-
-			await useUserInfoStore().clear();
-			useAppCookies().sessionToken.set(null);
-			await navigateTo("/");
-		} else {
-			toast.add({
-				title: "Error",
-				description: result.message || "An error occurred while deleting your account.",
-				icon: "i-lucide-alert-circle",
-				color: "error",
-			});
-		}
-	} catch (error) {
+	if (!result.success) {
 		toast.add({
 			title: "Error",
-			description: "An unexpected error occurred.",
+			description: result.message || "An error occurred while deleting your account.",
 			icon: "i-lucide-alert-circle",
 			color: "error",
 		});
-	} finally {
-		deleteLoading.value = false;
-		deleteConfirmOpen.value = false;
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(result.message);
 	}
+
+	toast.add({
+		title: "Account deleted",
+		description: "Your account has been permanently deleted.",
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	await endSession("/");
 }
 </script>
 
 <template>
 	<div class="space-y-6">
-		<!-- Header -->
 		<div>
 			<h2 class="text-xl font-semibold text-white">Security Settings</h2>
-			<p class="text-sm text-slate-400 mt-1">Manage your password and account security</p>
+			<p class="mt-1 text-sm text-slate-400">Manage your password and account security</p>
 		</div>
 
-		<!-- Password Card -->
-		<div class="rounded-xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm overflow-hidden">
-			<div class="px-6 py-4 border-b border-slate-800">
-				<div class="flex items-center gap-3">
-					<div class="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center">
-						<UIcon name="i-lucide-key-round" class="w-5 h-5 text-sky-400" />
-					</div>
-					<div>
-						<h3 class="font-medium text-white">Change Password</h3>
-						<p class="text-sm text-slate-400">Update your password to keep your account secure</p>
-					</div>
-				</div>
-			</div>
-			
-			<div class="p-6">
-				<UForm 
-					:schema="passwordSchema" 
-					:state="password" 
-					:validate="validate" 
-					@submit="onPasswordSubmit" 
-					class="divide-y divide-slate-800"
+		<DashboardSectionCard
+			title="Change Password"
+			description="Update your password to keep your account secure"
+			icon="i-lucide-key-round"
+		>
+			<UForm
+				:schema="passwordSchema"
+				:state="password"
+				:validate="validate"
+				class="divide-y divide-slate-800"
+				@submit="onPasswordSubmit"
+			>
+				<UFormField
+					name="current_password"
+					label="Current Password"
+					description="Enter your current password to verify."
+					required
+					class="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0 max-sm:flex-col"
+					:ui="{ root: 'w-full sm:w-auto', container: 'w-full sm:w-auto' }"
 				>
-					<UFormField 
-						name="current_password" 
-						label="Current Password" 
-						description="Enter your current password to verify."
-						required
-						class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
-						:ui='{
-							root: "w-full sm:w-auto",
-							container: "w-full sm:w-auto",
-						}'
-					>
-						<UInput v-model="password.current_password" type="password" placeholder="Current password" class="w-full sm:w-96" />
-					</UFormField>
+					<UInput
+						v-model="password.current_password"
+						type="password"
+						placeholder="Current password"
+						class="w-full sm:w-96"
+					/>
+				</UFormField>
 
-					<UFormField 
-						name="new_password" 
-						label="New Password" 
-						description="Min. 8 chars with uppercase, lowercase, number & special char."
-						required
-						class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
-						:ui='{
-							root: "w-full sm:w-auto",
-							container: "w-full sm:w-auto",
-						}'
-					>
-						<UInput v-model="password.new_password" type="password" placeholder="New password" class="w-full sm:w-96" />
-					</UFormField>
+				<UFormField
+					name="new_password"
+					label="New Password"
+					description="Min. 8 chars with uppercase, lowercase, number & special char."
+					required
+					class="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0 max-sm:flex-col"
+					:ui="{ root: 'w-full sm:w-auto', container: 'w-full sm:w-auto' }"
+				>
+					<UInput
+						v-model="password.new_password"
+						type="password"
+						placeholder="New password"
+						class="w-full sm:w-96"
+					/>
+				</UFormField>
 
-					<UFormField 
-						name="confirm_password" 
-						label="Confirm Password" 
-						description="Re-enter your new password."
-						required
-						class="flex max-sm:flex-col justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
-						:ui='{
-							root: "w-full sm:w-auto",
-							container: "w-full sm:w-auto",
-						}'
-					>
-						<UInput v-model="password.confirm_password" type="password" placeholder="Confirm password" class="w-full sm:w-96" />
-					</UFormField>
+				<UFormField
+					name="confirm_password"
+					label="Confirm Password"
+					description="Re-enter your new password."
+					required
+					class="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0 max-sm:flex-col"
+					:ui="{ root: 'w-full sm:w-auto', container: 'w-full sm:w-auto' }"
+				>
+					<UInput
+						v-model="password.confirm_password"
+						type="password"
+						placeholder="Confirm password"
+						class="w-full sm:w-96"
+					/>
+				</UFormField>
 
-					<div class="pt-4">
-						<UButton 
-							label="Update Password" 
-							type="submit" 
-							color="primary"
-							:loading="passwordLoading"
-							icon="i-lucide-lock"
-						/>
-					</div>
-				</UForm>
-			</div>
-		</div>
-
-		<!-- Danger Zone Card -->
-		<div class="rounded-xl border border-red-900/50 bg-red-950/20 backdrop-blur-sm overflow-hidden">
-			<div class="px-6 py-4 border-b border-red-900/50">
-				<div class="flex items-center gap-3">
-					<div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-						<UIcon name="i-lucide-alert-triangle" class="w-5 h-5 text-red-400" />
-					</div>
-					<div>
-						<h3 class="font-medium text-red-400">Danger Zone</h3>
-						<p class="text-sm text-slate-400">Irreversible and destructive actions</p>
-					</div>
-				</div>
-			</div>
-			
-			<div class="p-6">
-				<div class="flex flex-col md:flex-row md:items-center gap-4">
-					<div class="flex-1">
-						<h4 class="font-medium text-white">Delete Account</h4>
-						<p class="text-sm text-slate-400 mt-1">
-							Permanently delete your account and all associated data. This action cannot be undone.
-						</p>
-					</div>
-					<UButton 
-						label="Delete Account" 
-						color="error" 
-						variant="soft"
-						icon="i-lucide-trash-2"
-						@click="deleteConfirmOpen = true"
+				<div class="pt-4">
+					<UButton
+						label="Update Password"
+						type="submit"
+						color="primary"
+						:loading="passwordLoading"
+						icon="i-lucide-lock"
 					/>
 				</div>
-			</div>
-		</div>
+			</UForm>
+		</DashboardSectionCard>
 
-		<!-- Delete Confirmation Modal -->
-		<DashboardModal
-			v-model:open="deleteConfirmOpen"
-			title="Delete Account"
-			description="This action is permanent"
+		<DashboardSectionCard
+			title="Danger Zone"
+			description="Irreversible and destructive actions"
 			icon="i-lucide-alert-triangle"
-			icon-color="error"
+			tone="danger"
 		>
-			<div class="space-y-4">
-				<div class="p-4 rounded-lg bg-red-950/50 border border-red-900/50">
-					<p class="text-sm text-red-300">
-						<strong>Warning:</strong> All your data including packages, releases, and account information will be permanently deleted. This action cannot be reversed.
+			<div class="flex flex-col gap-4 md:flex-row md:items-center">
+				<div class="flex-1">
+					<h4 class="font-medium text-white">Delete Account</h4>
+					<p class="mt-1 text-sm text-slate-400">
+						Permanently delete your account and all associated data. This action cannot be undone.
 					</p>
 				</div>
-
-				<div>
-					<label class="block text-sm font-medium text-slate-300 mb-2">
-						Type <span class="text-red-400">DELETE</span> to confirm
-					</label>
-					<UInput 
-						v-model="deleteConfirmText" 
-						type="text" 
-						placeholder="Type DELETE"
-						class="w-full"
-					/>
-				</div>
-
-				<div class="flex justify-end gap-3 pt-2">
-					<UButton 
-						label="Cancel" 
-						color="neutral" 
-						variant="ghost"
-						@click="deleteConfirmOpen = false; deleteConfirmText = ''"
-					/>
-					<UButton 
-						label="Delete Account" 
-						color="error"
-						:loading="deleteLoading"
-						:disabled="deleteConfirmText !== 'DELETE'"
-						icon="i-lucide-trash-2"
-						@click="onDeleteAccount"
-					/>
-				</div>
+				<UButton
+					label="Delete Account"
+					color="error"
+					variant="soft"
+					icon="i-lucide-trash-2"
+					@click="deleteConfirmOpen = true;"
+				/>
 			</div>
-		</DashboardModal>
+		</DashboardSectionCard>
+
+		<DashboardDeleteModal
+			v-model:open="deleteConfirmOpen"
+			title="Delete Account"
+			warning-text="All your data including packages, releases, and account information will be permanently deleted. This action cannot be reversed."
+			:on-delete="onDeleteAccount"
+		/>
 	</div>
 </template>
