@@ -63,28 +63,39 @@ const packageColumns: TableColumn<DevPackage>[] = [
 const recentPackages = computed(() => (devPackages.value || []).slice(0, 5));
 const recentTasks = computed(() => (devTasks.value || []).slice(0, 5));
 
-const stats = computed(() => [
+type StatCard = {
+	label: string;
+	value: number;
+	loading: boolean;
+	icon: string;
+	iconColor: "primary" | "amber" | "emerald";
+};
+
+const stats = computed<StatCard[]>(() => [
 	{
 		label: "Total Packages",
 		value: devPackages.value?.length ?? 0,
+		loading: loadingPackages.value,
 		icon: "i-lucide-package",
-		color: "text-sky-400",
+		iconColor: "primary",
 	},
 	...(isAdmin.value
-		? [
+		? ([
 				{
 					label: "Pending Tasks",
 					value: recentTasks.value.filter((t) => t.status === "pending").length,
+					loading: loadingTasks.value,
 					icon: "i-lucide-clock",
-					color: "text-amber-400",
+					iconColor: "amber",
 				},
 				{
 					label: "Running Tasks",
 					value: recentTasks.value.filter((t) => t.status === "running").length,
+					loading: loadingTasks.value,
 					icon: "i-lucide-loader",
-					color: "text-emerald-400",
+					iconColor: "emerald",
 				},
-			]
+			] satisfies StatCard[])
 		: []),
 ]);
 </script>
@@ -92,7 +103,7 @@ const stats = computed(() => [
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar title="Dashboard" icon="i-lucide-layout-dashboard">
+            <DashboardPageHeader title="Dashboard" icon="i-lucide-layout-dashboard">
                 <template #right>
                     <UButton
                         label="New Package"
@@ -101,12 +112,12 @@ const stats = computed(() => [
                         to="/dashboard/packages/new"
                     />
                 </template>
-            </UDashboardNavbar>
+            </DashboardPageHeader>
         </template>
 
         <template #body>
             <!-- Welcome Section -->
-            <div class="space-y-6">
+            <DashboardPageBody>
                 <div class="flex items-center justify-between">
                     <div>
                         <h1 class="text-2xl font-bold">
@@ -123,22 +134,16 @@ const stats = computed(() => [
                 </div>
 
                 <!-- Stats Cards -->
-                <div :class="isAdmin ? 'grid gap-4 sm:grid-cols-3' : 'grid gap-4 sm:grid-cols-1'">
-                    <UCard
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <DashboardStatCard
                         v-for="stat in stats"
                         :key="stat.label"
-                        class="border-slate-800 bg-slate-900/60"
-                    >
-                        <div class="flex items-center gap-4">
-                            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-800">
-                                <UIcon :name="stat.icon" :class="['text-xl', stat.color]" />
-                            </div>
-                            <div>
-                                <p class="text-2xl font-bold">{{ stat.value }}</p>
-                                <p class="text-sm text-slate-400">{{ stat.label }}</p>
-                            </div>
-                        </div>
-                    </UCard>
+                        :label="stat.label"
+                        :value="stat.value"
+                        :loading="stat.loading"
+                        :icon="stat.icon"
+                        :icon-color="stat.iconColor"
+                    />
                 </div>
 
                 <!-- Recent Packages -->
@@ -340,7 +345,7 @@ const stats = computed(() => [
                         </div>
                     </UCard>
                 </div>
-            </div>
+            </DashboardPageBody>
         </template>
     </UDashboardPanel>
 </template>
