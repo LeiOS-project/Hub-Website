@@ -83,14 +83,14 @@ const stats = computed<StatCard[]>(() => [
 		? ([
 				{
 					label: "Pending Tasks",
-					value: recentTasks.value.filter((t) => t.status === "pending").length,
+					value: (devTasks.value || []).filter((t) => t.status === "pending").length,
 					loading: loadingTasks.value,
 					icon: "i-lucide-clock",
 					iconColor: "amber",
 				},
 				{
 					label: "Running Tasks",
-					value: recentTasks.value.filter((t) => t.status === "running").length,
+					value: (devTasks.value || []).filter((t) => t.status === "running").length,
 					loading: loadingTasks.value,
 					icon: "i-lucide-loader",
 					iconColor: "emerald",
@@ -147,7 +147,7 @@ const stats = computed<StatCard[]>(() => [
                 </div>
 
                 <!-- Recent Packages -->
-                <UCard v-if="isAdmin" class="border-slate-800 bg-slate-900/60">
+                <UCard class="border-slate-800 bg-slate-900/60">
                     <template #header>
                         <div class="flex items-center justify-between">
                             <h2 class="text-lg font-semibold flex items-center gap-2">
@@ -214,8 +214,8 @@ const stats = computed<StatCard[]>(() => [
                     </UEmpty>
                 </UCard>
 
-                <!-- Recent Tasks -->
-                <UCard class="border-slate-800 bg-slate-900/60">
+                <!-- Recent Tasks (the task list is admin-only) -->
+                <UCard v-if="isAdmin" class="border-slate-800 bg-slate-900/60">
                     <template #header>
                         <div class="flex items-center justify-between">
                             <h2 class="text-lg font-semibold flex items-center gap-2">
