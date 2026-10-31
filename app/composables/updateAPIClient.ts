@@ -5,18 +5,11 @@ export function updateAPIClient(token: string | null) {
 
     const apiURL = useRuntimeAppConfigs().apiUrl
 
-    if (token) {
-        client.setConfig({
-            baseURL: apiURL,
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            ignoreResponseError: true
-        });
-    } else {
-        client.setConfig({
-            baseURL: apiURL,
-            ignoreResponseError: true
-        });
-    }
+    client.setConfig({
+        baseURL: apiURL,
+        // `null` deletes the header; the client's setConfig merges headers, so omitting it
+        // would keep sending the previous token (across logout and across SSR requests).
+        headers: { Authorization: token ? `Bearer ${token}` : null },
+        ignoreResponseError: true
+    });
 }
