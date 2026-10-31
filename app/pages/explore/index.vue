@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { GetPackagesResponses } from '~/api-client';
+import type { GetPackagesResponses, GetPublishersResponses } from '~/api-client';
 
 type PublicPackage = GetPackagesResponses[200]['data'][number]
+type PublicPublisher = GetPublishersResponses[200]['data'][number]
 
 const toast = useToast()
 const search = ref('')
@@ -14,6 +15,23 @@ const { data: packages, pending, refresh } = await useAsyncData<PublicPackage[]>
     }
     return res.data
 })
+
+// Publisher display names for the badges. The list endpoint is paginated (max 100); packages of a
+// publisher outside that page fall back to the publisher name from the package's full name.
+const { data: publishers } = await useAsyncData<PublicPublisher[]>('public-publishers', async () => {
+    const res = await useAPI((api) => api.getPublishers({ query: { limit: 100 } }), true)
+    return res.success ? res.data : []
+})
+
+const publisherDisplayNames = computed(() => {
+    return new Map((publishers.value || []).map((publisher) => [publisher.name, publisher.display_name || publisher.name]))
+})
+
+// A package's full name is `<publisherName>.<packageName>`.
+function getPublisherLabel(pkg: PublicPackage) {
+    const publisherName = pkg.fullname.split('.')[0] || pkg.fullname
+    return publisherDisplayNames.value.get(publisherName) ?? publisherName
+}
 
 const filteredPackages = computed(() => {
     const term = search.value.trim().toLowerCase()
@@ -59,7 +77,7 @@ const filteredPackages = computed(() => {
                                         <UIcon name="i-lucide-package" class="text-sky-400" />
                                         <h3 class="text-lg font-semibold">{{ pkg.name }}</h3>
                                     </div>
-                                    <UBadge color="neutral" variant="soft">publisher #{{ pkg.publisher_id }}</UBadge>
+                                    <UBadge color="neutral" variant="soft" icon="i-lucide-building">{{ getPublisherLabel(pkg) }}</UBadge>
                                 </div>
                                 <p class="text-sm text-slate-400">{{ pkg.description || 'No description provided.' }}</p>
                                 <div class="flex flex-wrap gap-2">

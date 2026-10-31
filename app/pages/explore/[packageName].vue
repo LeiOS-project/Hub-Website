@@ -2,7 +2,8 @@
 import type { TableColumn } from '#ui/types'
 import type {
     GetPackagesByFullPackageNameReleasesResponses,
-    GetPackagesByFullPackageNameResponses
+    GetPackagesByFullPackageNameResponses,
+    GetPublishersByPublisherNameResponses
 } from '~/api-client'
 
 const toast = useToast()
@@ -11,15 +12,7 @@ const router = useRouter()
 
 type PublicPackage = GetPackagesByFullPackageNameResponses[200]['data']
 type PackageRelease = GetPackagesByFullPackageNameReleasesResponses[200]['data'][number]
-
-const repoOptions = [
-    { label: 'All repositories', value: 'all' },
-    { label: 'Archive', value: 'leios-archive' },
-    { label: 'Testing', value: 'leios-testing' },
-    { label: 'Stable', value: 'leios-stable' }
-]
-
-const repo = ref<'all' | 'leios-archive' | 'leios-testing' | 'leios-stable'>('all')
+type PublicPublisher = GetPublishersByPublisherNameResponses[200]['data']
 
 const packageName = computed(() => route.params.packageName as string)
 
@@ -62,6 +55,26 @@ const { data: releaseData } = await useAsyncData<PackageRelease[]>(
     },
     { watch: [packageName] }
 )
+
+// A package's full name is `<publisherName>.<packageName>`.
+const publisherName = computed(() => {
+    const fullname = packageInfo.value?.fullname || packageName.value
+    return fullname.split('.')[0] || fullname
+})
+
+const { data: publisher } = await useAsyncData<PublicPublisher | null>(
+    `public-publisher-${publisherName.value}`,
+    async () => {
+        const res = await useAPI(
+            (api) => api.getPublishersByPublisherName({ path: { publisherName: publisherName.value } }),
+            true
+        )
+        return res.success ? res.data : null
+    },
+    { watch: [publisherName] }
+)
+
+const publisherLabel = computed(() => publisher.value?.display_name || publisherName.value)
 
 const packageTitle = computed(() => packageInfo.value?.display_name || packageInfo.value?.name || packageName.value)
 
@@ -111,7 +124,6 @@ const releaseColumns: TableColumn<ReleaseRow>[] = [
                     <p class="text-slate-400">View public metadata and releases for this package.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <USelect v-model="repo" :items="repoOptions" class="w-48" />
                     <UButton icon="i-lucide-refresh-cw" variant="ghost" :loading="pending" @click="() => refresh()">Refresh</UButton>
                 </div>
             </div>
@@ -132,7 +144,7 @@ const releaseColumns: TableColumn<ReleaseRow>[] = [
                                 <h2 class="text-2xl font-semibold">{{ packageInfo.name }}</h2>
                                 <p class="text-slate-400">{{ packageInfo.description || 'No description provided.' }}</p>
                                 <div class="flex flex-wrap gap-2">
-                                    <UBadge color="neutral" variant="soft">publisher #{{ packageInfo.publisher_id }}</UBadge>
+                                    <UBadge color="neutral" variant="soft" icon="i-lucide-building">{{ publisherLabel }}</UBadge>
                                     <UButton v-if="packageInfo.homepage_url" size="sm" variant="ghost" color="neutral" :to="packageInfo.homepage_url" target="_blank" icon="i-lucide-external-link">Homepage</UButton>
                                 </div>
                             </div>
@@ -144,7 +156,7 @@ const releaseColumns: TableColumn<ReleaseRow>[] = [
                                 <UBadge color="neutral" variant="soft">{{ releases.length }} entries</UBadge>
                             </div>
 
-                            <div v-if="!releases.length" class="text-slate-400">No releases for this selection.</div>
+                            <div v-if="!releases.length" class="text-slate-400">No releases yet.</div>
 
                             <UTable v-else :data="releases" :columns="releaseColumns" />
                         </div>
