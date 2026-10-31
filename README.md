@@ -1,87 +1,88 @@
 # LeiOS Repository Hub
 
 Central control center for LeiOS packages: public explorer, developer workflows, and admin approvals.
+The Hub is the web frontend of the LeiOS API-Server, which it talks to over HTTP.
 
 ## Features
 
-- 🔍 Public package explorer with search, repo filters (archive/testing/stable), and release tables
+- 🔍 Public package explorer with search, publisher names and release tables
 - 🛠️ Developer workspace to create packages, upload amd64/arm64 releases, and request promotion to stable
-- 🛡️ Admin controls for approving/denying stable promotion requests and managing users/roles
+- 🏢 Publisher management with member roles and per-package role overrides
+- 🛡️ Admin controls for stable promotion requests, users, all packages, OS releases and tasks
+- 🔑 Personal API keys for scripts and CI
 - 🔐 Session-based authentication with automatic API client configuration
-- 🎨 Dark Nuxt UI theme using the Aurora-inspired palette
 
 ## Tech Stack
 
-- Framework: Nuxt 4 (SSR)
-- UI: @nuxt/ui + Lucide icons
-- Styling: Tailwind CSS + custom tokens
+- Framework: Nuxt 4 (SSR for public pages, client-rendered dashboard)
+- UI: Nuxt UI v4 + Lucide icons, Tailwind CSS v4 (dark-only)
 - Language: TypeScript
-- Runtime: Bun (Nitro bun preset)
-- API client: Generated via openapi-ts
+- Runtime: Bun (`nuxt build --preset bun`)
+- API client: generated with `@hey-api/openapi-ts` from the API-Server's OpenAPI spec
+- Tooling: Biome (format + lint), `bun test`
+
+The code follows the [LeiCraftMC Style Guide](https://git.leicraftmc.de/LeiCraftMC/Style-Guides).
 
 ## Quick start
 
-1) Install dependencies
+1. Install dependencies
 
-```bash
-bun install
-```
+   ```bash
+   bun install
+   ```
 
-2) Environment variables
+2. Environment variables — copy `example.env` to `.env` and adjust as needed:
 
-Copy `example.env` to `.env` and adjust as needed (PowerShell example):
+   - `LEIOS_HUB_API_URL` — origin of the LeiOS API-Server, without `/v1` (default `http://localhost:12151`)
+   - `LEIOS_HUB_APP_URL` — public URL of the Hub (default `http://localhost:12153`)
+   - `LEIOS_HUB_ENABLE_SIGNUP` — show the (not yet functional) signup page (default `false`)
 
-```powershell
-Copy-Item example.env .env
-```
+3. Development server (port `12153`)
 
-Key values:
+   ```bash
+   bun run dev
+   ```
 
-- `REPO_API_URL` — API base URL (defaults to `http://localhost:12151`)
-- `USE_DEV_PROXY` — set to `true` to enable the dev proxy in `nuxt.config.ts`
-- `DEV_PROXY_TARGET` — proxy target when `USE_DEV_PROXY=true` (defaults to `https://api.leios.dev`)
+4. Regenerate the typed API client (the API-Server must be running on port `12151` with docs enabled)
 
-3) Development server (default port `12153`)
+   ```bash
+   bun run api-client:generate
+   ```
 
-```bash
-bun run dev
-```
+5. Production build & start
 
-4) Generate the typed API client from the OpenAPI spec
+   ```bash
+   bun run build
+   bun run start
+   ```
 
-```bash
-bun run api-client:generate
-```
+## Scripts
 
-5) Production build & start
+| Script | Purpose |
+| --- | --- |
+| `bun run dev` | Dev server on port 12153 |
+| `bun run build` / `bun run start` | Production build (Bun preset) and server on port 12153 |
+| `bun run typecheck` | `nuxt typecheck` + `tsc` for the tests |
+| `bun run check:ci` / `bun run format` | Biome check (CI gate) / format |
+| `bun test` / `bun run test:ci` | Tests / tests with coverage and a JUnit report |
+| `bun run api-client:generate` | Regenerate `app/api-client/` |
 
-```bash
-bun run build
-bun start
-```
+## Deployment
 
-## OpenCode setup
+CI (`.gitlab-ci.yml`) runs lint, typecheck and tests on every push and merge request; on the
+default branch it builds `.output/` and pushes the Docker image (`docker/Dockerfile`). Run it with
+`docker/docker-compose.yml`, setting `LEIOS_HUB_API_URL` and `LEIOS_HUB_APP_URL` for the
+deployment.
 
-- Project config is checked in at `opencode.json`.
-- Project commands live under `.opencode/commands/`.
-- Nuxt and Nuxt UI MCP servers are enabled for OpenCode and match the existing VS Code MCP config in `.vscode/mcp.json`.
-- Repo instructions for OpenCode live in `AGENTS.md`.
+## AI tooling
 
-Useful OpenCode commands in this repo:
-
-- `/verify` - run `bun test` and `bun run build`
-- `/dev` - work on local dev-server setup
-- `/api-client` - regenerate the typed API client
-
-
-## Styling
-
-- Dark-forward UI using @nuxt/ui components and the Aurora-inspired palette defined in `assets/css/main.css`.
-- Tailwind utilities layered with custom CSS variables (`--surface-*`, `--text-*`) for consistent surfaces and text contrast.
+- `AGENTS.md` (all agents) and `CLAUDE.md` (Claude Code) describe the repo conventions.
+- Claude Code commands and MCP servers: `.claude/settings.json`; VS Code MCP: `.vscode/mcp.json`.
+- OpenCode: `opencode.json` and `.opencode/commands/` (`/verify`, `/dev`, `/api-client`).
 
 ## License
 
-GPL License — see `LICENSE` for details.
+AGPL-3.0 — see `LICENSE` for details.
 
 ## Support
 
