@@ -1,73 +1,83 @@
 <script setup lang="ts">
-import type { TableColumn } from '#ui/types'
-import type { GetAdminTasksResponses } from '@/api-client/types.gen'
+import type { TableColumn } from "#ui/types";
+import type { GetAdminTasksResponses } from "@/api-client/types.gen";
 
-type DevTask = GetAdminTasksResponses[200]['data'][number]
+type DevTask = GetAdminTasksResponses[200]["data"][number];
 
 definePageMeta({
-    layout: 'dashboard'
-})
+	layout: "dashboard",
+});
 
 useSeoMeta({
-    title: 'Tasks | LeiOS Hub',
-    description: 'View scheduled tasks'
-})
+	title: "Tasks | LeiOS Hub",
+	description: "View scheduled tasks",
+});
 
-const toast = useToast()
+const toast = useToast();
 
 const taskColumns: TableColumn<DevTask>[] = [
-    { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'status', header: 'Status' },
-    { id: 'created', header: 'Created' },
-    { id: 'finished', header: 'Finished' },
-    { accessorKey: 'message', header: 'Message' }
-]
+	{ accessorKey: "id", header: "ID" },
+	{ accessorKey: "status", header: "Status" },
+	{ id: "created", header: "Created" },
+	{ id: "finished", header: "Finished" },
+	{ accessorKey: "message", header: "Message" },
+];
 
-const { data: tasks, loading, refresh } = await useAPIAsyncData<DevTask[]>(
-    'admin-tasks-list',
-    async () => {
-        const res = await useAPI((api) => api.getAdminTasks({}))
-        if (!res.success) {
-            toast.add({ title: 'Failed to load tasks', description: res.message, color: 'error' })
-            return []
-        }
-        return res.data;
-    }
-)
+const {
+	data: tasks,
+	loading,
+	refresh,
+} = await useAPIAsyncData<DevTask[]>("admin-tasks-list", async () => {
+	const res = await useAPI((api) => api.getAdminTasks({}));
+	if (!res.success) {
+		toast.add({ title: "Failed to load tasks", description: res.message, color: "error" });
+		return [];
+	}
+	return res.data;
+});
 
 function formatDate(timestamp: number | null) {
-    if (!timestamp) return '—';
-    return new Date(timestamp).toLocaleString();
+	if (!timestamp) return "—";
+	return new Date(timestamp).toLocaleString();
 }
 
-function getStatusColor(status: DevTask['status']) {
-    switch (status) {
-        case 'completed': return 'success' as const
-        case 'running': return 'info' as const
-        case 'failed': return 'error' as const
-        case 'paused': return 'warning' as const
-        default: return 'neutral' as const
-    }
+function getStatusColor(status: DevTask["status"]) {
+	switch (status) {
+		case "completed":
+			return "success" as const;
+		case "running":
+			return "info" as const;
+		case "failed":
+			return "error" as const;
+		case "paused":
+			return "warning" as const;
+		default:
+			return "neutral" as const;
+	}
 }
 
-function getStatusIcon(status: DevTask['status']) {
-    switch (status) {
-        case 'completed': return 'i-lucide-check-circle'
-        case 'running': return 'i-lucide-loader'
-        case 'failed': return 'i-lucide-x-circle'
-        case 'paused': return 'i-lucide-pause-circle'
-        default: return 'i-lucide-clock'
-    }
+function getStatusIcon(status: DevTask["status"]) {
+	switch (status) {
+		case "completed":
+			return "i-lucide-check-circle";
+		case "running":
+			return "i-lucide-loader";
+		case "failed":
+			return "i-lucide-x-circle";
+		case "paused":
+			return "i-lucide-pause-circle";
+		default:
+			return "i-lucide-clock";
+	}
 }
 
 const taskStatusOptions = [
-    { label: 'Pending', value: 'pending' },
-    { label: 'Running', value: 'running' },
-    { label: 'Paused', value: 'paused' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'Failed', value: 'failed' },
-]
-
+	{ label: "Pending", value: "pending" },
+	{ label: "Running", value: "running" },
+	{ label: "Paused", value: "paused" },
+	{ label: "Completed", value: "completed" },
+	{ label: "Failed", value: "failed" },
+];
 </script>
 
 <template>

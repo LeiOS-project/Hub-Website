@@ -1,109 +1,118 @@
 <script setup lang="ts">
-import type { TableColumn } from '@nuxt/ui';
-import type { GetAdminStablePromotionRequestsResponses } from '@/api-client/types.gen';
+import type { TableColumn } from "@nuxt/ui";
+import type { GetAdminStablePromotionRequestsResponses } from "@/api-client/types.gen";
 
-type AdminStableRequest = GetAdminStablePromotionRequestsResponses[200]['data'][number];
+type AdminStableRequest = GetAdminStablePromotionRequestsResponses[200]["data"][number];
 
 definePageMeta({
-    layout: 'dashboard'
+	layout: "dashboard",
 });
 
 useSeoMeta({
-    title: 'Stable Promotion Requests | LeiOS Hub',
-    description: 'Review and manage stable promotion requests'
+	title: "Stable Promotion Requests | LeiOS Hub",
+	description: "Review and manage stable promotion requests",
 });
 
 const toast = useToast();
 
 // Fetch stable promotion requests
 const stablePromotionRequests = await useAPIAsyncData(
-    'admin-stable-promotion-requests',
-    async () => {
-        const res = await useAPI((api) => api.getAdminStablePromotionRequests({}));
-        
-        if (!res.success) {
-            toast.add({
-                title: 'Error',
-                description: `Failed to load stable promotion requests: ${res.message}`,
-                color: 'error'
-            });
-            return [];
-        }
+	"admin-stable-promotion-requests",
+	async () => {
+		const res = await useAPI((api) => api.getAdminStablePromotionRequests({}));
 
-        return res.data;
-    }
+		if (!res.success) {
+			toast.add({
+				title: "Error",
+				description: `Failed to load stable promotion requests: ${res.message}`,
+				color: "error",
+			});
+			return [];
+		}
+
+		return res.data;
+	},
 );
 
 const requestColumns: TableColumn<AdminStableRequest>[] = [
-    { accessorKey: 'id', header: 'ID' },
-    { id: 'package', header: 'Package' },
-    { id: 'release', header: 'Release' },
-    { id: 'status', header: 'Status' },
-    { accessorKey: 'created_at', header: 'Created At' },
-    { accessorKey: 'admin_note', header: 'Admin Note' },
-    { id: 'actions', header: '', enableSorting: false, enableHiding: false }
+	{ accessorKey: "id", header: "ID" },
+	{ id: "package", header: "Package" },
+	{ id: "release", header: "Release" },
+	{ id: "status", header: "Status" },
+	{ accessorKey: "created_at", header: "Created At" },
+	{ accessorKey: "admin_note", header: "Admin Note" },
+	{ id: "actions", header: "", enableSorting: false, enableHiding: false },
 ];
 
 const decisionModal = ref(false);
 const selectedRequest = ref<AdminStableRequest | null>(null);
 const decisionForm = reactive({
-    status: 'approved' as 'approved' | 'denied',
-    admin_note: ''
+	status: "approved" as "approved" | "denied",
+	admin_note: "",
 });
 const submittingDecision = ref(false);
 
-function openDecision(request: AdminStableRequest, initialStatus: 'approved' | 'denied' = 'approved') {
-    selectedRequest.value = request;
-    decisionForm.status = initialStatus;
-    decisionForm.admin_note = '';
-    decisionModal.value = true;
+function openDecision(
+	request: AdminStableRequest,
+	initialStatus: "approved" | "denied" = "approved",
+) {
+	selectedRequest.value = request;
+	decisionForm.status = initialStatus;
+	decisionForm.admin_note = "";
+	decisionModal.value = true;
 }
 
 async function submitDecision() {
-    if (!selectedRequest.value) return;
+	if (!selectedRequest.value) return;
 
-    submittingDecision.value = true;
+	submittingDecision.value = true;
 
-    try {
-        const res = await useAPI((api) => api.postAdminStablePromotionRequestsByStablePromotionRequestIdDecide({
-            path: { stablePromotionRequestID: (selectedRequest.value as AdminStableRequest).id },
-            body: {
-                status: decisionForm.status,
-                admin_note: decisionForm.admin_note
-            }
-        }));
+	try {
+		const res = await useAPI((api) =>
+			api.postAdminStablePromotionRequestsByStablePromotionRequestIdDecide({
+				path: { stablePromotionRequestID: (selectedRequest.value as AdminStableRequest).id },
+				body: {
+					status: decisionForm.status,
+					admin_note: decisionForm.admin_note,
+				},
+			}),
+		);
 
-        if (res.success) {
-            toast.add({
-                title: decisionForm.status === 'approved' ? 'Request approved' : 'Request denied',
-                description: `Stable promotion request #${selectedRequest.value.id} has been ${decisionForm.status}.`,
-                icon: 'i-lucide-check',
-                color: 'success'
-            });
-            decisionModal.value = false;
-            await stablePromotionRequests.refresh();
-        } else {
-            throw new Error(res.message || 'Failed to submit decision');
-        }
-    } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error'
-        });
-    } finally {
-        submittingDecision.value = false;
-    }
+		if (res.success) {
+			toast.add({
+				title: decisionForm.status === "approved" ? "Request approved" : "Request denied",
+				description: `Stable promotion request #${selectedRequest.value.id} has been ${decisionForm.status}.`,
+				icon: "i-lucide-check",
+				color: "success",
+			});
+			decisionModal.value = false;
+			await stablePromotionRequests.refresh();
+		} else {
+			throw new Error(res.message || "Failed to submit decision");
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	} finally {
+		submittingDecision.value = false;
+	}
 }
 
-function getStatusColor(status: AdminStableRequest['status']) {
-    switch (status) {
-        case 'approved': return 'success';
-        case 'denied': return 'error';
-        case 'pending': return 'warning';
-        default: return 'neutral';
-    }
+function getStatusColor(status: AdminStableRequest["status"]) {
+	switch (status) {
+		case "approved":
+			return "success";
+		case "denied":
+			return "error";
+		case "pending":
+			return "warning";
+		default:
+			return "neutral";
+	}
 }
 </script>
 

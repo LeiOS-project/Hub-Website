@@ -1,76 +1,76 @@
 <script setup lang="ts">
-import type { GetAdminOsReleasesResponses } from '~/api-client'
-import type { TableColumn } from '@nuxt/ui'
-import DashboardPageHeader from '~/components/dashboard/DashboardPageHeader.vue';
-import DashboardPageBody from '~/components/dashboard/DashboardPageBody.vue';
+import type { TableColumn } from "@nuxt/ui";
+import type { GetAdminOsReleasesResponses } from "~/api-client";
+import DashboardPageBody from "~/components/dashboard/DashboardPageBody.vue";
+import DashboardPageHeader from "~/components/dashboard/DashboardPageHeader.vue";
 
-const toast = useToast()
+const toast = useToast();
 
 type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
 
 definePageMeta({
-    layout: 'dashboard'
+	layout: "dashboard",
 });
 
 useSeoMeta({
-    title: 'OS Releases | LeiOS Hub',
-    description: 'Manage OS Releases on LeiOS Hub'
+	title: "OS Releases | LeiOS Hub",
+	description: "Manage OS Releases on LeiOS Hub",
 });
 
-const { data: osReleases, loading, refresh } = await useAPIAsyncData<OSRelease[]>(
-    '/admin/os-releases',
-    async () => {
-        const res = await useAPI((api) => api.getAdminOsReleases({}))
-        if (!res.success) {
-            toast.add({ title: 'Failed to load OS Releases', description: res.message, color: 'error' })
-            return []
-        }
-        return res.data;
+const {
+	data: osReleases,
+	loading,
+	refresh,
+} = await useAPIAsyncData<OSRelease[]>("/admin/os-releases", async () => {
+	const res = await useAPI((api) => api.getAdminOsReleases({}));
+	if (!res.success) {
+		toast.add({ title: "Failed to load OS Releases", description: res.message, color: "error" });
+		return [];
+	}
+	return res.data;
 
-        // for (let i = 0; i < 200; i++) {
-        //     res.data.push({
-        //         id: i,
-        //         version: `2025.${String(Math.floor(i / 28) + 1).padStart(2, '0')}.${String((i % 28) + 1).padStart(2, '0')}`,
-        //         created_at: Date.now() - i * 1000 * 60 * 60 * 24,
-        //         published_at: Date.now() - i * 1000 * 60 * 60 * 24,
-        //         publishing_status: (['pending', 'running', 'paused', 'completed', 'failed'] satisfies OSRelease['publishing_status'][])[Math.floor(Math.random() * 1000) % 5] as OSRelease['publishing_status'],
-        //     });
-        // }
-        // return res.data;
-    }
-);
+	// for (let i = 0; i < 200; i++) {
+	//     res.data.push({
+	//         id: i,
+	//         version: `2025.${String(Math.floor(i / 28) + 1).padStart(2, '0')}.${String((i % 28) + 1).padStart(2, '0')}`,
+	//         created_at: Date.now() - i * 1000 * 60 * 60 * 24,
+	//         published_at: Date.now() - i * 1000 * 60 * 60 * 24,
+	//         publishing_status: (['pending', 'running', 'paused', 'completed', 'failed'] satisfies OSRelease['publishing_status'][])[Math.floor(Math.random() * 1000) % 5] as OSRelease['publishing_status'],
+	//     });
+	// }
+	// return res.data;
+});
 
 const osReleasesTableColumns: TableColumn<OSRelease>[] = [
-    { accessorKey: 'version' , header: 'Version' },
-    { accessorKey: 'created_at', header: 'Created At' },
-    { accessorKey: 'publishing_status', header: 'Publishing Status' },
-    { accessorKey: 'published_at', header: 'Published At' },
-]
+	{ accessorKey: "version", header: "Version" },
+	{ accessorKey: "created_at", header: "Created At" },
+	{ accessorKey: "publishing_status", header: "Publishing Status" },
+	{ accessorKey: "published_at", header: "Published At" },
+];
 
-function getPublishingStatusColor(status: OSRelease['publishing_status']) {
-    switch (status) {
-        case 'pending':
-            return 'warning'
-        case 'paused':
-            return 'warning'
-        case 'completed':
-            return 'success'
-        case 'failed':
-            return 'error'
-        case 'running':
-            return 'info'
-    }
+function getPublishingStatusColor(status: OSRelease["publishing_status"]) {
+	switch (status) {
+		case "pending":
+			return "warning";
+		case "paused":
+			return "warning";
+		case "completed":
+			return "success";
+		case "failed":
+			return "error";
+		case "running":
+			return "info";
+	}
 }
 
 // Filter options for publishing status
 const publishingStatusOptions = [
-    { label: 'Pending', value: 'pending' },
-    { label: 'Running', value: 'running' },
-    { label: 'Paused', value: 'paused' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'Failed', value: 'failed' },
-]
-
+	{ label: "Pending", value: "pending" },
+	{ label: "Running", value: "running" },
+	{ label: "Paused", value: "paused" },
+	{ label: "Completed", value: "completed" },
+	{ label: "Failed", value: "failed" },
+];
 </script>
 
 <template>

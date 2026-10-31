@@ -1,6 +1,4 @@
-
 export function useRuntimeAppConfigs() {
-    const config = useRuntimeConfig();
-    return config.public;
+	const config = useRuntimeConfig();
+	return config.public;
 }
-

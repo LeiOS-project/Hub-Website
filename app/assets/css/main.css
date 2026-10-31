@@ -2,7 +2,7 @@
 @import "@nuxt/ui";
 
 @theme {
-    --font-sans: "Inter", "Rubik", sans-serif;
+	--font-sans: "Inter", "Rubik", sans-serif;
 }
 
 /* ===========================
@@ -10,13 +10,13 @@
    =========================== */
 
 :root {
-    color-scheme: dark;
+	color-scheme: dark;
 }
 
 html {
-    scroll-behavior: smooth;
+	scroll-behavior: smooth;
 }
 
 .main-bg-color {
-    background-color: rgb(2 6 23);
+	background-color: rgb(2 6 23);
 }

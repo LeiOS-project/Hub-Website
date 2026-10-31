@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Publisher, NewPublisher } from "~/utils/types";
-import { zPostPublishersBody, zPutPublishersByPublisherNameBody } from "~/api-client/zod.gen";
 import type z from "zod";
+import { zPostPublishersBody, zPutPublishersByPublisherNameBody } from "~/api-client/zod.gen";
+import type { NewPublisher, Publisher } from "~/utils/types";
 
 definePageMeta({
-    layout: 'dashboard'
+	layout: "dashboard",
 });
 
 const route = useRoute();
@@ -15,145 +15,145 @@ const pub_data = pub.data;
 const pub_loading = pub.loading;
 
 const headerTexts = computed(() => {
-    if (pub.isNew) {
-        return {
-            title: 'Create New Publisher',
-            description: 'Create a new publisher on LeiOS Hub.',
-        };
-    }
-    return {
-        title: `Publisher: ${pub_data.value.name}`,
-        description: 'View and manage the details of the publisher.',
-    };
+	if (pub.isNew) {
+		return {
+			title: "Create New Publisher",
+			description: "Create a new publisher on LeiOS Hub.",
+		};
+	}
+	return {
+		title: `Publisher: ${pub_data.value.name}`,
+		description: "View and manage the details of the publisher.",
+	};
 });
 
 const publisher_form_schema = pub.isNew ? zPostPublishersBody : zPutPublishersByPublisherNameBody;
 const publisher_form_state = ref<NewPublisher>({
-    name: pub_data.value.name || '',
-    display_name: pub_data.value.display_name || '',
-    description: pub_data.value.description || '',
-    homepage_url: pub_data.value.homepage_url || '',
-    maintainer_contact_name: pub_data.value.maintainer_contact_name || '',
-    maintainer_contact_email: pub_data.value.maintainer_contact_email || '',
+	name: pub_data.value.name || "",
+	display_name: pub_data.value.display_name || "",
+	description: pub_data.value.description || "",
+	homepage_url: pub_data.value.homepage_url || "",
+	maintainer_contact_name: pub_data.value.maintainer_contact_name || "",
+	maintainer_contact_email: pub_data.value.maintainer_contact_email || "",
 });
 
 const submitting = ref(false);
 
 async function onFormSubmit() {
-    submitting.value = true;
-    try {
-        if (pub.isNew) {
-            const result = await useAPI((api) =>
-                api.postPublishers({
-                    body: {
-                        name: publisher_form_state.value.name,
-                        display_name: publisher_form_state.value.display_name,
-                        description: publisher_form_state.value.description,
-                        homepage_url: publisher_form_state.value.homepage_url,
-                        maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
-                        maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
-                    }
-                })
-            );
+	submitting.value = true;
+	try {
+		if (pub.isNew) {
+			const result = await useAPI((api) =>
+				api.postPublishers({
+					body: {
+						name: publisher_form_state.value.name,
+						display_name: publisher_form_state.value.display_name,
+						description: publisher_form_state.value.description,
+						homepage_url: publisher_form_state.value.homepage_url,
+						maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
+						maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
+					},
+				}),
+			);
 
-            if (result.success) {
-                toast.add({
-                    title: 'Publisher created',
-                    description: `The publisher "${publisher_form_state.value.name}" has been created.`,
-                    icon: 'i-lucide-check',
-                    color: 'success',
-                });
+			if (result.success) {
+				toast.add({
+					title: "Publisher created",
+					description: `The publisher "${publisher_form_state.value.name}" has been created.`,
+					icon: "i-lucide-check",
+					color: "success",
+				});
 
-                await navigateTo(`/dashboard/publishers/${publisher_form_state.value.name}`);
-            } else {
-                throw new Error(result.message || 'Failed to create publisher');
-            }
-        } else {
-            const result = await useAPI((api) =>
-                api.putPublishersByPublisherName({
-                    path: {
-                        publisherName: pub_data.value.name,
-                    },
-                    body: {
-                        display_name: publisher_form_state.value.display_name,
-                        description: publisher_form_state.value.description,
-                        homepage_url: publisher_form_state.value.homepage_url,
-                        maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
-                        maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
-                    }
-                })
-            );
+				await navigateTo(`/dashboard/publishers/${publisher_form_state.value.name}`);
+			} else {
+				throw new Error(result.message || "Failed to create publisher");
+			}
+		} else {
+			const result = await useAPI((api) =>
+				api.putPublishersByPublisherName({
+					path: {
+						publisherName: pub_data.value.name,
+					},
+					body: {
+						display_name: publisher_form_state.value.display_name,
+						description: publisher_form_state.value.description,
+						homepage_url: publisher_form_state.value.homepage_url,
+						maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
+						maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
+					},
+				}),
+			);
 
-            if (result.success) {
-                pub_data.value = {
-                    ...pub_data.value,
-                    display_name: publisher_form_state.value.display_name,
-                    description: publisher_form_state.value.description,
-                    homepage_url: publisher_form_state.value.homepage_url,
-                    maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
-                    maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
-                };
+			if (result.success) {
+				pub_data.value = {
+					...pub_data.value,
+					display_name: publisher_form_state.value.display_name,
+					description: publisher_form_state.value.description,
+					homepage_url: publisher_form_state.value.homepage_url,
+					maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
+					maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
+				};
 
-                toast.add({
-                    title: 'Publisher updated',
-                    description: `The publisher has been successfully updated.`,
-                    icon: 'i-lucide-check',
-                    color: 'success',
-                });
-            } else {
-                throw new Error(result.message || 'Failed to update publisher');
-            }
-        }
-    } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error',
-        });
-    } finally {
-        submitting.value = false;
-    }
+				toast.add({
+					title: "Publisher updated",
+					description: `The publisher has been successfully updated.`,
+					icon: "i-lucide-check",
+					color: "success",
+				});
+			} else {
+				throw new Error(result.message || "Failed to update publisher");
+			}
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	} finally {
+		submitting.value = false;
+	}
 }
 
 const deleteConfirmOpen = ref(false);
 
 async function onDeletePublisher() {
-    try {
-        const result = await useAPI((api) =>
-            api.deletePublishersByPublisherName({
-                path: { publisherName: pub_data.value.name }
-            })
-        );
+	try {
+		const result = await useAPI((api) =>
+			api.deletePublishersByPublisherName({
+				path: { publisherName: pub_data.value.name },
+			}),
+		);
 
-        if (result.success) {
-            toast.add({
-                title: 'Publisher deleted',
-                description: `The publisher "${pub_data.value.name}" has been deleted.`,
-                icon: 'i-lucide-check',
-                color: 'success',
-            });
+		if (result.success) {
+			toast.add({
+				title: "Publisher deleted",
+				description: `The publisher "${pub_data.value.name}" has been deleted.`,
+				icon: "i-lucide-check",
+				color: "success",
+			});
 
-            await navigateTo('/dashboard/publishers');
-        } else {
-            throw new Error(result.message || 'Failed to delete publisher');
-        }
-    } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error',
-        });
-        deleteConfirmOpen.value = false;
-    }
+			await navigateTo("/dashboard/publishers");
+		} else {
+			throw new Error(result.message || "Failed to delete publisher");
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+		deleteConfirmOpen.value = false;
+	}
 }
 
 // Pre-fill empty homepage_url so the input doesn't error on empty URL fields
 watchEffect(() => {
-    if (!publisher_form_state.value.homepage_url) {
-        publisher_form_state.value.homepage_url = 'https://';
-    }
+	if (!publisher_form_state.value.homepage_url) {
+		publisher_form_state.value.homepage_url = "https://";
+	}
 });
 </script>
 

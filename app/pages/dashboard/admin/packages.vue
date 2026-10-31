@@ -1,21 +1,21 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from "@nuxt/ui";
+import * as z from "zod";
 import type { DropdownMenuItem, TableColumn } from "#ui/types";
 import type { GetPackagesResponses } from "@/api-client/types.gen";
-import type { Publisher } from '~/utils/types';
-import * as z from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
 import { zPostPackagesBody } from "~/api-client/zod.gen";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
+import type { Publisher } from "~/utils/types";
 
 type AdminPackage = GetPackagesResponses[200]["data"][number];
 
 definePageMeta({
-    layout: "dashboard",
+	layout: "dashboard",
 });
 
 useSeoMeta({
-    title: "All Packages | LeiOS Hub",
-    description: "Manage all packages",
+	title: "All Packages | LeiOS Hub",
+	description: "Manage all packages",
 });
 
 const toast = useToast();
@@ -24,90 +24,88 @@ const toast = useToast();
 const userInfoStore = useUserInfoStore();
 const currentUser = await userInfoStore.use();
 if (!userInfoStore.isValid(currentUser)) {
-    throw new Error('User not authenticated but trying to access Admin Packages');
+	throw new Error("User not authenticated but trying to access Admin Packages");
 }
 
 if (currentUser.value.role !== "admin") {
-    await navigateTo("/dashboard");
+	await navigateTo("/dashboard");
 }
 
 const packageColumns: TableColumn<AdminPackage>[] = [
-    { accessorKey: "id", header: "ID" },
-    { accessorKey: "fullname", header: "Name" },
-    { accessorKey: "publisher_id", header: "Publisher", enableSorting: true },
-    { accessorKey: "description", header: "Description" },
-    { id: "stable", header: "Stable" },
-    { id: "testing", header: "Testing" },
-    { id: "actions", header: "", enableSorting: false, enableHiding: false },
+	{ accessorKey: "id", header: "ID" },
+	{ accessorKey: "fullname", header: "Name" },
+	{ accessorKey: "publisher_id", header: "Publisher", enableSorting: true },
+	{ accessorKey: "description", header: "Description" },
+	{ id: "stable", header: "Stable" },
+	{ id: "testing", header: "Testing" },
+	{ id: "actions", header: "", enableSorting: false, enableHiding: false },
 ];
 
 const {
-    data: packages,
-    loading,
-    refresh,
+	data: packages,
+	loading,
+	refresh,
 } = await useAPILazyAsyncData<AdminPackage[]>("admin-packages-list", async () => {
-    const res = await useAPI((api) => api.getPackages({}));
-    if (!res.success) {
-        toast.add({
-            title: "Failed to load packages",
-            description: res.message,
-            color: "error",
-        });
-        return [];
-    }
-    return res.data;
+	const res = await useAPI((api) => api.getPackages({}));
+	if (!res.success) {
+		toast.add({
+			title: "Failed to load packages",
+			description: res.message,
+			color: "error",
+		});
+		return [];
+	}
+	return res.data;
 });
 
 // Load publishers for filter + display
 const { data: publishers } = await useAPILazyAsyncData<Publisher[]>(
-    'admin-packages-publishers',
-    async () => {
-        const res = await useAPI((api) => api.getPublishers({}));
-        if (!res.success) return [];
-        return res.data;
-    }
+	"admin-packages-publishers",
+	async () => {
+		const res = await useAPI((api) => api.getPublishers({}));
+		if (!res.success) return [];
+		return res.data;
+	},
 );
 
 const publisherFilterOptions = computed(() =>
-    (publishers.value || []).map(p => ({
-        label: p.display_name,
-        value: p.id,
-    }))
+	(publishers.value || []).map((p) => ({
+		label: p.display_name,
+		value: p.id,
+	})),
 );
 
 const publisherNameById = computed(() => {
-    const map: Record<number, string> = {};
-    for (const p of (publishers.value || [])) {
-        map[p.id] = p.display_name;
-    }
-    return map;
+	const map: Record<number, string> = {};
+	for (const p of publishers.value || []) {
+		map[p.id] = p.display_name;
+	}
+	return map;
 });
 
-function getAdminPackageRowActions(row: {
-    original: AdminPackage;
-}): DropdownMenuItem[][] {
-    return [
-        [
-            {
-                label: "Edit",
-                icon: "i-lucide-pencil",
-                onSelect: () => openEdit(row.original),
-            },
-            {
-                label: "View Releases",
-                icon: "i-lucide-list",
-                to: `/dashboard/packages/${row.original.fullname}`,
-            },
-        ],
-        [
-            {
-                label: "Delete",
-                icon: "i-lucide-trash-2",
-                color: "error",
-                onSelect: () => openDelete(row.original),
-            },
-        ],
-    ];
+function getAdminPackageRowActions(row: { original: AdminPackage }): DropdownMenuItem[][] {
+	return [
+		[
+			{
+				label: "Edit",
+				icon: "i-lucide-pencil",
+				onSelect: () => openEdit(row.original),
+			},
+			{
+				label: "View Releases",
+				icon: "i-lucide-list",
+				to: `/dashboard/packages/${row.original.fullname}`,
+			},
+		],
+		[
+			{
+				label: "Delete",
+				icon: "i-lucide-trash-2",
+				color: "error",
+				onSelect: () => openDelete(row.original),
+			},
+		],
+	];
 }
 
 const showCreateModal = ref(false);
@@ -118,71 +116,69 @@ const createSchema = zPostPackagesBody;
 type CreateSchema = z.output<typeof createSchema>;
 
 const editForm = reactive({
-    description: "",
-    homepage_url: "",
+	description: "",
+	homepage_url: "",
 });
 
 const createForm = reactive({
-    name: '',
-    display_name: '',
-    publisher_id: undefined as number | undefined,
-    description: '',
-    homepage_url: '',
+	name: "",
+	display_name: "",
+	publisher_id: undefined as number | undefined,
+	description: "",
+	homepage_url: "",
 });
 
 async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
-    const res = await useAPI((api) =>
-        api.postPackages({ body: event.data })
-    );
-    if (res.success) {
-        toast.add({ title: "Package created", color: "success" });
-        showCreateModal.value = false;
-        await refresh();
-    } else {
-        toast.add({
-            title: "Create failed",
-            description: res.message,
-            color: "error",
-        });
-    }
+	const res = await useAPI((api) => api.postPackages({ body: event.data }));
+	if (res.success) {
+		toast.add({ title: "Package created", color: "success" });
+		showCreateModal.value = false;
+		await refresh();
+	} else {
+		toast.add({
+			title: "Create failed",
+			description: res.message,
+			color: "error",
+		});
+	}
 }
 
 function openEdit(pkg: AdminPackage) {
-    selectedPackage.value = pkg;
-    editForm.description = pkg.description;
-    editForm.homepage_url = pkg.homepage_url;
-    showEditModal.value = true;
+	selectedPackage.value = pkg;
+	editForm.description = pkg.description;
+	editForm.homepage_url = pkg.homepage_url;
+	showEditModal.value = true;
 }
 
 function openDelete(pkg: AdminPackage) {
-    packageToDelete.value = pkg;
-    showDeleteModal.value = true;
+	packageToDelete.value = pkg;
+	showDeleteModal.value = true;
 }
 
 async function submitEdit() {
-    if (!selectedPackage.value) return;
-    const target = selectedPackage.value;
-    const res = await useAPI((api) =>
-        api.putPackagesByFullPackageName({
-            path: { fullPackageName: target.fullname },
-            body: {
-                description: editForm.description,
-                homepage_url: editForm.homepage_url,
-            },
-        })
-    );
+	if (!selectedPackage.value) return;
+	const target = selectedPackage.value;
+	const res = await useAPI((api) =>
+		api.putPackagesByFullPackageName({
+			path: { fullPackageName: target.fullname },
+			body: {
+				description: editForm.description,
+				homepage_url: editForm.homepage_url,
+			},
+		}),
+	);
 
-    if (res.success) {
-        toast.add({ title: "Package updated", color: "success" });
-        showEditModal.value = false;
-        await refresh();
-    } else {
-        toast.add({
-            title: "Update failed",
-            description: res.message,
-            color: "error",
-        });
-    }
+	if (res.success) {
+		toast.add({ title: "Package updated", color: "success" });
+		showEditModal.value = false;
+		await refresh();
+	} else {
+		toast.add({
+			title: "Update failed",
+			description: res.message,
+			color: "error",
+		});
+	}
 }
 
 // Delete with DashboardDeleteModal
@@ -191,28 +187,28 @@ const deleting = ref(false);
 const packageToDelete = ref<AdminPackage | null>(null);
 
 async function deletePackage() {
-    if (!packageToDelete.value) return;
-    const target = packageToDelete.value;
-    deleting.value = true;
-    const res = await useAPI((api) =>
-        api.deletePackagesByFullPackageName({
-            path: { fullPackageName: target.fullname },
-        })
-    );
-    deleting.value = false;
+	if (!packageToDelete.value) return;
+	const target = packageToDelete.value;
+	deleting.value = true;
+	const res = await useAPI((api) =>
+		api.deletePackagesByFullPackageName({
+			path: { fullPackageName: target.fullname },
+		}),
+	);
+	deleting.value = false;
 
-    if (res.success) {
-        toast.add({ title: "Package deleted", color: "success" });
-        showDeleteModal.value = false;
-        packageToDelete.value = null;
-        await refresh();
-    } else {
-        toast.add({
-            title: "Delete failed",
-            description: res.message,
-            color: "error",
-        });
-    }
+	if (res.success) {
+		toast.add({ title: "Package deleted", color: "success" });
+		showDeleteModal.value = false;
+		packageToDelete.value = null;
+		await refresh();
+	} else {
+		toast.add({
+			title: "Delete failed",
+			description: res.message,
+			color: "error",
+		});
+	}
 }
 </script>
 

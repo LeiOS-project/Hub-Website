@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import type { FooterColumn } from '@nuxt/ui'
+import type { FooterColumn } from "@nuxt/ui";
 
 const socialLinks = [
-    { icon: 'i-lucide-github', to: 'https://github.com/LeiOS-project', label: 'GitHub' },
-    { icon: 'i-lucide-message-circle', to: 'https://discord.gg/8YC5BXjCc5', label: 'Discord' }
-]
+	{ icon: "i-lucide-github", to: "https://github.com/LeiOS-project", label: "GitHub" },
+	{ icon: "i-lucide-message-circle", to: "https://discord.gg/8YC5BXjCc5", label: "Discord" },
+];
 
 const resourceLinks = [
-    { label: 'Blog', to: 'https://blog.leicraftmc.de/tag/leios/', target: '_blank' },
-    { label: 'Source Code', to: 'https://git.leicraftmc.de/LeiOS/', target: '_blank' },
-    { label: 'GitHub', to: 'https://github.com/LeiOS-project', target: '_blank' }
-]
+	{ label: "Blog", to: "https://blog.leicraftmc.de/tag/leios/", target: "_blank" },
+	{ label: "Source Code", to: "https://git.leicraftmc.de/LeiOS/", target: "_blank" },
+	{ label: "GitHub", to: "https://github.com/LeiOS-project", target: "_blank" },
+];
 
 const communityLinks = [
-    { label: 'Discord', to: 'https://discord.gg/8YC5BXjCc5', target: '_blank' },
-    { label: 'Contribute', to: 'https://github.com/LeiOS-project', target: '_blank' }
-]
+	{ label: "Discord", to: "https://discord.gg/8YC5BXjCc5", target: "_blank" },
+	{ label: "Contribute", to: "https://github.com/LeiOS-project", target: "_blank" },
+];
 
 const footerColumns: FooterColumn[] = [
-    { label: 'Resources', children: resourceLinks },
-    { label: 'Community', children: communityLinks }
-]
+	{ label: "Resources", children: resourceLinks },
+	{ label: "Community", children: communityLinks },
+];
 
-const currentYear = new Date().getFullYear()
+const currentYear = new Date().getFullYear();
 </script>
 
 <template>

@@ -1,47 +1,60 @@
 <script setup lang="ts">
-import type { GetPackagesResponses, GetPublishersResponses } from '~/api-client';
+import type { GetPackagesResponses, GetPublishersResponses } from "~/api-client";
 
-type PublicPackage = GetPackagesResponses[200]['data'][number]
-type PublicPublisher = GetPublishersResponses[200]['data'][number]
+type PublicPackage = GetPackagesResponses[200]["data"][number];
+type PublicPublisher = GetPublishersResponses[200]["data"][number];
 
-const toast = useToast()
-const search = ref('')
+const toast = useToast();
+const search = ref("");
 
-const { data: packages, pending, refresh } = await useAsyncData<PublicPackage[]>('public-packages', async () => {
-    const res = await useAPI((api) => api.getPackages({}), true)
-    if (!res.success) {
-        toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
-        return []
-    }
-    return res.data
-})
+const {
+	data: packages,
+	pending,
+	refresh,
+} = await useAsyncData<PublicPackage[]>("public-packages", async () => {
+	const res = await useAPI((api) => api.getPackages({}), true);
+	if (!res.success) {
+		toast.add({ title: "Failed to load packages", description: res.message, color: "error" });
+		return [];
+	}
+	return res.data;
+});
 
 // Publisher display names for the badges. The list endpoint is paginated (max 100); packages of a
 // publisher outside that page fall back to the publisher name from the package's full name.
-const { data: publishers } = await useAsyncData<PublicPublisher[]>('public-publishers', async () => {
-    const res = await useAPI((api) => api.getPublishers({ query: { limit: 100 } }), true)
-    return res.success ? res.data : []
-})
+const { data: publishers } = await useAsyncData<PublicPublisher[]>(
+	"public-publishers",
+	async () => {
+		const res = await useAPI((api) => api.getPublishers({ query: { limit: 100 } }), true);
+		return res.success ? res.data : [];
+	},
+);
 
 const publisherDisplayNames = computed(() => {
-    return new Map((publishers.value || []).map((publisher) => [publisher.name, publisher.display_name || publisher.name]))
-})
+	return new Map(
+		(publishers.value || []).map((publisher) => [
+			publisher.name,
+			publisher.display_name || publisher.name,
+		]),
+	);
+});
 
 // A package's full name is `<publisherName>.<packageName>`.
 function getPublisherLabel(pkg: PublicPackage) {
-    const publisherName = pkg.fullname.split('.')[0] || pkg.fullname
-    return publisherDisplayNames.value.get(publisherName) ?? publisherName
+	const publisherName = pkg.fullname.split(".")[0] || pkg.fullname;
+	return publisherDisplayNames.value.get(publisherName) ?? publisherName;
 }
 
 const filteredPackages = computed(() => {
-    const term = search.value.trim().toLowerCase()
-    if (!term) return packages.value || []
-    return (packages.value || []).filter((pkg) =>
-        pkg.name.toLowerCase().includes(term) ||
-        (pkg.description || '').toLowerCase().includes(term) ||
-        (pkg.homepage_url || '').toLowerCase().includes(term)
-    )
-})
+	const term = search.value.trim().toLowerCase();
+	if (!term) return packages.value || [];
+	return (packages.value || []).filter(
+		(pkg) =>
+			pkg.name.toLowerCase().includes(term) ||
+			(pkg.description || "").toLowerCase().includes(term) ||
+			(pkg.homepage_url || "").toLowerCase().includes(term),
+	);
+});
 </script>
 
 <template>

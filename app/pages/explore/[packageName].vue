@@ -1,114 +1,133 @@
 <script setup lang="ts">
-import type { TableColumn } from '#ui/types'
+import type { TableColumn } from "#ui/types";
 import type {
-    GetPackagesByFullPackageNameReleasesResponses,
-    GetPackagesByFullPackageNameResponses,
-    GetPublishersByPublisherNameResponses
-} from '~/api-client'
+	GetPackagesByFullPackageNameReleasesResponses,
+	GetPackagesByFullPackageNameResponses,
+	GetPublishersByPublisherNameResponses,
+} from "~/api-client";
 
-const toast = useToast()
-const route = useRoute()
-const router = useRouter()
+const toast = useToast();
+const route = useRoute();
+const router = useRouter();
 
-type PublicPackage = GetPackagesByFullPackageNameResponses[200]['data']
-type PackageRelease = GetPackagesByFullPackageNameReleasesResponses[200]['data'][number]
-type PublicPublisher = GetPublishersByPublisherNameResponses[200]['data']
+type PublicPackage = GetPackagesByFullPackageNameResponses[200]["data"];
+type PackageRelease = GetPackagesByFullPackageNameReleasesResponses[200]["data"][number];
+type PublicPublisher = GetPublishersByPublisherNameResponses[200]["data"];
 
-const packageName = computed(() => route.params.packageName as string)
+const packageName = computed(() => route.params.packageName as string);
 
-const { data: packageInfo, pending, refresh } = await useAsyncData<PublicPackage | null>(
-    `public-package-${packageName.value}`,
-    async () => {
-        const res = await useAPI(
-            (api) =>
-                api.getPackagesByFullPackageName({
-                    path: { fullPackageName: packageName.value }
-                }),
-            true
-        )
+const {
+	data: packageInfo,
+	pending,
+	refresh,
+} = await useAsyncData<PublicPackage | null>(
+	`public-package-${packageName.value}`,
+	async () => {
+		const res = await useAPI(
+			(api) =>
+				api.getPackagesByFullPackageName({
+					path: { fullPackageName: packageName.value },
+				}),
+			true,
+		);
 
-        if (!res.success) {
-            toast.add({ title: 'Failed to load package', description: res.message, color: 'error' })
-            if (Number(res.code) === 404) {
-                await router.push('/explore')
-            }
-            return null
-        }
-        return res.data
-    },
-    { watch: [packageName] }
-)
+		if (!res.success) {
+			toast.add({ title: "Failed to load package", description: res.message, color: "error" });
+			if (Number(res.code) === 404) {
+				await router.push("/explore");
+			}
+			return null;
+		}
+		return res.data;
+	},
+	{ watch: [packageName] },
+);
 
 const { data: releaseData } = await useAsyncData<PackageRelease[]>(
-    `public-package-releases-${packageName.value}`,
-    async () => {
-        const res = await useAPI(
-            (api) => api.getPackagesByFullPackageNameReleases({ path: { fullPackageName: packageName.value } }),
-            true
-        )
+	`public-package-releases-${packageName.value}`,
+	async () => {
+		const res = await useAPI(
+			(api) =>
+				api.getPackagesByFullPackageNameReleases({ path: { fullPackageName: packageName.value } }),
+			true,
+		);
 
-        if (!res.success) {
-            return []
-        }
+		if (!res.success) {
+			return [];
+		}
 
-        return res.data
-    },
-    { watch: [packageName] }
-)
+		return res.data;
+	},
+	{ watch: [packageName] },
+);
 
 // A package's full name is `<publisherName>.<packageName>`.
 const publisherName = computed(() => {
-    const fullname = packageInfo.value?.fullname || packageName.value
-    return fullname.split('.')[0] || fullname
-})
+	const fullname = packageInfo.value?.fullname || packageName.value;
+	return fullname.split(".")[0] || fullname;
+});
 
 const { data: publisher } = await useAsyncData<PublicPublisher | null>(
-    `public-publisher-${publisherName.value}`,
-    async () => {
-        const res = await useAPI(
-            (api) => api.getPublishersByPublisherName({ path: { publisherName: publisherName.value } }),
-            true
-        )
-        return res.success ? res.data : null
-    },
-    { watch: [publisherName] }
-)
+	`public-publisher-${publisherName.value}`,
+	async () => {
+		const res = await useAPI(
+			(api) => api.getPublishersByPublisherName({ path: { publisherName: publisherName.value } }),
+			true,
+		);
+		return res.success ? res.data : null;
+	},
+	{ watch: [publisherName] },
+);
 
-const publisherLabel = computed(() => publisher.value?.display_name || publisherName.value)
+const publisherLabel = computed(() => publisher.value?.display_name || publisherName.value);
 
-const packageTitle = computed(() => packageInfo.value?.display_name || packageInfo.value?.name || packageName.value)
+const packageTitle = computed(
+	() => packageInfo.value?.display_name || packageInfo.value?.name || packageName.value,
+);
 
 const releases = computed(() => {
-    return (releaseData.value || []).flatMap((release) => {
-        const rows: ReleaseRow[] = []
+	return (releaseData.value || []).flatMap((release) => {
+		const rows: ReleaseRow[] = [];
 
-        if (release.architectures.amd64) {
-            rows.push({ version: release.version_with_leios_patch, arch: 'amd64', changelog: release.changelog })
-        }
+		if (release.architectures.amd64) {
+			rows.push({
+				version: release.version_with_leios_patch,
+				arch: "amd64",
+				changelog: release.changelog,
+			});
+		}
 
-        if (release.architectures.arm64) {
-            rows.push({ version: release.version_with_leios_patch, arch: 'arm64', changelog: release.changelog })
-        }
+		if (release.architectures.arm64) {
+			rows.push({
+				version: release.version_with_leios_patch,
+				arch: "arm64",
+				changelog: release.changelog,
+			});
+		}
 
-        if (release.architectures.is_all) {
-            rows.push({ version: release.version_with_leios_patch, arch: 'all', changelog: release.changelog })
-        }
+		if (release.architectures.is_all) {
+			rows.push({
+				version: release.version_with_leios_patch,
+				arch: "all",
+				changelog: release.changelog,
+			});
+		}
 
-        return rows
-    })
-})
+		return rows;
+	});
+});
 
 type ReleaseRow = {
-    version: string
-    arch: string
-    changelog: string
-}
+	version: string;
+	arch: string;
+	changelog: string;
+};
 
 const releaseColumns: TableColumn<ReleaseRow>[] = [
-    { accessorKey: 'version', header: 'Version' },
-    { accessorKey: 'arch', header: 'Arch' },
-    { accessorKey: 'changelog', header: 'Changelog' }
-]
+	{ accessorKey: "version", header: "Version" },
+	{ accessorKey: "arch", header: "Arch" },
+	{ accessorKey: "changelog", header: "Changelog" },
+];
 </script>
 
 <template>

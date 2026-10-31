@@ -1,70 +1,65 @@
 <script setup lang="ts">
-import type { TableColumn } from '#ui/types'
-import type { GetPackagesResponses } from '@/api-client/types.gen'
-import type { Publisher } from '~/utils/types'
-import { useAPI } from '@/composables/useAPI'
-import DashboardPageBody from '~/components/dashboard/DashboardPageBody.vue'
+import type { TableColumn } from "#ui/types";
+import type { GetPackagesResponses } from "@/api-client/types.gen";
+import { useAPI } from "@/composables/useAPI";
+import DashboardPageBody from "~/components/dashboard/DashboardPageBody.vue";
+import type { Publisher } from "~/utils/types";
 
-type DevPackage = GetPackagesResponses[200]['data'][number]
+type DevPackage = GetPackagesResponses[200]["data"][number];
 
 definePageMeta({
-    layout: 'dashboard'
-})
+	layout: "dashboard",
+});
 
 useSeoMeta({
-    title: 'Packages | LeiOS Hub',
-    description: 'Manage your packages'
-})
+	title: "Packages | LeiOS Hub",
+	description: "Manage your packages",
+});
 
-const toast = useToast()
+const toast = useToast();
 
 const packageTableColumns: TableColumn<DevPackage>[] = [
-    { accessorKey: 'fullname', header: 'Name' },
-    { accessorKey: 'description', header: 'Description' },
-    { accessorKey: 'homepage_url', header: 'Homepage' },
-    { accessorKey: 'publisher_id', header: 'Publisher', enableSorting: true },
-    { id: 'stable', header: 'Stable' },
-    { id: 'testing', header: 'Testing' },
-    { id: 'actions', header: '', enableSorting: false, enableHiding: false }
-]
+	{ accessorKey: "fullname", header: "Name" },
+	{ accessorKey: "description", header: "Description" },
+	{ accessorKey: "homepage_url", header: "Homepage" },
+	{ accessorKey: "publisher_id", header: "Publisher", enableSorting: true },
+	{ id: "stable", header: "Stable" },
+	{ id: "testing", header: "Testing" },
+	{ id: "actions", header: "", enableSorting: false, enableHiding: false },
+];
 
-const packages = await useAPIAsyncData(
-    `/dev/packages`,
-    async () => {
-        const res = await useAPI((api) => api.getPackages({ query: { onlyMembershipByMe: true } }));
-        if (!res.success) {
-            toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
-            return [];
-        }
-        return res.data;
-    }
-)
+const packages = await useAPIAsyncData(`/dev/packages`, async () => {
+	const res = await useAPI((api) => api.getPackages({ query: { onlyMembershipByMe: true } }));
+	if (!res.success) {
+		toast.add({ title: "Failed to load packages", description: res.message, color: "error" });
+		return [];
+	}
+	return res.data;
+});
 
 const { data: publishers } = await useAPILazyAsyncData<Publisher[]>(
-    'package-publishers-filter',
-    async () => {
-        const res = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
-        if (!res.success) return [];
-        return res.data;
-    }
+	"package-publishers-filter",
+	async () => {
+		const res = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
+		if (!res.success) return [];
+		return res.data;
+	},
 );
 
 const publisherFilterOptions = computed(() =>
-    (publishers.value || []).map(p => ({
-        label: p.display_name,
-        value: p.id,
-    }))
+	(publishers.value || []).map((p) => ({
+		label: p.display_name,
+		value: p.id,
+	})),
 );
 
 const publisherNameById = computed(() => {
-    const map: Record<number, string> = {};
-    for (const p of (publishers.value || [])) {
-        map[p.id] = p.display_name;
-    }
-    return map;
+	const map: Record<number, string> = {};
+	for (const p of publishers.value || []) {
+		map[p.id] = p.display_name;
+	}
+	return map;
 });
-
-
 </script>
 
 <template>

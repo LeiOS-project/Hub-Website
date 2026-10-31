@@ -1,118 +1,130 @@
 <script setup lang="ts">
-import type { GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses } from '~/api-client';
+import type { GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses } from "~/api-client";
 
 const route = useRoute();
 const toast = useToast();
 
 const requestId = parseInt(route.params.stable_promotion_request_id as string);
 if (isNaN(requestId)) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid stable promotion request ID' });
+	throw createError({ statusCode: 400, statusMessage: "Invalid stable promotion request ID" });
 }
 
-type AdminStableRequest = GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses[200]['data'];
+type AdminStableRequest =
+	GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses[200]["data"];
 
 const { data: result, refresh } = await useAPIAsyncData(
-    `/admin/stable-promotion-requests/${requestId}`,
-    async () => {
-        const res = await useAPI((api) => api.getAdminStablePromotionRequestsByStablePromotionRequestId({
-            path: {
-                stablePromotionRequestID: requestId
-            }
-        }));
-        return res;
-    }
+	`/admin/stable-promotion-requests/${requestId}`,
+	async () => {
+		const res = await useAPI((api) =>
+			api.getAdminStablePromotionRequestsByStablePromotionRequestId({
+				path: {
+					stablePromotionRequestID: requestId,
+				},
+			}),
+		);
+		return res;
+	},
 );
 
 const error = computed(() => {
-    if (!result.value?.success || !result.value?.data) {
-        return createError({
-            statusCode: result.value?.code || 500,
-            statusMessage: result.value?.message || 'Failed to load stable promotion request'
-        });
-    }
-    return null;
+	if (!result.value?.success || !result.value?.data) {
+		return createError({
+			statusCode: result.value?.code || 500,
+			statusMessage: result.value?.message || "Failed to load stable promotion request",
+		});
+	}
+	return null;
 });
 
 const requestData = computed(() => result.value?.data as AdminStableRequest);
 
 definePageMeta({
-    layout: 'dashboard'
+	layout: "dashboard",
 });
 
 useSeoMeta({
-    title: `Request #${requestId} | Stable Promotion Requests | LeiOS Hub`,
-    description: 'Review stable promotion request details'
+	title: `Request #${requestId} | Stable Promotion Requests | LeiOS Hub`,
+	description: "Review stable promotion request details",
 });
 
-function getStatusColor(status: AdminStableRequest['status']) {
-    switch (status) {
-        case 'approved': return 'success';
-        case 'denied': return 'error';
-        case 'pending': return 'warning';
-        default: return 'neutral';
-    }
+function getStatusColor(status: AdminStableRequest["status"]) {
+	switch (status) {
+		case "approved":
+			return "success";
+		case "denied":
+			return "error";
+		case "pending":
+			return "warning";
+		default:
+			return "neutral";
+	}
 }
 
-function getStatusIcon(status: AdminStableRequest['status']) {
-    switch (status) {
-        case 'approved': return 'i-lucide-check-circle';
-        case 'denied': return 'i-lucide-x-circle';
-        case 'pending': return 'i-lucide-clock';
-        default: return 'i-lucide-help-circle';
-    }
+function getStatusIcon(status: AdminStableRequest["status"]) {
+	switch (status) {
+		case "approved":
+			return "i-lucide-check-circle";
+		case "denied":
+			return "i-lucide-x-circle";
+		case "pending":
+			return "i-lucide-clock";
+		default:
+			return "i-lucide-help-circle";
+	}
 }
 
 const decisionModal = ref(false);
 const decisionForm = reactive({
-    status: 'approved' as 'approved' | 'denied',
-    admin_note: ''
+	status: "approved" as "approved" | "denied",
+	admin_note: "",
 });
 const submittingDecision = ref(false);
 
-function openDecision(initialStatus: 'approved' | 'denied' = 'approved') {
-    decisionForm.status = initialStatus;
-    decisionForm.admin_note = requestData.value.admin_note || '';
-    decisionModal.value = true;
+function openDecision(initialStatus: "approved" | "denied" = "approved") {
+	decisionForm.status = initialStatus;
+	decisionForm.admin_note = requestData.value.admin_note || "";
+	decisionModal.value = true;
 }
 
 async function submitDecision() {
-    if (!requestData.value) return;
+	if (!requestData.value) return;
 
-    submittingDecision.value = true;
+	submittingDecision.value = true;
 
-    try {
-        const res = await useAPI((api) => api.postAdminStablePromotionRequestsByStablePromotionRequestIdDecide({
-            path: { stablePromotionRequestID: requestData.value.id },
-            body: {
-                status: decisionForm.status,
-                admin_note: decisionForm.admin_note
-            }
-        }));
+	try {
+		const res = await useAPI((api) =>
+			api.postAdminStablePromotionRequestsByStablePromotionRequestIdDecide({
+				path: { stablePromotionRequestID: requestData.value.id },
+				body: {
+					status: decisionForm.status,
+					admin_note: decisionForm.admin_note,
+				},
+			}),
+		);
 
-        if (res.success) {
-            toast.add({
-                title: decisionForm.status === 'approved' ? 'Request approved' : 'Request denied',
-                description: `Stable promotion request #${requestData.value.id} has been ${decisionForm.status}.`,
-                icon: 'i-lucide-check',
-                color: 'success'
-            });
-            decisionModal.value = false;
-            await refresh();
-        } else {
-            throw new Error(res.message || 'Failed to submit decision');
-        }
-    } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error'
-        });
-    } finally {
-        submittingDecision.value = false;
-    }
+		if (res.success) {
+			toast.add({
+				title: decisionForm.status === "approved" ? "Request approved" : "Request denied",
+				description: `Stable promotion request #${requestData.value.id} has been ${decisionForm.status}.`,
+				icon: "i-lucide-check",
+				color: "success",
+			});
+			decisionModal.value = false;
+			await refresh();
+		} else {
+			throw new Error(res.message || "Failed to submit decision");
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	} finally {
+		submittingDecision.value = false;
+	}
 }
-
 </script>
 
 <template>

@@ -1,30 +1,30 @@
 <script setup lang="ts">
+import type { AuthFormField, FormSubmitEvent } from "@nuxt/ui";
 import * as z from "zod";
-import type { FormSubmitEvent, AuthFormField } from "@nuxt/ui";
 
 definePageMeta({
-    layout: 'auth'
+	layout: "auth",
 });
 
 useSeoMeta({
-    title: "Forgot Password | LeiOS Hub",
-    description: "Reset your password",
+	title: "Forgot Password | LeiOS Hub",
+	description: "Reset your password",
 });
 
 const toast = useToast();
 
 const fields: AuthFormField[] = [
-    {
-        name: "email",
-        type: "email",
-        label: "Email Address",
-        placeholder: "Enter your email address",
-        required: true,
-    },
+	{
+		name: "email",
+		type: "email",
+		label: "Email Address",
+		placeholder: "Enter your email address",
+		required: true,
+	},
 ];
 
 const schema = z.object({
-    email: z.email("Invalid email address").trim(),
+	email: z.email("Invalid email address").trim(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -33,26 +33,26 @@ const submitted = ref(false);
 const loading = ref(false);
 
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
-    if (loading.value) return;
+	if (loading.value) return;
 
-    loading.value = true;
+	loading.value = true;
 
-    const result = await useAPI((api) => {
-        return api.postAuthResetPasswordRequest({ body: payload.data });
-    }, true);
+	const result = await useAPI((api) => {
+		return api.postAuthResetPasswordRequest({ body: payload.data });
+	}, true);
 
-    loading.value = false;
+	loading.value = false;
 
-    if (result.success) {
-        submitted.value = true;
-    } else {
-        toast.add({
-            title: "Request Failed",
-            description: result.message || "An error occurred. Please try again later.",
-            icon: "i-lucide-alert-circle",
-            color: "error",
-        });
-    }
+	if (result.success) {
+		submitted.value = true;
+	} else {
+		toast.add({
+			title: "Request Failed",
+			description: result.message || "An error occurred. Please try again later.",
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+	}
 }
 </script>
 

@@ -1,61 +1,67 @@
-import type { ComputedGetter, ComputedRef, WritableComputedRef, DebuggerOptions, WritableComputedOptions } from "vue";
+import type {
+	ComputedGetter,
+	ComputedRef,
+	DebuggerOptions,
+	WritableComputedOptions,
+	WritableComputedRef,
+} from "vue";
 
 export function useAwaitedComputed<T>(
-    getter: ComputedGetter<Promise<T>>,
-    debugOptions?: DebuggerOptions
+	getter: ComputedGetter<Promise<T>>,
+	debugOptions?: DebuggerOptions,
 ): Promise<ComputedRef<T>>;
 
 export function useAwaitedComputed<T, S = T>(
-    options: WritableComputedOptions<Promise<T>, S>,
-    debugOptions?: DebuggerOptions
+	options: WritableComputedOptions<Promise<T>, S>,
+	debugOptions?: DebuggerOptions,
 ): Promise<WritableComputedRef<T, S>>;
 
 export async function useAwaitedComputed<T, S = T>(
-    source: ComputedGetter<Promise<T>> | WritableComputedOptions<Promise<T>, S>,
-    debugOptions?: DebuggerOptions
+	source: ComputedGetter<Promise<T>> | WritableComputedOptions<Promise<T>, S>,
+	debugOptions?: DebuggerOptions,
 ): Promise<ComputedRef<T> | WritableComputedRef<T, S>> {
-    const state = ref<T>() as { value: T };
+	const state = ref<T>() as { value: T };
 
-    let resolveFirst!: () => void;
-    let rejectFirst!: (reason: unknown) => void;
-    const firstRun = new Promise<void>((resolve, reject) => {
-        resolveFirst = resolve;
-        rejectFirst = reject;
-    });
-    let initialized = false;
+	let resolveFirst!: () => void;
+	let rejectFirst!: (reason: unknown) => void;
+	const firstRun = new Promise<void>((resolve, reject) => {
+		resolveFirst = resolve;
+		rejectFirst = reject;
+	});
+	let initialized = false;
 
-    const getter = typeof source === "function" ? source : source.get;
+	const getter = typeof source === "function" ? source : source.get;
 
-    watchEffect(async (onCleanup) => {
-        let cancelled = false;
-        onCleanup(() => (cancelled = true));
+	watchEffect(async (onCleanup) => {
+		let cancelled = false;
+		onCleanup(() => (cancelled = true));
 
-        try {
-            const value = await getter();
-            if (cancelled) return;
+		try {
+			const value = await getter();
+			if (cancelled) return;
 
-            state.value = value;
+			state.value = value;
 
-            if (!initialized) {
-                initialized = true;
-                resolveFirst();
-            }
-        } catch (error) {
-            if (!initialized) {
-                initialized = true;
-                rejectFirst(error);
-            }
-        }
-    }, debugOptions);
+			if (!initialized) {
+				initialized = true;
+				resolveFirst();
+			}
+		} catch (error) {
+			if (!initialized) {
+				initialized = true;
+				rejectFirst(error);
+			}
+		}
+	}, debugOptions);
 
-    await firstRun;
+	await firstRun;
 
-    if (typeof source === "function") {
-        return computed(() => state.value);
-    }
+	if (typeof source === "function") {
+		return computed(() => state.value);
+	}
 
-    return computed({
-        get: () => state.value,
-        set: source.set,
-    });
+	return computed({
+		get: () => state.value,
+		set: source.set,
+	});
 }

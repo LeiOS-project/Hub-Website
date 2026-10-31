@@ -1,6 +1,9 @@
 <script lang="ts" setup>
-import type { NavigationMenuItem } from '@nuxt/ui';
-import type { GetAdminOsReleasesResponses, GetAdminOsReleasesByVersionPublishingLogsResponses } from '~/api-client';
+import type { NavigationMenuItem } from "@nuxt/ui";
+import type {
+	GetAdminOsReleasesByVersionPublishingLogsResponses,
+	GetAdminOsReleasesResponses,
+} from "~/api-client";
 
 const toast = useToast();
 const route = useRoute();
@@ -8,219 +11,259 @@ const route = useRoute();
 type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
 type OSReleasePublishingLogs = GetAdminOsReleasesByVersionPublishingLogsResponses["200"]["data"];
 
-const os_release = useSubrouterInjectedData<OSRelease>('os_release').inject();
+const os_release = useSubrouterInjectedData<OSRelease>("os_release").inject();
 const os_release_data = os_release.data;
 
-let os_release_publishing_logs_error: {
-    readonly success: false;
-    readonly code: 500;
-    readonly message: string;
-    readonly data: null;
-} | undefined;
+let os_release_publishing_logs_error:
+	| {
+			readonly success: false;
+			readonly code: 500;
+			readonly message: string;
+			readonly data: null;
+	  }
+	| undefined;
 
 const {
-    data: os_release_publishing_logs,
-    refresh: os_release_publishing_logs_refresh,
-    loading: os_release_publishing_logs_loading,
-} = await useAPIAsyncData<OSReleasePublishingLogs | null>(`admin-os-release:${os_release.data.value.version}:logs`, async () => {
-    const res = await useAPI((api) => api.getAdminOsReleasesByVersionPublishingLogs({
-        path: {
-            version: os_release.data.value.version
-        }
-    }));
-    if (!res.success || !res.data) {
-        os_release_publishing_logs_error = res;
-    }
-    return res.data;
-    // const return_data = {
-    //     logs: ""
-    // };
-    // for (let i = 0; i < 500; i++) {
-    //     const levels = ['info', 'success', 'warn', 'error', 'debug'];
-    //     const level = levels[Math.floor(Math.random() * levels.length)] || 'info';
-    //     const timestamp = new Date(Date.now() - Math.floor(Math.random() * 1000000000)).toISOString();
-    //     let message = "";
-    //     switch (level) {
-    //         case 'info':
-    //             message = `This is an informational message number ${i}.`;
-    //             break;
-    //         case 'success':
-    //             message = `Operation completed successfully for item ${i}.`;
-    //             break;
-    //         case 'warn':
-    //             message = `Potential issue detected in process ${i}.`;
-    //             break;
-    //         case 'error':
-    //             message = `An error occurred while processing item ${i}.`;
-    //             break;
-    //         case 'debug':
-    //             message = `Variable x has value ${Math.random()} at step ${i}.`;
-    //             break;
-    //     }
-    //     return_data.logs += `[${timestamp}] [${level.toUpperCase()}] ${message}\n`;
-    // }
-    // return return_data;
-
-});
+	data: os_release_publishing_logs,
+	refresh: os_release_publishing_logs_refresh,
+	loading: os_release_publishing_logs_loading,
+} = await useAPIAsyncData<OSReleasePublishingLogs | null>(
+	`admin-os-release:${os_release.data.value.version}:logs`,
+	async () => {
+		const res = await useAPI((api) =>
+			api.getAdminOsReleasesByVersionPublishingLogs({
+				path: {
+					version: os_release.data.value.version,
+				},
+			}),
+		);
+		if (!res.success || !res.data) {
+			os_release_publishing_logs_error = res;
+		}
+		return res.data;
+		// const return_data = {
+		//     logs: ""
+		// };
+		// for (let i = 0; i < 500; i++) {
+		//     const levels = ['info', 'success', 'warn', 'error', 'debug'];
+		//     const level = levels[Math.floor(Math.random() * levels.length)] || 'info';
+		//     const timestamp = new Date(Date.now() - Math.floor(Math.random() * 1000000000)).toISOString();
+		//     let message = "";
+		//     switch (level) {
+		//         case 'info':
+		//             message = `This is an informational message number ${i}.`;
+		//             break;
+		//         case 'success':
+		//             message = `Operation completed successfully for item ${i}.`;
+		//             break;
+		//         case 'warn':
+		//             message = `Potential issue detected in process ${i}.`;
+		//             break;
+		//         case 'error':
+		//             message = `An error occurred while processing item ${i}.`;
+		//             break;
+		//         case 'debug':
+		//             message = `Variable x has value ${Math.random()} at step ${i}.`;
+		//             break;
+		//     }
+		//     return_data.logs += `[${timestamp}] [${level.toUpperCase()}] ${message}\n`;
+		// }
+		// return return_data;
+	},
+);
 
 // Parse logs into structured format
 interface LogEntry {
-    timestamp: string;
-    level: 'info' | 'warn' | 'error' | 'debug' | 'success';
-    message: string;
-    raw: string;
+	timestamp: string;
+	level: "info" | "warn" | "error" | "debug" | "success";
+	message: string;
+	raw: string;
 }
 
 const parsedLogs = computed<LogEntry[]>(() => {
-    const rawLogs = os_release_publishing_logs.value?.logs;
-    if (!rawLogs) return [];
-    
-    const lines = rawLogs.split('\n').filter(line => line.trim());
-    
-    return lines.map(line => {
-        // Try to parse timestamp (common formats: ISO, brackets, etc.)
-        const timestampMatch = line.match(/^(\[?\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?\]?)\s*/);
-        const timestamp = timestampMatch?.[1]?.replace(/[\[\]]/g, '') || '';
-        const restOfLine = timestampMatch ? line.slice(timestampMatch[0].length) : line;
-        
-        // Detect log level
-        let level: LogEntry['level'] = 'info';
-        const lowerLine = restOfLine.toLowerCase();
-        
-        if (lowerLine.includes('[error]') || lowerLine.includes('error:') || lowerLine.startsWith('error')) {
-            level = 'error';
-        } else if (lowerLine.includes('[warn]') || lowerLine.includes('warning:') || lowerLine.includes('[warning]')) {
-            level = 'warn';
-        } else if (lowerLine.includes('[debug]') || lowerLine.includes('debug:')) {
-            level = 'debug';
-        } else if (lowerLine.includes('[success]') || lowerLine.includes('successfully') || lowerLine.includes('completed')) {
-            level = 'success';
-        }
-        
-        return {
-            timestamp,
-            level,
-            message: restOfLine,
-            raw: line
-        };
-    });
+	const rawLogs = os_release_publishing_logs.value?.logs;
+	if (!rawLogs) return [];
+
+	const lines = rawLogs.split("\n").filter((line) => line.trim());
+
+	return lines.map((line) => {
+		// Try to parse timestamp (common formats: ISO, brackets, etc.)
+		const timestampMatch = line.match(
+			/^(\[?\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?\]?)\s*/,
+		);
+		const timestamp = timestampMatch?.[1]?.replace(/[\[\]]/g, "") || "";
+		const restOfLine = timestampMatch ? line.slice(timestampMatch[0].length) : line;
+
+		// Detect log level
+		let level: LogEntry["level"] = "info";
+		const lowerLine = restOfLine.toLowerCase();
+
+		if (
+			lowerLine.includes("[error]") ||
+			lowerLine.includes("error:") ||
+			lowerLine.startsWith("error")
+		) {
+			level = "error";
+		} else if (
+			lowerLine.includes("[warn]") ||
+			lowerLine.includes("warning:") ||
+			lowerLine.includes("[warning]")
+		) {
+			level = "warn";
+		} else if (lowerLine.includes("[debug]") || lowerLine.includes("debug:")) {
+			level = "debug";
+		} else if (
+			lowerLine.includes("[success]") ||
+			lowerLine.includes("successfully") ||
+			lowerLine.includes("completed")
+		) {
+			level = "success";
+		}
+
+		return {
+			timestamp,
+			level,
+			message: restOfLine,
+			raw: line,
+		};
+	});
 });
 
 // Filter state
-const searchQuery = ref('');
-const selectedLevelObjects = ref<Array<{ label: string; value: string; icon: string; color: string }>>([]);
+const searchQuery = ref("");
+const selectedLevelObjects = ref<
+	Array<{ label: string; value: string; icon: string; color: string }>
+>([]);
 const showTimestamps = ref(true);
 const autoScroll = ref(true);
 
 const levelOptions = [
-    { label: 'Info', value: 'info', icon: 'i-lucide-info', color: 'info' },
-    { label: 'Success', value: 'success', icon: 'i-lucide-check-circle', color: 'success' },
-    { label: 'Warning', value: 'warn', icon: 'i-lucide-alert-triangle', color: 'warning' },
-    { label: 'Error', value: 'error', icon: 'i-lucide-x-circle', color: 'error' },
-    { label: 'Debug', value: 'debug', icon: 'i-lucide-bug', color: 'neutral' }
+	{ label: "Info", value: "info", icon: "i-lucide-info", color: "info" },
+	{ label: "Success", value: "success", icon: "i-lucide-check-circle", color: "success" },
+	{ label: "Warning", value: "warn", icon: "i-lucide-alert-triangle", color: "warning" },
+	{ label: "Error", value: "error", icon: "i-lucide-x-circle", color: "error" },
+	{ label: "Debug", value: "debug", icon: "i-lucide-bug", color: "neutral" },
 ];
 
-const selectedLevels = computed(() => selectedLevelObjects.value.map(opt => opt.value));
+const selectedLevels = computed(() => selectedLevelObjects.value.map((opt) => opt.value));
 
 const filteredLogs = computed(() => {
-    let logs = parsedLogs.value;
-    
-    // Filter by level
-    if (selectedLevels.value.length > 0) {
-        logs = logs.filter(log => selectedLevels.value.includes(log.level));
-    }
-    
-    // Filter by search query
-    if (searchQuery.value.trim()) {
-        const query = searchQuery.value.toLowerCase();
-        logs = logs.filter(log => log.message.toLowerCase().includes(query));
-    }
-    
-    return logs;
+	let logs = parsedLogs.value;
+
+	// Filter by level
+	if (selectedLevels.value.length > 0) {
+		logs = logs.filter((log) => selectedLevels.value.includes(log.level));
+	}
+
+	// Filter by search query
+	if (searchQuery.value.trim()) {
+		const query = searchQuery.value.toLowerCase();
+		logs = logs.filter((log) => log.message.toLowerCase().includes(query));
+	}
+
+	return logs;
 });
 
 // Stats
 const logStats = computed(() => ({
-    total: parsedLogs.value.length,
-    info: parsedLogs.value.filter(l => l.level === 'info').length,
-    success: parsedLogs.value.filter(l => l.level === 'success').length,
-    warn: parsedLogs.value.filter(l => l.level === 'warn').length,
-    error: parsedLogs.value.filter(l => l.level === 'error').length,
-    debug: parsedLogs.value.filter(l => l.level === 'debug').length,
+	total: parsedLogs.value.length,
+	info: parsedLogs.value.filter((l) => l.level === "info").length,
+	success: parsedLogs.value.filter((l) => l.level === "success").length,
+	warn: parsedLogs.value.filter((l) => l.level === "warn").length,
+	error: parsedLogs.value.filter((l) => l.level === "error").length,
+	debug: parsedLogs.value.filter((l) => l.level === "debug").length,
 }));
 
-function getLevelColor(level: LogEntry['level']) {
-    switch (level) {
-        case 'error': return 'text-red-400';
-        case 'warn': return 'text-amber-400';
-        case 'success': return 'text-emerald-400';
-        case 'debug': return 'text-slate-400';
-        default: return 'text-sky-400';
-    }
+function getLevelColor(level: LogEntry["level"]) {
+	switch (level) {
+		case "error":
+			return "text-red-400";
+		case "warn":
+			return "text-amber-400";
+		case "success":
+			return "text-emerald-400";
+		case "debug":
+			return "text-slate-400";
+		default:
+			return "text-sky-400";
+	}
 }
 
-function getLevelIcon(level: LogEntry['level']) {
-    switch (level) {
-        case 'error': return 'i-lucide-x-circle';
-        case 'warn': return 'i-lucide-alert-triangle';
-        case 'success': return 'i-lucide-check-circle';
-        case 'debug': return 'i-lucide-bug';
-        default: return 'i-lucide-info';
-    }
+function getLevelIcon(level: LogEntry["level"]) {
+	switch (level) {
+		case "error":
+			return "i-lucide-x-circle";
+		case "warn":
+			return "i-lucide-alert-triangle";
+		case "success":
+			return "i-lucide-check-circle";
+		case "debug":
+			return "i-lucide-bug";
+		default:
+			return "i-lucide-info";
+	}
 }
 
-function getLevelBgColor(level: LogEntry['level']) {
-    switch (level) {
-        case 'error': return 'bg-red-500/10 hover:bg-red-500/15';
-        case 'warn': return 'bg-amber-500/10 hover:bg-amber-500/15';
-        case 'success': return 'bg-emerald-500/10 hover:bg-emerald-500/15';
-        case 'debug': return 'bg-slate-500/10 hover:bg-slate-500/15';
-        default: return 'bg-sky-500/10 hover:bg-sky-500/15';
-    }
+function getLevelBgColor(level: LogEntry["level"]) {
+	switch (level) {
+		case "error":
+			return "bg-red-500/10 hover:bg-red-500/15";
+		case "warn":
+			return "bg-amber-500/10 hover:bg-amber-500/15";
+		case "success":
+			return "bg-emerald-500/10 hover:bg-emerald-500/15";
+		case "debug":
+			return "bg-slate-500/10 hover:bg-slate-500/15";
+		default:
+			return "bg-sky-500/10 hover:bg-sky-500/15";
+	}
 }
 
 // Auto-scroll to bottom
 const logContainer = ref<HTMLElement | null>(null);
 
 function scrollToBottom() {
-    if (logContainer.value && autoScroll.value) {
-        logContainer.value.scrollTop = logContainer.value.scrollHeight;
-    }
+	if (logContainer.value && autoScroll.value) {
+		logContainer.value.scrollTop = logContainer.value.scrollHeight;
+	}
 }
 
 // Copy logs to clipboard
 async function copyLogs() {
-    const logText = filteredLogs.value.map(l => l.raw).join('\n');
-    await navigator.clipboard.writeText(logText);
-    toast.add({
-        title: 'Logs copied',
-        description: 'Log content has been copied to clipboard.',
-        icon: 'i-lucide-check',
-        color: 'success'
-    });
+	const logText = filteredLogs.value.map((l) => l.raw).join("\n");
+	await navigator.clipboard.writeText(logText);
+	toast.add({
+		title: "Logs copied",
+		description: "Log content has been copied to clipboard.",
+		icon: "i-lucide-check",
+		color: "success",
+	});
 }
 
 // Download logs
 function downloadLogs() {
-    const logText = os_release_publishing_logs.value?.logs || '';
-    const blob = new Blob([logText], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `os-release-${os_release.data.value.version}-logs.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+	const logText = os_release_publishing_logs.value?.logs || "";
+	const blob = new Blob([logText], { type: "text/plain" });
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = `os-release-${os_release.data.value.version}-logs.txt`;
+	a.click();
+	URL.revokeObjectURL(url);
 }
 
 // Watch for new logs and auto-scroll
-watch(filteredLogs, () => {
-    nextTick(scrollToBottom);
-}, { deep: true });
+watch(
+	filteredLogs,
+	() => {
+		nextTick(scrollToBottom);
+	},
+	{ deep: true },
+);
 
 onMounted(() => {
-    nextTick(scrollToBottom);
+	nextTick(scrollToBottom);
 });
-
 </script>
 
 <template>

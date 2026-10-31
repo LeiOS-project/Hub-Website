@@ -1,50 +1,52 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 
 const confirmText = ref("");
 
 interface Props {
-    title: string;
-    warningText: string;
-    open: boolean;
-    preventAutoClose?: boolean;
-    onDelete: () => Promise<void> | void;
+	title: string;
+	warningText: string;
+	open: boolean;
+	preventAutoClose?: boolean;
+	onDelete: () => Promise<void> | void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    preventAutoClose: false
+	preventAutoClose: false,
 });
 
 const emit = defineEmits<{
-    'update:open': [value: boolean];
+	"update:open": [value: boolean];
 }>();
 
 // Setze confirmText zurück, wenn das Modal geschlossen wird
-watch(() => props.open, (newVal) => {
-    if (!newVal) {
-        confirmText.value = "";
-    }
-});
+watch(
+	() => props.open,
+	(newVal) => {
+		if (!newVal) {
+			confirmText.value = "";
+		}
+	},
+);
 
 const loading = ref(false);
 
 async function onDeleteWrapper() {
-    loading.value = true;
+	loading.value = true;
 
-    try {
-        await props.onDelete();
+	try {
+		await props.onDelete();
 
-        if (!props.preventAutoClose) {
-            emit('update:open', false);
-        }
-    } catch (error) {
-        // Delete operation failed — error toast is handled by the caller
-        console.error('Delete operation failed:', error);
-    } finally {
-        loading.value = false;
-    }
+		if (!props.preventAutoClose) {
+			emit("update:open", false);
+		}
+	} catch (error) {
+		// Delete operation failed — error toast is handled by the caller
+		console.error("Delete operation failed:", error);
+	} finally {
+		loading.value = false;
+	}
 }
-
 </script>
 
 <template>

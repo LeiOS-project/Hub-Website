@@ -1,21 +1,18 @@
 <script setup lang="ts">
-import type { TableColumn } from '#ui/types';
-import type {
-    GetAdminTasksResponses,
-    GetPackagesResponses
-} from '@/api-client/types.gen';
-import { useUserInfoStore } from '~/composables/stores/useUserStore';
+import type { TableColumn } from "#ui/types";
+import type { GetAdminTasksResponses, GetPackagesResponses } from "@/api-client/types.gen";
+import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
-type DevPackage = GetPackagesResponses[200]['data'][number];
-type DevTask = GetAdminTasksResponses[200]['data'][number];
+type DevPackage = GetPackagesResponses[200]["data"][number];
+type DevTask = GetAdminTasksResponses[200]["data"][number];
 
 definePageMeta({
-    layout: 'dashboard',
+	layout: "dashboard",
 });
 
 useSeoMeta({
-    title: 'Dashboard | LeiOS Hub',
-    description: 'Manage your packages and releases'
+	title: "Dashboard | LeiOS Hub",
+	description: "Manage your packages and releases",
 });
 
 const toast = useToast();
@@ -23,70 +20,72 @@ const toast = useToast();
 const userInfoStore = useUserInfoStore();
 const user = await userInfoStore.use();
 if (!userInfoStore.isValid(user)) {
-    throw new Error('User not authenticated but trying to access Dashboard')
+	throw new Error("User not authenticated but trying to access Dashboard");
 }
 
-const isAdmin = computed(() => user.value.role === 'admin')
+const isAdmin = computed(() => user.value.role === "admin");
 
 // Fetch packages
 const { data: devPackages, loading: loadingPackages } = await useAPIAsyncData<DevPackage[]>(
-    'dev-packages',
-    async () => {
-        const res = await useAPI((api) => api.getPackages({ query: { onlyMembershipByMe: true } }))
-        if (!res.success) {
-            toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
-            return []
-        }
-        return res.data
-    }
-)
+	"dev-packages",
+	async () => {
+		const res = await useAPI((api) => api.getPackages({ query: { onlyMembershipByMe: true } }));
+		if (!res.success) {
+			toast.add({ title: "Failed to load packages", description: res.message, color: "error" });
+			return [];
+		}
+		return res.data;
+	},
+);
 
 // Fetch tasks
 const { data: devTasks, loading: loadingTasks } = await useAPIAsyncData<DevTask[]>(
-    'dev-tasks',
-    async () => {
-        if (!isAdmin.value) {
-            return []
-        }
+	"dev-tasks",
+	async () => {
+		if (!isAdmin.value) {
+			return [];
+		}
 
-        const res = await useAPI((api) => api.getAdminTasks({}))
-        if (!res.success) {
-            return []
-        }
-        return res.data
-    }
+		const res = await useAPI((api) => api.getAdminTasks({}));
+		if (!res.success) {
+			return [];
+		}
+		return res.data;
+	},
 );
 
 const packageColumns: TableColumn<DevPackage>[] = [
-    { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'description', header: 'Description' },
-    { id: 'actions', header: '', enableSorting: false, enableHiding: false }
+	{ accessorKey: "name", header: "Name" },
+	{ accessorKey: "description", header: "Description" },
+	{ id: "actions", header: "", enableSorting: false, enableHiding: false },
 ];
 
 const recentPackages = computed(() => (devPackages.value || []).slice(0, 5));
 const recentTasks = computed(() => (devTasks.value || []).slice(0, 5));
 
 const stats = computed(() => [
-    {
-        label: 'Total Packages',
-        value: devPackages.value?.length ?? 0,
-        icon: 'i-lucide-package',
-        color: 'text-sky-400'
-    },
-    ...(isAdmin.value ? [
-        {
-            label: 'Pending Tasks',
-            value: recentTasks.value.filter((t) => t.status === 'pending').length,
-            icon: 'i-lucide-clock',
-            color: 'text-amber-400'
-        },
-        {
-            label: 'Running Tasks',
-            value: recentTasks.value.filter((t) => t.status === 'running').length,
-            icon: 'i-lucide-loader',
-            color: 'text-emerald-400'
-        }
-    ] : [])
+	{
+		label: "Total Packages",
+		value: devPackages.value?.length ?? 0,
+		icon: "i-lucide-package",
+		color: "text-sky-400",
+	},
+	...(isAdmin.value
+		? [
+				{
+					label: "Pending Tasks",
+					value: recentTasks.value.filter((t) => t.status === "pending").length,
+					icon: "i-lucide-clock",
+					color: "text-amber-400",
+				},
+				{
+					label: "Running Tasks",
+					value: recentTasks.value.filter((t) => t.status === "running").length,
+					icon: "i-lucide-loader",
+					color: "text-emerald-400",
+				},
+			]
+		: []),
 ]);
 </script>
 

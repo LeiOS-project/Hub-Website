@@ -1,26 +1,30 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
+import type { NavigationMenuItem } from "@nuxt/ui";
 
 definePageMeta({
-    layout: 'dashboard'
-})
+	layout: "dashboard",
+});
 
 useSeoMeta({
-    title: 'Settings | LeiOS Hub',
-    description: 'Manage your account settings'
-})
+	title: "Settings | LeiOS Hub",
+	description: "Manage your account settings",
+});
 
-const links = [[{
-	label: 'General',
-	icon: 'i-lucide-user',
-	to: '/dashboard/settings',
-	exact: true
-}, {
-	label: 'Security',
-	icon: 'i-lucide-shield',
-	to: '/dashboard/settings/security'
-}]] satisfies NavigationMenuItem[][]
-
+const links = [
+	[
+		{
+			label: "General",
+			icon: "i-lucide-user",
+			to: "/dashboard/settings",
+			exact: true,
+		},
+		{
+			label: "Security",
+			icon: "i-lucide-shield",
+			to: "/dashboard/settings/security",
+		},
+	],
+] satisfies NavigationMenuItem[][];
 </script>
 
 <template>

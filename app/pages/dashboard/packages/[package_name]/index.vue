@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import type {
-    GetPublishersResponses,
-    GetPackagesResponses,
-    GetPackagesByFullPackageNameResponses,
-    PostPackagesData,
-} from "@/api-client/types.gen";
 import type z from "zod";
-import {
-    zPostPackagesBody,
-    zPutPackagesByFullPackageNameBody,
-} from "~/api-client/zod.gen";
+import type {
+	GetPackagesByFullPackageNameResponses,
+	GetPackagesResponses,
+	GetPublishersResponses,
+	PostPackagesData,
+} from "@/api-client/types.gen";
+import { zPostPackagesBody, zPutPackagesByFullPackageNameBody } from "~/api-client/zod.gen";
+
 type DevPackage = GetPackagesByFullPackageNameResponses[200]["data"];
 type NewDevPackage = NonNullable<PostPackagesData["body"]>;
 
@@ -21,168 +19,174 @@ const pkg_loading = pkg.loading;
 
 type Publisher = GetPublishersResponses[200]["data"][number];
 
-const { data: publishers } = await useAPIAsyncData<Publisher[]>(
-    "package-publishers",
-    async () => {
-        if (!pkg.isNew) {
-            return [];
-        }
+const { data: publishers } = await useAPIAsyncData<Publisher[]>("package-publishers", async () => {
+	if (!pkg.isNew) {
+		return [];
+	}
 
-        const result = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
-        if (!result.success) {
-            toast.add({
-                title: "Failed to load publishers",
-                description: result.message,
-                color: "error",
-            });
-            return [];
-        }
+	const result = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
+	if (!result.success) {
+		toast.add({
+			title: "Failed to load publishers",
+			description: result.message,
+			color: "error",
+		});
+		return [];
+	}
 
-        return result.data;
-    }
-);
+	return result.data;
+});
 
 const publisherOptions = computed(() =>
-    (publishers.value || []).map((publisher) => ({
-        label: publisher.display_name,
-        value: publisher.id,
-    }))
+	(publishers.value || []).map((publisher) => ({
+		label: publisher.display_name,
+		value: publisher.id,
+	})),
 );
 
 const publisherNameById = computed(() => {
-    const map: Record<number, string> = {};
-    for (const p of (publishers.value || [])) {
-        map[p.id] = p.name;
-    }
-    return map;
+	const map: Record<number, string> = {};
+	for (const p of publishers.value || []) {
+		map[p.id] = p.name;
+	}
+	return map;
 });
 
 const fullPackageNamePreview = computed(() => {
-    if (!pkg.isNew) return null;
-    const publisherName = publisherNameById.value[package_form_state.value.publisher_id];
-    const shortName = package_form_state.value.name;
-    if (!publisherName || !shortName) return null;
-    return `${publisherName}.${shortName}`;
+	if (!pkg.isNew) return null;
+	const publisherName = publisherNameById.value[package_form_state.value.publisher_id];
+	const shortName = package_form_state.value.name;
+	if (!publisherName || !shortName) return null;
+	return `${publisherName}.${shortName}`;
 });
 
 const headerTexts = computed(() => {
-    if (pkg.isNew) {
-        return {
-            title: "Create New Package",
-            description: "Create a new package on LeiOS Hub.",
-        };
-    }
-    return {
-        title: `Package ${(pkg_data as Ref<DevPackage>).value.name}`,
-        description: "View and manage the details of the package.",
-    };
+	if (pkg.isNew) {
+		return {
+			title: "Create New Package",
+			description: "Create a new package on LeiOS Hub.",
+		};
+	}
+	return {
+		title: `Package ${(pkg_data as Ref<DevPackage>).value.name}`,
+		description: "View and manage the details of the package.",
+	};
 });
 
 const package_form_schema = pkg.isNew ? zPostPackagesBody : zPutPackagesByFullPackageNameBody;
 type PackageFormSchema = NonNullable<z.infer<typeof package_form_schema>>;
 const package_form_state = ref<NewDevPackage>(
-    pkg.isNew
-        ? { name: '', display_name: '', description: '', homepage_url: '', requires_patching: false } as unknown as NewDevPackage
-        : {
-            publisher_id: (pkg_data.value as DevPackage).publisher_id,
-            name: (pkg_data.value as DevPackage).name,
-            display_name: (pkg_data.value as DevPackage).display_name,
-            description: (pkg_data.value as DevPackage).description,
-            homepage_url: (pkg_data.value as DevPackage).homepage_url,
-            requires_patching: (pkg_data.value as DevPackage).requires_patching,
-        }
+	pkg.isNew
+		? ({
+				name: "",
+				display_name: "",
+				description: "",
+				homepage_url: "",
+				requires_patching: false,
+			} as unknown as NewDevPackage)
+		: {
+				publisher_id: (pkg_data.value as DevPackage).publisher_id,
+				name: (pkg_data.value as DevPackage).name,
+				display_name: (pkg_data.value as DevPackage).display_name,
+				description: (pkg_data.value as DevPackage).description,
+				homepage_url: (pkg_data.value as DevPackage).homepage_url,
+				requires_patching: (pkg_data.value as DevPackage).requires_patching,
+			},
 );
 
 watchEffect(() => {
-    if (pkg.isNew && !package_form_state.value.publisher_id && publisherOptions.value.length === 1) {
-        package_form_state.value.publisher_id = publisherOptions.value[0]!.value;
-    }
+	if (pkg.isNew && !package_form_state.value.publisher_id && publisherOptions.value.length === 1) {
+		package_form_state.value.publisher_id = publisherOptions.value[0]!.value;
+	}
 });
 
 async function onFormSubmit() {
-    try {
-        if (pkg.isNew) {
-            const result = await useAPI((api) =>
-                api.postPackages({
-                    body: package_form_state.value,
-                })
-            );
+	try {
+		if (pkg.isNew) {
+			const result = await useAPI((api) =>
+				api.postPackages({
+					body: package_form_state.value,
+				}),
+			);
 
-            if (result.success) {
-                const packagesResult = await useAPI((api) => api.getPackages({
-                    query: {
-                        onlyMembershipByMe: true,
-                        publisherID: package_form_state.value.publisher_id,
-                        searchString: package_form_state.value.name,
-                    },
-                }));
+			if (result.success) {
+				const packagesResult = await useAPI((api) =>
+					api.getPackages({
+						query: {
+							onlyMembershipByMe: true,
+							publisherID: package_form_state.value.publisher_id,
+							searchString: package_form_state.value.name,
+						},
+					}),
+				);
 
-                const packagesData = packagesResult.success
-                    ? (packagesResult.data as GetPackagesResponses["200"]["data"])
-                    : null;
-                const createdPackage = packagesData?.find((candidate) =>
-                    candidate.publisher_id === package_form_state.value.publisher_id &&
-                    candidate.name === package_form_state.value.name
-                ) ?? null;
+				const packagesData = packagesResult.success
+					? (packagesResult.data as GetPackagesResponses["200"]["data"])
+					: null;
+				const createdPackage =
+					packagesData?.find(
+						(candidate) =>
+							candidate.publisher_id === package_form_state.value.publisher_id &&
+							candidate.name === package_form_state.value.name,
+					) ?? null;
 
-                toast.add({
-                    title: "Package created",
-                    description: `The Package has been successfully created.`,
-                    icon: "i-lucide-check",
-                    color: "success",
-                });
+				toast.add({
+					title: "Package created",
+					description: `The Package has been successfully created.`,
+					icon: "i-lucide-check",
+					color: "success",
+				});
 
-                // Redirect to the new package page
-                await navigateTo(
-                    `/dashboard/packages/${createdPackage?.fullname || package_form_state.value.name}`
-                );
-            } else {
-                throw new Error(result.message || "Failed to create package");
-            }
-        } else {
-            const result = await useAPI((api) =>
-                api.putPackagesByFullPackageName({
-                    path: {
-                        fullPackageName: (pkg_data.value as DevPackage).fullname,
-                    },
-                    body: {
-                        display_name: package_form_state.value.display_name,
-                        description: package_form_state.value.description,
-                        homepage_url: package_form_state.value.homepage_url,
-                        requires_patching:
-                            package_form_state.value.requires_patching,
-                    },
-                })
-            );
+				// Redirect to the new package page
+				await navigateTo(
+					`/dashboard/packages/${createdPackage?.fullname || package_form_state.value.name}`,
+				);
+			} else {
+				throw new Error(result.message || "Failed to create package");
+			}
+		} else {
+			const result = await useAPI((api) =>
+				api.putPackagesByFullPackageName({
+					path: {
+						fullPackageName: (pkg_data.value as DevPackage).fullname,
+					},
+					body: {
+						display_name: package_form_state.value.display_name,
+						description: package_form_state.value.description,
+						homepage_url: package_form_state.value.homepage_url,
+						requires_patching: package_form_state.value.requires_patching,
+					},
+				}),
+			);
 
-            if (result.success) {
-                pkg_data.value = {
-                    ...pkg_data.value,
-                    ...package_form_state.value,
-                };
+			if (result.success) {
+				pkg_data.value = {
+					...pkg_data.value,
+					...package_form_state.value,
+				};
 
-                toast.add({
-                    title: "Package updated",
-                    description: `The Package has been successfully updated.`,
-                    icon: "i-lucide-check",
-                    color: "success",
-                });
-            } else {
-                throw new Error(result.message || "Failed to update package");
-            }
-        }
-    } catch (error: any) {
-        toast.add({
-            title: "Error",
-            description: error.message || "An unexpected error occurred.",
-            icon: "i-lucide-x-circle",
-            color: "error",
-        });
-    }
+				toast.add({
+					title: "Package updated",
+					description: `The Package has been successfully updated.`,
+					icon: "i-lucide-check",
+					color: "success",
+				});
+			} else {
+				throw new Error(result.message || "Failed to update package");
+			}
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	}
 }
 
 async function onDeletePackage() {
-    console.warn("Package deletion is not yet implemented.");
+	console.warn("Package deletion is not yet implemented.");
 }
 </script>
 

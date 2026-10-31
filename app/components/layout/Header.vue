@@ -1,41 +1,41 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
-import LeiOSLogo from '../img/LeiOSLogo.vue';
-import type { GetAccountResponses } from '~/api-client';
-import type { UnwrapRef } from 'vue';
-import { useUserInfoStore } from '~/composables/stores/useUserStore';
+import type { NavigationMenuItem } from "@nuxt/ui";
+import type { UnwrapRef } from "vue";
+import type { GetAccountResponses } from "~/api-client";
+import { useUserInfoStore } from "~/composables/stores/useUserStore";
+import LeiOSLogo from "../img/LeiOSLogo.vue";
 
 type UserInfo = GetAccountResponses["200"]["data"];
 
-const route = useRoute()
-const sessionCookie = useAppCookies().sessionToken.get()
+const route = useRoute();
+const sessionCookie = useAppCookies().sessionToken.get();
 const userInfoStore = useUserInfoStore();
 const user = await userInfoStore.use();
 
 const links = computed<NavigationMenuItem[]>(() => [
-    {
-        label: 'Home',
-        to: '/'
-    },
-    {
-        label: 'Explorer',
-        to: '/explore'
-    },
-    {
-        label: 'Dashboard',
-        to: '/dashboard'
-    }
-])
+	{
+		label: "Home",
+		to: "/",
+	},
+	{
+		label: "Explorer",
+		to: "/explore",
+	},
+	{
+		label: "Dashboard",
+		to: "/dashboard",
+	},
+]);
 
-const isAuthenticated = computed(() => Boolean(sessionCookie.value))
+const isAuthenticated = computed(() => Boolean(sessionCookie.value));
 
 const profileLabel = computed(() => {
-    if (user.value?.display_name) return user.value.display_name
-    if (user.value?.username) return user.value.username
-    return 'Profile'
-})
+	if (user.value?.display_name) return user.value.display_name;
+	if (user.value?.username) return user.value.username;
+	return "Profile";
+});
 
-const redirectQuery = computed(() => encodeURIComponent(route.fullPath))
+const redirectQuery = computed(() => encodeURIComponent(route.fullPath));
 </script>
 
 <template>

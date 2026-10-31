@@ -1,67 +1,68 @@
 <script setup lang="ts">
 const highlights = [
-    {
-        icon: 'i-lucide-package-search',
-        title: 'Repository-first',
-        description: 'Single entry point for publishing, promoting, and reviewing LeiOS packages.'
-    },
-    {
-        icon: 'i-lucide-shield-check',
-        title: 'Role-aware access',
-        description: 'Developer and admin spaces with guardrails for submissions and approvals.'
-    },
-    {
-        icon: 'i-lucide-rocket',
-        title: 'Fast delivery',
-        description: 'Upload builds, request stable promotion, and track status in one place.'
-    }
-]
+	{
+		icon: "i-lucide-package-search",
+		title: "Repository-first",
+		description: "Single entry point for publishing, promoting, and reviewing LeiOS packages.",
+	},
+	{
+		icon: "i-lucide-shield-check",
+		title: "Role-aware access",
+		description: "Developer and admin spaces with guardrails for submissions and approvals.",
+	},
+	{
+		icon: "i-lucide-rocket",
+		title: "Fast delivery",
+		description: "Upload builds, request stable promotion, and track status in one place.",
+	},
+];
 
 const flows = [
-    {
-        label: 'Developers',
-        steps: [
-            'Create a package entry with metadata',
-            'Upload builds for amd64 or arm64',
-            'Request promotion to stable once validated'
-        ]
-    },
-    {
-        label: 'Admins',
-        steps: [
-            'Review stable promotion requests',
-            'Manage users and roles',
-            'Promote or revoke releases instantly'
-        ]
-    }
-]
+	{
+		label: "Developers",
+		steps: [
+			"Create a package entry with metadata",
+			"Upload builds for amd64 or arm64",
+			"Request promotion to stable once validated",
+		],
+	},
+	{
+		label: "Admins",
+		steps: [
+			"Review stable promotion requests",
+			"Manage users and roles",
+			"Promote or revoke releases instantly",
+		],
+	},
+];
 
 const cards = [
-    {
-        title: 'Developer dashboard',
-        icon: 'i-lucide-layout-dashboard',
-        detail: 'Submit packages, upload releases, and track promotion requests with live status.',
-        to: '/dashboard'
-    },
-    {
-        title: 'Admin controls',
-        icon: 'i-lucide-shield',
-        detail: 'Approve stable promotion requests, reset passwords, and manage roles without leaving Nuxt UI.',
-        to: '/dashboard/admin/users'
-    },
-    {
-        title: 'Public explorer',
-        icon: 'i-lucide-compass',
-        detail: 'Browse all published packages and their releases without signing in.',
-        to: '/explore'
-    }
+	{
+		title: "Developer dashboard",
+		icon: "i-lucide-layout-dashboard",
+		detail: "Submit packages, upload releases, and track promotion requests with live status.",
+		to: "/dashboard",
+	},
+	{
+		title: "Admin controls",
+		icon: "i-lucide-shield",
+		detail:
+			"Approve stable promotion requests, reset passwords, and manage roles without leaving Nuxt UI.",
+		to: "/dashboard/admin/users",
+	},
+	{
+		title: "Public explorer",
+		icon: "i-lucide-compass",
+		detail: "Browse all published packages and their releases without signing in.",
+		to: "/explore",
+	},
 ];
 
 useSeoMeta({
-    title: 'LeiOS Hub | Centralized Package Management for LeiOS',
-    description: 'Manage and publish LeiOS packages with ease using the LeiOS Repository Hub. Designed for developers and admins alike.'
+	title: "LeiOS Hub | Centralized Package Management for LeiOS",
+	description:
+		"Manage and publish LeiOS packages with ease using the LeiOS Repository Hub. Designed for developers and admins alike.",
 });
-
 </script>
 
 <template>

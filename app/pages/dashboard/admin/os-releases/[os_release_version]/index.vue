@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { FormError, NavigationMenuItem } from '@nuxt/ui';
-import z from 'zod';
-import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from '~/api-client';
-import { zPostAdminOsReleasesBody, zPutAdminOsReleasesByVersionBody } from '~/api-client/zod.gen';
-import DashboardDeleteModal from '~/components/dashboard/DashboardDeleteModal.vue';
+import type { FormError, NavigationMenuItem } from "@nuxt/ui";
+import z from "zod";
+import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from "~/api-client";
+import { zPostAdminOsReleasesBody, zPutAdminOsReleasesByVersionBody } from "~/api-client/zod.gen";
+import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 
 const toast = useToast();
 const route = useRoute();
@@ -16,109 +16,106 @@ type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
 // const os_release_pending = inject<Ref<boolean>>('os_release_pending');
 // const os_release_is_new = inject<boolean>('os_release_is_new');
 
-const os_release = useSubrouterInjectedData<OSRelease, NewOSRelease>('os_release', true).inject();
-console.log('os_release:', os_release);
+const os_release = useSubrouterInjectedData<OSRelease, NewOSRelease>("os_release", true).inject();
+console.log("os_release:", os_release);
 const os_release_data = os_release.data;
 const os_release_loading = os_release.loading;
 
-function getPublishingStatusColor(status: OSRelease['publishing_status']) {
-    switch (status) {
-        case 'pending':
-            return 'warning'
-        case 'paused':
-            return 'warning'
-        case 'completed':
-            return 'success'
-        case 'failed':
-            return 'error'
-        case 'running':
-            return 'info'
-    }
+function getPublishingStatusColor(status: OSRelease["publishing_status"]) {
+	switch (status) {
+		case "pending":
+			return "warning";
+		case "paused":
+			return "warning";
+		case "completed":
+			return "success";
+		case "failed":
+			return "error";
+		case "running":
+			return "info";
+	}
 }
 
-const os_release_form_schema = os_release.isNew ? zPostAdminOsReleasesBody : zPutAdminOsReleasesByVersionBody;
+const os_release_form_schema = os_release.isNew
+	? zPostAdminOsReleasesBody
+	: zPutAdminOsReleasesByVersionBody;
 type OSReleaseFormState = NonNullable<z.infer<typeof os_release_form_schema>>;
 const os_release_form_state = ref<NewOSRelease>({
 	changelog: os_release_data.value.changelog,
 });
 
 async function onFormSubmit() {
-
 	os_release_loading.value = true;
 
 	try {
-
 		if (os_release.isNew) {
-			const result = await useAPI((api) => api.postAdminOsReleases({
-				body: {
-					changelog: os_release_form_state.value.changelog,
-				}
-			}));
+			const result = await useAPI((api) =>
+				api.postAdminOsReleases({
+					body: {
+						changelog: os_release_form_state.value.changelog,
+					},
+				}),
+			);
 
 			if (result.success) {
 				toast.add({
-					title: 'OS Release created',
-					description: 'The OS Release has been successfully created.',
-					icon: 'i-lucide-check',
-					color: 'success'
-				})
+					title: "OS Release created",
+					description: "The OS Release has been successfully created.",
+					icon: "i-lucide-check",
+					color: "success",
+				});
 
 				// Redirect to the newly created OS Release page
 				navigateTo(`/dashboard/admin/os-releases/${result.data?.version}`);
 			} else {
-				throw new Error(result.message || 'Failed to create OS Release');
+				throw new Error(result.message || "Failed to create OS Release");
 			}
-
 		} else {
-			
-			const result = await useAPI((api) => api.putAdminOsReleasesByVersion({
-				path: {
-					version: (os_release_data as Ref<OSRelease>).value.version
-				},
-				body: {
-					changelog: os_release_form_state.value.changelog
-				}
-			}));
+			const result = await useAPI((api) =>
+				api.putAdminOsReleasesByVersion({
+					path: {
+						version: (os_release_data as Ref<OSRelease>).value.version,
+					},
+					body: {
+						changelog: os_release_form_state.value.changelog,
+					},
+				}),
+			);
 
 			if (result.success) {
 				os_release_data.value.changelog = os_release_form_state.value.changelog as string;
 
 				toast.add({
-					title: 'OS Release updated',
-					description: 'The OS Release has been successfully updated.',
-					icon: 'i-lucide-check',
-					color: 'success'
-				})
+					title: "OS Release updated",
+					description: "The OS Release has been successfully updated.",
+					icon: "i-lucide-check",
+					color: "success",
+				});
 			} else {
-				throw new Error(result.message || 'Failed to update OS Release');
+				throw new Error(result.message || "Failed to update OS Release");
 			}
-
 		}
 	} catch (error: any) {
 		toast.add({
-			title: 'Error',
-			description: error.message || 'An unexpected error occurred.',
-			icon: 'i-lucide-alert-circle',
-			color: 'error'
-		})
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
 	} finally {
-		os_release_loading.value = false
+		os_release_loading.value = false;
 	}
-	
 }
-
 
 const deleteConfirmOpen = ref(false);
 
 async function onDeleteOSRelease() {
-
-
-    toast.add({
-        title: 'OS Release deletion not implemented',
-        description: 'The deletion of OS Releases is not yet implemented.',
-        icon: 'i-lucide-alert-triangle',
-        color: 'warning'
-    });
+	toast.add({
+		title: "OS Release deletion not implemented",
+		description: "The deletion of OS Releases is not yet implemented.",
+		icon: "i-lucide-alert-triangle",
+		color: "warning",
+	});
 
 	deleteConfirmOpen.value = false;
 
@@ -160,16 +157,15 @@ async function onDeleteOSRelease() {
 const headerTexts = computed(() => {
 	if (os_release.isNew) {
 		return {
-			title: 'New OS Release',
-			description: 'Create a new OS Release for LeiOS.'
-		}
+			title: "New OS Release",
+			description: "Create a new OS Release for LeiOS.",
+		};
 	}
 	return {
 		title: `OS Release ${(os_release_data as Ref<OSRelease>).value.version}`,
-		description: 'View and manage the details of this OS Release.'
-	}
+		description: "View and manage the details of this OS Release.",
+	};
 });
-
 </script>
 
 <template>

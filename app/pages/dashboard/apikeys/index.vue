@@ -1,110 +1,102 @@
 <script setup lang="ts">
-import type { TableColumn } from '@nuxt/ui';
-
+import type { TableColumn } from "@nuxt/ui";
 
 definePageMeta({
-    layout: 'dashboard',
+	layout: "dashboard",
 });
 
 useSeoMeta({
-    title: 'API Keys | LeiOS Hub',
-    description: 'Manage your API keys'
+	title: "API Keys | LeiOS Hub",
+	description: "Manage your API keys",
 });
 
 const toast = useToast();
 
 const apikeysTableColumns: TableColumn<APIKey>[] = [
-    { accessorKey: "id", header: "ID" },
-    { accessorKey: "description", header: "Description" },
-    { accessorKey: "created_at", header: "Created At" },
-    { accessorKey: "expires_at", header: "Expires At" },
-    { accessorKey: "status", header: "Status" },
-    // implement later
-    // { accessorKey: "last_used_at", header: "Last Used At" },
-    { accessorKey: "actions", header: "" },
+	{ accessorKey: "id", header: "ID" },
+	{ accessorKey: "description", header: "Description" },
+	{ accessorKey: "created_at", header: "Created At" },
+	{ accessorKey: "expires_at", header: "Expires At" },
+	{ accessorKey: "status", header: "Status" },
+	// implement later
+	// { accessorKey: "last_used_at", header: "Last Used At" },
+	{ accessorKey: "actions", header: "" },
 ];
 
-const apiKeys = await useAPIAsyncData<APIKey[]>(
-    '/account/apikeys',
-    async () => {
-        const res = await useAPI((api) => api.getAccountApikeys({}));
-        if (!res.success) {
-            toast.add({ title: 'Failed to load API Keys', description: res.message, color: 'error' });
-            return [];
-        }
+const apiKeys = await useAPIAsyncData<APIKey[]>("/account/apikeys", async () => {
+	const res = await useAPI((api) => api.getAccountApikeys({}));
+	if (!res.success) {
+		toast.add({ title: "Failed to load API Keys", description: res.message, color: "error" });
+		return [];
+	}
 
-        // res.data.push({
-        //     id: "demo-key",
-        //     description: 'Demo API Key',
-        //     created_at: Date.now() - 1000 * 60 * 60 * 24 * 30,
-        //     expires_at: Date.now() + 1000 * 60 * 60 * 24 * 335,
-        //     // last_used_at: Date.now() - 1000 * 60 * 60 * 24 * 1,
-        // });
+	// res.data.push({
+	//     id: "demo-key",
+	//     description: 'Demo API Key',
+	//     created_at: Date.now() - 1000 * 60 * 60 * 24 * 30,
+	//     expires_at: Date.now() + 1000 * 60 * 60 * 24 * 335,
+	//     // last_used_at: Date.now() - 1000 * 60 * 60 * 24 * 1,
+	// });
 
-        // res.data.push({
-        //     id: "expired-key",
-        //     description: 'Expired API Key',
-        //     created_at: Date.now() - 1000 * 60 * 60 * 24 * 60,
-        //     expires_at: Date.now() - 1000 * 60 * 60 * 24 * 30,
-        //     // last_used_at: Date.now() - 1000 * 60 * 60 * 24 * 31,
-        // });
+	// res.data.push({
+	//     id: "expired-key",
+	//     description: 'Expired API Key',
+	//     created_at: Date.now() - 1000 * 60 * 60 * 24 * 60,
+	//     expires_at: Date.now() - 1000 * 60 * 60 * 24 * 30,
+	//     // last_used_at: Date.now() - 1000 * 60 * 60 * 24 * 31,
+	// });
 
-        // res.data.push({
-        //     id: "never-expire-key",
-        //     description: 'Never Expire API Key',
-        //     created_at: Date.now() - 1000 * 60 * 60 * 24 * 10,
-        //     expires_at: null,
-        //     // last_used_at: Date.now() - 1000 * 60 * 60 * 24 * 2,
-        // });
+	// res.data.push({
+	//     id: "never-expire-key",
+	//     description: 'Never Expire API Key',
+	//     created_at: Date.now() - 1000 * 60 * 60 * 24 * 10,
+	//     expires_at: null,
+	//     // last_used_at: Date.now() - 1000 * 60 * 60 * 24 * 2,
+	// });
 
-        return res.data;
-    }
-);
+	return res.data;
+});
 
 const deleteConfirmOpen = ref(false);
 const latestOnDeleteClickAPIKeyId = ref<string | null>(null);
 
 async function onDeleteApiKey() {
+	try {
+		if (!latestOnDeleteClickAPIKeyId.value) {
+			throw new Error("No API Key ID specified for deletion.");
+		}
 
-    try {
+		const res = await useAPI((api) =>
+			api.deleteAccountApikeysByApiKeyId({
+				path: {
+					apiKeyID: latestOnDeleteClickAPIKeyId.value as string,
+				},
+			}),
+		);
 
-        if (!latestOnDeleteClickAPIKeyId.value) {
-            throw new Error('No API Key ID specified for deletion.');
-        }
+		if (res.success) {
+			toast.add({
+				title: "API Key deleted",
+				description: "The API Key has been successfully deleted.",
+				color: "success",
+			});
 
-        const res = await useAPI((api) => api.deleteAccountApikeysByApiKeyId({
-            path: {
-                apiKeyID: latestOnDeleteClickAPIKeyId.value as string
-            }
-        }));
+			// Refresh the API keys list
+			await apiKeys.refresh();
 
-        if (res.success) {
-
-            toast.add({
-                title: 'API Key deleted',
-                description: 'The API Key has been successfully deleted.',
-                color: 'success'
-            });
-
-            // Refresh the API keys list
-            await apiKeys.refresh();
-
-            deleteConfirmOpen.value = false;
-
-        } else {
-            throw new Error(res.message || 'Failed to delete API Key.');
-        }
-
-    } catch (error: any) {
-        toast.add({
-            title: 'Failed to delete API Key',
-            description: error.message || 'An unknown error occurred.',
-            icon: 'i-lucide-alert-circle',
-            color: 'error'
-        });
-    }
+			deleteConfirmOpen.value = false;
+		} else {
+			throw new Error(res.message || "Failed to delete API Key.");
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Failed to delete API Key",
+			description: error.message || "An unknown error occurred.",
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+	}
 }
-
 </script>
 
 <template>

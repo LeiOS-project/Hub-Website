@@ -1,121 +1,111 @@
 <script setup lang="ts">
-import type { UseSubrouterPathDynamics } from '~/composables/useSubrouterPathDynamics';
-
+import type { UseSubrouterPathDynamics } from "~/composables/useSubrouterPathDynamics";
 
 definePageMeta({
-    layout: 'dashboard'
+	layout: "dashboard",
 });
 
 const route = useRoute();
-
 
 const api_key_id = route.params.api_key_id as string;
 
 let error = null;
 
 if (!api_key_id) {
-    error = createError({ statusCode: 400, statusMessage: 'API Key ID is required' });
+	error = createError({ statusCode: 400, statusMessage: "API Key ID is required" });
 }
 
 if (api_key_id === "new") {
-
-    useSubrouterInjectedData<number, NewAPIKey>('api_key', true).provide({
-        data: ref({
-            description: '',
-            expires_at: "30d"
-        }),
-        isNew: true
-    });
-
+	useSubrouterInjectedData<number, NewAPIKey>("api_key", true).provide({
+		data: ref({
+			description: "",
+			expires_at: "30d",
+		}),
+		isNew: true,
+	});
 } else {
-    
-    const { data: result, refresh, loading } = await useAPIAsyncData(
-        `/account/apikeys/${api_key_id}`,
-        async () => {
+	const {
+		data: result,
+		refresh,
+		loading,
+	} = await useAPIAsyncData(`/account/apikeys/${api_key_id}`, async () => {
+		const res = await useAPI((api) =>
+			api.getAccountApikeysByApiKeyId({
+				path: {
+					apiKeyID: api_key_id,
+				},
+			}),
+		);
 
-            const res = await useAPI((api) => api.getAccountApikeysByApiKeyId({
-                path: {
-                    apiKeyID: api_key_id
-                }
-            }));
+		return res;
+	});
 
-            return res;
-        }
-    )
+	if (!result.value?.success || !result.value?.data) {
+		error = createError({
+			statusCode: result.value?.code || 500,
+			statusMessage: result.value?.message || "Failed to load API Key data",
+		});
+	}
 
-    if (!result.value?.success || !result.value?.data) {
-        error = createError({
-            statusCode: result.value?.code || 500,
-            statusMessage: result.value?.message || 'Failed to load API Key data'
-        });
-    }
+	const data = computed(() => result.value?.data as APIKey);
 
-    const data = computed(() => result.value?.data as APIKey);
-
-    useSubrouterInjectedData<APIKey, NewAPIKey>("api_key", true).provide({
-        data: data,
-        refresh,
-        loading,
-        isNew: false
-    });
-
+	useSubrouterInjectedData<APIKey, NewAPIKey>("api_key", true).provide({
+		data: data,
+		refresh,
+		loading,
+		isNew: false,
+	});
 }
 
 function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
-
-    return api_key_id === "new" ? {
-        [`/dashboard/apikeys/new`]: {
-            isNavLink: true,
-            label: 'General',
-            icon: 'i-lucide-info',
-            exact: true,
-            getDynamicValues() {
-                return {
-                    seoSettings: {
-                        title: `New API Key`,
-                        description: `Create a new API Key on LeiOS Hub`
-                    },
-                    breadcrumbItems: [
-                        { label: 'New API Key' }
-                    ]
-                };
-            }
-        }
-    } : {
-        [`/dashboard/apikeys/${api_key_id}`]: {
-            isNavLink: true,
-            label: 'General',
-            icon: 'i-lucide-info',
-            exact: true,
-            getDynamicValues() {
-                return {
-                    seoSettings: {
-                        title: `API Key ${api_key_id}`,
-                        description: `Manage API Key ${api_key_id} on LeiOS Hub`
-                    },
-                    breadcrumbItems: [
-                        { label: api_key_id }
-                    ]
-                };
-            }
-        }
-    };
+	return api_key_id === "new"
+		? {
+				[`/dashboard/apikeys/new`]: {
+					isNavLink: true,
+					label: "General",
+					icon: "i-lucide-info",
+					exact: true,
+					getDynamicValues() {
+						return {
+							seoSettings: {
+								title: `New API Key`,
+								description: `Create a new API Key on LeiOS Hub`,
+							},
+							breadcrumbItems: [{ label: "New API Key" }],
+						};
+					},
+				},
+			}
+		: {
+				[`/dashboard/apikeys/${api_key_id}`]: {
+					isNavLink: true,
+					label: "General",
+					icon: "i-lucide-info",
+					exact: true,
+					getDynamicValues() {
+						return {
+							seoSettings: {
+								title: `API Key ${api_key_id}`,
+								description: `Manage API Key ${api_key_id} on LeiOS Hub`,
+							},
+							breadcrumbItems: [{ label: api_key_id }],
+						};
+					},
+				},
+			};
 }
 
 const subrouterPathDynamics = useSubrouterPathDynamics({
-    baseTitle: `API Keys | LeiOS Hub`,
-    basebreadcrumbItems: [
-        { label: 'API Keys', to: '/dashboard/apikeys' }
-    ],      
-    routes: getRoutesConfig()
+	baseTitle: `API Keys | LeiOS Hub`,
+	basebreadcrumbItems: [{ label: "API Keys", to: "/dashboard/apikeys" }],
+	routes: getRoutesConfig(),
 });
 
 const routePathDynamicValues = await useAwaitedComputed(async () => {
-    const values = await subrouterPathDynamics.getPathDynamicValues(route.path);
-    useSeoMeta(values.seoSettings);
-    return values;
+	const values = await subrouterPathDynamics.getPathDynamicValues(route.path);
+	useSeoMeta(values.seoSettings);
+	return values;
 });
-
 </script>
 
 <template>
