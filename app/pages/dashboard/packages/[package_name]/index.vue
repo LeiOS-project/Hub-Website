@@ -17,14 +17,16 @@ const pkg = useSubrouterInjectedData<DevPackage, NewDevPackage>("package", true)
 const pkg_data = pkg.data;
 const pkg_loading = pkg.loading;
 
-type Publisher = GetPublishersResponses[200]["data"][number];
+type Publisher = GetPublishersResponses[200]["data"]["items"][number];
 
 const { data: publishers } = await useAPIAsyncData<Publisher[]>("package-publishers", async () => {
 	if (!pkg.isNew) {
 		return [];
 	}
 
-	const result = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
+	const result = await useAPI((api) =>
+		api.getPublishers({ query: { onlyMembershipByMe: "true", limit: 100 } }),
+	);
 	if (!result.success) {
 		toast.add({
 			title: "Failed to load publishers",
@@ -34,7 +36,7 @@ const { data: publishers } = await useAPIAsyncData<Publisher[]>("package-publish
 		return [];
 	}
 
-	return result.data;
+	return result.data.items;
 });
 
 const publisherOptions = computed(() =>
@@ -113,7 +115,8 @@ async function onFormSubmit() {
 				const packagesResult = await useAPI((api) =>
 					api.getPackages({
 						query: {
-							onlyMembershipByMe: true,
+							onlyMembershipByMe: "true",
+							limit: 100,
 							publisherID: package_form_state.value.publisher_id,
 							searchString: package_form_state.value.name,
 						},
@@ -124,7 +127,7 @@ async function onFormSubmit() {
 					? (packagesResult.data as GetPackagesResponses["200"]["data"])
 					: null;
 				const createdPackage =
-					packagesData?.find(
+					packagesData?.items.find(
 						(candidate) =>
 							candidate.publisher_id === package_form_state.value.publisher_id &&
 							candidate.name === package_form_state.value.name,

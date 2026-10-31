@@ -85,6 +85,57 @@ export const zPostAuthResetPasswordRequestResponse = z.object({
     data: z.null()
 });
 
+export const zPostAuthSignupBody = z.object({
+    username: z.string().min(5).max(40).regex(/^(?!.*[.-]{2})(?!.*--)(?!.*\.\.)[a-z0-9](?:[a-z0-9._-]{3,38}[a-z0-9_])?$/),
+    display_name: z.string().min(1).max(64),
+    email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/),
+    password: z.string().min(8).max(50).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
+});
+
+/**
+ * Account created. Check your inbox to confirm your email address.
+ */
+export const zPostAuthSignupResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(201),
+    message: z.literal('Account created. Check your inbox to confirm your email address.'),
+    data: z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        username: z.string(),
+        display_name: z.string(),
+        email: z.string(),
+        email_verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable()
+    })
+});
+
+export const zPostAuthVerifyEmailBody = z.object({
+    token: z.string().min(1).max(256)
+});
+
+/**
+ * Email address confirmed
+ */
+export const zPostAuthVerifyEmailResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Email address confirmed'),
+    data: z.null()
+});
+
+export const zPostAuthVerifyEmailResendBody = z.object({
+    email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/)
+});
+
+/**
+ * If an unconfirmed account uses this address, a new verification email has been sent
+ */
+export const zPostAuthVerifyEmailResendResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('If an unconfirmed account uses this address, a new verification email has been sent'),
+    data: z.null()
+});
+
 /**
  * Account deleted successfully
  */
@@ -112,6 +163,10 @@ export const zGetAccountResponse = z.object({
             'developer',
             'user'
         ]),
+        email_verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        status: z.enum(['active', 'suspended']),
+        suspended_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        suspended_reason: z.string().nullable(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     })
 });
@@ -146,6 +201,16 @@ export const zPutAccountPasswordResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Password changed successfully'),
+    data: z.null()
+});
+
+/**
+ * Verification email sent
+ */
+export const zPostAccountEmailVerificationResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Verification email sent'),
     data: z.null()
 });
 
@@ -225,7 +290,7 @@ export const zGetPublishersQuery = z.object({
     limit: z.int().gte(1).lte(100).optional().default(10),
     offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
     searchString: z.string().min(3).optional(),
-    onlyMembershipByMe: z.boolean().optional().default(false)
+    onlyMembershipByMe: z.string().optional()
 });
 
 /**
@@ -235,16 +300,20 @@ export const zGetPublishersResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Publishers retrieved successfully'),
-    data: z.array(z.object({
-        id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        name: z.string(),
-        display_name: z.string(),
-        description: z.string(),
-        homepage_url: z.string(),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        maintainer_contact_name: z.string(),
-        maintainer_contact_email: z.string()
-    }))
+    data: z.object({
+        items: z.array(z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            name: z.string(),
+            display_name: z.string(),
+            description: z.string(),
+            homepage_url: z.string(),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            maintainer_contact_name: z.string(),
+            maintainer_contact_email: z.string(),
+            verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable()
+        })),
+        total: z.int().gte(0).lte(9007199254740991)
+    })
 });
 
 export const zPostPublishersBody = z.object({
@@ -253,7 +322,8 @@ export const zPostPublishersBody = z.object({
     description: z.string().min(1).max(500),
     homepage_url: z.url().max(500),
     maintainer_contact_name: z.string().min(1).max(254),
-    maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/)
+    maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/),
+    verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullish()
 });
 
 /**
@@ -301,7 +371,8 @@ export const zGetPublishersByPublisherNameResponse = z.object({
         homepage_url: z.string(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         maintainer_contact_name: z.string(),
-        maintainer_contact_email: z.string()
+        maintainer_contact_email: z.string(),
+        verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable()
     })
 });
 
@@ -310,7 +381,8 @@ export const zPutPublishersByPublisherNameBody = z.object({
     description: z.string().min(1).max(500).optional(),
     homepage_url: z.url().max(500).optional(),
     maintainer_contact_name: z.string().min(1).max(254).optional(),
-    maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/).optional()
+    maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/).optional(),
+    verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullish()
 });
 
 export const zPutPublishersByPublisherNamePath = z.object({
@@ -473,7 +545,18 @@ export const zGetPackagesQuery = z.object({
     searchString: z.string().min(3).optional(),
     publisherID: z.int().gte(1).lte(9007199254740991).optional(),
     publisherName: z.string().min(1).optional(),
-    onlyMembershipByMe: z.boolean().optional().default(false)
+    onlyMembershipByMe: z.string().optional(),
+    sort: z.enum([
+        'name',
+        'newest',
+        'updated'
+    ]).optional().default('name'),
+    channel: z.enum(['stable', 'testing']).optional(),
+    flag: z.enum([
+        'SYSTEM-MANAGED',
+        'HIDDEN',
+        'DEPRECATED'
+    ]).optional()
 });
 
 /**
@@ -483,35 +566,38 @@ export const zGetPackagesResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Packages retrieved successfully'),
-    data: z.array(z.object({
-        id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        publisher_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        name: z.string(),
-        fullname: z.string(),
-        top_level_alias: z.string().nullable(),
-        display_name: z.string(),
-        description: z.string(),
-        homepage_url: z.string(),
-        flags: z.union([
-            z.union([
-                z.string(),
-                z.number(),
-                z.boolean()
-            ]),
-            z.record(z.string(), z.unknown()),
-            z.array(z.unknown())
-        ]).nullable(),
-        requires_patching: z.boolean(),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        latest_stable_release: z.object({
-            amd64: z.string().nullable(),
-            arm64: z.string().nullable()
-        }),
-        latest_testing_release: z.object({
-            amd64: z.string().nullable(),
-            arm64: z.string().nullable()
-        })
-    }))
+    data: z.object({
+        items: z.array(z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            publisher_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            name: z.string(),
+            fullname: z.string(),
+            top_level_alias: z.string().nullable(),
+            display_name: z.string(),
+            description: z.string(),
+            homepage_url: z.string(),
+            flags: z.array(z.enum([
+                'SYSTEM-MANAGED',
+                'HIDDEN',
+                'DEPRECATED'
+            ])),
+            moderation_note: z.string().nullable(),
+            requires_patching: z.boolean(),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            last_release_at: z.unknown(),
+            publisher_display_name: z.unknown(),
+            publisher_verified_at: z.unknown(),
+            latest_stable_release: z.object({
+                amd64: z.string().nullable(),
+                arm64: z.string().nullable()
+            }),
+            latest_testing_release: z.object({
+                amd64: z.string().nullable(),
+                arm64: z.string().nullable()
+            })
+        })),
+        total: z.int().gte(0).lte(9007199254740991)
+    })
 });
 
 export const zPostPackagesBody = z.object({
@@ -520,6 +606,7 @@ export const zPostPackagesBody = z.object({
     display_name: z.string().min(1).max(200),
     description: z.string().min(1).max(500),
     homepage_url: z.url().max(500),
+    moderation_note: z.string().nullish(),
     requires_patching: z.boolean().optional().default(false)
 });
 
@@ -567,17 +654,17 @@ export const zGetPackagesByFullPackageNameResponse = z.object({
         display_name: z.string(),
         description: z.string(),
         homepage_url: z.string(),
-        flags: z.union([
-            z.union([
-                z.string(),
-                z.number(),
-                z.boolean()
-            ]),
-            z.record(z.string(), z.unknown()),
-            z.array(z.unknown())
-        ]).nullable(),
+        flags: z.array(z.enum([
+            'SYSTEM-MANAGED',
+            'HIDDEN',
+            'DEPRECATED'
+        ])),
+        moderation_note: z.string().nullable(),
         requires_patching: z.boolean(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        last_release_at: z.unknown(),
+        publisher_display_name: z.unknown(),
+        publisher_verified_at: z.unknown(),
         latest_stable_release: z.object({
             amd64: z.string().nullable(),
             arm64: z.string().nullable()
@@ -593,6 +680,7 @@ export const zPutPackagesByFullPackageNameBody = z.object({
     display_name: z.string().min(1).max(200).optional(),
     description: z.string().min(1).max(500).optional(),
     homepage_url: z.url().max(500).optional(),
+    moderation_note: z.string().nullish(),
     requires_patching: z.boolean().optional().default(false)
 });
 
@@ -635,7 +723,7 @@ export const zGetPackagesByFullPackageNameReleasesResponse = z.object({
 });
 
 export const zPostPackagesByFullPackageNameReleasesBody = z.object({
-    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/),
     changelog: z.string().min(1).max(10000)
 });
 
@@ -655,7 +743,7 @@ export const zPostPackagesByFullPackageNameReleasesResponse = z.object({
 
 export const zListReleaseStablePromotionRequestsPath = z.object({
     fullPackageName: z.string(),
-    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/)
 });
 
 export const zListReleaseStablePromotionRequestsQuery = z.object({
@@ -711,7 +799,7 @@ export const zCreateReleaseStablePromotionRequestBody = z.record(z.string(), z.n
 
 export const zCreateReleaseStablePromotionRequestPath = z.object({
     fullPackageName: z.string(),
-    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/)
 });
 
 /**
@@ -728,7 +816,7 @@ export const zCreateReleaseStablePromotionRequestResponse = z.object({
 
 export const zDeleteReleaseStablePromotionRequestPath = z.object({
     fullPackageName: z.string(),
-    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/),
     stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
 });
 
@@ -744,7 +832,7 @@ export const zDeleteReleaseStablePromotionRequestResponse = z.object({
 
 export const zGetReleaseStablePromotionRequestPath = z.object({
     fullPackageName: z.string(),
-    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/),
     stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
 });
 
@@ -791,7 +879,7 @@ export const zGetReleaseStablePromotionRequestResponse = z.object({
 
 export const zDeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchPath = z.object({
     fullPackageName: z.string(),
-    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/)
 });
 
 /**
@@ -806,7 +894,7 @@ export const zDeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchResp
 
 export const zGetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchPath = z.object({
     fullPackageName: z.string(),
-    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/)
 });
 
 /**
@@ -835,7 +923,7 @@ export const zPutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchBody = 
 
 export const zPutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchPath = z.object({
     fullPackageName: z.string(),
-    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/)
 });
 
 /**
@@ -854,7 +942,7 @@ export const zPostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArch
 
 export const zPostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchPath = z.object({
     fullPackageName: z.string(),
-    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/),
     arch: z.enum([
         'amd64',
         'arm64',
@@ -969,9 +1057,11 @@ export const zGetAdminUsersQuery = z.object({
         'developer',
         'user'
     ]).optional(),
+    status: z.enum(['active', 'suspended']).optional(),
+    verified: z.string().optional(),
     search: z.string().min(1).max(64).optional(),
-    limit: z.int().gte(1).lte(100).optional(),
-    offset: z.int().gte(0).lte(9007199254740991).optional()
+    limit: z.int().gte(1).lte(100).optional().default(25),
+    offset: z.int().gte(0).lte(9007199254740991).optional().default(0)
 });
 
 /**
@@ -981,18 +1071,25 @@ export const zGetAdminUsersResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Users retrieved successfully'),
-    data: z.array(z.object({
-        id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        username: z.string(),
-        display_name: z.string(),
-        email: z.string(),
-        role: z.enum([
-            'admin',
-            'developer',
-            'user'
-        ]),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
-    }))
+    data: z.object({
+        items: z.array(z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            username: z.string(),
+            display_name: z.string(),
+            email: z.string(),
+            role: z.enum([
+                'admin',
+                'developer',
+                'user'
+            ]),
+            email_verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            status: z.enum(['active', 'suspended']),
+            suspended_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            suspended_reason: z.string().nullable(),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        })),
+        total: z.int().gte(0).lte(9007199254740991)
+    })
 });
 
 export const zPostAdminUsersBody = z.object({
@@ -1004,6 +1101,10 @@ export const zPostAdminUsersBody = z.object({
         'developer',
         'user'
     ]).optional(),
+    email_verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullish(),
+    status: z.enum(['active', 'suspended']).optional(),
+    suspended_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullish(),
+    suspended_reason: z.string().nullish(),
     password: z.string().min(8).max(128)
 });
 
@@ -1024,6 +1125,10 @@ export const zPostAdminUsersResponse = z.object({
             'developer',
             'user'
         ]),
+        email_verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        status: z.enum(['active', 'suspended']),
+        suspended_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        suspended_reason: z.string().nullable(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     })
 });
@@ -1063,14 +1168,18 @@ export const zGetAdminUsersByUserIdResponse = z.object({
             'developer',
             'user'
         ]),
+        email_verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        status: z.enum(['active', 'suspended']),
+        suspended_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        suspended_reason: z.string().nullable(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     })
 });
 
 export const zPutAdminUsersByUserIdBody = z.object({
-    username: z.string().optional(),
-    display_name: z.string().optional(),
-    email: z.string().optional(),
+    username: z.string().min(5).max(40).regex(/^(?!.*[.-]{2})(?!.*--)(?!.*\.\.)[a-z0-9](?:[a-z0-9._-]{3,38}[a-z0-9_])?$/).optional(),
+    display_name: z.string().min(1).max(64).optional(),
+    email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/).optional(),
     role: z.enum([
         'admin',
         'developer',
@@ -1099,6 +1208,10 @@ export const zPutAdminUsersByUserIdResponse = z.object({
             'developer',
             'user'
         ]),
+        email_verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        status: z.enum(['active', 'suspended']),
+        suspended_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        suspended_reason: z.string().nullable(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
     })
 });
@@ -1121,6 +1234,114 @@ export const zPutAdminUsersByUserIdPasswordResponse = z.object({
     data: z.null()
 });
 
+export const zPostAdminUsersByUserIdSuspendBody = z.object({
+    reason: z.string().min(1).max(500)
+});
+
+export const zPostAdminUsersByUserIdSuspendPath = z.object({
+    userId: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * User suspended
+ */
+export const zPostAdminUsersByUserIdSuspendResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('User suspended'),
+    data: z.null()
+});
+
+export const zPostAdminUsersByUserIdUnsuspendPath = z.object({
+    userId: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Suspension lifted
+ */
+export const zPostAdminUsersByUserIdUnsuspendResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Suspension lifted'),
+    data: z.null()
+});
+
+export const zPostAdminUsersByUserIdPasswordResetLinkBody = z.object({
+    send_email: z.boolean().optional().default(false)
+});
+
+export const zPostAdminUsersByUserIdPasswordResetLinkPath = z.object({
+    userId: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Password reset link created
+ */
+export const zPostAdminUsersByUserIdPasswordResetLinkResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(201),
+    message: z.literal('Password reset link created'),
+    data: z.object({
+        reset_url: z.string(),
+        expires_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        emailed: z.boolean()
+    })
+});
+
+export const zPostAdminUsersByUserIdRevokeSessionsPath = z.object({
+    userId: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * All sessions and API keys revoked
+ */
+export const zPostAdminUsersByUserIdRevokeSessionsResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('All sessions and API keys revoked'),
+    data: z.null()
+});
+
+export const zPostAdminUsersByUserIdVerifyEmailPath = z.object({
+    userId: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Email address marked as confirmed
+ */
+export const zPostAdminUsersByUserIdVerifyEmailResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Email address marked as confirmed'),
+    data: z.null()
+});
+
+export const zGetAdminUsersByUserIdPublishersPath = z.object({
+    userId: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Publishers retrieved successfully
+ */
+export const zGetAdminUsersByUserIdPublishersResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Publishers retrieved successfully'),
+    data: z.array(z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        name: z.string(),
+        display_name: z.string(),
+        verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        role: z.enum([
+            'ADMIN',
+            'MAINTAINER',
+            'DEVELOPER',
+            'VIEWER'
+        ]),
+        is_owner: z.boolean()
+    }))
+});
+
 export const zGetAdminOsReleasesQuery = z.object({
     limit: z.int().gte(1).lte(100).optional().default(10),
     offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
@@ -1134,20 +1355,23 @@ export const zGetAdminOsReleasesResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('OS releases retrieved'),
-    data: z.array(z.object({
-        id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        version: z.string(),
-        changelog: z.string(),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        published_at: z.number().nullable(),
-        publishing_status: z.enum([
-            'pending',
-            'running',
-            'paused',
-            'failed',
-            'completed'
-        ])
-    }))
+    data: z.object({
+        items: z.array(z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            version: z.string(),
+            changelog: z.string(),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            published_at: z.number().nullable(),
+            publishing_status: z.enum([
+                'pending',
+                'running',
+                'paused',
+                'failed',
+                'completed'
+            ])
+        })),
+        total: z.int().gte(0).lte(9007199254740991)
+    })
 });
 
 export const zPostAdminOsReleasesBody = z.object({
@@ -1242,7 +1466,14 @@ export const zGetAdminTasksQuery = z.object({
     limit: z.int().gte(1).lte(100).optional().default(10),
     offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
     order: z.enum(['newest', 'oldest']).optional().default('newest'),
-    searchString: z.string().min(3).optional()
+    searchString: z.string().min(3).optional(),
+    status: z.enum([
+        'pending',
+        'running',
+        'paused',
+        'failed',
+        'completed'
+    ]).optional()
 });
 
 /**
@@ -1252,29 +1483,32 @@ export const zGetAdminTasksResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Scheduled tasks retrieved'),
-    data: z.array(z.object({
-        id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        storeLogs: z.boolean(),
-        status: z.enum([
-            'pending',
-            'running',
-            'paused',
-            'failed',
-            'completed'
-        ]),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        finished_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
-        result: z.union([
-            z.union([
-                z.string(),
-                z.number(),
-                z.boolean()
+    data: z.object({
+        items: z.array(z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            storeLogs: z.boolean(),
+            status: z.enum([
+                'pending',
+                'running',
+                'paused',
+                'failed',
+                'completed'
             ]),
-            z.record(z.string(), z.unknown()),
-            z.array(z.unknown())
-        ]).nullable(),
-        message: z.string().nullable()
-    }))
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            finished_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            result: z.union([
+                z.union([
+                    z.string(),
+                    z.number(),
+                    z.boolean()
+                ]),
+                z.record(z.string(), z.unknown()),
+                z.array(z.unknown())
+            ]).nullable(),
+            message: z.string().nullable()
+        })),
+        total: z.int().gte(0).lte(9007199254740991)
+    })
 });
 
 export const zGetAdminTasksByTaskIdPath = z.object({
@@ -1332,7 +1566,12 @@ export const zGetAdminTasksByTaskIdLogsResponse = z.object({
 export const zGetAdminStablePromotionRequestsQuery = z.object({
     limit: z.int().gte(1).lte(100).optional().default(10),
     offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
-    order: z.enum(['newest', 'oldest']).optional().default('newest')
+    order: z.enum(['newest', 'oldest']).optional().default('newest'),
+    status: z.enum([
+        'pending',
+        'approved',
+        'denied'
+    ]).optional()
 });
 
 /**
@@ -1342,20 +1581,24 @@ export const zGetAdminStablePromotionRequestsResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Stable promotion requests retrieved successfully'),
-    data: z.array(z.object({
-        id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        status: z.enum([
-            'pending',
-            'approved',
-            'denied'
-        ]),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        admin_note: z.string().nullable(),
-        package_name: z.string(),
-        package_release_version: z.string()
-    }))
+    data: z.object({
+        items: z.array(z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.enum([
+                'pending',
+                'approved',
+                'denied'
+            ]),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            admin_note: z.string().nullable(),
+            package_name: z.string(),
+            package_fullname: z.string(),
+            package_release_version: z.string()
+        })),
+        total: z.int().gte(0).lte(9007199254740991)
+    })
 });
 
 export const zGetAdminStablePromotionRequestsByStablePromotionRequestIdPath = z.object({
@@ -1381,6 +1624,7 @@ export const zGetAdminStablePromotionRequestsByStablePromotionRequestIdResponse 
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         admin_note: z.string().nullable(),
         package_name: z.string(),
+        package_fullname: z.string(),
         package_release_version: z.string()
     })
 });
@@ -1404,6 +1648,283 @@ export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdDecideRe
     data: z.null()
 });
 
+export const zGetAdminPublishersQuery = z.object({
+    limit: z.int().gte(1).lte(100).optional().default(10),
+    offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
+    search: z.string().min(1).max(64).optional(),
+    verified: z.string().optional()
+});
+
+/**
+ * Publishers retrieved successfully
+ */
+export const zGetAdminPublishersResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Publishers retrieved successfully'),
+    data: z.object({
+        items: z.array(z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            name: z.string(),
+            display_name: z.string(),
+            description: z.string(),
+            homepage_url: z.string(),
+            owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            maintainer_contact_name: z.string(),
+            maintainer_contact_email: z.string(),
+            verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            owner_username: z.string(),
+            package_count: z.int().gte(-9007199254740991).lte(9007199254740991),
+            member_count: z.int().gte(-9007199254740991).lte(9007199254740991)
+        })),
+        total: z.int().gte(0).lte(9007199254740991)
+    })
+});
+
+export const zPostAdminPublishersByPublisherNameVerifyPath = z.object({
+    publisherName: z.string().min(1)
+});
+
+/**
+ * Publisher marked as verified
+ */
+export const zPostAdminPublishersByPublisherNameVerifyResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Publisher marked as verified'),
+    data: z.null()
+});
+
+export const zPostAdminPublishersByPublisherNameUnverifyPath = z.object({
+    publisherName: z.string().min(1)
+});
+
+/**
+ * Publisher verification removed
+ */
+export const zPostAdminPublishersByPublisherNameUnverifyResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Publisher verification removed'),
+    data: z.null()
+});
+
+export const zPutAdminPackagesByFullPackageNameModerationBody = z.object({
+    hidden: z.boolean(),
+    deprecated: z.boolean(),
+    note: z.string().max(500).nullable()
+});
+
+export const zPutAdminPackagesByFullPackageNameModerationPath = z.object({
+    fullPackageName: z.string().min(1)
+});
+
+/**
+ * Package moderation updated
+ */
+export const zPutAdminPackagesByFullPackageNameModerationResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Package moderation updated'),
+    data: z.null()
+});
+
+export const zGetAdminReportsQuery = z.object({
+    limit: z.int().gte(1).lte(100).optional().default(10),
+    offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
+    order: z.enum(['newest', 'oldest']).optional().default('newest'),
+    status: z.enum([
+        'open',
+        'resolved',
+        'dismissed'
+    ]).optional(),
+    target_type: z.enum(['package', 'publisher']).optional()
+});
+
+/**
+ * Reports retrieved successfully
+ */
+export const zGetAdminReportsResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Reports retrieved successfully'),
+    data: z.object({
+        items: z.array(z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            reporter_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            target_type: z.enum(['package', 'publisher']),
+            target_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            target_label: z.string(),
+            reason: z.enum([
+                'malware',
+                'spam',
+                'copyright',
+                'inappropriate',
+                'broken',
+                'impersonation',
+                'other'
+            ]),
+            details: z.string(),
+            status: z.enum([
+                'open',
+                'resolved',
+                'dismissed'
+            ]),
+            resolution_note: z.string().nullable(),
+            resolved_by_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            resolved_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            reporter_username: z.string().nullable(),
+            resolved_by_username: z.string().nullable()
+        })),
+        total: z.int().gte(0).lte(9007199254740991)
+    })
+});
+
+export const zGetAdminReportsByReportIdPath = z.object({
+    reportId: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Report retrieved successfully
+ */
+export const zGetAdminReportsByReportIdResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Report retrieved successfully'),
+    data: z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        reporter_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        target_type: z.enum(['package', 'publisher']),
+        target_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        target_label: z.string(),
+        reason: z.enum([
+            'malware',
+            'spam',
+            'copyright',
+            'inappropriate',
+            'broken',
+            'impersonation',
+            'other'
+        ]),
+        details: z.string(),
+        status: z.enum([
+            'open',
+            'resolved',
+            'dismissed'
+        ]),
+        resolution_note: z.string().nullable(),
+        resolved_by_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        resolved_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        reporter_username: z.string().nullable(),
+        resolved_by_username: z.string().nullable()
+    })
+});
+
+export const zPostAdminReportsByReportIdResolveBody = z.object({
+    status: z.enum(['resolved', 'dismissed']),
+    note: z.string().max(2000).optional().default('')
+});
+
+export const zPostAdminReportsByReportIdResolvePath = z.object({
+    reportId: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Report closed
+ */
+export const zPostAdminReportsByReportIdResolveResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Report closed'),
+    data: z.null()
+});
+
+export const zGetAdminAuditLogQuery = z.object({
+    limit: z.int().gte(1).lte(100).optional().default(10),
+    offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
+    order: z.enum(['newest', 'oldest']).optional().default('newest'),
+    actor_user_id: z.int().gt(0).lte(9007199254740991).optional(),
+    action: z.string().min(1).max(64).optional(),
+    target_type: z.enum([
+        'user',
+        'publisher',
+        'package',
+        'release',
+        'stable_promotion_request',
+        'os_release',
+        'report'
+    ]).optional(),
+    target_id: z.string().min(1).max(256).optional()
+});
+
+/**
+ * Audit log retrieved successfully
+ */
+export const zGetAdminAuditLogResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Audit log retrieved successfully'),
+    data: z.object({
+        items: z.array(z.object({
+            id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            actor_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            action: z.string(),
+            target_type: z.enum([
+                'user',
+                'publisher',
+                'package',
+                'release',
+                'stable_promotion_request',
+                'os_release',
+                'report'
+            ]),
+            target_id: z.string().nullable(),
+            target_label: z.string().nullable(),
+            metadata: z.record(z.string(), z.unknown()),
+            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            actor_username: z.string().nullable()
+        })),
+        total: z.int().gte(0).lte(9007199254740991)
+    })
+});
+
+/**
+ * Statistics retrieved successfully
+ */
+export const zGetAdminStatsResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Statistics retrieved successfully'),
+    data: z.object({
+        users: z.object({
+            total: z.int().gte(-9007199254740991).lte(9007199254740991),
+            suspended: z.int().gte(-9007199254740991).lte(9007199254740991),
+            unverified: z.int().gte(-9007199254740991).lte(9007199254740991),
+            new_last_7_days: z.int().gte(-9007199254740991).lte(9007199254740991)
+        }),
+        publishers: z.object({
+            total: z.int().gte(-9007199254740991).lte(9007199254740991),
+            verified: z.int().gte(-9007199254740991).lte(9007199254740991)
+        }),
+        packages: z.object({
+            total: z.int().gte(-9007199254740991).lte(9007199254740991),
+            hidden: z.int().gte(-9007199254740991).lte(9007199254740991),
+            deprecated: z.int().gte(-9007199254740991).lte(9007199254740991)
+        }),
+        releases: z.int().gte(-9007199254740991).lte(9007199254740991),
+        stable_promotion_requests_pending: z.int().gte(-9007199254740991).lte(9007199254740991),
+        reports_open: z.int().gte(-9007199254740991).lte(9007199254740991),
+        tasks: z.object({
+            running: z.int().gte(-9007199254740991).lte(9007199254740991),
+            pending: z.int().gte(-9007199254740991).lte(9007199254740991),
+            failed: z.int().gte(-9007199254740991).lte(9007199254740991)
+        })
+    })
+});
+
 export const zGetUsersSearchQuery = z.object({
     q: z.string().min(2).max(64),
     limit: z.int().gte(1).lte(50).optional().default(10)
@@ -1421,4 +1942,104 @@ export const zGetUsersSearchResponse = z.object({
         username: z.string(),
         display_name: z.string()
     }))
+});
+
+/**
+ * Server features retrieved successfully
+ */
+export const zGetMetaResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Server features retrieved successfully'),
+    data: z.object({
+        signup_enabled: z.boolean(),
+        email_enabled: z.boolean()
+    })
+});
+
+/**
+ * Statistics retrieved successfully
+ */
+export const zGetMetaStatsResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Statistics retrieved successfully'),
+    data: z.object({
+        packages: z.int().gte(-9007199254740991).lte(9007199254740991),
+        publishers: z.int().gte(-9007199254740991).lte(9007199254740991),
+        verified_publishers: z.int().gte(-9007199254740991).lte(9007199254740991),
+        releases: z.int().gte(-9007199254740991).lte(9007199254740991),
+        latest_os_release: z.object({
+            version: z.string(),
+            published_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        }).nullable()
+    })
+});
+
+export const zGetOsReleasesQuery = z.object({
+    limit: z.int().gte(1).lte(100).optional().default(10),
+    offset: z.int().gte(0).lte(9007199254740991).optional().default(0),
+    order: z.enum(['newest', 'oldest']).optional().default('newest')
+});
+
+/**
+ * OS releases retrieved successfully
+ */
+export const zGetOsReleasesResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('OS releases retrieved successfully'),
+    data: z.object({
+        items: z.array(z.object({
+            version: z.string(),
+            changelog: z.string(),
+            published_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        })),
+        total: z.int().gte(0).lte(9007199254740991)
+    })
+});
+
+export const zGetOsReleasesByVersionPath = z.object({
+    version: z.string().regex(/^\d{4}\.\d{2}\.\d{3}$/)
+});
+
+/**
+ * OS release retrieved successfully
+ */
+export const zGetOsReleasesByVersionResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('OS release retrieved successfully'),
+    data: z.object({
+        version: z.string(),
+        changelog: z.string(),
+        published_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+    })
+});
+
+export const zPostReportsBody = z.object({
+    target_type: z.enum(['package', 'publisher']),
+    target_name: z.string().min(1).max(256),
+    reason: z.enum([
+        'malware',
+        'spam',
+        'copyright',
+        'inappropriate',
+        'broken',
+        'impersonation',
+        'other'
+    ]),
+    details: z.string().max(2000).optional().default('')
+});
+
+/**
+ * Report submitted. Thank you!
+ */
+export const zPostReportsResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(201),
+    message: z.literal('Report submitted. Thank you!'),
+    data: z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991)
+    })
 });

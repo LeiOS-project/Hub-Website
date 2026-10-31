@@ -3,8 +3,8 @@ import type { TableColumn } from "#ui/types";
 import type { GetAdminTasksResponses, GetPackagesResponses } from "@/api-client/types.gen";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
-type DevPackage = GetPackagesResponses[200]["data"][number];
-type DevTask = GetAdminTasksResponses[200]["data"][number];
+type DevPackage = GetPackagesResponses[200]["data"]["items"][number];
+type DevTask = GetAdminTasksResponses[200]["data"]["items"][number];
 
 definePageMeta({
 	layout: "dashboard",
@@ -29,12 +29,14 @@ const isAdmin = computed(() => user.value.role === "admin");
 const { data: devPackages, loading: loadingPackages } = await useAPIAsyncData<DevPackage[]>(
 	"dev-packages",
 	async () => {
-		const res = await useAPI((api) => api.getPackages({ query: { onlyMembershipByMe: true } }));
+		const res = await useAPI((api) =>
+			api.getPackages({ query: { onlyMembershipByMe: "true", limit: 100 } }),
+		);
 		if (!res.success) {
 			toast.add({ title: "Failed to load packages", description: res.message, color: "error" });
 			return [];
 		}
-		return res.data;
+		return res.data.items;
 	},
 );
 
@@ -46,11 +48,11 @@ const { data: devTasks, loading: loadingTasks } = await useAPIAsyncData<DevTask[
 			return [];
 		}
 
-		const res = await useAPI((api) => api.getAdminTasks({}));
+		const res = await useAPI((api) => api.getAdminTasks({ query: { limit: 100 } }));
 		if (!res.success) {
 			return [];
 		}
-		return res.data;
+		return res.data.items;
 	},
 );
 

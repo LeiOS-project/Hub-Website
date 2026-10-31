@@ -7,7 +7,7 @@ import { zPostPackagesBody } from "~/api-client/zod.gen";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 import type { Publisher } from "~/utils/types";
 
-type AdminPackage = GetPackagesResponses[200]["data"][number];
+type AdminPackage = GetPackagesResponses[200]["data"]["items"][number];
 
 definePageMeta({
 	layout: "dashboard",
@@ -46,7 +46,7 @@ const {
 	loading,
 	refresh,
 } = await useAPILazyAsyncData<AdminPackage[]>("admin-packages-list", async () => {
-	const res = await useAPI((api) => api.getPackages({}));
+	const res = await useAPI((api) => api.getPackages({ query: { limit: 100 } }));
 	if (!res.success) {
 		toast.add({
 			title: "Failed to load packages",
@@ -55,16 +55,16 @@ const {
 		});
 		return [];
 	}
-	return res.data;
+	return res.data.items;
 });
 
 // Load publishers for filter + display
 const { data: publishers } = await useAPILazyAsyncData<Publisher[]>(
 	"admin-packages-publishers",
 	async () => {
-		const res = await useAPI((api) => api.getPublishers({}));
+		const res = await useAPI((api) => api.getPublishers({ query: { limit: 100 } }));
 		if (!res.success) return [];
-		return res.data;
+		return res.data.items;
 	},
 );
 

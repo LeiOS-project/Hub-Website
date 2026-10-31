@@ -23,12 +23,14 @@ const publisherTableColumns: TableColumn<Publisher>[] = [
 ];
 
 const publishers = await useAPILazyAsyncData<Publisher[]>("/dashboard/publishers", async () => {
-	const res = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
+	const res = await useAPI((api) =>
+		api.getPublishers({ query: { onlyMembershipByMe: "true", limit: 100 } }),
+	);
 	if (!res.success) {
 		toast.add({ title: "Failed to load publishers", description: res.message, color: "error" });
 		return [];
 	}
-	return res.data;
+	return res.data.items;
 });
 </script>
 

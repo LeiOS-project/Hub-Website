@@ -20,7 +20,7 @@ export namespace UtilityTypes {
 
 export type UserInfo = GetAccountResponses["200"]["data"];
 
-export type DevPackage = GetPackagesResponses["200"]["data"][number];
+export type DevPackage = GetPackagesResponses["200"]["data"]["items"][number];
 export type NewDevPackage = NonNullable<PostPackagesData["body"]>;
 export type DevPackageDetail = GetPackagesByFullPackageNameResponses["200"]["data"];
 
@@ -35,7 +35,7 @@ export type DevPackageStablePromotionRequest =
 	ListReleaseStablePromotionRequestsResponses["200"]["data"][number];
 export type NewDevPackageStablePromotionRequest = Record<string, never>;
 
-export type Publisher = GetPublishersResponses["200"]["data"][number];
+export type Publisher = GetPublishersResponses["200"]["data"]["items"][number];
 export type NewPublisher = NonNullable<PostPublishersData["body"]>;
 
 export type PublisherMember = GetPublishersByPublisherNameMembersResponses["200"]["data"][number];

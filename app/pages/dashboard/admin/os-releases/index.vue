@@ -4,7 +4,7 @@ import type { GetAdminOsReleasesResponses } from "~/api-client";
 
 const toast = useToast();
 
-type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
+type OSRelease = GetAdminOsReleasesResponses["200"]["data"]["items"][number];
 
 definePageMeta({
 	layout: "dashboard",
@@ -20,12 +20,12 @@ const {
 	loading,
 	refresh,
 } = await useAPIAsyncData<OSRelease[]>("/admin/os-releases", async () => {
-	const res = await useAPI((api) => api.getAdminOsReleases({}));
+	const res = await useAPI((api) => api.getAdminOsReleases({ query: { limit: 100 } }));
 	if (!res.success) {
 		toast.add({ title: "Failed to load OS Releases", description: res.message, color: "error" });
 		return [];
 	}
-	return res.data;
+	return res.data.items;
 
 	// for (let i = 0; i < 200; i++) {
 	//     res.data.push({

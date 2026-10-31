@@ -6,7 +6,7 @@ import type { GetAdminUsersResponses } from "@/api-client/types.gen";
 import { zPostAdminUsersBody } from "~/api-client/zod.gen";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
-type AdminUser = GetAdminUsersResponses[200]["data"][number];
+type AdminUser = GetAdminUsersResponses[200]["data"]["items"][number];
 
 definePageMeta({
 	layout: "dashboard",
@@ -50,7 +50,7 @@ const {
 	loading,
 	refresh,
 } = await useAPILazyAsyncData<AdminUser[]>("admin-users-list", async () => {
-	const res = await useAPI((api) => api.getAdminUsers({}));
+	const res = await useAPI((api) => api.getAdminUsers({ query: { limit: 100 } }));
 	if (!res.success) {
 		toast.add({
 			title: "Failed to load users",
@@ -59,7 +59,7 @@ const {
 		});
 		return [];
 	}
-	return res.data;
+	return res.data.items;
 });
 
 function getUserOptionsDropdownItems(row: { original: AdminUser }): DropdownMenuItem[][] {

@@ -7,7 +7,7 @@ const route = useRoute();
 
 const os_release_version = route.params.os_release_version as string;
 
-type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
+type OSRelease = GetAdminOsReleasesResponses["200"]["data"]["items"][number];
 type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
 
 definePageMeta({

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { GetPackagesResponses, GetPublishersResponses } from "~/api-client";
 
-type PublicPackage = GetPackagesResponses[200]["data"][number];
-type PublicPublisher = GetPublishersResponses[200]["data"][number];
+type PublicPackage = GetPackagesResponses[200]["data"]["items"][number];
+type PublicPublisher = GetPublishersResponses[200]["data"]["items"][number];
 
 usePageSeo({
 	title: "Explorer | LeiOS Hub",
@@ -17,12 +17,12 @@ const {
 	pending,
 	refresh,
 } = await useAsyncData<PublicPackage[]>("public-packages", async () => {
-	const res = await useAPI((api) => api.getPackages({}), true);
+	const res = await useAPI((api) => api.getPackages({ query: { limit: 100 } }), true);
 	if (!res.success) {
 		toast.add({ title: "Failed to load packages", description: res.message, color: "error" });
 		return [];
 	}
-	return res.data;
+	return res.data.items;
 });
 
 // Publisher display names for the badges. The list endpoint is paginated (max 100); packages of a
@@ -31,7 +31,7 @@ const { data: publishers } = await useAsyncData<PublicPublisher[]>(
 	"public-publishers",
 	async () => {
 		const res = await useAPI((api) => api.getPublishers({ query: { limit: 100 } }), true);
-		return res.success ? res.data : [];
+		return res.success ? res.data.items : [];
 	},
 );
 

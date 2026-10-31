@@ -8,7 +8,7 @@ import type {
 const toast = useToast();
 const route = useRoute();
 
-type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
+type OSRelease = GetAdminOsReleasesResponses["200"]["data"]["items"][number];
 type OSReleasePublishingLogs = GetAdminOsReleasesByVersionPublishingLogsResponses["200"]["data"];
 
 const os_release = useSubrouterInjectedData<OSRelease>("os_release").inject();

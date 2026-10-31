@@ -2,7 +2,7 @@
 import type { TableColumn } from "#ui/types";
 import type { GetAdminTasksResponses } from "@/api-client/types.gen";
 
-type DevTask = GetAdminTasksResponses[200]["data"][number];
+type DevTask = GetAdminTasksResponses[200]["data"]["items"][number];
 
 definePageMeta({
 	layout: "dashboard",
@@ -28,12 +28,12 @@ const {
 	loading,
 	refresh,
 } = await useAPIAsyncData<DevTask[]>("admin-tasks-list", async () => {
-	const res = await useAPI((api) => api.getAdminTasks({}));
+	const res = await useAPI((api) => api.getAdminTasks({ query: { limit: 100 } }));
 	if (!res.success) {
 		toast.add({ title: "Failed to load tasks", description: res.message, color: "error" });
 		return [];
 	}
-	return res.data;
+	return res.data.items;
 });
 
 function getStatusColor(status: DevTask["status"]) {

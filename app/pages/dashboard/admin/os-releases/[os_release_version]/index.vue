@@ -7,7 +7,7 @@ import { zPostAdminOsReleasesBody, zPutAdminOsReleasesByVersionBody } from "~/ap
 const toast = useToast();
 const route = useRoute();
 
-type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
+type OSRelease = GetAdminOsReleasesResponses["200"]["data"]["items"][number];
 type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
 
 // const os_release = inject<Ref<OSRelease | NewOSRelease>>('os_release_data');

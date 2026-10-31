@@ -3,7 +3,7 @@
 
 import { type Client, type ClientMeta, type Composable, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateReleaseStablePromotionRequestData, CreateReleaseStablePromotionRequestError, CreateReleaseStablePromotionRequestResponse, DeleteAccountApikeysByApiKeyIdData, DeleteAccountApikeysByApiKeyIdError, DeleteAccountApikeysByApiKeyIdResponse, DeleteAccountData, DeleteAccountError, DeleteAccountResponse, DeleteAdminUsersByUserIdData, DeleteAdminUsersByUserIdError, DeleteAdminUsersByUserIdResponse, DeletePackagesByFullPackageNameData, DeletePackagesByFullPackageNameError, DeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchData, DeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchError, DeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchResponse, DeletePackagesByFullPackageNameResponse, DeletePackagesByFullPackageNameRoleAssignmentsByUserIdData, DeletePackagesByFullPackageNameRoleAssignmentsByUserIdError, DeletePackagesByFullPackageNameRoleAssignmentsByUserIdResponse, DeletePublishersByPublisherNameData, DeletePublishersByPublisherNameError, DeletePublishersByPublisherNameMembersByUserIdData, DeletePublishersByPublisherNameMembersByUserIdError, DeletePublishersByPublisherNameMembersByUserIdResponse, DeletePublishersByPublisherNameResponse, DeleteReleaseStablePromotionRequestData, DeleteReleaseStablePromotionRequestError, DeleteReleaseStablePromotionRequestResponse, GetAccountApikeysByApiKeyIdData, GetAccountApikeysByApiKeyIdError, GetAccountApikeysByApiKeyIdResponse, GetAccountApikeysData, GetAccountApikeysResponse, GetAccountData, GetAccountError, GetAccountResponse, GetAdminOsReleasesByVersionData, GetAdminOsReleasesByVersionError, GetAdminOsReleasesByVersionPublishingLogsData, GetAdminOsReleasesByVersionPublishingLogsError, GetAdminOsReleasesByVersionPublishingLogsResponse, GetAdminOsReleasesByVersionResponse, GetAdminOsReleasesData, GetAdminOsReleasesResponse, GetAdminStablePromotionRequestsByStablePromotionRequestIdData, GetAdminStablePromotionRequestsByStablePromotionRequestIdError, GetAdminStablePromotionRequestsByStablePromotionRequestIdResponse, GetAdminStablePromotionRequestsData, GetAdminStablePromotionRequestsResponse, GetAdminTasksByTaskIdData, GetAdminTasksByTaskIdError, GetAdminTasksByTaskIdLogsData, GetAdminTasksByTaskIdLogsError, GetAdminTasksByTaskIdLogsResponse, GetAdminTasksByTaskIdResponse, GetAdminTasksData, GetAdminTasksResponse, GetAdminUsersByUserIdData, GetAdminUsersByUserIdError, GetAdminUsersByUserIdResponse, GetAdminUsersData, GetAdminUsersResponse, GetAuthSessionData, GetAuthSessionError, GetAuthSessionResponse, GetPackagesByFullPackageNameData, GetPackagesByFullPackageNameError, GetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchData, GetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchError, GetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchResponse, GetPackagesByFullPackageNameReleasesData, GetPackagesByFullPackageNameReleasesResponse, GetPackagesByFullPackageNameResponse, GetPackagesByFullPackageNameRoleAssignmentsData, GetPackagesByFullPackageNameRoleAssignmentsError, GetPackagesByFullPackageNameRoleAssignmentsResponse, GetPackagesData, GetPackagesResponse, GetPublishersByPublisherNameData, GetPublishersByPublisherNameError, GetPublishersByPublisherNameMembersByUserIdData, GetPublishersByPublisherNameMembersByUserIdError, GetPublishersByPublisherNameMembersByUserIdResponse, GetPublishersByPublisherNameMembersData, GetPublishersByPublisherNameMembersResponse, GetPublishersByPublisherNameResponse, GetPublishersData, GetPublishersError, GetPublishersResponse, GetReleaseStablePromotionRequestData, GetReleaseStablePromotionRequestResponse, GetUsersSearchData, GetUsersSearchError, GetUsersSearchResponse, ListReleaseStablePromotionRequestsData, ListReleaseStablePromotionRequestsResponse, PostAccountApikeysData, PostAccountApikeysError, PostAccountApikeysResponse, PostAdminOsReleasesData, PostAdminOsReleasesResponse, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideData, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideError, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse, PostAdminUsersData, PostAdminUsersError, PostAdminUsersResponse, PostAuthLoginData, PostAuthLoginError, PostAuthLoginResponse, PostAuthLogoutData, PostAuthLogoutError, PostAuthLogoutResponse, PostAuthResetPasswordData, PostAuthResetPasswordError, PostAuthResetPasswordRequestData, PostAuthResetPasswordRequestError, PostAuthResetPasswordRequestResponse, PostAuthResetPasswordResponse, PostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchData, PostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchError, PostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchResponse, PostPackagesByFullPackageNameReleasesData, PostPackagesByFullPackageNameReleasesError, PostPackagesByFullPackageNameReleasesResponse, PostPackagesByFullPackageNameRoleAssignmentsData, PostPackagesByFullPackageNameRoleAssignmentsError, PostPackagesByFullPackageNameRoleAssignmentsResponse, PostPackagesData, PostPackagesError, PostPackagesResponse, PostPublishersByPublisherNameMembersData, PostPublishersByPublisherNameMembersError, PostPublishersByPublisherNameMembersResponse, PostPublishersByPublisherNameTransferOwnershipData, PostPublishersByPublisherNameTransferOwnershipError, PostPublishersByPublisherNameTransferOwnershipResponse, PostPublishersData, PostPublishersError, PostPublishersResponse, PutAccountData, PutAccountError, PutAccountPasswordData, PutAccountPasswordError, PutAccountPasswordResponse, PutAccountResponse, PutAdminOsReleasesByVersionData, PutAdminOsReleasesByVersionError, PutAdminOsReleasesByVersionResponse, PutAdminUsersByUserIdData, PutAdminUsersByUserIdError, PutAdminUsersByUserIdPasswordData, PutAdminUsersByUserIdPasswordError, PutAdminUsersByUserIdPasswordResponse, PutAdminUsersByUserIdResponse, PutPackagesByFullPackageNameData, PutPackagesByFullPackageNameError, PutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchData, PutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchError, PutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchResponse, PutPackagesByFullPackageNameResponse, PutPackagesByFullPackageNameRoleAssignmentsByUserIdData, PutPackagesByFullPackageNameRoleAssignmentsByUserIdError, PutPackagesByFullPackageNameRoleAssignmentsByUserIdResponse, PutPublishersByPublisherNameData, PutPublishersByPublisherNameError, PutPublishersByPublisherNameMembersByUserIdData, PutPublishersByPublisherNameMembersByUserIdError, PutPublishersByPublisherNameMembersByUserIdResponse, PutPublishersByPublisherNameResponse } from './types.gen';
+import type { CreateReleaseStablePromotionRequestData, CreateReleaseStablePromotionRequestError, CreateReleaseStablePromotionRequestResponse, DeleteAccountApikeysByApiKeyIdData, DeleteAccountApikeysByApiKeyIdError, DeleteAccountApikeysByApiKeyIdResponse, DeleteAccountData, DeleteAccountError, DeleteAccountResponse, DeleteAdminUsersByUserIdData, DeleteAdminUsersByUserIdError, DeleteAdminUsersByUserIdResponse, DeletePackagesByFullPackageNameData, DeletePackagesByFullPackageNameError, DeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchData, DeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchError, DeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchResponse, DeletePackagesByFullPackageNameResponse, DeletePackagesByFullPackageNameRoleAssignmentsByUserIdData, DeletePackagesByFullPackageNameRoleAssignmentsByUserIdError, DeletePackagesByFullPackageNameRoleAssignmentsByUserIdResponse, DeletePublishersByPublisherNameData, DeletePublishersByPublisherNameError, DeletePublishersByPublisherNameMembersByUserIdData, DeletePublishersByPublisherNameMembersByUserIdError, DeletePublishersByPublisherNameMembersByUserIdResponse, DeletePublishersByPublisherNameResponse, DeleteReleaseStablePromotionRequestData, DeleteReleaseStablePromotionRequestError, DeleteReleaseStablePromotionRequestResponse, GetAccountApikeysByApiKeyIdData, GetAccountApikeysByApiKeyIdError, GetAccountApikeysByApiKeyIdResponse, GetAccountApikeysData, GetAccountApikeysResponse, GetAccountData, GetAccountError, GetAccountResponse, GetAdminAuditLogData, GetAdminAuditLogError, GetAdminAuditLogResponse, GetAdminOsReleasesByVersionData, GetAdminOsReleasesByVersionError, GetAdminOsReleasesByVersionPublishingLogsData, GetAdminOsReleasesByVersionPublishingLogsError, GetAdminOsReleasesByVersionPublishingLogsResponse, GetAdminOsReleasesByVersionResponse, GetAdminOsReleasesData, GetAdminOsReleasesResponse, GetAdminPublishersData, GetAdminPublishersError, GetAdminPublishersResponse, GetAdminReportsByReportIdData, GetAdminReportsByReportIdError, GetAdminReportsByReportIdResponse, GetAdminReportsData, GetAdminReportsError, GetAdminReportsResponse, GetAdminStablePromotionRequestsByStablePromotionRequestIdData, GetAdminStablePromotionRequestsByStablePromotionRequestIdError, GetAdminStablePromotionRequestsByStablePromotionRequestIdResponse, GetAdminStablePromotionRequestsData, GetAdminStablePromotionRequestsResponse, GetAdminStatsData, GetAdminStatsResponse, GetAdminTasksByTaskIdData, GetAdminTasksByTaskIdError, GetAdminTasksByTaskIdLogsData, GetAdminTasksByTaskIdLogsError, GetAdminTasksByTaskIdLogsResponse, GetAdminTasksByTaskIdResponse, GetAdminTasksData, GetAdminTasksResponse, GetAdminUsersByUserIdData, GetAdminUsersByUserIdError, GetAdminUsersByUserIdPublishersData, GetAdminUsersByUserIdPublishersError, GetAdminUsersByUserIdPublishersResponse, GetAdminUsersByUserIdResponse, GetAdminUsersData, GetAdminUsersResponse, GetAuthSessionData, GetAuthSessionError, GetAuthSessionResponse, GetMetaData, GetMetaResponse, GetMetaStatsData, GetMetaStatsResponse, GetOsReleasesByVersionData, GetOsReleasesByVersionError, GetOsReleasesByVersionResponse, GetOsReleasesData, GetOsReleasesError, GetOsReleasesResponse, GetPackagesByFullPackageNameData, GetPackagesByFullPackageNameError, GetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchData, GetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchError, GetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchResponse, GetPackagesByFullPackageNameReleasesData, GetPackagesByFullPackageNameReleasesResponse, GetPackagesByFullPackageNameResponse, GetPackagesByFullPackageNameRoleAssignmentsData, GetPackagesByFullPackageNameRoleAssignmentsError, GetPackagesByFullPackageNameRoleAssignmentsResponse, GetPackagesData, GetPackagesResponse, GetPublishersByPublisherNameData, GetPublishersByPublisherNameError, GetPublishersByPublisherNameMembersByUserIdData, GetPublishersByPublisherNameMembersByUserIdError, GetPublishersByPublisherNameMembersByUserIdResponse, GetPublishersByPublisherNameMembersData, GetPublishersByPublisherNameMembersResponse, GetPublishersByPublisherNameResponse, GetPublishersData, GetPublishersError, GetPublishersResponse, GetReleaseStablePromotionRequestData, GetReleaseStablePromotionRequestResponse, GetUsersSearchData, GetUsersSearchError, GetUsersSearchResponse, ListReleaseStablePromotionRequestsData, ListReleaseStablePromotionRequestsResponse, PostAccountApikeysData, PostAccountApikeysError, PostAccountApikeysResponse, PostAccountEmailVerificationData, PostAccountEmailVerificationError, PostAccountEmailVerificationResponse, PostAdminOsReleasesData, PostAdminOsReleasesResponse, PostAdminPublishersByPublisherNameUnverifyData, PostAdminPublishersByPublisherNameUnverifyError, PostAdminPublishersByPublisherNameUnverifyResponse, PostAdminPublishersByPublisherNameVerifyData, PostAdminPublishersByPublisherNameVerifyError, PostAdminPublishersByPublisherNameVerifyResponse, PostAdminReportsByReportIdResolveData, PostAdminReportsByReportIdResolveError, PostAdminReportsByReportIdResolveResponse, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideData, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideError, PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse, PostAdminUsersByUserIdPasswordResetLinkData, PostAdminUsersByUserIdPasswordResetLinkError, PostAdminUsersByUserIdPasswordResetLinkResponse, PostAdminUsersByUserIdRevokeSessionsData, PostAdminUsersByUserIdRevokeSessionsError, PostAdminUsersByUserIdRevokeSessionsResponse, PostAdminUsersByUserIdSuspendData, PostAdminUsersByUserIdSuspendError, PostAdminUsersByUserIdSuspendResponse, PostAdminUsersByUserIdUnsuspendData, PostAdminUsersByUserIdUnsuspendError, PostAdminUsersByUserIdUnsuspendResponse, PostAdminUsersByUserIdVerifyEmailData, PostAdminUsersByUserIdVerifyEmailError, PostAdminUsersByUserIdVerifyEmailResponse, PostAdminUsersData, PostAdminUsersError, PostAdminUsersResponse, PostAuthLoginData, PostAuthLoginError, PostAuthLoginResponse, PostAuthLogoutData, PostAuthLogoutError, PostAuthLogoutResponse, PostAuthResetPasswordData, PostAuthResetPasswordError, PostAuthResetPasswordRequestData, PostAuthResetPasswordRequestError, PostAuthResetPasswordRequestResponse, PostAuthResetPasswordResponse, PostAuthSignupData, PostAuthSignupError, PostAuthSignupResponse, PostAuthVerifyEmailData, PostAuthVerifyEmailError, PostAuthVerifyEmailResendData, PostAuthVerifyEmailResendError, PostAuthVerifyEmailResendResponse, PostAuthVerifyEmailResponse, PostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchData, PostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchError, PostPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArchResponse, PostPackagesByFullPackageNameReleasesData, PostPackagesByFullPackageNameReleasesError, PostPackagesByFullPackageNameReleasesResponse, PostPackagesByFullPackageNameRoleAssignmentsData, PostPackagesByFullPackageNameRoleAssignmentsError, PostPackagesByFullPackageNameRoleAssignmentsResponse, PostPackagesData, PostPackagesError, PostPackagesResponse, PostPublishersByPublisherNameMembersData, PostPublishersByPublisherNameMembersError, PostPublishersByPublisherNameMembersResponse, PostPublishersByPublisherNameTransferOwnershipData, PostPublishersByPublisherNameTransferOwnershipError, PostPublishersByPublisherNameTransferOwnershipResponse, PostPublishersData, PostPublishersError, PostPublishersResponse, PostReportsData, PostReportsError, PostReportsResponse, PutAccountData, PutAccountError, PutAccountPasswordData, PutAccountPasswordError, PutAccountPasswordResponse, PutAccountResponse, PutAdminOsReleasesByVersionData, PutAdminOsReleasesByVersionError, PutAdminOsReleasesByVersionResponse, PutAdminPackagesByFullPackageNameModerationData, PutAdminPackagesByFullPackageNameModerationError, PutAdminPackagesByFullPackageNameModerationResponse, PutAdminUsersByUserIdData, PutAdminUsersByUserIdError, PutAdminUsersByUserIdPasswordData, PutAdminUsersByUserIdPasswordError, PutAdminUsersByUserIdPasswordResponse, PutAdminUsersByUserIdResponse, PutPackagesByFullPackageNameData, PutPackagesByFullPackageNameError, PutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchData, PutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchError, PutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchResponse, PutPackagesByFullPackageNameResponse, PutPackagesByFullPackageNameRoleAssignmentsByUserIdData, PutPackagesByFullPackageNameRoleAssignmentsByUserIdError, PutPackagesByFullPackageNameRoleAssignmentsByUserIdResponse, PutPublishersByPublisherNameData, PutPublishersByPublisherNameError, PutPublishersByPublisherNameMembersByUserIdData, PutPublishersByPublisherNameMembersByUserIdError, PutPublishersByPublisherNameMembersByUserIdResponse, PutPublishersByPublisherNameResponse } from './types.gen';
 
 export type Options<TComposable extends Composable = '$fetch', TData extends TDataShape = TDataShape, ResT = unknown, DefaultT = undefined> = Options2<TComposable, TData, ResT, DefaultT> & {
     /**
@@ -84,6 +84,48 @@ export const postAuthResetPasswordRequest = <TComposable extends Composable = '$
 });
 
 /**
+ * Sign up
+ *
+ * Create a new account. The account can sign in right away, but some actions (like creating a publisher) need the email address to be confirmed through the link that is emailed.
+ */
+export const postAuthSignup = <TComposable extends Composable = '$fetch', DefaultT extends PostAuthSignupResponse = PostAuthSignupResponse>(options: Options<TComposable, PostAuthSignupData, PostAuthSignupResponse, DefaultT>): RequestResult<TComposable, PostAuthSignupResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAuthSignupResponse | DefaultT, PostAuthSignupError, DefaultT>({
+    url: '/auth/signup',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Confirm an email address
+ *
+ * Consume the token from a verification email. Works signed in or signed out, so the link can be opened anywhere.
+ */
+export const postAuthVerifyEmail = <TComposable extends Composable = '$fetch', DefaultT extends PostAuthVerifyEmailResponse = PostAuthVerifyEmailResponse>(options: Options<TComposable, PostAuthVerifyEmailData, PostAuthVerifyEmailResponse, DefaultT>): RequestResult<TComposable, PostAuthVerifyEmailResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAuthVerifyEmailResponse | DefaultT, PostAuthVerifyEmailError, DefaultT>({
+    url: '/auth/verify-email',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Resend the verification email
+ *
+ * Send a new verification link to an account whose email address is not confirmed yet. Always answers the same way, so it does not reveal which addresses have accounts.
+ */
+export const postAuthVerifyEmailResend = <TComposable extends Composable = '$fetch', DefaultT extends PostAuthVerifyEmailResendResponse = PostAuthVerifyEmailResendResponse>(options: Options<TComposable, PostAuthVerifyEmailResendData, PostAuthVerifyEmailResendResponse, DefaultT>): RequestResult<TComposable, PostAuthVerifyEmailResendResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAuthVerifyEmailResendResponse | DefaultT, PostAuthVerifyEmailResendError, DefaultT>({
+    url: '/auth/verify-email/resend',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Delete account
  *
  * Permanently delete the authenticated user's account.
@@ -133,6 +175,17 @@ export const putAccountPassword = <TComposable extends Composable = '$fetch', De
         'Content-Type': 'application/json',
         ...options.headers
     }
+});
+
+/**
+ * Resend the verification email
+ *
+ * Send a new confirmation link for the authenticated user's email address, if it is not confirmed yet.
+ */
+export const postAccountEmailVerification = <TComposable extends Composable = '$fetch', DefaultT extends PostAccountEmailVerificationResponse = PostAccountEmailVerificationResponse>(options: Options<TComposable, PostAccountEmailVerificationData, PostAccountEmailVerificationResponse, DefaultT>): RequestResult<TComposable, PostAccountEmailVerificationResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAccountEmailVerificationResponse | DefaultT, PostAccountEmailVerificationError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/account/email-verification',
+    ...options
 });
 
 /**
@@ -609,6 +662,80 @@ export const putAdminUsersByUserIdPassword = <TComposable extends Composable = '
 });
 
 /**
+ * Suspend user
+ *
+ * Block an account from signing in and end all its sessions and API keys. Publishers and packages it owns stay as they are.
+ */
+export const postAdminUsersByUserIdSuspend = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminUsersByUserIdSuspendResponse = PostAdminUsersByUserIdSuspendResponse>(options: Options<TComposable, PostAdminUsersByUserIdSuspendData, PostAdminUsersByUserIdSuspendResponse, DefaultT>): RequestResult<TComposable, PostAdminUsersByUserIdSuspendResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAdminUsersByUserIdSuspendResponse | DefaultT, PostAdminUsersByUserIdSuspendError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/users/{userId}/suspend',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Lift suspension
+ *
+ * Allow a suspended account to sign in again.
+ */
+export const postAdminUsersByUserIdUnsuspend = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminUsersByUserIdUnsuspendResponse = PostAdminUsersByUserIdUnsuspendResponse>(options: Options<TComposable, PostAdminUsersByUserIdUnsuspendData, PostAdminUsersByUserIdUnsuspendResponse, DefaultT>): RequestResult<TComposable, PostAdminUsersByUserIdUnsuspendResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAdminUsersByUserIdUnsuspendResponse | DefaultT, PostAdminUsersByUserIdUnsuspendError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/users/{userId}/unsuspend',
+    ...options
+});
+
+/**
+ * Create a password reset link
+ *
+ * Create a one-time password reset link (valid 24 hours) to hand to the user, and email it to them when email is configured.
+ */
+export const postAdminUsersByUserIdPasswordResetLink = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminUsersByUserIdPasswordResetLinkResponse = PostAdminUsersByUserIdPasswordResetLinkResponse>(options: Options<TComposable, PostAdminUsersByUserIdPasswordResetLinkData, PostAdminUsersByUserIdPasswordResetLinkResponse, DefaultT>): RequestResult<TComposable, PostAdminUsersByUserIdPasswordResetLinkResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAdminUsersByUserIdPasswordResetLinkResponse | DefaultT, PostAdminUsersByUserIdPasswordResetLinkError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/users/{userId}/password-reset-link',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Sign user out everywhere
+ *
+ * End all sessions and delete all API keys of an account.
+ */
+export const postAdminUsersByUserIdRevokeSessions = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminUsersByUserIdRevokeSessionsResponse = PostAdminUsersByUserIdRevokeSessionsResponse>(options: Options<TComposable, PostAdminUsersByUserIdRevokeSessionsData, PostAdminUsersByUserIdRevokeSessionsResponse, DefaultT>): RequestResult<TComposable, PostAdminUsersByUserIdRevokeSessionsResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAdminUsersByUserIdRevokeSessionsResponse | DefaultT, PostAdminUsersByUserIdRevokeSessionsError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/users/{userId}/revoke-sessions',
+    ...options
+});
+
+/**
+ * Mark email as confirmed
+ *
+ * Confirm a user's email address on their behalf, e.g. when the verification email cannot reach them.
+ */
+export const postAdminUsersByUserIdVerifyEmail = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminUsersByUserIdVerifyEmailResponse = PostAdminUsersByUserIdVerifyEmailResponse>(options: Options<TComposable, PostAdminUsersByUserIdVerifyEmailData, PostAdminUsersByUserIdVerifyEmailResponse, DefaultT>): RequestResult<TComposable, PostAdminUsersByUserIdVerifyEmailResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAdminUsersByUserIdVerifyEmailResponse | DefaultT, PostAdminUsersByUserIdVerifyEmailError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/users/{userId}/verify-email',
+    ...options
+});
+
+/**
+ * List a user's publishers
+ *
+ * Publishers the user owns or is a member of, with their role.
+ */
+export const getAdminUsersByUserIdPublishers = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminUsersByUserIdPublishersResponse = GetAdminUsersByUserIdPublishersResponse>(options: Options<TComposable, GetAdminUsersByUserIdPublishersData, GetAdminUsersByUserIdPublishersResponse, DefaultT>): RequestResult<TComposable, GetAdminUsersByUserIdPublishersResponse | DefaultT, DefaultT> => (options.client ?? client).get<TComposable, GetAdminUsersByUserIdPublishersResponse | DefaultT, GetAdminUsersByUserIdPublishersError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/users/{userId}/publishers',
+    ...options
+});
+
+/**
  * List OS releases
  *
  * Retrieve all OS releases.
@@ -742,6 +869,113 @@ export const postAdminStablePromotionRequestsByStablePromotionRequestIdDecide = 
 });
 
 /**
+ * List all publishers
+ *
+ * Every publisher with its owner and package/member counts, optionally filtered by name or verification.
+ */
+export const getAdminPublishers = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPublishersResponse = GetAdminPublishersResponse>(options: Options<TComposable, GetAdminPublishersData, GetAdminPublishersResponse, DefaultT>): RequestResult<TComposable, GetAdminPublishersResponse | DefaultT, DefaultT> => (options.client ?? client).get<TComposable, GetAdminPublishersResponse | DefaultT, GetAdminPublishersError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/publishers',
+    ...options
+});
+
+/**
+ * Verify publisher
+ *
+ * Mark a publisher as verified (official / trusted). Verified publishers get a badge in the hub.
+ */
+export const postAdminPublishersByPublisherNameVerify = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPublishersByPublisherNameVerifyResponse = PostAdminPublishersByPublisherNameVerifyResponse>(options: Options<TComposable, PostAdminPublishersByPublisherNameVerifyData, PostAdminPublishersByPublisherNameVerifyResponse, DefaultT>): RequestResult<TComposable, PostAdminPublishersByPublisherNameVerifyResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAdminPublishersByPublisherNameVerifyResponse | DefaultT, PostAdminPublishersByPublisherNameVerifyError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/publishers/{publisherName}/verify',
+    ...options
+});
+
+/**
+ * Remove publisher verification
+ *
+ * Remove the verified badge from a publisher.
+ */
+export const postAdminPublishersByPublisherNameUnverify = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPublishersByPublisherNameUnverifyResponse = PostAdminPublishersByPublisherNameUnverifyResponse>(options: Options<TComposable, PostAdminPublishersByPublisherNameUnverifyData, PostAdminPublishersByPublisherNameUnverifyResponse, DefaultT>): RequestResult<TComposable, PostAdminPublishersByPublisherNameUnverifyResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAdminPublishersByPublisherNameUnverifyResponse | DefaultT, PostAdminPublishersByPublisherNameUnverifyError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/publishers/{publisherName}/unverify',
+    ...options
+});
+
+/**
+ * Set package moderation flags
+ *
+ * Hide a package from the public hub or mark it as deprecated, with a note. Hidden packages stay visible to their publisher's members and to admins.
+ */
+export const putAdminPackagesByFullPackageNameModeration = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminPackagesByFullPackageNameModerationResponse = PutAdminPackagesByFullPackageNameModerationResponse>(options: Options<TComposable, PutAdminPackagesByFullPackageNameModerationData, PutAdminPackagesByFullPackageNameModerationResponse, DefaultT>): RequestResult<TComposable, PutAdminPackagesByFullPackageNameModerationResponse | DefaultT, DefaultT> => (options.client ?? client).put<TComposable, PutAdminPackagesByFullPackageNameModerationResponse | DefaultT, PutAdminPackagesByFullPackageNameModerationError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/packages/{fullPackageName}/moderation',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List reports
+ *
+ * User reports about packages and publishers, newest first by default.
+ */
+export const getAdminReports = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminReportsResponse = GetAdminReportsResponse>(options: Options<TComposable, GetAdminReportsData, GetAdminReportsResponse, DefaultT>): RequestResult<TComposable, GetAdminReportsResponse | DefaultT, DefaultT> => (options.client ?? client).get<TComposable, GetAdminReportsResponse | DefaultT, GetAdminReportsError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/reports',
+    ...options
+});
+
+/**
+ * Get report
+ *
+ * Retrieve one report.
+ */
+export const getAdminReportsByReportId = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminReportsByReportIdResponse = GetAdminReportsByReportIdResponse>(options: Options<TComposable, GetAdminReportsByReportIdData, GetAdminReportsByReportIdResponse, DefaultT>): RequestResult<TComposable, GetAdminReportsByReportIdResponse | DefaultT, DefaultT> => (options.client ?? client).get<TComposable, GetAdminReportsByReportIdResponse | DefaultT, GetAdminReportsByReportIdError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/reports/{reportId}',
+    ...options
+});
+
+/**
+ * Resolve report
+ *
+ * Close a report as resolved (action taken) or dismissed (no action needed), with a note.
+ */
+export const postAdminReportsByReportIdResolve = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminReportsByReportIdResolveResponse = PostAdminReportsByReportIdResolveResponse>(options: Options<TComposable, PostAdminReportsByReportIdResolveData, PostAdminReportsByReportIdResolveResponse, DefaultT>): RequestResult<TComposable, PostAdminReportsByReportIdResolveResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostAdminReportsByReportIdResolveResponse | DefaultT, PostAdminReportsByReportIdResolveError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/reports/{reportId}/resolve',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List audit log entries
+ *
+ * Who did what to which resource — admin actions, publisher management, signups and reports.
+ */
+export const getAdminAuditLog = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminAuditLogResponse = GetAdminAuditLogResponse>(options: Options<TComposable, GetAdminAuditLogData, GetAdminAuditLogResponse, DefaultT>): RequestResult<TComposable, GetAdminAuditLogResponse | DefaultT, DefaultT> => (options.client ?? client).get<TComposable, GetAdminAuditLogResponse | DefaultT, GetAdminAuditLogError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/audit-log',
+    ...options
+});
+
+/**
+ * Get admin overview statistics
+ *
+ * Counts for the admin dashboard: users, publishers, packages and open work queues.
+ */
+export const getAdminStats = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminStatsResponse = GetAdminStatsResponse>(options: Options<TComposable, GetAdminStatsData, GetAdminStatsResponse, DefaultT>): RequestResult<TComposable, GetAdminStatsResponse | DefaultT, DefaultT> => (options.client ?? client).get<TComposable, GetAdminStatsResponse | DefaultT, unknown, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/stats',
+    ...options
+});
+
+/**
  * Search users
  *
  * Search for LeiOS users by username or display name. Only returns minimal public info. Requires authentication.
@@ -750,4 +984,47 @@ export const getUsersSearch = <TComposable extends Composable = '$fetch', Defaul
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/users/search',
     ...options
+});
+
+/**
+ * Get server features
+ *
+ * Which optional features this server has enabled, for clients to adapt their UI.
+ */
+export const getMeta = <TComposable extends Composable = '$fetch', DefaultT extends GetMetaResponse = GetMetaResponse>(options: Options<TComposable, GetMetaData, GetMetaResponse, DefaultT>): RequestResult<TComposable, GetMetaResponse | DefaultT, DefaultT> => (options.client ?? client).get<TComposable, GetMetaResponse | DefaultT, unknown, DefaultT>({ url: '/meta', ...options });
+
+/**
+ * Get public hub statistics
+ *
+ * Counts of listed packages, publishers and releases, and the latest published OS release.
+ */
+export const getMetaStats = <TComposable extends Composable = '$fetch', DefaultT extends GetMetaStatsResponse = GetMetaStatsResponse>(options: Options<TComposable, GetMetaStatsData, GetMetaStatsResponse, DefaultT>): RequestResult<TComposable, GetMetaStatsResponse | DefaultT, DefaultT> => (options.client ?? client).get<TComposable, GetMetaStatsResponse | DefaultT, unknown, DefaultT>({ url: '/meta/stats', ...options });
+
+/**
+ * List published OS releases
+ *
+ * Retrieve the published LeiOS releases with their changelogs.
+ */
+export const getOsReleases = <TComposable extends Composable = '$fetch', DefaultT extends GetOsReleasesResponse = GetOsReleasesResponse>(options: Options<TComposable, GetOsReleasesData, GetOsReleasesResponse, DefaultT>): RequestResult<TComposable, GetOsReleasesResponse | DefaultT, DefaultT> => (options.client ?? client).get<TComposable, GetOsReleasesResponse | DefaultT, GetOsReleasesError, DefaultT>({ url: '/os-releases', ...options });
+
+/**
+ * Get a published OS release
+ *
+ * Retrieve one published LeiOS release by version (YYYY.MM.NNN).
+ */
+export const getOsReleasesByVersion = <TComposable extends Composable = '$fetch', DefaultT extends GetOsReleasesByVersionResponse = GetOsReleasesByVersionResponse>(options: Options<TComposable, GetOsReleasesByVersionData, GetOsReleasesByVersionResponse, DefaultT>): RequestResult<TComposable, GetOsReleasesByVersionResponse | DefaultT, DefaultT> => (options.client ?? client).get<TComposable, GetOsReleasesByVersionResponse | DefaultT, GetOsReleasesByVersionError, DefaultT>({ url: '/os-releases/{version}', ...options });
+
+/**
+ * Report a package or publisher
+ *
+ * Flag a package or publisher for the moderators (malware, spam, copyright, …). Needs a signed-in account with a confirmed email address.
+ */
+export const postReports = <TComposable extends Composable = '$fetch', DefaultT extends PostReportsResponse = PostReportsResponse>(options: Options<TComposable, PostReportsData, PostReportsResponse, DefaultT>): RequestResult<TComposable, PostReportsResponse | DefaultT, DefaultT> => (options.client ?? client).post<TComposable, PostReportsResponse | DefaultT, PostReportsError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/reports',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });

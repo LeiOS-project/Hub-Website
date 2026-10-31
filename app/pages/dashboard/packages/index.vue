@@ -4,7 +4,7 @@ import type { GetPackagesResponses } from "@/api-client/types.gen";
 import { useAPI } from "@/composables/useAPI";
 import type { Publisher } from "~/utils/types";
 
-type DevPackage = GetPackagesResponses[200]["data"][number];
+type DevPackage = GetPackagesResponses[200]["data"]["items"][number];
 
 definePageMeta({
 	layout: "dashboard",
@@ -28,20 +28,24 @@ const packageTableColumns: TableColumn<DevPackage>[] = [
 ];
 
 const packages = await useAPIAsyncData(`/dev/packages`, async () => {
-	const res = await useAPI((api) => api.getPackages({ query: { onlyMembershipByMe: true } }));
+	const res = await useAPI((api) =>
+		api.getPackages({ query: { onlyMembershipByMe: "true", limit: 100 } }),
+	);
 	if (!res.success) {
 		toast.add({ title: "Failed to load packages", description: res.message, color: "error" });
 		return [];
 	}
-	return res.data;
+	return res.data.items;
 });
 
 const { data: publishers } = await useAPILazyAsyncData<Publisher[]>(
 	"package-publishers-filter",
 	async () => {
-		const res = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
+		const res = await useAPI((api) =>
+			api.getPublishers({ query: { onlyMembershipByMe: "true", limit: 100 } }),
+		);
 		if (!res.success) return [];
-		return res.data;
+		return res.data.items;
 	},
 );
 

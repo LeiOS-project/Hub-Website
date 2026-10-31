@@ -2,7 +2,7 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { GetAdminStablePromotionRequestsResponses } from "@/api-client/types.gen";
 
-type AdminStableRequest = GetAdminStablePromotionRequestsResponses[200]["data"][number];
+type AdminStableRequest = GetAdminStablePromotionRequestsResponses[200]["data"]["items"][number];
 
 definePageMeta({
 	layout: "dashboard",
@@ -19,7 +19,7 @@ const toast = useToast();
 const stablePromotionRequests = await useAPIAsyncData(
 	"admin-stable-promotion-requests",
 	async () => {
-		const res = await useAPI((api) => api.getAdminStablePromotionRequests({}));
+		const res = await useAPI((api) => api.getAdminStablePromotionRequests({ query: { limit: 100 } }));
 
 		if (!res.success) {
 			toast.add({
@@ -30,7 +30,7 @@ const stablePromotionRequests = await useAPIAsyncData(
 			return [];
 		}
 
-		return res.data;
+		return res.data.items;
 	},
 );
 
