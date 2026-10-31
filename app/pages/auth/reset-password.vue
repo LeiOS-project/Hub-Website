@@ -105,6 +105,8 @@ async function onSubmit(payload: FormSubmitEvent<NewPasswordSchema>) {
     <template v-if="reset_token">
         <UAuthForm
             :schema="schema"
+            :state="formState"
+            :validate="validate"
             title="Reset Password"
             description="Enter your new password below to reset it."
             icon="i-lucide-mail"
