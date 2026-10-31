@@ -47,13 +47,13 @@ const cards = [
         title: 'Admin controls',
         icon: 'i-lucide-shield',
         detail: 'Approve stable promotion requests, reset passwords, and manage roles without leaving Nuxt UI.',
-        to: '/dashboard?tab=admin'
+        to: '/dashboard/admin/users'
     },
     {
         title: 'Public explorer',
         icon: 'i-lucide-compass',
-        detail: 'Coming soon: browse packages and pull metadata directly from the repo.',
-        to: '#'
+        detail: 'Browse all published packages and their releases without signing in.',
+        to: '/explore'
     }
 ];
 
@@ -107,22 +107,22 @@ useSeoMeta({
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm text-slate-400">Public Explorer</p>
-                                    <p class="text-xl font-semibold text-sky-100">Coming soon</p>
+                                    <p class="text-xl font-semibold text-sky-100">Browse all packages</p>
                                 </div>
-                                <UBadge color="neutral" variant="soft">preview</UBadge>
+                                <UBadge color="primary" variant="soft">public</UBadge>
                             </div>
 
                             <div class="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
                                 <div class="flex items-center gap-3">
                                     <UIcon name="i-lucide-compass" class="text-sky-400" />
                                     <div>
-                                        <p class="text-sm text-slate-400">Browse all packages</p>
-                                        <p class="text-slate-200">API integration is on the way.</p>
+                                        <p class="text-sm text-slate-400">No account needed</p>
+                                        <p class="text-slate-200">See every LeiOS package and its releases.</p>
                                     </div>
                                 </div>
-                                <p class="mt-3 text-sm text-slate-500">
-                                    The public explorer endpoint is not live yet. You can still prepare packages and releases in the dashboard today.
-                                </p>
+                                <UButton to="/explore" size="sm" color="primary" variant="soft" class="mt-4" trailing-icon="i-lucide-arrow-right">
+                                    Open the explorer
+                                </UButton>
                             </div>
                         </div>
                     </UCard>
@@ -183,8 +183,8 @@ useSeoMeta({
                                 <h3 class="text-lg font-semibold">{{ card.title }}</h3>
                             </div>
                             <p class="text-slate-400">{{ card.detail }}</p>
-                            <UButton :to="card.to" :disabled="card.title === 'Public explorer'" size="sm" color="primary" variant="soft">
-                                {{ card.title === 'Public explorer' ? 'Coming soon' : 'Open' }}
+                            <UButton :to="card.to" size="sm" color="primary" variant="soft">
+                                Open
                             </UButton>
                         </div>
                     </UCard>
