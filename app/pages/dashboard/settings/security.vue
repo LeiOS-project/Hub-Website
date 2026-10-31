@@ -83,7 +83,7 @@ async function onPasswordSubmit(event: FormSubmitEvent<PasswordSchema>) {
 			});
 
 			await useUserInfoStore().clear();
-			useAppCookies().sessionToken.get()!.value = null;
+			useAppCookies().sessionToken.set(null);
 			await navigateTo("/auth/login");
 		} else {
 			toast.add({
@@ -130,7 +130,7 @@ async function onDeleteAccount() {
 			});
 
 			await useUserInfoStore().clear();
-			useAppCookies().sessionToken.get()!.value = null;
+			useAppCookies().sessionToken.set(null);
 			await navigateTo("/");
 		} else {
 			toast.add({

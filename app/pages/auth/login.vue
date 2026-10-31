@@ -2,7 +2,6 @@
 import type { AuthFormField, FormSubmitEvent } from "@nuxt/ui";
 import * as z from "zod";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
-import { useRuntimeAppConfigs } from "~/composables/useRuntimeAppConfigs";
 
 const isSignupEnabled = useRuntimeAppConfigs().isSignupEnabled;
 
@@ -16,14 +15,12 @@ useSeoMeta({
 });
 
 const route = useRoute();
-let redirectUrl = route.query.url?.toString() || "/dashboard";
-
-// Ensure redirectUrl is a safe path within the application
-if (!redirectUrl.startsWith("/dashboard")) {
-	redirectUrl = "/dashboard";
-}
-
 const toast = useToast();
+
+// Only follow internal redirects (`/…`, not `//evil.example`); default to the dashboard.
+const requestedUrl = route.query.url?.toString() ?? "";
+const redirectUrl =
+	requestedUrl.startsWith("/") && !requestedUrl.startsWith("//") ? requestedUrl : "/dashboard";
 
 const fields: AuthFormField[] = [
 	{
@@ -50,90 +47,80 @@ const fields: AuthFormField[] = [
 
 const schema = z.object({
 	username: z.string("Username is required").trim().min(1, "Username is required"),
-	password: z.string("Password is required").trim().min(1, "Password is required"),
+	password: z.string("Password is required").min(1, "Password is required"),
 	remember: z.boolean().optional(),
 });
 
 type Schema = z.output<typeof schema>;
 
+const loading = ref(false);
+
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
-	const result = await useAPI((api) => {
-		return api.postAuthLogin({ body: payload.data });
-	}, true);
+	loading.value = true;
 
-	if (result.success) {
-		updateAPIClient(result.data.token);
+	const result = await useAPI(
+		(api) =>
+			api.postAuthLogin({
+				body: { username: payload.data.username, password: payload.data.password },
+			}),
+		true,
+	);
 
-		const sessionToken = useCookie("leioshub_session_token", {
-			path: "/",
-			secure: true,
-			sameSite: "lax",
-			httpOnly: false,
-			maxAge: payload.data.remember ? 60 * 60 * 24 * 30 : undefined, // 30 days
-		});
+	loading.value = false;
 
-		sessionToken.value = result.data.token;
-
-		await useUserInfoStore().refresh();
-
+	if (!result.success) {
+		const invalidCredentials = (result.code as number) === 401;
 		toast.add({
-			title: "Login Successful",
-			description: "You have been logged in successfully.",
+			title: invalidCredentials ? "Invalid Username or Password" : "Login Failed",
+			description: invalidCredentials
+				? "Please check your credentials and try again."
+				: result.message || "An error occurred during login. Please try again later.",
+			icon: "i-lucide-alert-circle",
+			color: "error",
 		});
-
-		await navigateTo(redirectUrl.toString());
 		return;
-	} else {
-		if ((result.code as number) === 401) {
-			toast.add({
-				title: "Invalid Username or Password",
-				description: "Please check your credentials and try again.",
-				icon: "i-lucide-alert-circle",
-				color: "error",
-			});
-		} else {
-			toast.add({
-				title: "Login Failed",
-				description: result.message || "An error occurred during login. Please try again later.",
-				icon: "i-lucide-alert-circle",
-				color: "error",
-			});
-		}
 	}
+
+	updateAPIClient(result.data.token);
+	useAppCookies().sessionToken.set(result.data.token, {
+		maxAge: payload.data.remember ? 60 * 60 * 24 * 30 : undefined, // 30 days only with "remember me"
+	});
+
+	// Fresh per-user state for the new session.
+	await useUserInfoStore().refresh();
+
+	toast.add({
+		title: "Login Successful",
+		description: "You have been logged in successfully.",
+		icon: "i-lucide-check",
+		color: "success",
+	});
+
+	await navigateTo(redirectUrl);
 }
 </script>
 
 <template>
-    <UAuthForm
-        :schema="schema"
-        title="Login"
-        description="Enter your credentials to access your account."
-        icon="i-lucide-user"
-        :fields="fields"
-        @submit="onSubmit"
-        :submit="{
-            label: 'Login',
-        }"
-    >
-        <template #footer>
-            <div class="text-center text-sm">
-                Forgot your password?
-                <NuxtLink
-                    to="/auth/forgot-password"
-                    class="text-sky-400 hover:underline"
-                >
-                    Reset here
-                </NuxtLink>
-            </div>
-            <div v-if="isSignupEnabled" class="text-center text-sm mt-2">
-                Don't have an account?
-                <NuxtLink
-                    to="/auth/signup"
-                    class="text-sky-400 hover:underline"
-                >
-                    Sign up
-                </NuxtLink>
-            </div>
-        </template>
-    </UAuthForm>
+	<UAuthForm
+		:schema="schema"
+		title="Login"
+		description="Enter your credentials to access your account."
+		icon="i-lucide-user"
+		:fields="fields"
+		:submit="{ label: 'Login', loading }"
+		@submit="onSubmit"
+	>
+		<template #footer>
+			<div class="text-center text-sm">
+				Forgot your password?
+				<NuxtLink to="/auth/forgot-password" class="text-primary hover:underline">
+					Reset here
+				</NuxtLink>
+			</div>
+			<div v-if="isSignupEnabled" class="mt-2 text-center text-sm">
+				Don't have an account?
+				<NuxtLink to="/auth/signup" class="text-primary hover:underline">Sign up</NuxtLink>
+			</div>
+		</template>
+	</UAuthForm>
 </template>

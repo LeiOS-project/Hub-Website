@@ -117,41 +117,8 @@ async function onDeleteOSRelease() {
 		color: "warning",
 	});
 
+	// The API has no endpoint for deleting OS releases yet.
 	deleteConfirmOpen.value = false;
-
-	// try {
-	// 	// const result = await useAPI((api) => api.deleteOSRelease({}))
-
-	// 	if (result.success) {
-	// 		toast.add({
-	// 			title: 'OS Release deleted',
-	// 			description: 'The OS Release has been permanently deleted.',
-	// 			icon: 'i-lucide-check',
-	// 			color: 'success'
-	// 		})
-
-	// 		await useUserInfoStore().clear();
-	// 		useCookie("leioshub_session_token").value = null
-	// 		navigateTo('/')
-	// 	} else {
-	// 		toast.add({
-	// 			title: 'Error',
-	// 			description: result.message || 'An error occurred while deleting the OS Release.',
-	// 			icon: 'i-lucide-alert-circle',
-	// 			color: 'error'
-	// 		})
-	// 	}
-	// } catch (error) {
-	// 	toast.add({
-	// 		title: 'Error',
-	// 		description: 'An unexpected error occurred.',
-	// 		icon: 'i-lucide-alert-circle',
-	// 		color: 'error'
-	// 	})
-	// } finally {
-	// 	deleteLoading.value = false
-	// 	deleteConfirmOpen.value = false
-	// }
 }
 
 const headerTexts = computed(() => {
