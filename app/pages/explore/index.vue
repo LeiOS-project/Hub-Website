@@ -4,6 +4,11 @@ import type { GetPackagesResponses, GetPublishersResponses } from "~/api-client"
 type PublicPackage = GetPackagesResponses[200]["data"][number];
 type PublicPublisher = GetPublishersResponses[200]["data"][number];
 
+usePageSeo({
+	title: "Explorer | LeiOS Hub",
+	description: "Browse all LeiOS packages, their publishers and releases.",
+});
+
 const toast = useToast();
 const search = ref("");
 

@@ -85,6 +85,14 @@ const packageTitle = computed(
 	() => packageInfo.value?.display_name || packageInfo.value?.name || packageName.value,
 );
 
+usePageSeo({
+	title: `${packageTitle.value} | Explorer | LeiOS Hub`,
+	description:
+		packageInfo.value?.description ||
+		`Releases and metadata of the LeiOS package ${packageName.value}.`,
+	noindex: !packageInfo.value,
+});
+
 const releases = computed(() => {
 	return (releaseData.value || []).flatMap((release) => {
 		const rows: ReleaseRow[] = [];

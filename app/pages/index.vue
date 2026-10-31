@@ -58,10 +58,16 @@ const cards = [
 	},
 ];
 
-useSeoMeta({
+usePageSeo({
 	title: "LeiOS Hub | Centralized Package Management for LeiOS",
 	description:
 		"Manage and publish LeiOS packages with ease using the LeiOS Repository Hub. Designed for developers and admins alike.",
+	jsonLd: {
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		name: "LeiOS Hub",
+		description: "Package repository hub for the LeiOS operating system.",
+	},
 });
 </script>
 
