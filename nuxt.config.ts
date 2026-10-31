@@ -1,42 +1,59 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+// Nuxt 4 (app/ srcDir is the default). See the LeiCraftMC style guide, docs/06-frontend-nuxt.md.
 export default defineNuxtConfig({
 	compatibilityDate: "2025-07-15",
 	devtools: { enabled: true },
 	modules: ["@nuxt/ui"],
-
 	colorMode: {
 		preference: "dark",
 		fallback: "dark",
 		classSuffix: "",
 	},
-
 	ssr: true,
-
 	css: ["~/assets/css/main.css"],
 
 	nitro: {
-		devProxy:
-			process.env.USE_DEV_PROXY === "true"
-				? {
-						"/api/proxy": {
-							target: process.env.DEV_PROXY_TARGET || "https://api.leios.dev",
-							changeOrigin: true,
-						},
-					}
-				: {},
+		rollupConfig: {
+			output: {
+				// Map the prefixed env vars onto Nuxt's NUXT_PUBLIC_* overrides at server start, so a
+				// built .output/ (e.g. the Docker image) is configured through LEIOS_HUB_* at runtime.
+				banner: (function () {
+					const mappings = {
+						LEIOS_HUB_API_URL: "API_URL",
+						LEIOS_HUB_APP_URL: "APP_URL",
+						LEIOS_HUB_ENABLE_SIGNUP: "IS_SIGNUP_ENABLED",
+					};
+
+					const bannerCode = `
+						(function () {
+							const mappings = ${JSON.stringify(mappings)};
+							const env = globalThis.process?.env ?? {};
+							for (const [envName, runtimeName] of Object.entries(mappings)) {
+								if (!env['NUXT_PUBLIC_' + runtimeName] && env[envName]) {
+									env['NUXT_PUBLIC_' + runtimeName] = env[envName];
+								}
+							}
+						})();
+					`;
+
+					return bannerCode.replace(/^\s+|\s+$/g, "").replace(/\n\s*/g, " ");
+				})(),
+			},
+		},
+
+		esbuild: {
+			options: {
+				target: "esnext",
+			},
+		},
 	},
 
 	runtimeConfig: {
 		public: {
-			apiUrl: process.env.LEIOS_API_URL || "http://localhost:12151/v1",
+			// Origin of the LeiOS API-Server, without `/v1` (updateAPIClient appends it).
+			apiUrl: process.env.LEIOS_HUB_API_URL || "http://localhost:12151",
 			appUrl: process.env.LEIOS_HUB_APP_URL || "http://localhost:12153",
-			isSignupEnabled: process.env.LEIOS_HUB_APP_ENABLE_SIGNUP === "true" ? true : false,
-		},
-	},
-
-	vite: {
-		server: {
-			allowedHosts: ["leios-hub-website-test.tun.is-on.net"],
+			// Temporary switch for the signup UI; to be replaced by a flag from the API.
+			isSignupEnabled: process.env.LEIOS_HUB_ENABLE_SIGNUP === "true",
 		},
 	},
 
@@ -45,4 +62,6 @@ export default defineNuxtConfig({
 		"/auth/**": { ssr: false },
 		"/**": { ssr: true },
 	},
+
+	telemetry: false,
 });
