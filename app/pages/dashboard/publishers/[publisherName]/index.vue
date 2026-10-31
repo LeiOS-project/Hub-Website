@@ -119,34 +119,31 @@ async function onFormSubmit() {
 const deleteConfirmOpen = ref(false);
 
 async function onDeletePublisher() {
-	try {
-		const result = await useAPI((api) =>
-			api.deletePublishersByPublisherName({
-				path: { publisherName: pub_data.value.name },
-			}),
-		);
+	const publisherName = pub_data.value.name;
+	const result = await useAPI((api) =>
+		api.deletePublishersByPublisherName({
+			path: { publisherName },
+		}),
+	);
 
-		if (result.success) {
-			toast.add({
-				title: "Publisher deleted",
-				description: `The publisher "${pub_data.value.name}" has been deleted.`,
-				icon: "i-lucide-check",
-				color: "success",
-			});
-
-			await navigateTo("/dashboard/publishers");
-		} else {
-			throw new Error(result.message || "Failed to delete publisher");
-		}
-	} catch (error: any) {
+	if (!result.success) {
 		toast.add({
-			title: "Error",
-			description: error.message || "An unexpected error occurred.",
-			icon: "i-lucide-x-circle",
+			title: "Failed to delete publisher",
+			description: result.message || "An unexpected error occurred.",
+			icon: "i-lucide-alert-circle",
 			color: "error",
 		});
-		deleteConfirmOpen.value = false;
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(result.message);
 	}
+
+	toast.add({
+		title: "Publisher deleted",
+		description: `The publisher "${publisherName}" has been deleted.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	await navigateTo("/dashboard/publishers");
 }
 
 // Pre-fill empty homepage_url so the input doesn't error on empty URL fields
@@ -301,41 +298,30 @@ watchEffect(() => {
             </div>
         </div>
 
-        <!-- Danger Zone Card -->
-        <div
+        <!-- Danger Zone -->
+        <DashboardSectionCard
             v-if="!pub.isNew"
-            class="rounded-xl border border-red-900/50 bg-red-950/20 backdrop-blur-sm overflow-hidden"
+            title="Danger Zone"
+            description="Irreversible and destructive actions"
+            icon="i-lucide-alert-triangle"
+            tone="danger"
         >
-            <div class="px-6 py-4 border-b border-red-900/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                        <UIcon name="i-lucide-alert-triangle" class="w-5 h-5 text-red-400" />
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-red-400">Danger Zone</h3>
-                        <p class="text-sm text-slate-400">Irreversible and destructive actions</p>
-                    </div>
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex-1">
+                    <h4 class="font-medium text-white">Delete Publisher</h4>
+                    <p class="text-sm text-slate-400 mt-1">
+                        Permanently delete this publisher. This will fail if the publisher still has packages.
+                    </p>
                 </div>
+                <UButton
+                    label="Delete Publisher"
+                    color="error"
+                    variant="soft"
+                    icon="i-lucide-trash-2"
+                    @click="deleteConfirmOpen = true"
+                />
             </div>
-
-            <div class="p-6">
-                <div class="flex flex-col md:flex-row md:items-center gap-4">
-                    <div class="flex-1">
-                        <h4 class="font-medium text-white">Delete Publisher</h4>
-                        <p class="text-sm text-slate-400 mt-1">
-                            Permanently delete this publisher. This will fail if the publisher still has packages.
-                        </p>
-                    </div>
-                    <UButton
-                        label="Delete Publisher"
-                        color="error"
-                        variant="soft"
-                        icon="i-lucide-trash-2"
-                        @click="deleteConfirmOpen = true"
-                    />
-                </div>
-            </div>
-        </div>
+        </DashboardSectionCard>
 
         <!-- Delete Confirmation Modal -->
         <DashboardDeleteModal
@@ -344,7 +330,6 @@ watchEffect(() => {
             warning-text="All data associated with this publisher will be permanently deleted. This action cannot be reversed. Note: publishers with existing packages cannot be deleted."
             v-model:open="deleteConfirmOpen"
             :on-delete="onDeletePublisher"
-            :prevent-auto-close="true"
         />
     </div>
 </template>

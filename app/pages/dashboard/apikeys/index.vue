@@ -61,41 +61,27 @@ const deleteConfirmOpen = ref(false);
 const latestOnDeleteClickAPIKeyId = ref<string | null>(null);
 
 async function onDeleteApiKey() {
-	try {
-		if (!latestOnDeleteClickAPIKeyId.value) {
-			throw new Error("No API Key ID specified for deletion.");
-		}
+	const apiKeyID = latestOnDeleteClickAPIKeyId.value;
+	if (!apiKeyID) return;
 
-		const res = await useAPI((api) =>
-			api.deleteAccountApikeysByApiKeyId({
-				path: {
-					apiKeyID: latestOnDeleteClickAPIKeyId.value as string,
-				},
-			}),
-		);
-
-		if (res.success) {
-			toast.add({
-				title: "API Key deleted",
-				description: "The API Key has been successfully deleted.",
-				color: "success",
-			});
-
-			// Refresh the API keys list
-			await apiKeys.refresh();
-
-			deleteConfirmOpen.value = false;
-		} else {
-			throw new Error(res.message || "Failed to delete API Key.");
-		}
-	} catch (error: any) {
+	const res = await useAPI((api) => api.deleteAccountApikeysByApiKeyId({ path: { apiKeyID } }));
+	if (!res.success) {
 		toast.add({
 			title: "Failed to delete API Key",
-			description: error.message || "An unknown error occurred.",
+			description: res.message || "An unknown error occurred.",
 			icon: "i-lucide-alert-circle",
 			color: "error",
 		});
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(res.message);
 	}
+
+	toast.add({
+		title: "API Key deleted",
+		description: "The API Key has been successfully deleted.",
+		color: "success",
+	});
+	await apiKeys.refresh();
 }
 </script>
 
@@ -225,6 +211,5 @@ async function onDeleteApiKey() {
         warning-text="Are you sure you want to delete this API key? This action cannot be undone."
         v-model:open="deleteConfirmOpen"
         :on-delete="onDeleteApiKey"
-        :prevent-auto-close=true
     />
 </template>

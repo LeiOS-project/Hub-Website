@@ -220,18 +220,15 @@ async function onDeleteUser() {
 	if (!deleteTarget.value) return;
 	const target = deleteTarget.value;
 	const res = await useAPI((api) => api.deleteAdminUsersByUserId({ path: { userId: target.id } }));
-	if (res.success) {
-		toast.add({ title: "User deleted", color: "success" });
-		deleteConfirmOpen.value = false;
-		deleteTarget.value = null;
-		await refresh();
-	} else {
-		toast.add({
-			title: "Delete failed",
-			description: res.message,
-			color: "error",
-		});
+	if (!res.success) {
+		toast.add({ title: "Delete failed", description: res.message, color: "error" });
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(res.message);
 	}
+
+	toast.add({ title: "User deleted", color: "success" });
+	deleteTarget.value = null;
+	await refresh();
 }
 </script>
 
@@ -438,6 +435,5 @@ async function onDeleteUser() {
         :warning-text="`Are you sure you want to delete user &quot;${deleteTarget?.username || ''}&quot;? This action cannot be undone.`"
         v-model:open="deleteConfirmOpen"
         :on-delete="onDeleteUser"
-        :prevent-auto-close="true"
     />
 </template>

@@ -230,37 +230,34 @@ async function onRemoveMember() {
 	if (!deleteTarget.value) return;
 	const target = deleteTarget.value;
 
-	try {
-		const res = await useAPI((api) =>
-			api.deletePublishersByPublisherNameMembersByUserId({
-				path: {
-					publisherName,
-					userId: target.userId,
-				},
-			}),
-		);
+	const res = await useAPI((api) =>
+		api.deletePublishersByPublisherNameMembersByUserId({
+			path: {
+				publisherName,
+				userId: target.userId,
+			},
+		}),
+	);
 
-		if (res.success) {
-			toast.add({
-				title: "Member removed",
-				description: `"${target.username}" has been removed.`,
-				icon: "i-lucide-check",
-				color: "success",
-			});
-			deleteConfirmOpen.value = false;
-			deleteTarget.value = null;
-			await members.refresh();
-		} else {
-			throw new Error(res.message || "Failed to remove member");
-		}
-	} catch (error: any) {
+	if (!res.success) {
 		toast.add({
-			title: "Error",
-			description: error.message || "An unexpected error occurred.",
-			icon: "i-lucide-x-circle",
+			title: "Failed to remove member",
+			description: res.message || "An unexpected error occurred.",
+			icon: "i-lucide-alert-circle",
 			color: "error",
 		});
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(res.message);
 	}
+
+	toast.add({
+		title: "Member removed",
+		description: `"${target.username}" has been removed.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	deleteTarget.value = null;
+	await members.refresh();
 }
 </script>
 
@@ -486,6 +483,5 @@ async function onRemoveMember() {
         :warning-text="`Are you sure you want to remove &quot;${deleteTarget?.username || ''}&quot; from this publisher?`"
         v-model:open="deleteConfirmOpen"
         :on-delete="onRemoveMember"
-        :prevent-auto-close="true"
     />
 </template>

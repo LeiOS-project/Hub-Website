@@ -379,53 +379,35 @@ async function onDeletePackage() {
             </div>
         </div>
 
-        <!-- Danger Zone Card -->
-        <div
+        <!-- Danger Zone -->
+        <DashboardSectionCard
             v-if="!pkg.isNew"
-            class="rounded-xl border border-red-900/50 bg-red-950/20 backdrop-blur-sm overflow-hidden"
+            title="Danger Zone"
+            description="Irreversible and destructive actions"
+            icon="i-lucide-alert-triangle"
+            tone="danger"
         >
-            <div class="px-6 py-4 border-b border-red-900/50">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center"
-                    >
-                        <UIcon
-                            name="i-lucide-alert-triangle"
-                            class="w-5 h-5 text-red-400"
-                        />
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-red-400">Danger Zone</h3>
-                        <p class="text-sm text-slate-400">
-                            Irreversible and destructive actions
-                        </p>
-                    </div>
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex-1">
+                    <h4 class="font-medium text-white">
+                        Delete Package
+                    </h4>
+                    <p class="text-sm text-slate-400 mt-1">
+                        Permanently delete this package and all
+                        associated data. This action cannot be undone.
+                    </p>
                 </div>
+                <UTooltip text="Coming soon — deletion is not yet implemented">
+                    <UButton
+                        label="Delete Package"
+                        color="error"
+                        variant="soft"
+                        icon="i-lucide-trash-2"
+                        disabled
+                    />
+                </UTooltip>
             </div>
-
-            <div class="p-6">
-                <div class="flex flex-col md:flex-row md:items-center gap-4">
-                    <div class="flex-1">
-                        <h4 class="font-medium text-white">
-                            Delete Package
-                        </h4>
-                        <p class="text-sm text-slate-400 mt-1">
-                            Permanently delete this package and all
-                            associated data. This action cannot be undone.
-                        </p>
-                    </div>
-                    <UTooltip text="Coming soon — deletion is not yet implemented">
-                        <UButton
-                            label="Delete Package"
-                            color="error"
-                            variant="soft"
-                            icon="i-lucide-trash-2"
-                            disabled
-                        />
-                    </UTooltip>
-                </div>
-            </div>
-        </div>
+        </DashboardSectionCard>
 
     </div>
 </template>

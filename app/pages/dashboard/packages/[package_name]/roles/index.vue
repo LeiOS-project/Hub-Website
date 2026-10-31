@@ -313,33 +313,30 @@ function openRemoveOverride(member: MemberWithOverride) {
 async function onRemoveOverride() {
 	if (!deleteTarget.value) return;
 	const target = deleteTarget.value;
-	try {
-		const res = await useAPI((api) =>
-			api.deletePackagesByFullPackageNameRoleAssignmentsByUserId({
-				path: { fullPackageName, userId: target.userId },
-			}),
-		);
-		if (res.success) {
-			toast.add({
-				title: "Override removed",
-				description: `Reverted to publisher-level role for ${target.username}.`,
-				icon: "i-lucide-check",
-				color: "success",
-			});
-			deleteConfirmOpen.value = false;
-			deleteTarget.value = null;
-			await loadData();
-		} else {
-			throw new Error(res.message || "Failed to remove override");
-		}
-	} catch (error: any) {
+	const res = await useAPI((api) =>
+		api.deletePackagesByFullPackageNameRoleAssignmentsByUserId({
+			path: { fullPackageName, userId: target.userId },
+		}),
+	);
+	if (!res.success) {
 		toast.add({
-			title: "Error",
-			description: error.message || "An unexpected error occurred.",
-			icon: "i-lucide-x-circle",
+			title: "Failed to remove override",
+			description: res.message || "An unexpected error occurred.",
+			icon: "i-lucide-alert-circle",
 			color: "error",
 		});
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(res.message);
 	}
+
+	toast.add({
+		title: "Override removed",
+		description: `Reverted to publisher-level role for ${target.username}.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	deleteTarget.value = null;
+	await loadData();
 }
 </script>
 
@@ -587,6 +584,5 @@ async function onRemoveOverride() {
         :warning-text="`Remove the override for &quot;${deleteTarget?.username || ''}&quot;? They will revert to their publisher-level role for this package.`"
         v-model:open="deleteConfirmOpen"
         :on-delete="onRemoveOverride"
-        :prevent-auto-close="true"
     />
 </template>
