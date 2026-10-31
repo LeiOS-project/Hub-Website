@@ -1,3 +1,12 @@
+/**
+ * useAPI — the single gateway to the generated API SDK.
+ *
+ * On the server it applies the session cookie's token and calls the SDK; on the client it reads the session cookie,
+ * applies it to the generated client via `updateAPIClient`, redirects to `/auth/login` on a missing
+ * or 401 token, and always returns the backend's `{ success, code, message, data }` envelope
+ * (errors are normalized into the envelope, never thrown). Callers branch on `result.success`.
+ * See docs/07-state-and-data.md.
+ */
 import * as baseAPIClient from "@/api-client/sdk.gen";
 
 export namespace UseAPITypes {
@@ -39,24 +48,24 @@ class AsyncRequestTaskWrapper<TReturn> {
 
 	async execute(): Promise<TReturn> {
 		this.loading.value = true;
-
-		const result = await this.handler();
-
-		this.loading.value = false;
-		return result;
+		try {
+			return await this.handler();
+		} finally {
+			this.loading.value = false;
+		}
 	}
 }
 
 class LazyAsyncDataRequestWrapper<TReturn> {
-	// 1. The public read-only refs (Computed)
+	// 1. The public read-only refs (computed)
 	readonly data: Ref<TReturn | null>;
 	readonly loading: Ref<boolean>;
 
-	// 2. Internal pointers (Plain class properties, NOT refs themselves)
+	// 2. Internal pointers (plain class properties, NOT refs themselves)
 	protected _activeDataRef: Ref<TReturn | null> | null = null;
 	protected _activeLoadingRef: Ref<boolean> | null = null;
 
-	// 3. The "Signal" - determines which pointer we are looking at
+	// 3. The "signal" — determines which pointer we are looking at
 	protected _linkSignal = ref(0);
 
 	protected refreshFunction?: () => Promise<void>;
@@ -70,14 +79,11 @@ class LazyAsyncDataRequestWrapper<TReturn> {
 		// Initialize the computed properties ONCE
 		this.data = computed({
 			get: () => {
-				// Track the signal
 				this._linkSignal.value;
-				// Return the value of whatever ref we are currently pointing to
 				return this._activeDataRef?.value ?? null;
 			},
 			set: (newValue) => {
 				if (this._activeDataRef) {
-					// This updates the actual Ref returned by useLazyAsyncData
 					this._activeDataRef.value = newValue;
 				}
 			},
@@ -101,16 +107,13 @@ class LazyAsyncDataRequestWrapper<TReturn> {
 			immediate: false,
 		});
 
-		// 4. Update the internal pointers (Point to the new refs)
-		// We cast 'data' because Nuxt types can sometimes be 'TReturn | null' or just 'TReturn'
 		this._activeDataRef = data as Ref<TReturn | null>;
 		this._activeLoadingRef = pending;
 
 		this.refreshFunction = refresh;
 		this.clearFunction = clear;
 
-		// 5. Trigger the signal. The computed properties will now re-evaluate
-		// and find the new _activeDataRef.
+		// Trigger the signal so the computed properties re-evaluate and find the new refs.
 		this._linkSignal.value++;
 	}
 
@@ -122,10 +125,7 @@ class LazyAsyncDataRequestWrapper<TReturn> {
 			throw new Error("Failed to initialize refresh function.");
 		}
 
-		await this.refreshFunction!();
-
-		// console.log("after refresh source:", this._activeDataRef?.value);
-		// console.log("after refresh target:", this.data.value); // This will now be CORRECT
+		await this.refreshFunction();
 
 		return this.data;
 	}
@@ -143,7 +143,6 @@ export async function useAPI<TReturn>(
 		if (import.meta.server) {
 			const sessionToken = useAppCookies().sessionToken.get().value;
 			updateAPIClient(sessionToken ?? null);
-
 			return await handler(baseAPIClient);
 		} else if (import.meta.client) {
 			const sessionToken = useAppCookies().sessionToken.get();
@@ -153,18 +152,17 @@ export async function useAPI<TReturn>(
 			} else {
 				updateAPIClient(null);
 				if (!disableAuthRedirect) {
-					await navigateTo("/auth/login?url=" + encodeURIComponent(useRoute().fullPath));
+					await navigateTo(`/auth/login?url=${encodeURIComponent(useRoute().fullPath)}`);
 				}
 			}
 
 			const result = await handler(baseAPIClient);
 
-			// Any 401 means the session is gone — never match on the message text.
 			if ((result as any)?.success === false && (result as any)?.code === 401) {
 				updateAPIClient(null);
 				sessionToken.value = null;
 				if (!disableAuthRedirect) {
-					await navigateTo("/auth/login?url=" + encodeURIComponent(useRoute().fullPath));
+					await navigateTo(`/auth/login?url=${encodeURIComponent(useRoute().fullPath)}`);
 				}
 			}
 			return result;

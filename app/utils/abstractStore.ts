@@ -1,3 +1,12 @@
+/**
+ * AbstractStore — SSR-safe state over Nuxt `useState`.
+ *
+ * `BasicAbstractStore<T>` holds a `useState<T | null>` slot, an abstract `fetchData()`, and
+ * `use()`/`refresh()`/`refreshIfNeeded()`/`clear()`. `*WithMetadata` adds a second slot (e.g. a
+ * `loading` flag); `Modifiable*` adds `update()`. Each concrete store is a class instantiated by
+ * a `useXxxStore()` factory. Prefer this over static `reactive()` stores — `useState` is shared
+ * per-request on the server, static class fields are not. See docs/07-state-and-data.md.
+ */
 export abstract class BasicAbstractStore<T> {
 	protected readonly options: BasicAbstractStore.Options;
 
@@ -7,7 +16,6 @@ export abstract class BasicAbstractStore<T> {
 		protected readonly storeKey: string,
 		options?: BasicAbstractStore.InitOptions,
 	) {
-		// default options
 		this.options = {
 			enableAutoFetchIfEmpty: false,
 			...options,

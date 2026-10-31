@@ -1,3 +1,12 @@
+/**
+ * useAwaitedComputed — an async `computed()`.
+ *
+ * Pass a getter that returns a `Promise<T>`; it returns a `ComputedRef<T>` that resolves to the
+ * latest value and updates whenever its reactive dependencies change. Awaits the first run before
+ * returning so the initial value is populated. See docs/07-state-and-data.md.
+ *
+ * Hub addition: if the first run throws, the returned promise rejects instead of never settling.
+ */
 import type {
 	ComputedGetter,
 	ComputedRef,

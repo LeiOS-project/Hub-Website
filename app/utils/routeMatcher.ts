@@ -1,5 +1,10 @@
-import { createRouterMatcher } from "vue-router";
-
+/**
+ * SimpleRouteMatcher — Nuxt-style `[param]` route matching for allowlists.
+ *
+ * Used by route guards that need to know whether a path is public (`/auth/login`,
+ * `/docs`, …) without importing the full router. Static routes match exactly; dynamic
+ * routes (`/dashboard/[id]`) match by regex and extract params.
+ */
 type RouteMatch = {
 	route: string;
 	params: Record<string, string>;

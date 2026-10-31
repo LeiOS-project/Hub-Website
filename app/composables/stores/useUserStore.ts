@@ -1,3 +1,10 @@
+/**
+ * useUserInfoStore — the signed-in user's account (`GET /account`), cached in `useState`.
+ *
+ * Auto-fetches on the first `use()` and resolves to `null` without a valid session. `useAPI` runs
+ * with the auth redirect disabled so `auth.global.ts` decides where to send the user. Call
+ * `clear()` on logout. See docs/07-state-and-data.md.
+ */
 import { ModifiableAbstractStore } from "~/utils/abstractStore";
 import type { UserInfo } from "~/utils/types";
 
@@ -13,8 +20,6 @@ class UserInfoStore extends ModifiableAbstractStore<UserInfo, Partial<UserInfo>>
 			return null;
 		}
 
-		// `true` = no auth redirect; auth.global.ts decides where to send the user.
-		// useAPI never throws, so no try/catch is needed.
 		const response = await useAPI((api) => api.getAccount({}), true);
 		if (!response.success) {
 			return null;

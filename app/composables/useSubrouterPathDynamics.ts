@@ -54,7 +54,7 @@ class SubrouterPathDynamics<
 
 	constructor(private readonly options: Settings) {
 		if (isRef(this.options.routes)) {
-			//@ts-ignore
+			//@ts-expect-error
 			this.links = computed(() => {
 				const links: NavigationMenuItem[] = [];
 				for (const [path, dynamics] of Object.entries(this.options.routes.value)) {
@@ -77,7 +77,7 @@ class SubrouterPathDynamics<
 					});
 				}
 			}
-			//@ts-ignore
+			//@ts-expect-error
 			this.links = [links];
 		}
 	}
