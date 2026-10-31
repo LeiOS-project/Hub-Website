@@ -21,6 +21,7 @@ async function onFormSubmit() {
 	apiKey_loading.value = true;
 
 	try {
+		// API keys cannot be changed after creation; existing keys are shown read-only.
 		if (apiKey.isNew) {
 			const result = await useAPI((api) =>
 				api.postAccountApikeys({
@@ -46,37 +47,6 @@ async function onFormSubmit() {
 			} else {
 				throw new Error(result.message || "Failed to create API Key");
 			}
-		} else {
-			toast.add({
-				title: "API Key update not implemented",
-				description: "Updating API Keys is not yet implemented.",
-				icon: "i-lucide-info",
-				color: "info",
-			});
-
-			// const result = await useAPI((api) => api.putAccountApikeysId({
-			// 	path: {
-			// 		id: (apiKey_data as Ref<APIKey>).value.id
-			// 	},
-			// 	body: {
-			// 		description: apiKey_form_state.value.description,
-			//         expires_at: apiKey_form_state.value.expires_at
-			// 	}
-			// }));
-
-			// if (result.success) {
-			// 	apiKey_data.value.description = apiKey_form_state.value.description;
-			//     apiKey_data.value.expires_at = apiKey_form_state.value.expires_at;
-
-			// 	toast.add({
-			// 		title: 'API Key updated',
-			// 		description: 'The API Key has been successfully updated.',
-			// 		icon: 'i-lucide-check',
-			// 		color: 'success'
-			// 	})
-			// } else {
-			// 	throw new Error(result.message || 'Failed to update API Key');
-			// }
 		}
 	} catch (error: any) {
 		toast.add({
@@ -138,7 +108,8 @@ const headerTexts = computed(() => {
 	}
 	return {
 		title: `API Key ${(apiKey_data as Ref<APIKey>).value.id}`,
-		description: "View and manage the details of the API Key.",
+		description:
+			"API keys cannot be changed after creation — create a new key and delete this one instead.",
 	};
 });
 </script>
@@ -227,16 +198,8 @@ const headerTexts = computed(() => {
 						/>
                     </UFormField>
 
-                    <div class="pt-4">
-						<UButton v-if="!apiKey.isNew"
-							label="Save Changes" 
-							color="primary"
-							type="submit" 
-							:loading="apiKey_loading"
-							icon="i-lucide-save"
-							disabled
-						/>
-						<UButton v-else
+                    <div v-if="apiKey.isNew" class="pt-4">
+						<UButton
 							label="Create API Key" 
 							color="primary"
 							type="submit" 

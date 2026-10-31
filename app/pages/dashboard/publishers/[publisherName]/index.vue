@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type z from "zod";
 import { zPostPublishersBody, zPutPublishersByPublisherNameBody } from "~/api-client/zod.gen";
+import type { UserSearchResult } from "~/components/form/UserSearch.vue";
 import type { NewPublisher, Publisher } from "~/utils/types";
 
 definePageMeta({
@@ -148,6 +149,45 @@ async function onDeletePublisher() {
 		color: "success",
 	});
 	await navigateTo("/dashboard/publishers");
+}
+
+// --- Ownership transfer ---
+const transferOpen = ref(false);
+const transferTarget = ref<UserSearchResult | null>(null);
+const transferring = ref(false);
+
+async function onTransferOwnership() {
+	if (!transferTarget.value) return;
+
+	transferring.value = true;
+	const target = transferTarget.value;
+	const result = await useAPI((api) =>
+		api.postPublishersByPublisherNameTransferOwnership({
+			path: { publisherName: pub_data.value.name },
+			body: { new_owner_user_id: target.id },
+		}),
+	);
+	transferring.value = false;
+
+	if (!result.success) {
+		toast.add({
+			title: "Could not transfer ownership",
+			description: result.message,
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+		return;
+	}
+
+	transferOpen.value = false;
+	transferTarget.value = null;
+	toast.add({
+		title: "Ownership transferred",
+		description: `${target.username} now owns ${pub_data.value.display_name}. You stay a member.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	await pub.refresh();
 }
 
 // Pre-fill empty homepage_url so the input doesn't error on empty URL fields
@@ -310,7 +350,24 @@ watchEffect(() => {
             icon="i-lucide-alert-triangle"
             tone="danger"
         >
-            <div class="flex flex-col md:flex-row md:items-center gap-4">
+            <div class="flex flex-col gap-4 border-b border-red-900/50 pb-4 md:flex-row md:items-center">
+                <div class="flex-1">
+                    <h4 class="font-medium text-white">Transfer Ownership</h4>
+                    <p class="text-sm text-slate-400 mt-1">
+                        Make another user the owner of this publisher. Only the current owner or a
+                        site admin can do this; the new owner also becomes a publisher admin.
+                    </p>
+                </div>
+                <UButton
+                    label="Transfer Ownership"
+                    color="error"
+                    variant="soft"
+                    icon="i-lucide-arrow-right-left"
+                    @click="transferOpen = true;"
+                />
+            </div>
+
+            <div class="flex flex-col md:flex-row md:items-center gap-4 pt-4">
                 <div class="flex-1">
                     <h4 class="font-medium text-white">Delete Publisher</h4>
                     <p class="text-sm text-slate-400 mt-1">
@@ -335,5 +392,33 @@ watchEffect(() => {
             v-model:open="deleteConfirmOpen"
             :on-delete="onDeletePublisher"
         />
+
+        <DashboardModal
+            v-if="!pub.isNew"
+            v-model:open="transferOpen"
+            title="Transfer Ownership"
+            description="The new owner gets full control of this publisher, including deleting it."
+            icon="i-lucide-arrow-right-left"
+            icon-color="amber"
+        >
+            <FormUserSearch v-model="transferTarget" placeholder="Search for the new owner..." />
+
+            <template #footer>
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="transferOpen = false;"
+                />
+                <UButton
+                    label="Transfer Ownership"
+                    color="error"
+                    icon="i-lucide-arrow-right-left"
+                    :disabled="!transferTarget"
+                    :loading="transferring"
+                    @click="onTransferOwnership();"
+                />
+            </template>
+        </DashboardModal>
     </div>
 </template>

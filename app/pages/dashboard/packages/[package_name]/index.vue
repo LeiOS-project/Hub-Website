@@ -188,8 +188,37 @@ async function onFormSubmit() {
 	}
 }
 
+const deleteConfirmOpen = ref(false);
+
+const isSystemManaged = computed(
+	() => !pkg.isNew && (pkg_data.value as DevPackage).flags.includes("SYSTEM-MANAGED"),
+);
+
 async function onDeletePackage() {
-	console.warn("Package deletion is not yet implemented.");
+	const fullname = (pkg_data.value as DevPackage).fullname;
+
+	const res = await useAPI((api) =>
+		api.deletePackagesByFullPackageName({ path: { fullPackageName: fullname } }),
+	);
+
+	if (!res.success) {
+		toast.add({
+			title: "Failed to delete package",
+			description: res.message,
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(res.message);
+	}
+
+	toast.add({
+		title: "Package deleted",
+		description: `${fullname} and all its releases were removed.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	await navigateTo("/dashboard/packages");
 }
 </script>
 
@@ -396,21 +425,33 @@ async function onDeletePackage() {
                         Delete Package
                     </h4>
                     <p class="text-sm text-slate-400 mt-1">
-                        Permanently delete this package and all
-                        associated data. This action cannot be undone.
+                        Permanently delete this package and all its releases, including the
+                        published files in the archive, testing and stable repositories.
                     </p>
                 </div>
-                <UTooltip text="Coming soon — deletion is not yet implemented">
+                <UTooltip
+                    :text="isSystemManaged ? 'System-managed packages cannot be deleted' : undefined"
+                    :disabled="!isSystemManaged"
+                >
                     <UButton
                         label="Delete Package"
                         color="error"
                         variant="soft"
                         icon="i-lucide-trash-2"
-                        disabled
+                        :disabled="isSystemManaged"
+                        @click="deleteConfirmOpen = true;"
                     />
                 </UTooltip>
             </div>
         </DashboardSectionCard>
+
+        <DashboardDeleteModal
+            v-if="!pkg.isNew"
+            v-model:open="deleteConfirmOpen"
+            title="Delete Package"
+            warning-text="The package, all its releases and their files in every repository will be permanently deleted. Users who installed it keep their installed copy but get no updates."
+            :on-delete="onDeletePackage"
+        />
 
     </div>
 </template>

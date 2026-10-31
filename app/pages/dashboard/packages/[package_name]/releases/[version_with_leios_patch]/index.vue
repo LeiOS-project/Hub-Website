@@ -130,15 +130,34 @@ async function onFormSubmit() {
 
 const deleteConfirmOpen = ref(false);
 
-async function onDeletePackage() {
-	toast.add({
-		title: "Package release deletion is not yet implemented.",
-		description: "This feature is coming soon.",
-		icon: "i-lucide-info",
-		color: "info",
-	});
+async function onDeleteRelease() {
+	const fullname = pkg_data.value.fullname;
+	const version = (pkg_release_data.value as DevPackageRelease).version_with_leios_patch;
 
-	deleteConfirmOpen.value = false;
+	const res = await useAPI((api) =>
+		api.deletePackagesByFullPackageNameReleasesByVersionWithLeiosPatch({
+			path: { fullPackageName: fullname, version_with_leios_patch: version },
+		}),
+	);
+
+	if (!res.success) {
+		toast.add({
+			title: "Failed to delete release",
+			description: res.message,
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(res.message);
+	}
+
+	toast.add({
+		title: "Release deleted",
+		description: `${fullname} ${version} was removed from every repository.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	await navigateTo(`/dashboard/packages/${fullname}/releases`);
 }
 
 function getStatusColor(status: StablePromotionRequest["status"]) {
@@ -636,8 +655,8 @@ function onFileChange(arch: Architecture | "all", files: File | File[] | null | 
                         Delete Package Release
                     </h4>
                     <p class="text-sm text-slate-400 mt-1">
-                        Permanently delete this package release and all
-                        associated data. This action cannot be undone.
+                        Permanently delete this release, its stable promotion request and its
+                        files in the archive, testing and stable repositories.
                     </p>
                 </div>
                 <UButton label="Delete Package Release" color="error" variant="soft" icon="i-lucide-trash-2"
@@ -649,10 +668,9 @@ function onFileChange(arch: Architecture | "all", files: File | File[] | null | 
         <DashboardDeleteModal
             v-if="!pkg_release.isNew"
             title="Delete Package Release"
-            warning-text="All data associated with this package release and related information will be permanently deleted. This action cannot be reversed."
+            warning-text="The release and its files in every repository will be permanently deleted. If it is the current testing or stable version, that architecture has no version until a newer release is uploaded or promoted."
             v-model:open="deleteConfirmOpen"
-            :onDelete="onDeletePackage"
-            :prevent-auto-close=true
+            :on-delete="onDeleteRelease"
         />
     </div>
 </template>
