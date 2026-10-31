@@ -54,14 +54,30 @@ const sidebarItems = computed(() => {
 			// ],
 		},
 		{
+			label: "Overview",
+			icon: "i-lucide-gauge",
+			to: "/dashboard/admin",
+			exact: true,
+		},
+		{
 			label: "Users",
 			icon: "i-lucide-users",
 			to: "/dashboard/admin/users",
 		},
 		{
+			label: "Publishers",
+			icon: "i-lucide-building-2",
+			to: "/dashboard/admin/publishers",
+		},
+		{
 			label: "All Packages",
 			icon: "i-lucide-package-search",
 			to: "/dashboard/admin/packages",
+		},
+		{
+			label: "Reports",
+			icon: "i-lucide-flag",
+			to: "/dashboard/admin/reports",
 		},
 		{
 			label: "Stable Promotion Requests",
@@ -77,6 +93,11 @@ const sidebarItems = computed(() => {
 			label: "Tasks",
 			icon: "i-lucide-list-checks",
 			to: "/dashboard/admin/tasks",
+		},
+		{
+			label: "Audit Log",
+			icon: "i-lucide-scroll-text",
+			to: "/dashboard/admin/audit-log",
 		},
 	];
 

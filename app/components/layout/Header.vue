@@ -10,7 +10,9 @@ const user = await useUserInfoStore().use();
 
 const links = computed<NavigationMenuItem[]>(() => [
 	{ label: "Home", to: "/" },
-	{ label: "Explorer", to: "/explore" },
+	{ label: "Explore", to: "/explore" },
+	{ label: "Publishers", to: "/publishers" },
+	{ label: "Releases", to: "/releases" },
 	{ label: "Dashboard", to: "/dashboard" },
 ]);
 
