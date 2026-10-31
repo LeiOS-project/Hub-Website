@@ -17,8 +17,6 @@ export default defineNuxtConfig({
 	],
 
 	nitro: {
-		preset: 'bun',
-
 		devProxy: process.env.USE_DEV_PROXY === "true" ? {
 			"/api/proxy": {
 				target: process.env.DEV_PROXY_TARGET || "https://api.leios.dev",
