@@ -112,6 +112,10 @@ const showCreateModal = ref(false);
 const showEditModal = ref(false);
 const selectedPackage = ref<AdminPackage | null>(null);
 
+// URL placeholders live in <script>: vue-tsc 3.3.14 mangles `//` inside component attribute
+// strings in its generated code, which breaks type-checking of the rest of the template.
+const homepageUrlPlaceholder = "https://github.com/...";
+
 const createSchema = zPostPackagesBody;
 type CreateSchema = z.output<typeof createSchema>;
 
@@ -352,7 +356,7 @@ async function deletePackage() {
                 <UTextarea v-model="createForm.description" placeholder="A brief description of the package" class="w-full" />
             </UFormField>
             <UFormField label="Homepage URL" name="homepage_url">
-                <UInput v-model="createForm.homepage_url" placeholder="https://github.com/..." class="w-full" />
+                <UInput v-model="createForm.homepage_url" :placeholder="homepageUrlPlaceholder" class="w-full" />
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">

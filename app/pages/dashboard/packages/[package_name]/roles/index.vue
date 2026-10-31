@@ -572,7 +572,7 @@ async function onRemoveOverride() {
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">
-                <UButton label="Cancel" color="neutral" variant="ghost" @click="showEditModal = false" />
+                <UButton label="Cancel" color="neutral" variant="ghost" @click="showEditModal = false;" />
                 <UButton label="Save" color="primary" :loading="editSubmitting" icon="i-lucide-save" @click="onEditOverride" />
             </div>
         </div>

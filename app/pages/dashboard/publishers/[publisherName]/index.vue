@@ -27,6 +27,10 @@ const headerTexts = computed(() => {
 	};
 });
 
+// URL placeholders live in <script>: vue-tsc 3.3.14 mangles `//` inside component attribute
+// strings in its generated code, which breaks type-checking of the rest of the template.
+const homepageUrlPlaceholder = "https://...";
+
 const publisher_form_schema = pub.isNew ? zPostPublishersBody : zPutPublishersByPublisherNameBody;
 const publisher_form_state = ref<NewPublisher>({
 	name: pub_data.value.name || "",
@@ -242,7 +246,7 @@ watchEffect(() => {
                     >
                         <UInput
                             v-model="publisher_form_state.homepage_url"
-                            placeholder="https://..."
+                            :placeholder="homepageUrlPlaceholder"
                             class="w-full sm:w-96"
                         />
                     </UFormField>
@@ -318,7 +322,7 @@ watchEffect(() => {
                     color="error"
                     variant="soft"
                     icon="i-lucide-trash-2"
-                    @click="deleteConfirmOpen = true"
+                    @click="deleteConfirmOpen = true;"
                 />
             </div>
         </DashboardSectionCard>

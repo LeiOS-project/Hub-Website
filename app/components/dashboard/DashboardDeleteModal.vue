@@ -63,7 +63,7 @@ async function onDeleteWrapper() {
 
 		<template #footer>
 			<div class="flex justify-end gap-3">
-				<UButton label="Cancel" color="neutral" variant="ghost" @click="open = false" />
+				<UButton label="Cancel" color="neutral" variant="ghost" @click="open = false;" />
 				<UButton
 					:label="title"
 					color="error"

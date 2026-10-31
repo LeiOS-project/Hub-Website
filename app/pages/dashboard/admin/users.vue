@@ -277,7 +277,7 @@ async function onDeleteUser() {
                             label="New User"
                             icon="i-lucide-user-plus"
                             color="primary"
-                            @click="showCreateModal = true"
+                            @click="showCreateModal = true;"
                         />
                     </template>
 
@@ -320,7 +320,7 @@ async function onDeleteUser() {
                         <UButton
                             label="Create User"
                             color="primary"
-                            @click="showCreateModal = true"
+                            @click="showCreateModal = true;"
                         />
                     </template>
                 </DashboardDataTable>
@@ -356,7 +356,7 @@ async function onDeleteUser() {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="showCreateModal = false"
+                    @click="showCreateModal = false;"
                 />
                 <UButton
                     type="submit"
@@ -389,7 +389,7 @@ async function onDeleteUser() {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="showEditModal = false"
+                    @click="showEditModal = false;"
                 />
                 <UButton label="Save" color="primary" @click="submitEdit" />
             </div>
@@ -418,7 +418,7 @@ async function onDeleteUser() {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="showPasswordModal = false"
+                    @click="showPasswordModal = false;"
                 />
                 <UButton
                     label="Update Password"

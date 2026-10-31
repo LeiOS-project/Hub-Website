@@ -269,7 +269,7 @@ const headerTexts = computed(() => {
 					color="error" 
 					variant="soft"
 					icon="i-lucide-trash-2"
-					@click="deleteConfirmOpen = true"
+					@click="deleteConfirmOpen = true;"
 				/>
 			</div>
 		</DashboardSectionCard>

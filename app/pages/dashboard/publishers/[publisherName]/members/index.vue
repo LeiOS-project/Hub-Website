@@ -306,7 +306,7 @@ async function onRemoveMember() {
                     label="Add Member"
                     icon="i-lucide-user-plus"
                     color="primary"
-                    @click="showAddModal = true"
+                    @click="showAddModal = true;"
                 />
             </template>
 
@@ -361,7 +361,7 @@ async function onRemoveMember() {
                 <UButton
                     label="Add Member"
                     color="primary"
-                    @click="showAddModal = true"
+                    @click="showAddModal = true;"
                 />
             </template>
         </DashboardDataTable>
@@ -464,7 +464,7 @@ async function onRemoveMember() {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="showEditModal = false"
+                    @click="showEditModal = false;"
                 />
                 <UButton
                     label="Save"

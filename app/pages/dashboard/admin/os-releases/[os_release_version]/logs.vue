@@ -400,7 +400,7 @@ onMounted(() => {
                                 variant="ghost"
                                 size="sm"
                                 :class="showTimestamps ? 'text-sky-400' : ''"
-                                @click="showTimestamps = !showTimestamps"
+                                @click="showTimestamps = !showTimestamps;"
                             />
                         </UTooltip>
                         <UTooltip text="Auto-scroll">
@@ -410,7 +410,7 @@ onMounted(() => {
                                 variant="ghost"
                                 size="sm"
                                 :class="autoScroll ? 'text-sky-400' : ''"
-                                @click="autoScroll = !autoScroll"
+                                @click="autoScroll = !autoScroll;"
                             />
                         </UTooltip>
                         <UDivider orientation="vertical" class="h-5" />

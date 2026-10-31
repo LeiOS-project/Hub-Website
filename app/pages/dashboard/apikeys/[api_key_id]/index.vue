@@ -271,7 +271,7 @@ const headerTexts = computed(() => {
                     color="error"
                     variant="soft"
                     icon="i-lucide-trash-2"
-                    @click="deleteConfirmOpen = true"
+                    @click="deleteConfirmOpen = true;"
                 />
             </div>
         </DashboardSectionCard>
@@ -328,7 +328,7 @@ const headerTexts = computed(() => {
 								autocapitalize="off" 
 								autocorrect="off"
 								spellcheck="false"
-								@click="api_key_creation_result_reveale_token = !api_key_creation_result_reveale_token"
+								@click="api_key_creation_result_reveale_token = !api_key_creation_result_reveale_token;"
 							/>
 						</template>
 					</UInput>

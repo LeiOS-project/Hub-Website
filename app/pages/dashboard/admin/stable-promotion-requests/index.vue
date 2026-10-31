@@ -270,7 +270,7 @@ function getStatusColor(status: AdminStableRequest["status"]) {
                     icon="i-lucide-check"
                     :color="decisionForm.status === 'approved' ? 'success' : 'neutral'"
                     :variant="decisionForm.status === 'approved' ? 'solid' : 'outline'"
-                    @click="decisionForm.status = 'approved'"
+                    @click="decisionForm.status = 'approved';"
                     :disabled="submittingDecision"
                 />
                 <UButton
@@ -278,7 +278,7 @@ function getStatusColor(status: AdminStableRequest["status"]) {
                     icon="i-lucide-x"
                     :color="decisionForm.status === 'denied' ? 'error' : 'neutral'"
                     :variant="decisionForm.status === 'denied' ? 'solid' : 'outline'"
-                    @click="decisionForm.status = 'denied'"
+                    @click="decisionForm.status = 'denied';"
                     :disabled="submittingDecision"
                 />
             </div>
@@ -316,7 +316,7 @@ function getStatusColor(status: AdminStableRequest["status"]) {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="decisionModal = false"
+                    @click="decisionModal = false;"
                     :disabled="submittingDecision"
                 />
                 <UButton
