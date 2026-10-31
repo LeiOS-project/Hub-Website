@@ -1,42 +1,20 @@
-<script setup lang="ts">
-import Footer from "~/components/layout/Footer.vue";
-import Header from "~/components/layout/Header.vue";
-</script>
-
 <template>
-    <NuxtLoadingIndicator
-        color="#00bcff"
-        position="top"
-    />
+	<NuxtLoadingIndicator color="var(--ui-primary)" position="top" />
 
-    <div class="app-layout main-bg-color">
-        <!-- Navigation -->
-        <Header />
+	<div class="main-bg-color flex min-h-screen flex-col text-slate-100">
+		<LayoutHeader />
 
-        <!-- Main Content -->
-        <UMain class="main-content">
-            <div class="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-sky-500/5 to-transparent"></div>
-            <div class="flex min-h-[calc(100vh-80px)] items-center justify-center">
-                <UPageCard class="w-full max-w-md border-slate-800">
-                    <slot />
-                </UPageCard>
-            </div>
-        </UMain>
+		<UMain class="relative flex-1">
+			<div
+				class="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-primary/5 to-transparent"
+			></div>
+			<div class="flex min-h-[calc(100vh-80px)] items-center justify-center p-4">
+				<UPageCard class="w-full max-w-md border-slate-800">
+					<slot />
+				</UPageCard>
+			</div>
+		</UMain>
 
-        <!-- Footer -->
-        <Footer />
-    </div>
+		<LayoutFooter />
+	</div>
 </template>
-
-<style scoped>
-.app-layout {
-    min-height: 100vh;
-    color: rgb(241 245 249);
-    display: flex;
-    flex-direction: column;
-}
-
-.main-content {
-    flex: 1;
-}
-</style>

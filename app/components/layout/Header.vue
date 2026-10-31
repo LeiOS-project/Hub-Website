@@ -1,86 +1,70 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from "@nuxt/ui";
-import type { UnwrapRef } from "vue";
-import type { GetAccountResponses } from "~/api-client";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
-import LeiOSLogo from "../img/LeiOSLogo.vue";
 
-type UserInfo = GetAccountResponses["200"]["data"];
+// The LeiOS logo links to the project site; "/ Hub" links to the Hub's home page.
+const LEIOS_WEBSITE_URL = "https://www.leios.dev";
 
 const route = useRoute();
-const sessionCookie = useAppCookies().sessionToken.get();
-const userInfoStore = useUserInfoStore();
-const user = await userInfoStore.use();
+const user = await useUserInfoStore().use();
 
 const links = computed<NavigationMenuItem[]>(() => [
-	{
-		label: "Home",
-		to: "/",
-	},
-	{
-		label: "Explorer",
-		to: "/explore",
-	},
-	{
-		label: "Dashboard",
-		to: "/dashboard",
-	},
+	{ label: "Home", to: "/" },
+	{ label: "Explorer", to: "/explore" },
+	{ label: "Dashboard", to: "/dashboard" },
 ]);
 
-const isAuthenticated = computed(() => Boolean(sessionCookie.value));
+const profileLabel = computed(() => user.value?.display_name || user.value?.username || "Profile");
 
-const profileLabel = computed(() => {
-	if (user.value?.display_name) return user.value.display_name;
-	if (user.value?.username) return user.value.username;
-	return "Profile";
-});
-
-const redirectQuery = computed(() => encodeURIComponent(route.fullPath));
+const loginRoute = computed(() =>
+	route.path.startsWith("/auth")
+		? "/auth/login"
+		: `/auth/login?url=${encodeURIComponent(route.fullPath)}`,
+);
 </script>
 
 <template>
-    <UHeader class="backdrop-blur-xl">
-        <template #left>
-            <div class="flex items-center gap-2">
-                <NuxtLink to="https://www.leios.dev" target="_blank">
-                    <LeiOSLogo class="h-8 w-auto" />
-                </NuxtLink>
-                <NuxtLink to="/" class="flex items-center gap-2 text-2xl font-bold leading-none">
-                    <span>/</span>
-                    <span>Hub</span>
-                </NuxtLink>
-            </div>
-        </template>
+	<UHeader class="backdrop-blur-xl">
+		<template #left>
+			<div class="flex items-center gap-2">
+				<NuxtLink :to="LEIOS_WEBSITE_URL" target="_blank" aria-label="LeiOS website">
+					<ImgLeiOSLogo class="h-8 w-auto" />
+				</NuxtLink>
+				<NuxtLink to="/" class="flex items-center gap-2 text-2xl leading-none font-bold">
+					<span>/</span>
+					<span>Hub</span>
+				</NuxtLink>
+			</div>
+		</template>
 
-        <UNavigationMenu :items="links" />
+		<UNavigationMenu :items="links" />
 
-        <template #body>
-            <UNavigationMenu :items="links" orientation="vertical" class="w-full" />
-        </template>
+		<template #body>
+			<UNavigationMenu :items="links" orientation="vertical" class="w-full" />
+		</template>
 
-        <template #right>
-            <div class="flex items-center gap-2">
-                <template v-if="isAuthenticated">
-                    <div class="hidden sm:flex items-center gap-1.5 text-white">
-                        <UIcon name="i-lucide-user" class="size-4" />
-                        <span class="text-sm">{{ profileLabel }}</span>
-                    </div>
-                    <UButton
-                        icon="i-lucide-layout-dashboard"
-                        to="/dashboard"
-                        color="primary"
-                        variant="soft"
-                        class="hidden sm:flex"
-                    >
-                        Dashboard
-                    </UButton>
-                </template>
+		<template #right>
+			<div class="flex items-center gap-2">
+				<template v-if="user">
+					<div class="hidden items-center gap-1.5 text-white sm:flex">
+						<UIcon name="i-lucide-user" class="size-4" />
+						<span class="text-sm">{{ profileLabel }}</span>
+					</div>
+					<UButton
+						icon="i-lucide-layout-dashboard"
+						to="/dashboard"
+						color="primary"
+						variant="soft"
+						class="hidden sm:flex"
+					>
+						Dashboard
+					</UButton>
+				</template>
 
-                <UButton v-else icon="i-lucide-log-in" :to="`/auth/login?url=${redirectQuery}`" color="primary"
-                    variant="solid" class="">
-                    Login
-                </UButton>
-            </div>
-        </template>
-    </UHeader>
+				<UButton v-else icon="i-lucide-log-in" :to="loginRoute" color="primary" variant="solid">
+					Login
+				</UButton>
+			</div>
+		</template>
+	</UHeader>
 </template>

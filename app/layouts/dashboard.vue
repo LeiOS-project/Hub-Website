@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from "@nuxt/ui";
-import UserMenu from "~/components/dashboard/UserMenu.vue";
-import LeiOSIcon from "~/components/img/LeiOSIcon.vue";
-import LeiOSLogo from "~/components/img/LeiOSLogo.vue";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
 const userInfoStore = useUserInfoStore();
@@ -16,6 +13,7 @@ const sidebarItems = computed(() => {
 			label: "Overview",
 			icon: "i-lucide-layout-dashboard",
 			to: "/dashboard",
+			exact: true,
 		},
 		{
 			label: "Packages",
@@ -124,12 +122,9 @@ const sidebarItems = computed(() => {
 </script>
 
 <template>
-    <NuxtLoadingIndicator
-        color="#00bcff"
-        position="top"
-    />
+    <NuxtLoadingIndicator color="var(--ui-primary)" position="top" />
 
-    <UDashboardGroup class="app-layout-dashboard main-bg-color">
+    <UDashboardGroup class="main-bg-color text-slate-100">
         <UDashboardSidebar
             collapsible
             resizable
@@ -145,10 +140,10 @@ const sidebarItems = computed(() => {
         >
             <template #header="{ collapsed }">
                 <NuxtLink to="/" :class="`${!collapsed ? 'ms-2.5' : ''} flex items-center gap-1.5`">
-                    <LeiOSLogo v-if="!collapsed" class="h-6 w-auto flex-none" />
+                    <ImgLeiOSLogo v-if="!collapsed" class="h-6 w-auto flex-none" />
                     <span v-if="!collapsed" class="text-lg font-semibold">/</span>
                     <span v-if="!collapsed" class="text-lg font-semibold">Hub</span>
-                    <LeiOSIcon v-else class="h-8 w-8" />
+                    <ImgLeiOSIcon v-else class="h-8 w-8" />
                 </NuxtLink>
             </template>
 
@@ -181,7 +176,7 @@ const sidebarItems = computed(() => {
             </template>
 
             <template #footer="{ collapsed }">
-                <UserMenu :collapsed="collapsed"></UserMenu>
+                <DashboardUserMenu :collapsed="collapsed" />
             </template>
         </UDashboardSidebar>
 
@@ -189,8 +184,3 @@ const sidebarItems = computed(() => {
     </UDashboardGroup>
 </template>
 
-<style scoped>
-.app-layout-dashboard {
-    color: rgb(241 245 249);
-}
-</style>

@@ -1,3 +1,5 @@
 User-Agent: *
 Allow: /
 Disallow: /dashboard
+
+sitemap: https://hub.leios.dev/static/utils/sitemap.xml
