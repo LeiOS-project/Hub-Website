@@ -13,4 +13,3 @@ services:
       LEIOS_HUB_API_URL: http://localhost:12151
       # Public URL of this Hub (canonical URLs, OpenGraph).
       LEIOS_HUB_APP_URL: http://localhost:12153
-      LEIOS_HUB_ENABLE_SIGNUP: "false"

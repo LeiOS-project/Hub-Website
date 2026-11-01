@@ -41,7 +41,7 @@ Follow the LeiCraftMC Style Guide: https://git.leicraftmc.de/LeiCraftMC/Style-Gu
 - **Session cookie:** `lra_session_token` — matches the API's `lra_` token prefix
   (`lra_sess_…`, `lra_apikey_…`).
 - **Routing:** `/dashboard/**` and `/auth/**` render client-side (`routeRules` in `nuxt.config.ts`);
-  `/` and `/explore/**` are SSR and public. Access rules are the constants in
+  `/`, `/explore/**`, `/publishers/**` and `/releases` are SSR and public. Access rules are the constants in
   `app/middleware/auth.global.ts` (onboarding is off — the Hub has none yet).
 - **Roles:** users are `admin` / `developer` / `user` (`getRoleColor` in `app/utils/roles.ts`).
   Package and publisher permissions are enforced by the API-Server.

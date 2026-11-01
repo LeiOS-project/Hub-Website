@@ -5,10 +5,14 @@ The Hub is the web frontend of the LeiOS API-Server, which it talks to over HTTP
 
 ## Features
 
-- 🔍 Public package explorer with search, publisher names and release tables
+- 🔍 Public package explorer (search, sort, stable/testing filter), package pages with install
+  commands and release history, publisher profiles with verified badges, and the OS release log
+- 📝 Self-service signup with email confirmation (when the API-Server enables it)
 - 🛠️ Developer workspace to create packages, upload amd64/arm64 releases, and request promotion to stable
-- 🏢 Publisher management with member roles and per-package role overrides
-- 🛡️ Admin controls for stable promotion requests, users, all packages, OS releases and tasks
+- 🏢 Publisher management with member roles, per-package role overrides and ownership transfer
+- 🛡️ Admin area: overview, user moderation (suspend, reset links, sign-out everywhere), publisher
+  verification, hiding/deprecating packages, user reports, audit log, stable promotion reviews,
+  OS releases and tasks with logs
 - 🔑 Personal API keys for scripts and CI
 - 🔐 Session-based authentication with automatic API client configuration
 
@@ -35,7 +39,9 @@ The code follows the [LeiCraftMC Style Guide](https://git.leicraftmc.de/LeiCraft
 
    - `LEIOS_HUB_API_URL` — origin of the LeiOS API-Server, without `/v1` (default `http://localhost:12151`)
    - `LEIOS_HUB_APP_URL` — public URL of the Hub (default `http://localhost:12153`)
-   - `LEIOS_HUB_ENABLE_SIGNUP` — show the (not yet functional) signup page (default `false`)
+
+   Signup is switched on in the API-Server (`LRA_SIGNUP_ENABLED` plus SMTP); the Hub reads it from
+   `GET /v1/meta`.
 
 3. Development server (port `12153`)
 
