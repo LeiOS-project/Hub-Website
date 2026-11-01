@@ -47,8 +47,7 @@ const sort = computed<PublicPackageSort>(
 	() => sortItems.find((item) => item.value === queryValue(route.query.sort))?.value ?? "name",
 );
 const channel = computed<ChannelFilter>(
-	() =>
-		channelItems.find((item) => item.value === queryValue(route.query.channel))?.value ?? "all",
+	() => channelItems.find((item) => item.value === queryValue(route.query.channel))?.value ?? "all",
 );
 const page = computed(() => {
 	const value = Number.parseInt(queryValue(route.query.page), 10);

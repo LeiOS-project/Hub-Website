@@ -16,7 +16,7 @@ export default defineNuxtConfig({
 			output: {
 				// Map the prefixed env vars onto Nuxt's NUXT_PUBLIC_* overrides at server start, so a
 				// built .output/ (e.g. the Docker image) is configured through LEIOS_HUB_* at runtime.
-				banner: (function () {
+				banner: (() => {
 					const mappings = {
 						LEIOS_HUB_API_URL: "API_URL",
 						LEIOS_HUB_APP_URL: "APP_URL",

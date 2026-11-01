@@ -38,7 +38,8 @@ const numberFormat = new Intl.NumberFormat("en-US");
 
 const statItems = computed(() => {
 	const data = stats.data.value;
-	const format = (value: number | undefined) => (value === undefined ? "–" : numberFormat.format(value));
+	const format = (value: number | undefined) =>
+		value === undefined ? "–" : numberFormat.format(value);
 	return [
 		{ label: "Packages", value: format(data?.packages), to: "/explore" },
 		{ label: "Publishers", value: format(data?.publishers), to: "/publishers" },

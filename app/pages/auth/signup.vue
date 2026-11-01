@@ -142,10 +142,7 @@ async function resendConfirmation() {
 	const email = signedUpEmail.value;
 
 	resending.value = true;
-	const result = await useAPI(
-		(api) => api.postAuthVerifyEmailResend({ body: { email } }),
-		true,
-	);
+	const result = await useAPI((api) => api.postAuthVerifyEmailResend({ body: { email } }), true);
 	resending.value = false;
 
 	if (!result.success) {
