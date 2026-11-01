@@ -862,7 +862,6 @@ export type PostPublishersData = {
         homepage_url: string;
         maintainer_contact_name: string;
         maintainer_contact_email: string;
-        verified_at?: number | null;
     };
     path?: never;
     query?: never;
@@ -1027,7 +1026,6 @@ export type PutPublishersByPublisherNameData = {
         homepage_url?: string;
         maintainer_contact_name?: string;
         maintainer_contact_email?: string;
-        verified_at?: number | null;
     };
     path: {
         publisherName: string;
@@ -1449,7 +1447,6 @@ export type PostPackagesData = {
         display_name: string;
         description: string;
         homepage_url: string;
-        moderation_note?: string | null;
         requires_patching?: boolean;
     };
     path?: never;
@@ -1625,7 +1622,6 @@ export type PutPackagesByFullPackageNameData = {
         display_name?: string;
         description?: string;
         homepage_url?: string;
-        moderation_note?: string | null;
         requires_patching?: boolean;
     };
     path: {
@@ -2441,10 +2437,6 @@ export type PostAdminUsersData = {
         display_name: string;
         email: string;
         role?: 'admin' | 'developer' | 'user';
-        email_verified_at?: number | null;
-        status?: 'active' | 'suspended';
-        suspended_at?: number | null;
-        suspended_reason?: string | null;
         password: string;
     };
     path?: never;

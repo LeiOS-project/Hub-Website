@@ -322,8 +322,7 @@ export const zPostPublishersBody = z.object({
     description: z.string().min(1).max(500),
     homepage_url: z.url().max(500),
     maintainer_contact_name: z.string().min(1).max(254),
-    maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/),
-    verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullish()
+    maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/)
 });
 
 /**
@@ -381,8 +380,7 @@ export const zPutPublishersByPublisherNameBody = z.object({
     description: z.string().min(1).max(500).optional(),
     homepage_url: z.url().max(500).optional(),
     maintainer_contact_name: z.string().min(1).max(254).optional(),
-    maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/).optional(),
-    verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullish()
+    maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/).optional()
 });
 
 export const zPutPublishersByPublisherNamePath = z.object({
@@ -606,7 +604,6 @@ export const zPostPackagesBody = z.object({
     display_name: z.string().min(1).max(200),
     description: z.string().min(1).max(500),
     homepage_url: z.url().max(500),
-    moderation_note: z.string().nullish(),
     requires_patching: z.boolean().optional().default(false)
 });
 
@@ -680,7 +677,6 @@ export const zPutPackagesByFullPackageNameBody = z.object({
     display_name: z.string().min(1).max(200).optional(),
     description: z.string().min(1).max(500).optional(),
     homepage_url: z.url().max(500).optional(),
-    moderation_note: z.string().nullish(),
     requires_patching: z.boolean().optional().default(false)
 });
 
@@ -1101,10 +1097,6 @@ export const zPostAdminUsersBody = z.object({
         'developer',
         'user'
     ]).optional(),
-    email_verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullish(),
-    status: z.enum(['active', 'suspended']).optional(),
-    suspended_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullish(),
-    suspended_reason: z.string().nullish(),
     password: z.string().min(8).max(128)
 });
 
