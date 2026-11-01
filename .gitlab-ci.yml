@@ -1,6 +1,5 @@
-# .gitlab-ci.yml — root include for LeiCraftMC projects.
-# Copy to project root and add per-project stages or extra includes as needed.
-# Uses oven/bun everywhere; expects .gitlab/ci/testing.yml and .gitlab/ci/build.yml.
+# .gitlab-ci.yml — root CI config; layout from the LeiCraftMC Style Guide (docs/13-git-and-ci.md).
+# Uses oven/bun everywhere; includes .gitlab/ci/testing.yml and .gitlab/ci/build.yml.
 
 # Hub-specific: run pipelines for pushes and merge requests only.
 workflow:
