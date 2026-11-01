@@ -584,9 +584,9 @@ export const zGetPackagesResponse = z.object({
             moderation_note: z.string().nullable(),
             requires_patching: z.boolean(),
             created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            last_release_at: z.unknown(),
-            publisher_display_name: z.unknown(),
-            publisher_verified_at: z.unknown(),
+            last_release_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            publisher_display_name: z.string(),
+            publisher_verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
             latest_stable_release: z.object({
                 amd64: z.string().nullable(),
                 arm64: z.string().nullable()
@@ -662,9 +662,9 @@ export const zGetPackagesByFullPackageNameResponse = z.object({
         moderation_note: z.string().nullable(),
         requires_patching: z.boolean(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        last_release_at: z.unknown(),
-        publisher_display_name: z.unknown(),
-        publisher_verified_at: z.unknown(),
+        last_release_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        publisher_display_name: z.string(),
+        publisher_verified_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
         latest_stable_release: z.object({
             amd64: z.string().nullable(),
             arm64: z.string().nullable()

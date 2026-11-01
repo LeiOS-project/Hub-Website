@@ -1423,9 +1423,9 @@ export type GetPackagesResponses = {
                 moderation_note: string | null;
                 requires_patching: boolean;
                 created_at: number;
-                last_release_at: unknown;
-                publisher_display_name: unknown;
-                publisher_verified_at: unknown;
+                last_release_at: number | null;
+                publisher_display_name: string;
+                publisher_verified_at: number | null;
                 latest_stable_release: {
                     amd64: string | null;
                     arm64: string | null;
@@ -1603,9 +1603,9 @@ export type GetPackagesByFullPackageNameResponses = {
             moderation_note: string | null;
             requires_patching: boolean;
             created_at: number;
-            last_release_at: unknown;
-            publisher_display_name: unknown;
-            publisher_verified_at: unknown;
+            last_release_at: number | null;
+            publisher_display_name: string;
+            publisher_verified_at: number | null;
             latest_stable_release: {
                 amd64: string | null;
                 arm64: string | null;
