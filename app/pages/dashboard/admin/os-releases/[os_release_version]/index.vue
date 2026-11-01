@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FormError, NavigationMenuItem } from "@nuxt/ui";
-import z from "zod";
+import type z from "zod";
 import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from "~/api-client";
 import { zPostAdminOsReleasesBody, zPutAdminOsReleasesByVersionBody } from "~/api-client/zod.gen";
 
@@ -16,7 +16,6 @@ type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
 // const os_release_is_new = inject<boolean>('os_release_is_new');
 
 const os_release = useSubrouterInjectedData<OSRelease, NewOSRelease>("os_release", true).inject();
-console.log("os_release:", os_release);
 const os_release_data = os_release.data;
 const os_release_loading = os_release.loading;
 

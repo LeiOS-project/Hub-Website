@@ -30,7 +30,8 @@ export type AdminUser = GetAdminUsersResponses["200"]["data"]["items"][number];
 export type AdminUserRole = AdminUser["role"];
 export type AdminUserStatus = AdminUser["status"];
 export type AdminUserPublisher = GetAdminUsersByUserIdPublishersResponses["200"]["data"][number];
-export type AdminPasswordResetLink = PostAdminUsersByUserIdPasswordResetLinkResponses["201"]["data"];
+export type AdminPasswordResetLink =
+	PostAdminUsersByUserIdPasswordResetLinkResponses["201"]["data"];
 
 export type AdminPublisher = GetAdminPublishersResponses["200"]["data"]["items"][number];
 

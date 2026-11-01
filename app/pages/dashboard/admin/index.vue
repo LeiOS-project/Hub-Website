@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import type {
-	AdminReport,
-	AdminReportReason,
-	AdminStableRequest,
-	AdminStats,
-	AdminTask,
-} from "~/utils/adminTypes";
+import type { AdminReport, AdminStableRequest, AdminStats, AdminTask } from "~/utils/adminTypes";
 
 definePageMeta({
 	layout: "dashboard",
@@ -160,16 +154,6 @@ const statTiles = computed<StatTile[]>(() => {
 	];
 });
 
-const REASON_LABELS: Record<AdminReportReason, string> = {
-	malware: "Malware",
-	spam: "Spam",
-	copyright: "Copyright",
-	inappropriate: "Inappropriate",
-	broken: "Broken",
-	impersonation: "Impersonation",
-	other: "Other",
-};
-
 function formatAgo(ts: number) {
 	const seconds = Math.max(0, Math.floor((Date.now() - ts) / 1000));
 	return seconds < 60 ? "just now" : `${formatDuration(seconds)} ago`;
@@ -316,13 +300,7 @@ function formatAgo(ts: number) {
 										</div>
 									</div>
 									<div class="flex shrink-0 flex-col items-end gap-1">
-										<UBadge
-											:color="report.reason === 'malware' ? 'error' : 'warning'"
-											variant="soft"
-											size="sm"
-										>
-											{{ REASON_LABELS[report.reason] }}
-										</UBadge>
+										<AdminReportReasonBadge :reason="report.reason" size="sm" />
 										<span class="text-xs text-slate-500">{{ formatAgo(report.created_at) }}</span>
 									</div>
 								</NuxtLink>

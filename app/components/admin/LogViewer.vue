@@ -122,7 +122,12 @@ const logStats = computed(() => {
 });
 
 const statCards = computed(() => [
-	{ label: "Total", value: logStats.value.total, icon: "i-lucide-file-text", color: "text-slate-300" },
+	{
+		label: "Total",
+		value: logStats.value.total,
+		icon: "i-lucide-file-text",
+		color: "text-slate-300",
+	},
 	{ label: "Info", value: logStats.value.info, icon: "i-lucide-info", color: "text-sky-400" },
 	{
 		label: "Success",
