@@ -5,7 +5,8 @@ import { useUserInfoStore } from "~/composables/stores/useUserStore";
 const userInfoStore = useUserInfoStore();
 const user = await userInfoStore.use();
 
-const isAdmin = computed(() => user.value?.role === "admin");
+// Admins and moderators share the moderation area; admin-only actions are hidden on the pages.
+const isStaff = computed(() => isStaffRole(user.value?.role));
 
 const sidebarItems = computed(() => {
 	const devItems: NavigationMenuItem[] = [
@@ -34,24 +35,9 @@ const sidebarItems = computed(() => {
 
 	const adminItems: NavigationMenuItem[] = [
 		{
-			label: "Admin",
+			label: user.value?.role === "admin" ? "Admin" : "Moderation",
 			icon: "i-lucide-shield",
 			type: "label",
-			// defaultOpen: route.path.startsWith("/dashboard/admin"),
-			// children: [
-			//     {
-			//         label: "Stable Promotion Requests",
-			//         to: "/dashboard/admin/stable-promotion-requests",
-			//     },
-			//     {
-			//         label: "Users",
-			//         to: "/dashboard/admin/users",
-			//     },
-			//     {
-			//         label: "All Packages",
-			//         to: "/dashboard/admin/packages",
-			//     },
-			// ],
 		},
 		{
 			label: "Overview",
@@ -83,6 +69,11 @@ const sidebarItems = computed(() => {
 			label: "Stable Promotion Requests",
 			icon: "i-lucide-git-pull-request",
 			to: "/dashboard/admin/stable-promotion-requests",
+		},
+		{
+			label: "Stable Queue",
+			icon: "i-lucide-list-ordered",
+			to: "/dashboard/admin/stable-promotion-requests?status=queued",
 		},
 		{
 			label: "OS Releases",
@@ -176,7 +167,7 @@ const sidebarItems = computed(() => {
                 />
 
                 <UNavigationMenu
-                    v-if="isAdmin"
+                    v-if="isStaff"
                     :collapsed="collapsed"
                     :items="sidebarItems.admin"
                     orientation="vertical"

@@ -8,11 +8,15 @@ The Hub is the web frontend of the LeiOS API-Server, which it talks to over HTTP
 - 🔍 Public package explorer (search, sort, stable/testing filter), package pages with install
   commands and release history, publisher profiles with verified badges, and the OS release log
 - 📝 Self-service signup with email confirmation (when the API-Server enables it)
-- 🛠️ Developer workspace to create packages, upload amd64/arm64 releases, and request promotion to stable
+- 🛠️ Developer workspace to create packages, upload amd64/arm64 releases, request promotion to
+  stable and talk with the moderators about it; every release shows whether it is awaiting review,
+  queued for the next LeiOS release, released or in stable
+- 📝 Markdown descriptions, changelogs and messages with a rich-text editor
 - 🏢 Publisher management with member roles, per-package role overrides and ownership transfer
-- 🛡️ Admin area: overview, user moderation (suspend, reset links, sign-out everywhere), publisher
-  verification, hiding/deprecating packages, user reports, audit log, stable promotion reviews,
-  OS releases and tasks with logs
+- 🛡️ Admin area (admins and moderators): overview, user moderation (suspend, reset links, sign-out
+  everywhere), publisher verification, hiding/deprecating packages, user reports, audit log, stable
+  promotion reviews and the stable queue, OS releases (admins pick which queued releases go in and
+  generate release notes) and tasks with logs
 - 🔑 Personal API keys for scripts and CI
 - 🔐 Session-based authentication with automatic API client configuration
 

@@ -28,6 +28,7 @@ type EditSchema = z.output<typeof editSchema>;
 
 const ROLE_ITEMS: { label: string; value: AdminUserRole }[] = [
 	{ label: "Admin", value: "admin" },
+	{ label: "Moderator", value: "moderator" },
 	{ label: "Developer", value: "developer" },
 	{ label: "User", value: "user" },
 ];

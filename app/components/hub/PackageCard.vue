@@ -80,7 +80,7 @@ const testingVersion = computed(() => channelVersionLabel(props.pkg.latest_testi
 		</div>
 
 		<p class="mt-3 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-400">
-			{{ pkg.description || "No description provided." }}
+			{{ markdownToPlainText(pkg.description) || "No description provided." }}
 		</p>
 
 		<div class="mt-4 flex flex-wrap items-center gap-2">

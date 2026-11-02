@@ -117,14 +117,28 @@ const latestVersion =
 	pkg.latest_testing_release.arm64 ??
 	undefined;
 
+/** Whether a release is the version in stable right now (for any architecture). */
+function isCurrentStable(release: PublicPackageRelease) {
+	const version = release.version_with_leios_patch;
+	return pkg.latest_stable_release.amd64 === version || pkg.latest_stable_release.arm64 === version;
+}
+
+/** The stable promotion worth showing publicly: denied requests stay with the publisher. */
+function publicStableStatus(release: PublicPackageRelease) {
+	const promotion = release.stable_promotion;
+	return promotion && promotion.status !== "denied" ? promotion : null;
+}
+
+const plainDescription = markdownToPlainText(pkg.description, 300);
+
 usePageSeo({
 	title: `${title} (${pkg.fullname}) | LeiOS Hub`,
-	description: pkg.description || `The LeiOS package ${pkg.fullname} by ${publisherLabel}.`,
+	description: plainDescription || `The LeiOS package ${pkg.fullname} by ${publisherLabel}.`,
 	jsonLd: {
 		"@context": "https://schema.org",
 		"@type": "SoftwareApplication",
 		name: title,
-		description: pkg.description || undefined,
+		description: plainDescription || undefined,
 		operatingSystem: "LeiOS",
 		softwareVersion: latestVersion,
 		publisher: { "@type": "Organization", name: publisherLabel },
@@ -199,9 +213,12 @@ usePageSeo({
 			<div class="grid gap-6 lg:grid-cols-3">
 				<div class="min-w-0 space-y-6 lg:col-span-2">
 					<DashboardSectionCard title="About" icon="i-lucide-info">
-						<p class="leading-relaxed whitespace-pre-line text-slate-300">
-							{{ pkg.description || "No description provided." }}
-						</p>
+						<MarkdownContent
+							v-if="pkg.description"
+							:value="pkg.description"
+							class="text-slate-300"
+						/>
+						<p v-else class="text-slate-500">No description provided.</p>
 					</DashboardSectionCard>
 
 					<DashboardSectionCard
@@ -249,6 +266,20 @@ usePageSeo({
 									<UBadge v-if="index === 0" color="primary" variant="soft" size="sm">
 										Latest
 									</UBadge>
+									<UBadge
+										v-if="isCurrentStable(item.release)"
+										color="success"
+										variant="solid"
+										size="sm"
+										icon="i-lucide-shield-check"
+									>
+										In stable
+									</UBadge>
+									<HubStableStatusBadge
+										v-else-if="publicStableStatus(item.release)"
+										:status="publicStableStatus(item.release)!.status"
+										:os-release-version="publicStableStatus(item.release)!.os_release_version"
+									/>
 									<span class="flex flex-wrap gap-1">
 										<UBadge
 											v-for="arch in item.architectures"
@@ -267,12 +298,12 @@ usePageSeo({
 							</template>
 
 							<template #body="{ item }">
-								<p
+								<MarkdownContent
 									v-if="item.release.changelog"
-									class="text-sm leading-relaxed whitespace-pre-line text-slate-300"
-								>
-									{{ item.release.changelog }}
-								</p>
+									:value="item.release.changelog"
+									compact
+									class="text-slate-300"
+								/>
 								<p v-else class="text-sm text-slate-500">No changelog provided.</p>
 							</template>
 						</UAccordion>
@@ -343,7 +374,7 @@ usePageSeo({
 							</div>
 							<p class="font-mono text-xs text-slate-500">@{{ publisherName }}</p>
 							<p v-if="publisher?.description" class="line-clamp-4 text-sm text-slate-400">
-								{{ publisher.description }}
+								{{ markdownToPlainText(publisher.description) }}
 							</p>
 							<UButton
 								:to="`/publishers/${publisherName}`"

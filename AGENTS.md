@@ -43,8 +43,15 @@ Follow the LeiCraftMC Style Guide: https://git.leicraftmc.de/LeiCraftMC/Style-Gu
 - **Routing:** `/dashboard/**` and `/auth/**` render client-side (`routeRules` in `nuxt.config.ts`);
   `/`, `/explore/**`, `/publishers/**` and `/releases` are SSR and public. Access rules are the constants in
   `app/middleware/auth.global.ts` (onboarding is off — the Hub has none yet).
-- **Roles:** users are `admin` / `developer` / `user` (`getRoleColor` in `app/utils/roles.ts`).
-  Package and publisher permissions are enforced by the API-Server.
+- **Roles:** users are `admin` / `moderator` / `developer` / `user` (`app/utils/roles.ts`). Admins
+  and moderators (`isStaffRole`) open `/dashboard/admin`; pages hide what only admins may do (OS
+  release writes, account administration). Package and publisher permissions are enforced by the
+  API-Server.
+- **Markdown:** user-written text (descriptions, changelogs, stable request messages) is Markdown.
+  Render it with `<MarkdownContent>` (SSR-safe, no raw HTML, safe links only), edit it with
+  `<MarkdownEditor>` (Nuxt UI `UEditor`), and use `markdownToPlainText` for cards and meta tags.
+  The editor makes the client build need more than Node's default heap, hence `NODE_OPTIONS` in
+  the `build` script.
 - **Package names:** a package's `fullname` is `<publisherName>.<packageName>`; publisher names
   never contain dots.
 - **API client:** start the API-Server locally on 12151 with its docs enabled, then run

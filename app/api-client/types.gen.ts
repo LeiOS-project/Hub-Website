@@ -61,7 +61,7 @@ export type PostAuthLoginResponses = {
         message: 'Login successful';
         data: {
             user_id: number;
-            user_role: 'admin' | 'developer' | 'user';
+            user_role: 'admin' | 'moderator' | 'developer' | 'user';
             created_at: number;
             expires_at: number;
             token: string;
@@ -101,7 +101,7 @@ export type GetAuthSessionResponses = {
         message: 'Session info retrieved successfully';
         data: {
             user_id: number;
-            user_role: 'admin' | 'developer' | 'user';
+            user_role: 'admin' | 'moderator' | 'developer' | 'user';
             created_at: number;
             expires_at: number;
         };
@@ -455,7 +455,7 @@ export type GetAccountResponses = {
             username: string;
             display_name: string;
             email: string;
-            role: 'admin' | 'developer' | 'user';
+            role: 'admin' | 'moderator' | 'developer' | 'user';
             email_verified_at: number | null;
             status: 'active' | 'suspended';
             suspended_at: number | null;
@@ -858,6 +858,9 @@ export type PostPublishersData = {
     body: {
         name: string;
         display_name: string;
+        /**
+         * Markdown
+         */
         description: string;
         homepage_url: string;
         maintainer_contact_name: string;
@@ -1022,6 +1025,9 @@ export type GetPublishersByPublisherNameResponse = GetPublishersByPublisherNameR
 export type PutPublishersByPublisherNameData = {
     body: {
         display_name?: string;
+        /**
+         * Markdown
+         */
         description?: string;
         homepage_url?: string;
         maintainer_contact_name?: string;
@@ -1445,6 +1451,9 @@ export type PostPackagesData = {
         publisher_id: number;
         name: string;
         display_name: string;
+        /**
+         * Markdown
+         */
         description: string;
         homepage_url: string;
         requires_patching?: boolean;
@@ -1530,6 +1539,14 @@ export type DeletePackagesByFullPackageNameErrors = {
         success: false;
         code: 404;
         message: 'Package with specified name not found';
+    };
+    /**
+     * A release of this package is being published with an OS release
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'A release of this package is being published with an OS release';
     };
     /**
      * Failed to delete package from Aptly repositories
@@ -1620,6 +1637,9 @@ export type GetPackagesByFullPackageNameResponse = GetPackagesByFullPackageNameR
 export type PutPackagesByFullPackageNameData = {
     body: {
         display_name?: string;
+        /**
+         * Markdown
+         */
         description?: string;
         homepage_url?: string;
         requires_patching?: boolean;
@@ -1701,6 +1721,14 @@ export type GetPackagesByFullPackageNameReleasesResponses = {
             };
             created_at: number;
             changelog: string;
+            stable_promotion: {
+                request_id: number;
+                status: 'pending' | 'queued' | 'released' | 'denied';
+                /**
+                 * The OS release that released it
+                 */
+                os_release_version: string | null;
+            } | null;
         }>;
     };
 };
@@ -1710,6 +1738,9 @@ export type GetPackagesByFullPackageNameReleasesResponse = GetPackagesByFullPack
 export type PostPackagesByFullPackageNameReleasesData = {
     body: {
         version_with_leios_patch: string;
+        /**
+         * Markdown
+         */
         changelog: string;
     };
     path: {
@@ -1769,7 +1800,7 @@ export type ListReleaseStablePromotionRequestsData = {
         version_with_leios_patch: string;
     };
     query?: {
-        status?: 'pending' | 'approved' | 'denied';
+        status?: 'pending' | 'queued' | 'released' | 'denied';
     };
     url: '/packages/{fullPackageName}/releases/{version_with_leios_patch}/stable-promotion-requests';
 };
@@ -1786,29 +1817,21 @@ export type ListReleaseStablePromotionRequestsResponses = {
             id: number;
             package_id: number;
             package_release_id: number;
-            status: 'pending';
+            status: 'pending' | 'queued' | 'released' | 'denied';
             created_at: number;
-            admin_note: null;
+            status_changed_at: number | null;
+            /**
+             * The OS release that released it
+             */
+            os_release_version: string | null;
             package_name: string;
+            package_fullname: string;
             package_release_version: string;
-        } | {
-            id: number;
-            package_id: number;
-            package_release_id: number;
-            status: 'approved';
-            created_at: number;
-            admin_note: string | null;
-            package_name: string;
-            package_release_version: string;
-        } | {
-            id: number;
-            package_id: number;
-            package_release_id: number;
-            status: 'denied';
-            created_at: number;
-            admin_note: string | null;
-            package_name: string;
-            package_release_version: string;
+            /**
+             * Comments in the conversation
+             */
+            comment_count: number;
+            last_message_at: number | null;
         }>;
     };
 };
@@ -1817,7 +1840,10 @@ export type ListReleaseStablePromotionRequestsResponse = ListReleaseStablePromot
 
 export type CreateReleaseStablePromotionRequestData = {
     body: {
-        [key: string]: never;
+        /**
+         * Why the release should go to stable (Markdown); starts the conversation
+         */
+        message?: string;
     };
     path: {
         fullPackageName: string;
@@ -1892,6 +1918,14 @@ export type DeleteReleaseStablePromotionRequestErrors = {
         code: 403;
         message: 'You do not have permission to delete stable promotion requests for this package';
     };
+    /**
+     * The release is already in stable / The release is being published with an OS release
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'The release is already in stable / The release is being published with an OS release';
+    };
 };
 
 export type DeleteReleaseStablePromotionRequestError = DeleteReleaseStablePromotionRequestErrors[keyof DeleteReleaseStablePromotionRequestErrors];
@@ -1921,6 +1955,19 @@ export type GetReleaseStablePromotionRequestData = {
     url: '/packages/{fullPackageName}/releases/{version_with_leios_patch}/stable-promotion-requests/{stablePromotionRequestID}';
 };
 
+export type GetReleaseStablePromotionRequestErrors = {
+    /**
+     * Stable promotion request not found for this release
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Stable promotion request not found for this release';
+    };
+};
+
+export type GetReleaseStablePromotionRequestError = GetReleaseStablePromotionRequestErrors[keyof GetReleaseStablePromotionRequestErrors];
+
 export type GetReleaseStablePromotionRequestResponses = {
     /**
      * Stable promotion request retrieved successfully
@@ -1933,34 +1980,161 @@ export type GetReleaseStablePromotionRequestResponses = {
             id: number;
             package_id: number;
             package_release_id: number;
-            status: 'pending';
+            status: 'pending' | 'queued' | 'released' | 'denied';
             created_at: number;
-            admin_note: null;
+            status_changed_at: number | null;
+            /**
+             * The OS release that released it
+             */
+            os_release_version: string | null;
             package_name: string;
+            package_fullname: string;
             package_release_version: string;
-        } | {
-            id: number;
-            package_id: number;
-            package_release_id: number;
-            status: 'approved';
-            created_at: number;
-            admin_note: string | null;
-            package_name: string;
-            package_release_version: string;
-        } | {
-            id: number;
-            package_id: number;
-            package_release_id: number;
-            status: 'denied';
-            created_at: number;
-            admin_note: string | null;
-            package_name: string;
-            package_release_version: string;
+            /**
+             * Comments in the conversation
+             */
+            comment_count: number;
+            last_message_at: number | null;
         };
     };
 };
 
 export type GetReleaseStablePromotionRequestResponse = GetReleaseStablePromotionRequestResponses[keyof GetReleaseStablePromotionRequestResponses];
+
+export type ListReleaseStablePromotionRequestMessagesData = {
+    body?: never;
+    path: {
+        fullPackageName: string;
+        version_with_leios_patch: string;
+        stablePromotionRequestID: number;
+    };
+    query?: never;
+    url: '/packages/{fullPackageName}/releases/{version_with_leios_patch}/stable-promotion-requests/{stablePromotionRequestID}/messages';
+};
+
+export type ListReleaseStablePromotionRequestMessagesErrors = {
+    /**
+     * Only members of the publisher can read this conversation
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only members of the publisher can read this conversation';
+    };
+    /**
+     * Stable promotion request not found for this release
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Stable promotion request not found for this release';
+    };
+};
+
+export type ListReleaseStablePromotionRequestMessagesError = ListReleaseStablePromotionRequestMessagesErrors[keyof ListReleaseStablePromotionRequestMessagesErrors];
+
+export type ListReleaseStablePromotionRequestMessagesResponses = {
+    /**
+     * Messages retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Messages retrieved successfully';
+        data: Array<{
+            id: number;
+            request_id: number;
+            kind: 'comment' | 'status_change';
+            /**
+             * The new status of a status change
+             */
+            status: 'pending' | 'queued' | 'released' | 'denied' | null;
+            /**
+             * Markdown; empty for a status change without a comment
+             */
+            body: string;
+            created_at: number;
+            /**
+             * null for system entries and deleted accounts
+             */
+            author_user_id: number | null;
+            author_username: string | null;
+            author_display_name: string | null;
+            /**
+             * The author's site role
+             */
+            author_role: 'admin' | 'moderator' | 'developer' | 'user' | null;
+        }>;
+    };
+};
+
+export type ListReleaseStablePromotionRequestMessagesResponse = ListReleaseStablePromotionRequestMessagesResponses[keyof ListReleaseStablePromotionRequestMessagesResponses];
+
+export type CreateReleaseStablePromotionRequestMessageData = {
+    body: {
+        body: string;
+    };
+    path: {
+        fullPackageName: string;
+        version_with_leios_patch: string;
+        stablePromotionRequestID: number;
+    };
+    query?: never;
+    url: '/packages/{fullPackageName}/releases/{version_with_leios_patch}/stable-promotion-requests/{stablePromotionRequestID}/messages';
+};
+
+export type CreateReleaseStablePromotionRequestMessageErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * You do not have permission to reply to this request
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'You do not have permission to reply to this request';
+    };
+    /**
+     * Stable promotion request not found for this release
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Stable promotion request not found for this release';
+    };
+    /**
+     * The request was released; its conversation is closed
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'The request was released; its conversation is closed';
+    };
+};
+
+export type CreateReleaseStablePromotionRequestMessageError = CreateReleaseStablePromotionRequestMessageErrors[keyof CreateReleaseStablePromotionRequestMessageErrors];
+
+export type CreateReleaseStablePromotionRequestMessageResponses = {
+    /**
+     * Message added
+     */
+    201: {
+        success: true;
+        code: 201;
+        message: 'Message added';
+        data: {
+            id: number;
+        };
+    };
+};
+
+export type CreateReleaseStablePromotionRequestMessageResponse = CreateReleaseStablePromotionRequestMessageResponses[keyof CreateReleaseStablePromotionRequestMessageResponses];
 
 export type DeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchData = {
     body?: never;
@@ -1988,6 +2162,14 @@ export type DeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchErrors
         success: false;
         code: 404;
         message: 'Package release with specified version not found';
+    };
+    /**
+     * The release is being published with an OS release
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'The release is being published with an OS release';
     };
     /**
      * Failed to delete release from Aptly repositories
@@ -2056,6 +2238,14 @@ export type GetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchResponses
             };
             created_at: number;
             changelog: string;
+            stable_promotion: {
+                request_id: number;
+                status: 'pending' | 'queued' | 'released' | 'denied';
+                /**
+                 * The OS release that released it
+                 */
+                os_release_version: string | null;
+            } | null;
         };
     };
 };
@@ -2064,6 +2254,9 @@ export type GetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchResponse 
 
 export type PutPackagesByFullPackageNameReleasesByVersionWithLeiosPatchData = {
     body: {
+        /**
+         * Markdown
+         */
         changelog?: string;
     };
     path: {
@@ -2393,7 +2586,7 @@ export type GetAdminUsersData = {
     body?: never;
     path?: never;
     query?: {
-        role?: 'admin' | 'developer' | 'user';
+        role?: 'admin' | 'moderator' | 'developer' | 'user';
         status?: 'active' | 'suspended';
         verified?: string;
         search?: string;
@@ -2417,7 +2610,7 @@ export type GetAdminUsersResponses = {
                 username: string;
                 display_name: string;
                 email: string;
-                role: 'admin' | 'developer' | 'user';
+                role: 'admin' | 'moderator' | 'developer' | 'user';
                 email_verified_at: number | null;
                 status: 'active' | 'suspended';
                 suspended_at: number | null;
@@ -2436,7 +2629,7 @@ export type PostAdminUsersData = {
         username: string;
         display_name: string;
         email: string;
-        role?: 'admin' | 'developer' | 'user';
+        role?: 'admin' | 'moderator' | 'developer' | 'user';
         password: string;
     };
     path?: never;
@@ -2452,6 +2645,14 @@ export type PostAdminUsersErrors = {
         success: false;
         code: 400;
         message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Only site administrators can manage accounts
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can manage accounts';
     };
     /**
      * Conflict: Username or email already exists
@@ -2478,7 +2679,7 @@ export type PostAdminUsersResponses = {
             username: string;
             display_name: string;
             email: string;
-            role: 'admin' | 'developer' | 'user';
+            role: 'admin' | 'moderator' | 'developer' | 'user';
             email_verified_at: number | null;
             status: 'active' | 'suspended';
             suspended_at: number | null;
@@ -2507,6 +2708,14 @@ export type DeleteAdminUsersByUserIdErrors = {
         success: false;
         code: 400;
         message: 'Cannot delete user while they own publishers / Use the account settings to delete your own account';
+    };
+    /**
+     * Only site administrators can manage accounts
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can manage accounts';
     };
     /**
      * User not found
@@ -2569,7 +2778,7 @@ export type GetAdminUsersByUserIdResponses = {
             username: string;
             display_name: string;
             email: string;
-            role: 'admin' | 'developer' | 'user';
+            role: 'admin' | 'moderator' | 'developer' | 'user';
             email_verified_at: number | null;
             status: 'active' | 'suspended';
             suspended_at: number | null;
@@ -2586,7 +2795,7 @@ export type PutAdminUsersByUserIdData = {
         username?: string;
         display_name?: string;
         email?: string;
-        role?: 'admin' | 'developer' | 'user';
+        role?: 'admin' | 'moderator' | 'developer' | 'user';
     };
     path: {
         userId: number;
@@ -2603,6 +2812,14 @@ export type PutAdminUsersByUserIdErrors = {
         success: false;
         code: 400;
         message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Only site administrators can manage accounts
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can manage accounts';
     };
     /**
      * User not found
@@ -2637,7 +2854,7 @@ export type PutAdminUsersByUserIdResponses = {
             username: string;
             display_name: string;
             email: string;
-            role: 'admin' | 'developer' | 'user';
+            role: 'admin' | 'moderator' | 'developer' | 'user';
             email_verified_at: number | null;
             status: 'active' | 'suspended';
             suspended_at: number | null;
@@ -2671,6 +2888,14 @@ export type PutAdminUsersByUserIdPasswordErrors = {
         success: false;
         code: 400;
         message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Only site administrators can manage accounts
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can manage accounts';
     };
     /**
      * User not found
@@ -2719,6 +2944,14 @@ export type PostAdminUsersByUserIdSuspendErrors = {
         message: 'Bad Request: Syntax or validation error in request';
     };
     /**
+     * Only site administrators can suspend or reinstate site staff
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can suspend or reinstate site staff';
+    };
+    /**
      * User not found
      */
     404: {
@@ -2762,6 +2995,14 @@ export type PostAdminUsersByUserIdUnsuspendData = {
 };
 
 export type PostAdminUsersByUserIdUnsuspendErrors = {
+    /**
+     * Only site administrators can suspend or reinstate site staff
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can suspend or reinstate site staff';
+    };
     /**
      * User not found
      */
@@ -2817,6 +3058,14 @@ export type PostAdminUsersByUserIdPasswordResetLinkErrors = {
         message: 'Bad Request: Syntax or validation error in request';
     };
     /**
+     * Only site administrators can manage accounts
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can manage accounts';
+    };
+    /**
      * User not found
      */
     404: {
@@ -2857,6 +3106,14 @@ export type PostAdminUsersByUserIdRevokeSessionsData = {
 
 export type PostAdminUsersByUserIdRevokeSessionsErrors = {
     /**
+     * Only site administrators can manage accounts
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can manage accounts';
+    };
+    /**
      * User not found
      */
     404: {
@@ -2892,6 +3149,14 @@ export type PostAdminUsersByUserIdVerifyEmailData = {
 };
 
 export type PostAdminUsersByUserIdVerifyEmailErrors = {
+    /**
+     * Only site administrators can manage accounts
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can manage accounts';
+    };
     /**
      * User not found
      */
@@ -2992,10 +3257,17 @@ export type GetAdminOsReleasesResponses = {
             items: Array<{
                 id: number;
                 version: string;
+                /**
+                 * Markdown
+                 */
                 changelog: string;
                 created_at: number;
                 published_at: number | null;
                 publishing_status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
+                /**
+                 * Package releases this OS release moves into stable
+                 */
+                package_count: number;
             }>;
             total: number;
         };
@@ -3006,12 +3278,48 @@ export type GetAdminOsReleasesResponse = GetAdminOsReleasesResponses[keyof GetAd
 
 export type PostAdminOsReleasesData = {
     body: {
+        /**
+         * Markdown
+         */
         changelog: string;
+        /**
+         * Ids of queued stable promotion requests
+         */
+        stable_promotion_request_ids: Array<number>;
     };
     path?: never;
     query?: never;
     url: '/admin/os-releases';
 };
+
+export type PostAdminOsReleasesErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Only site administrators can create or edit OS releases
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can create or edit OS releases';
+    };
+    /**
+     * Another OS release is still being published
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'Another OS release is still being published';
+    };
+};
+
+export type PostAdminOsReleasesError = PostAdminOsReleasesErrors[keyof PostAdminOsReleasesErrors];
 
 export type PostAdminOsReleasesResponses = {
     /**
@@ -3024,15 +3332,78 @@ export type PostAdminOsReleasesResponses = {
         data: {
             id: number;
             version: string;
+            /**
+             * Markdown
+             */
             changelog: string;
             created_at: number;
             published_at: number | null;
             publishing_status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
+            /**
+             * Package releases this OS release moves into stable
+             */
+            package_count: number;
+            packages: Array<{
+                /**
+                 * null once the release was deleted
+                 */
+                package_release_id: number | null;
+                package_fullname: string;
+                version_with_leios_patch: string;
+            }>;
         };
     };
 };
 
 export type PostAdminOsReleasesResponse = PostAdminOsReleasesResponses[keyof PostAdminOsReleasesResponses];
+
+export type PostAdminOsReleasesGenerateChangelogData = {
+    body: {
+        /**
+         * Ids of queued stable promotion requests
+         */
+        stable_promotion_request_ids: Array<number>;
+    };
+    path?: never;
+    query?: never;
+    url: '/admin/os-releases/generate-changelog';
+};
+
+export type PostAdminOsReleasesGenerateChangelogErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+};
+
+export type PostAdminOsReleasesGenerateChangelogError = PostAdminOsReleasesGenerateChangelogErrors[keyof PostAdminOsReleasesGenerateChangelogErrors];
+
+export type PostAdminOsReleasesGenerateChangelogResponses = {
+    /**
+     * Release notes generated
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Release notes generated';
+        data: {
+            /**
+             * The version the next OS release would get
+             */
+            version: string;
+            /**
+             * Markdown release notes for the selected releases
+             */
+            changelog: string;
+        };
+    };
+};
+
+export type PostAdminOsReleasesGenerateChangelogResponse = PostAdminOsReleasesGenerateChangelogResponses[keyof PostAdminOsReleasesGenerateChangelogResponses];
 
 export type GetAdminOsReleasesByVersionData = {
     body?: never;
@@ -3067,10 +3438,25 @@ export type GetAdminOsReleasesByVersionResponses = {
         data: {
             id: number;
             version: string;
+            /**
+             * Markdown
+             */
             changelog: string;
             created_at: number;
             published_at: number | null;
             publishing_status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
+            /**
+             * Package releases this OS release moves into stable
+             */
+            package_count: number;
+            packages: Array<{
+                /**
+                 * null once the release was deleted
+                 */
+                package_release_id: number | null;
+                package_fullname: string;
+                version_with_leios_patch: string;
+            }>;
         };
     };
 };
@@ -3079,6 +3465,9 @@ export type GetAdminOsReleasesByVersionResponse = GetAdminOsReleasesByVersionRes
 
 export type PutAdminOsReleasesByVersionData = {
     body: {
+        /**
+         * Markdown
+         */
         changelog?: string;
     };
     path: {
@@ -3096,6 +3485,14 @@ export type PutAdminOsReleasesByVersionErrors = {
         success: false;
         code: 400;
         message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Only site administrators can create or edit OS releases
+     */
+    403: {
+        success: false;
+        code: 403;
+        message: 'Only site administrators can create or edit OS releases';
     };
     /**
      * OS release not found
@@ -3306,10 +3703,27 @@ export type GetAdminStablePromotionRequestsData = {
         limit?: number;
         offset?: number;
         order?: 'newest' | 'oldest';
-        status?: 'pending' | 'approved' | 'denied';
+        status?: 'pending' | 'queued' | 'released' | 'denied';
+        /**
+         * Matches the package name, display name or release version
+         */
+        search?: string;
     };
     url: '/admin/stable-promotion-requests';
 };
+
+export type GetAdminStablePromotionRequestsErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+};
+
+export type GetAdminStablePromotionRequestsError = GetAdminStablePromotionRequestsErrors[keyof GetAdminStablePromotionRequestsErrors];
 
 export type GetAdminStablePromotionRequestsResponses = {
     /**
@@ -3324,12 +3738,40 @@ export type GetAdminStablePromotionRequestsResponses = {
                 id: number;
                 package_id: number;
                 package_release_id: number;
-                status: 'pending' | 'approved' | 'denied';
+                status: 'pending' | 'queued' | 'released' | 'denied';
                 created_at: number;
-                admin_note: string | null;
+                status_changed_at: number | null;
+                /**
+                 * The OS release that released it
+                 */
+                os_release_version: string | null;
                 package_name: string;
                 package_fullname: string;
                 package_release_version: string;
+                /**
+                 * Comments in the conversation
+                 */
+                comment_count: number;
+                last_message_at: number | null;
+                publisher_id: number;
+                package_display_name: string;
+                /**
+                 * Versions in stable right now
+                 */
+                package_latest_stable_release: {
+                    amd64: string | null;
+                    arm64: string | null;
+                };
+                package_release_architectures: {
+                    amd64: boolean;
+                    arm64: boolean;
+                    is_all: boolean;
+                };
+                package_release_created_at: number;
+                requested_by_user_id: number | null;
+                requested_by_username: string | null;
+                status_changed_by_user_id: number | null;
+                status_changed_by_username: string | null;
             }>;
             total: number;
         };
@@ -3372,31 +3814,65 @@ export type GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses =
             id: number;
             package_id: number;
             package_release_id: number;
-            status: 'pending' | 'approved' | 'denied';
+            status: 'pending' | 'queued' | 'released' | 'denied';
             created_at: number;
-            admin_note: string | null;
+            status_changed_at: number | null;
+            /**
+             * The OS release that released it
+             */
+            os_release_version: string | null;
             package_name: string;
             package_fullname: string;
             package_release_version: string;
+            /**
+             * Comments in the conversation
+             */
+            comment_count: number;
+            last_message_at: number | null;
+            publisher_id: number;
+            package_display_name: string;
+            /**
+             * Versions in stable right now
+             */
+            package_latest_stable_release: {
+                amd64: string | null;
+                arm64: string | null;
+            };
+            package_release_architectures: {
+                amd64: boolean;
+                arm64: boolean;
+                is_all: boolean;
+            };
+            package_release_created_at: number;
+            requested_by_user_id: number | null;
+            requested_by_username: string | null;
+            status_changed_by_user_id: number | null;
+            status_changed_by_username: string | null;
         };
     };
 };
 
 export type GetAdminStablePromotionRequestsByStablePromotionRequestIdResponse = GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses[keyof GetAdminStablePromotionRequestsByStablePromotionRequestIdResponses];
 
-export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideData = {
+export type PutAdminStablePromotionRequestsByStablePromotionRequestIdStatusData = {
     body: {
-        status: 'approved' | 'denied';
-        admin_note: string;
+        /**
+         * queued approves the release for the next OS release, denied rejects it, pending reopens it or takes it out of the queue
+         */
+        status: 'pending' | 'queued' | 'denied';
+        /**
+         * Comment for the publisher (Markdown), shown with the status change
+         */
+        message?: string;
     };
     path: {
         stablePromotionRequestID: number;
     };
     query?: never;
-    url: '/admin/stable-promotion-requests/{stablePromotionRequestID}/decide';
+    url: '/admin/stable-promotion-requests/{stablePromotionRequestID}/status';
 };
 
-export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideErrors = {
+export type PutAdminStablePromotionRequestsByStablePromotionRequestIdStatusErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -3413,23 +3889,146 @@ export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideErro
         code: 404;
         message: 'Stable promotion request not found';
     };
+    /**
+     * The request already has this status / The release is already in stable / The release is being published with an OS release
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'The request already has this status / The release is already in stable / The release is being published with an OS release';
+    };
 };
 
-export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideError = PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideErrors[keyof PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideErrors];
+export type PutAdminStablePromotionRequestsByStablePromotionRequestIdStatusError = PutAdminStablePromotionRequestsByStablePromotionRequestIdStatusErrors[keyof PutAdminStablePromotionRequestsByStablePromotionRequestIdStatusErrors];
 
-export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponses = {
+export type PutAdminStablePromotionRequestsByStablePromotionRequestIdStatusResponses = {
     /**
-     * Decided on stable promotion request successfully
+     * Status changed successfully
      */
     200: {
         success: true;
         code: 200;
-        message: 'Decided on stable promotion request successfully';
+        message: 'Status changed successfully';
         data: null;
     };
 };
 
-export type PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse = PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponses[keyof PostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponses];
+export type PutAdminStablePromotionRequestsByStablePromotionRequestIdStatusResponse = PutAdminStablePromotionRequestsByStablePromotionRequestIdStatusResponses[keyof PutAdminStablePromotionRequestsByStablePromotionRequestIdStatusResponses];
+
+export type GetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesData = {
+    body?: never;
+    path: {
+        stablePromotionRequestID: number;
+    };
+    query?: never;
+    url: '/admin/stable-promotion-requests/{stablePromotionRequestID}/messages';
+};
+
+export type GetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesErrors = {
+    /**
+     * Stable promotion request not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Stable promotion request not found';
+    };
+};
+
+export type GetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesError = GetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesErrors[keyof GetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesErrors];
+
+export type GetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesResponses = {
+    /**
+     * Messages retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Messages retrieved successfully';
+        data: Array<{
+            id: number;
+            request_id: number;
+            kind: 'comment' | 'status_change';
+            /**
+             * The new status of a status change
+             */
+            status: 'pending' | 'queued' | 'released' | 'denied' | null;
+            /**
+             * Markdown; empty for a status change without a comment
+             */
+            body: string;
+            created_at: number;
+            /**
+             * null for system entries and deleted accounts
+             */
+            author_user_id: number | null;
+            author_username: string | null;
+            author_display_name: string | null;
+            /**
+             * The author's site role
+             */
+            author_role: 'admin' | 'moderator' | 'developer' | 'user' | null;
+        }>;
+    };
+};
+
+export type GetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesResponse = GetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesResponses[keyof GetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesResponses];
+
+export type PostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesData = {
+    body: {
+        body: string;
+    };
+    path: {
+        stablePromotionRequestID: number;
+    };
+    query?: never;
+    url: '/admin/stable-promotion-requests/{stablePromotionRequestID}/messages';
+};
+
+export type PostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Stable promotion request not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Stable promotion request not found';
+    };
+    /**
+     * The request was released; its conversation is closed
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'The request was released; its conversation is closed';
+    };
+};
+
+export type PostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesError = PostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesErrors[keyof PostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesErrors];
+
+export type PostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesResponses = {
+    /**
+     * Message added
+     */
+    201: {
+        success: true;
+        code: 201;
+        message: 'Message added';
+        data: {
+            id: number;
+        };
+    };
+};
+
+export type PostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesResponse = PostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesResponses[keyof PostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesResponses];
 
 export type GetAdminPublishersData = {
     body?: never;
@@ -3893,6 +4492,10 @@ export type GetAdminStatsResponses = {
             };
             releases: number;
             stable_promotion_requests_pending: number;
+            /**
+             * Releases queued for the next OS release
+             */
+            stable_queue: number;
             reports_open: number;
             tasks: {
                 running: number;

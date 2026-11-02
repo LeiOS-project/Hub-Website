@@ -20,6 +20,8 @@ if (!Number.isInteger(userId) || userId <= 0) {
 const currentUser = await useUserInfoStore().use();
 const currentUserId = computed(() => currentUser.value?.id);
 const isSelf = computed(() => currentUserId.value === userId);
+// Moderators can look users up and suspend regular accounts; account administration is for admins.
+const isAdmin = computed(() => currentUser.value?.role === "admin");
 
 const { data: result, refresh: refreshUser } = await useAPIAsyncData(
 	`admin-user:${userId}`,
@@ -362,6 +364,7 @@ async function refreshPage() {
 						<DashboardSectionCard title="Profile" description="Account details" icon="i-lucide-user">
 							<template #actions>
 								<UButton
+									v-if="isAdmin"
 									label="Edit"
 									icon="i-lucide-pencil"
 									color="neutral"
@@ -491,7 +494,7 @@ async function refreshPage() {
 							flush
 						>
 							<ul class="divide-y divide-slate-800">
-								<li class="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
+								<li v-if="isAdmin" class="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
 									<div class="min-w-0 flex-1">
 										<p class="font-medium text-white">Profile & role</p>
 										<p class="text-sm text-slate-400">Username, display name, email, site role.</p>
@@ -504,7 +507,7 @@ async function refreshPage() {
 										@click="showEditModal = true;"
 									/>
 								</li>
-								<li class="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
+								<li v-if="isAdmin" class="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
 									<div class="min-w-0 flex-1">
 										<p class="font-medium text-white">Password</p>
 										<p class="text-sm text-slate-400">Set a new one; signs the user out everywhere.</p>
@@ -517,7 +520,7 @@ async function refreshPage() {
 										@click="passwordModalOpen = true;"
 									/>
 								</li>
-								<li class="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
+								<li v-if="isAdmin" class="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
 									<div class="min-w-0 flex-1">
 										<p class="font-medium text-white">Password reset link</p>
 										<p class="text-sm text-slate-400">A one-time link, valid for 24 hours.</p>
@@ -530,7 +533,7 @@ async function refreshPage() {
 										@click="resetLinkModalOpen = true;"
 									/>
 								</li>
-								<li class="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
+								<li v-if="isAdmin" class="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
 									<div class="min-w-0 flex-1">
 										<p class="font-medium text-white">Sessions & API keys</p>
 										<p class="text-sm text-slate-400">End every session and delete all API keys.</p>
@@ -544,7 +547,7 @@ async function refreshPage() {
 									/>
 								</li>
 								<li
-									v-if="!user.email_verified_at"
+									v-if="isAdmin && !user.email_verified_at"
 									class="flex flex-wrap items-center justify-between gap-3 px-6 py-4"
 								>
 									<div class="min-w-0 flex-1">
@@ -590,7 +593,7 @@ async function refreshPage() {
 										icon="i-lucide-ban"
 										color="warning"
 										variant="soft"
-										:disabled="isSelf"
+										:disabled="isSelf || (!isAdmin && isStaffRole(user.role))"
 										@click="suspendModalOpen = true;"
 									/>
 								</li>
@@ -599,6 +602,7 @@ async function refreshPage() {
 
 						<!-- Danger zone -->
 						<DashboardSectionCard
+							v-if="isAdmin"
 							title="Danger Zone"
 							description="Irreversible and destructive actions"
 							icon="i-lucide-alert-triangle"

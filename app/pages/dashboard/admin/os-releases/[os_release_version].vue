@@ -1,31 +1,29 @@
 <script lang="ts" setup>
-import type { BreadcrumbItem, NavigationMenuItem } from "@nuxt/ui";
-import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from "~/api-client";
+/**
+ * Layout for one OS release (`/dashboard/admin/os-releases/:version`, plus its logs) and for the
+ * new-release form (`/dashboard/admin/os-releases/new`). Loads the release and provides it to the
+ * child pages as `os_release`.
+ */
+import type { GetAdminOsReleasesByVersionResponses } from "~/api-client";
 import type { UseSubrouterPathDynamics } from "~/composables/useSubrouterPathDynamics";
 
 const route = useRoute();
 
 const os_release_version = route.params.os_release_version as string;
 
-type OSRelease = GetAdminOsReleasesResponses["200"]["data"]["items"][number];
-type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
+type OSRelease = GetAdminOsReleasesByVersionResponses["200"]["data"];
+/** The new-release form loads its own data (the stable queue). */
+type NewOSRelease = Record<string, never>;
 
 definePageMeta({
 	layout: "dashboard",
 });
 
-// useSeoMeta({
-//     title: `${title} | LeiOS Hub`,
-//     description: `Manage OS Release ${os_release_version} on LeiOS Hub`
-// });
-
 let error = null;
 
 if (os_release_version === "new") {
-	useSubrouterInjectedData<number, NewOSRelease>("os_release", true).provide({
-		data: ref({
-			changelog: "",
-		}),
+	useSubrouterInjectedData<OSRelease, NewOSRelease>("os_release", true).provide({
+		data: ref({}),
 		refresh: async () => void 0,
 		loading: ref(false),
 		isNew: true,
@@ -35,26 +33,13 @@ if (os_release_version === "new") {
 		data: result,
 		refresh,
 		loading,
-	} = await useAPIAsyncData(`admin-os-release:${os_release_version}`, async () => {
-		const res = await useAPI((api) =>
-			api.getAdminOsReleasesByVersion({
-				path: {
-					version: os_release_version,
-				},
-			}),
-		);
-		return res;
-		// return {
-		//     success: true,
-		//     data: {
-		//         id: 1,
-		//         version: os_release_version,
-		//         created_at: Date.now() - 1000 * 60 * 60 * 24 * 7,
-		//         published_at: Date.now() - 1000 * 60 * 60 * 24 * 3,
-		//         publishing_status: 'completed' as OSRelease['publishing_status'],
-		//     } satisfies OSRelease
-		// };
-	});
+	} = await useAPIAsyncData(
+		`admin-os-release:${os_release_version}`,
+		async () =>
+			await useAPI((api) =>
+				api.getAdminOsReleasesByVersion({ path: { version: os_release_version } }),
+			),
+	);
 
 	if (!result.value?.success || !result.value?.data) {
 		error = createError({
@@ -78,14 +63,14 @@ function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
 		? {
 				[`/dashboard/admin/os-releases/new`]: {
 					isNavLink: true,
-					label: "General",
-					icon: "i-lucide-info",
+					label: "New release",
+					icon: "i-lucide-rocket",
 					exact: true,
 					getDynamicValues() {
 						return {
 							seoSettings: {
-								title: `New Release`,
-								description: `Create a new OS Release on LeiOS Hub`,
+								title: `New OS Release`,
+								description: `Create a LeiOS release from the stable queue`,
 							},
 							breadcrumbItems: [{ label: "New Release" }],
 						};
@@ -102,7 +87,7 @@ function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
 						return {
 							seoSettings: {
 								title: `Release ${os_release_version}`,
-								description: `Manage OS Release ${os_release_version} on LeiOS Hub`,
+								description: `LeiOS release ${os_release_version}`,
 							},
 							breadcrumbItems: [{ label: os_release_version }],
 						};
@@ -117,7 +102,7 @@ function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
 						return {
 							seoSettings: {
 								title: `Logs | Release ${os_release_version}`,
-								description: `View logs for OS Release ${os_release_version} on LeiOS Hub`,
+								description: `Publishing logs of LeiOS release ${os_release_version}`,
 							},
 							breadcrumbItems: [
 								{ label: os_release_version, to: `/dashboard/admin/os-releases/${os_release_version}` },

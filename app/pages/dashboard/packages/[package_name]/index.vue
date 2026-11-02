@@ -349,12 +349,9 @@ async function onDeletePackage() {
                             container: 'w-full',
                         }"
                     >
-                        <UTextarea
+                        <MarkdownEditor
                             v-model="package_form_state.description"
-                            placeholder="No description provided."
-                            :rows="5"
-                            autoresize
-                            class="w-full"
+                            placeholder="What the package does. The first sentence shows on package cards."
                         />
                     </UFormField>
 

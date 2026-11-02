@@ -190,7 +190,7 @@ const stats = computed<StatCard[]>(() => [
                         </template>
                         <template #description-cell="{ row }">
                             <span class="text-slate-400 line-clamp-1">
-                                {{ row.original.description || '—' }}
+                                {{ markdownToPlainText(row.original.description, 140) || '—' }}
                             </span>
                         </template>
                         <template #actions-cell="{ row }">

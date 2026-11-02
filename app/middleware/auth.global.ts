@@ -5,7 +5,7 @@
  * - `/auth/*` is for signed-out users; a valid session is sent on to `HOME_ROUTE`, except on the
  *   `AUTH_ROUTES_FOR_EVERYONE` (e.g. the confirmation link from an email, opened while signed in).
  * - `PROTECTED_PREFIXES` need a valid session, otherwise → `/auth/login?url=…`.
- * - `ADMIN_PREFIXES` additionally need `role === "admin"`, otherwise → `HOME_ROUTE`.
+ * - `ADMIN_PREFIXES` additionally need a staff role (`admin` or `moderator`), otherwise → `HOME_ROUTE`.
  * - `PUBLIC_ROUTES` are exceptions inside a protected prefix (`[param]` segments supported).
  * - `ONBOARDING_ROUTE` needs a session; with `REQUIRE_ONBOARDING`, signed-in users who haven't
  *   completed it are sent there before any other protected page.
@@ -72,7 +72,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 		// }
 	}
 
-	if (hasPrefix(to.path, ADMIN_PREFIXES) && user.value.role !== "admin") {
+	if (hasPrefix(to.path, ADMIN_PREFIXES) && !isStaffRole(user.value.role)) {
 		return navigateTo(HOME_ROUTE);
 	}
 });
