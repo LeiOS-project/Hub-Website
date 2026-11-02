@@ -48,8 +48,9 @@ export default defineNuxtConfig({
 
 	runtimeConfig: {
 		public: {
-			// Origin of the LeiOS API-Server, without `/v1` (updateAPIClient appends it).
-			apiUrl: process.env.LEIOS_API_URL || "http://localhost:12151",
+			// Full base URL of the LeiOS API-Server, including the version prefix — the client
+			// uses it verbatim.
+			apiUrl: process.env.LEIOS_API_URL || "http://localhost:12151/v1",
 			appUrl: process.env.LEIOS_HUB_APP_URL || "http://localhost:12153",
 		},
 	},

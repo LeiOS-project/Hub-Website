@@ -37,7 +37,8 @@ The code follows the [LeiCraftMC Style Guide](https://git.leicraftmc.de/LeiCraft
 
 2. Environment variables — copy `example.env` to `.env` and adjust as needed:
 
-   - `LEIOS_API_URL` — origin of the LeiOS API-Server, without `/v1` (default `http://localhost:12151`)
+   - `LEIOS_API_URL` — full base URL of the LeiOS API-Server, including the version prefix
+     (default `http://localhost:12151/v1`)
    - `LEIOS_HUB_APP_URL` — public URL of the Hub (default `http://localhost:12153`)
 
    Signup is switched on in the API-Server (`LRA_SIGNUP_ENABLED` plus SMTP); the Hub reads it from
