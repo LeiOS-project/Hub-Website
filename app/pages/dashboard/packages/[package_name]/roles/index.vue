@@ -22,6 +22,9 @@ const toast = useToast();
 
 const fullPackageName = route.params.package_name as string;
 const publisherName = fullPackageName.split(".")[0]!;
+// System packages are read-only: their role overrides cannot change.
+const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
+const isSystemManaged = computed(() => pkgData.value.flags.includes("SYSTEM-MANAGED"));
 
 const roleBadgeColor: Record<string, "info" | "success" | "warning" | "neutral"> = {
 	ADMIN: "info",
@@ -424,7 +427,7 @@ async function onRemoveOverride() {
             </template>
 
             <template #actions-cell="{ row }">
-                <div class="flex gap-1">
+                <div v-if="!isSystemManaged" class="flex gap-1">
                     <template v-if="row.original.override_id">
                         <UButton
                             icon="i-lucide-pencil"

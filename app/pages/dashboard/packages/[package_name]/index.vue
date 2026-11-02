@@ -190,6 +190,7 @@ async function onFormSubmit() {
 
 const deleteConfirmOpen = ref(false);
 
+// System packages are built by the API and read-only (see the [package_name] layout).
 const isSystemManaged = computed(
 	() => !pkg.isNew && (pkg_data.value as DevPackage).flags.includes("SYSTEM-MANAGED"),
 );
@@ -265,6 +266,7 @@ async function onDeletePackage() {
                     class="divide-y divide-slate-800"
                     :schema="package_form_schema"
                     :state="package_form_state"
+                    :disabled="isSystemManaged"
                     @submit="onFormSubmit()"
                 >
                     <UFormField
@@ -351,6 +353,7 @@ async function onDeletePackage() {
                     >
                         <MarkdownEditor
                             v-model="package_form_state.description"
+                            :disabled="isSystemManaged"
                             placeholder="What the package does. The first sentence shows on package cards."
                         />
                     </UFormField>
@@ -386,7 +389,7 @@ async function onDeletePackage() {
                         </div>
                     </UFormField>
 
-                    <div class="pt-4">
+                    <div v-if="!isSystemManaged" class="pt-4">
                         <UButton
                             v-if="!pkg.isNew"
                             label="Save Changes"
@@ -410,7 +413,7 @@ async function onDeletePackage() {
 
         <!-- Danger Zone -->
         <DashboardSectionCard
-            v-if="!pkg.isNew"
+            v-if="!pkg.isNew && !isSystemManaged"
             title="Danger Zone"
             description="Irreversible and destructive actions"
             icon="i-lucide-alert-triangle"
