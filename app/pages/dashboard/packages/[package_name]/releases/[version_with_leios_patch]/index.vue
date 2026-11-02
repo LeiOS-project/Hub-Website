@@ -14,6 +14,8 @@ const pkg_release = useSubrouterInjectedData<DevPackageRelease, NewDevPackageRel
 ).inject();
 const pkg_release_data = pkg_release.data;
 const pkg_release_loading = pkg_release.loading;
+// System packages are built and released by the API itself: no editing, uploads, stable requests.
+const isSystemManaged = computed(() => pkg_data.value.flags.includes("SYSTEM-MANAGED"));
 
 const headerTexts = computed(() => {
 	if (pkg_release.isNew) {
@@ -314,7 +316,7 @@ function onFileChange(arch: Architecture | "all", files: File | File[] | null | 
 
             <div class="p-6">
                 <UForm id="settings" class="divide-y divide-slate-800" :schema="package_release_form_schema"
-                    :state="package_release_form_state" @submit="onFormSubmit()">
+                    :state="package_release_form_state" :disabled="isSystemManaged" @submit="onFormSubmit()">
                     <!-- <UFormField
                         name="name"
                         label="Package Name"
@@ -349,10 +351,10 @@ function onFileChange(arch: Architecture | "all", files: File | File[] | null | 
                             container: 'w-full',
                         }">
                         <MarkdownEditor v-model="package_release_form_state.changelog"
-                            placeholder="What changed in this release? Markdown works too." />
+                            :disabled="isSystemManaged" placeholder="What changed in this release? Markdown works too." />
                     </UFormField>
 
-                    <div class="pt-4">
+                    <div v-if="!isSystemManaged" class="pt-4">
                         <UButton v-if="!pkg_release.isNew" label="Save Changes" color="primary" type="submit"
                             :loading="submitting" icon="i-lucide-save" />
                         <UButton v-else label="Create Package Release" color="primary" type="submit"
@@ -363,7 +365,7 @@ function onFileChange(arch: Architecture | "all", files: File | File[] | null | 
         </div>
 
         <!-- Deb Files Upload Card -->
-        <div v-if="!pkg_release.isNew"
+        <div v-if="!pkg_release.isNew && !isSystemManaged"
             class="rounded-xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-800">
                 <div class="flex items-center gap-3">
@@ -549,7 +551,7 @@ function onFileChange(arch: Architecture | "all", files: File | File[] | null | 
         </div>
 
         <!-- Stable Promotion Card -->
-        <div v-if="!pkg_release.isNew"
+        <div v-if="!pkg_release.isNew && !isSystemManaged"
             class="rounded-xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-800">
                 <div class="flex items-center gap-3">
@@ -619,7 +621,7 @@ function onFileChange(arch: Architecture | "all", files: File | File[] | null | 
 
         <!-- Danger Zone -->
         <DashboardSectionCard
-            v-if="!pkg_release.isNew"
+            v-if="!pkg_release.isNew && !isSystemManaged"
             title="Danger Zone"
             description="Irreversible and destructive actions"
             icon="i-lucide-alert-triangle"

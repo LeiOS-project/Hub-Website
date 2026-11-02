@@ -16,6 +16,12 @@ definePageMeta({
 
 let error = null;
 
+/**
+ * System packages (flag `SYSTEM-MANAGED`, e.g. leios.system.branding-meta-files) are built by the
+ * API and read-only for everyone (the API refuses every change); the pages hide their edit controls.
+ */
+const isSystemManaged = ref(false);
+
 if (package_name === "new") {
 	const data = ref<NewDevPackage>({
 		publisher_id: 0,
@@ -54,6 +60,7 @@ if (package_name === "new") {
 	}
 
 	const data = computed(() => result.value?.data as DevPackage);
+	isSystemManaged.value = Boolean(data.value?.flags.includes("SYSTEM-MANAGED"));
 
 	useSubrouterInjectedData<DevPackage, NewDevPackage>("package", true).provide({
 		data: data,
@@ -293,8 +300,18 @@ const routePathDynamicValues = await useAwaitedComputed(async () => {
 
         <template #body>
 			<div class="flex flex-col gap-4 sm:gap-6 lg:gap-12 w-full">
-				<NuxtPage v-if="!error" />
-                <UError v-else :error="error" />
+				<UError v-if="error" :error="error" />
+				<template v-else>
+					<UAlert
+						v-if="isSystemManaged"
+						color="neutral"
+						variant="subtle"
+						icon="i-lucide-cpu"
+						title="System package: read-only"
+						description="The LeiOS API builds and publishes this package itself, with every testing update and LeiOS release. Nobody can change it here, admins included."
+					/>
+					<NuxtPage />
+				</template>
 			</div>
 		</template>
 

@@ -96,6 +96,16 @@ watch(pageSize, reloadFromFirstPage);
 watch(() => [filters.status, filters.order], reloadFromFirstPage);
 watchDebounced(() => filters.search, reloadFromFirstPage, { debounce: 300 });
 
+// The sidebar links here with and without `?status=queued` (Stable Queue / Requests). Nuxt keeps
+// the page mounted when only the query changes, so the status filter follows the URL.
+watch(
+	() => route.query.status,
+	(status) => {
+		const fromURL = STABLE_STATUS_FILTER_ITEMS.find((i) => i.value === status)?.value ?? "pending";
+		if (fromURL !== filters.status) filters.status = fromURL;
+	},
+);
+
 const EMPTY_TEXTS: Partial<
 	Record<StablePromotionStatus | "all", { title: string; description: string }>
 > = {

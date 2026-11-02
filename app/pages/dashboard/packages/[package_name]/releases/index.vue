@@ -12,6 +12,8 @@ type DevPackage = GetPackagesByFullPackageNameResponses[200]["data"];
 type Release = GetPackagesByFullPackageNameReleasesResponses[200]["data"][number];
 
 const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
+// The API builds the releases of system packages itself.
+const isSystemManaged = computed(() => pkgData.value.flags.includes("SYSTEM-MANAGED"));
 
 const package_releases = await useAPIAsyncData(
 	`/dev/packages/${pkgData.value.fullname}/releases`,
@@ -99,6 +101,7 @@ const STABLE_FILTER_OPTIONS = [
             <template #header-right>
                 <UButton
                     :to="`/dashboard/packages/${pkgData.fullname}/releases/new`"
+                    v-if="!isSystemManaged"
                     label="New Release"
                     icon="i-lucide-plus"
                     color="primary"
@@ -160,6 +163,7 @@ const STABLE_FILTER_OPTIONS = [
             <template #empty-actions>
                 <UButton
                     :to="`/dashboard/packages/${pkgData.fullname}/releases/new`"
+                    v-if="!isSystemManaged"
                     label="New Release"
                     icon="i-lucide-plus"
                     color="primary"

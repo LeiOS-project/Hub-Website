@@ -8,6 +8,18 @@ const user = await userInfoStore.use();
 // Admins and moderators share the moderation area; admin-only actions are hidden on the pages.
 const isStaff = computed(() => isStaffRole(user.value?.role));
 
+const route = useRoute();
+// "Stable Queue" is the request list filtered to `?status=queued`, so path matching would mark
+// both entries active. Only one of them is: the queue for that filter, the requests otherwise.
+const showsStableQueue = computed(
+	() =>
+		route.path === "/dashboard/admin/stable-promotion-requests" && route.query.status === "queued",
+);
+const showsStableRequests = computed(
+	() =>
+		route.path.startsWith("/dashboard/admin/stable-promotion-requests") && !showsStableQueue.value,
+);
+
 const sidebarItems = computed(() => {
 	const devItems: NavigationMenuItem[] = [
 		{
@@ -69,11 +81,13 @@ const sidebarItems = computed(() => {
 			label: "Stable Promotion Requests",
 			icon: "i-lucide-git-pull-request",
 			to: "/dashboard/admin/stable-promotion-requests",
+			active: showsStableRequests.value,
 		},
 		{
 			label: "Stable Queue",
 			icon: "i-lucide-list-ordered",
 			to: "/dashboard/admin/stable-promotion-requests?status=queued",
+			active: showsStableQueue.value,
 		},
 		{
 			label: "OS Releases",
