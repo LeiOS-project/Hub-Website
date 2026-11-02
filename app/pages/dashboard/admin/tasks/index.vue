@@ -1,147 +1,273 @@
 <script setup lang="ts">
-import type { TableColumn } from '#ui/types'
-import type { GetAdminTasksResponses } from '@/api-client/types.gen'
-
-type DevTask = GetAdminTasksResponses[200]['data'][number]
+import type { TableColumn } from "@nuxt/ui";
+import { watchDebounced } from "@vueuse/core";
+import type { AdminListOrder, AdminPage, AdminTask, AdminTaskStatus } from "~/utils/adminTypes";
 
 definePageMeta({
-    layout: 'dashboard'
-})
+	layout: "dashboard",
+});
 
 useSeoMeta({
-    title: 'Tasks | LeiOS Hub',
-    description: 'View scheduled tasks'
-})
+	title: "Tasks | LeiOS Hub",
+	description: "View scheduled tasks",
+});
 
-const toast = useToast()
+const toast = useToast();
+const route = useRoute();
+const router = useRouter();
 
-const taskColumns: TableColumn<DevTask>[] = [
-    { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'status', header: 'Status' },
-    { id: 'created', header: 'Created' },
-    { id: 'finished', header: 'Finished' },
-    { accessorKey: 'message', header: 'Message' }
-]
+/** The API searches from 3 characters on. */
+const MIN_SEARCH_LENGTH = 3;
 
-const { data: tasks, loading, refresh } = await useAPIAsyncData<DevTask[]>(
-    'admin-tasks-list',
-    async () => {
-        const res = await useAPI((api) => api.getAdminTasks({}))
-        if (!res.success) {
-            toast.add({ title: 'Failed to load tasks', description: res.message, color: 'error' })
-            return []
-        }
-        return res.data;
-    }
-)
+const STATUS_ITEMS: { label: string; value: AdminTaskStatus | "all" }[] = [
+	{ label: "All statuses", value: "all" },
+	{ label: "Pending", value: "pending" },
+	{ label: "Running", value: "running" },
+	{ label: "Paused", value: "paused" },
+	{ label: "Completed", value: "completed" },
+	{ label: "Failed", value: "failed" },
+];
 
-function formatDate(timestamp: number | null) {
-    if (!timestamp) return '—';
-    return new Date(timestamp).toLocaleString();
+const ORDER_ITEMS: { label: string; value: AdminListOrder }[] = [
+	{ label: "Newest first", value: "newest" },
+	{ label: "Oldest first", value: "oldest" },
+];
+
+// Initial filters come from the URL so filtered views (e.g. failed tasks) can be linked.
+const filters = reactive({
+	status: STATUS_ITEMS.find((i) => i.value === route.query.status)?.value ?? "all",
+	search: typeof route.query.search === "string" ? route.query.search : "",
+	order: ORDER_ITEMS.find((i) => i.value === route.query.order)?.value ?? "newest",
+});
+
+const effectiveSearch = computed(() => {
+	const search = filters.search.trim();
+	return search.length >= MIN_SEARCH_LENGTH ? search : "";
+});
+const searchTooShort = computed(() => {
+	const length = filters.search.trim().length;
+	return length > 0 && length < MIN_SEARCH_LENGTH;
+});
+
+const page = ref(1);
+const pageSize = ref(25);
+
+const {
+	data: tasksPage,
+	loading,
+	refresh,
+} = await useAPILazyAsyncData<AdminPage<AdminTask>>("admin-tasks-list", async () => {
+	const res = await useAPI((api) =>
+		api.getAdminTasks({
+			query: {
+				status: filters.status === "all" ? undefined : filters.status,
+				searchString: effectiveSearch.value || undefined,
+				order: filters.order,
+				limit: pageSize.value,
+				offset: (page.value - 1) * pageSize.value,
+			},
+		}),
+	);
+
+	if (!res.success) {
+		toast.add({ title: "Failed to load tasks", description: res.message, color: "error" });
+		return { items: [], total: 0 };
+	}
+
+	// The page ran past the end: jump to the last page.
+	if (res.data.items.length === 0 && res.data.total > 0 && page.value > 1) {
+		page.value = Math.ceil(res.data.total / pageSize.value);
+	}
+	return res.data;
+});
+
+function reloadFromFirstPage() {
+	router.replace({
+		query: {
+			status: filters.status === "all" ? undefined : filters.status,
+			search: effectiveSearch.value || undefined,
+			order: filters.order === "newest" ? undefined : filters.order,
+		},
+	});
+
+	if (page.value !== 1) {
+		page.value = 1; // the page watcher reloads
+	} else {
+		refresh();
+	}
 }
 
-function getStatusColor(status: DevTask['status']) {
-    switch (status) {
-        case 'completed': return 'success' as const
-        case 'running': return 'info' as const
-        case 'failed': return 'error' as const
-        case 'paused': return 'warning' as const
-        default: return 'neutral' as const
-    }
+watch(page, () => refresh());
+watch(pageSize, reloadFromFirstPage);
+watch(() => [filters.status, filters.order], reloadFromFirstPage);
+// Only reload when the effective search changes (typing the first two characters does nothing).
+watchDebounced(effectiveSearch, reloadFromFirstPage, { debounce: 300 });
+
+const hasActiveFilters = computed(
+	() => filters.status !== "all" || filters.search.trim() !== "" || filters.order !== "newest",
+);
+
+function resetFilters() {
+	filters.status = "all";
+	filters.search = "";
+	filters.order = "newest";
 }
 
-function getStatusIcon(status: DevTask['status']) {
-    switch (status) {
-        case 'completed': return 'i-lucide-check-circle'
-        case 'running': return 'i-lucide-loader'
-        case 'failed': return 'i-lucide-x-circle'
-        case 'paused': return 'i-lucide-pause-circle'
-        default: return 'i-lucide-clock'
-    }
+const columns: TableColumn<AdminTask>[] = [
+	{ accessorKey: "id", header: "ID" },
+	{ accessorKey: "status", header: "Status" },
+	{ accessorKey: "message", header: "Message" },
+	{ accessorKey: "created_at", header: "Created" },
+	{ accessorKey: "finished_at", header: "Finished" },
+	{ id: "duration", header: "Duration" },
+	{ id: "actions", header: "", enableSorting: false, enableHiding: false },
+];
+
+function duration(task: AdminTask) {
+	if (!task.finished_at) return "—";
+	return formatDuration(Math.max(0, Math.round((task.finished_at - task.created_at) / 1000)));
 }
-
-const taskStatusOptions = [
-    { label: 'Pending', value: 'pending' },
-    { label: 'Running', value: 'running' },
-    { label: 'Paused', value: 'paused' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'Failed', value: 'failed' },
-]
-
 </script>
 
 <template>
-    <UDashboardPanel>
-        <template #header>
-            <DashboardPageHeader
-                title="Tasks"
-                icon="i-lucide-list-checks"
-                description="View scheduled tasks"
-            />
-        </template>
+	<UDashboardPanel>
+		<template #header>
+			<DashboardPageHeader
+				title="Tasks"
+				icon="i-lucide-list-checks"
+				description="View scheduled tasks"
+			/>
+		</template>
 
-        <template #body>
-            <DashboardPageBody>
+		<template #body>
+			<DashboardPageBody>
+				<DashboardDataTable
+					:data="tasksPage?.items ?? []"
+					:columns="columns"
+					:loading="loading"
+					:default-page-size="100"
+					:empty-title="hasActiveFilters ? 'No matching tasks' : 'No tasks'"
+					:empty-description="
+						hasActiveFilters
+							? 'Try other filters.'
+							: 'Tasks appear here when releases are uploaded or OS releases are published.'
+					"
+					empty-icon="i-lucide-clipboard-list"
+					@refresh="refresh()"
+				>
+					<template #header-left>
+						<USelect
+							v-model="filters.status"
+							:items="STATUS_ITEMS"
+							icon="i-lucide-filter"
+							class="w-full sm:w-auto sm:min-w-40"
+						/>
+						<UInput
+							v-model="filters.search"
+							icon="i-lucide-search"
+							placeholder="Search task type or message..."
+							:color="searchTooShort ? 'warning' : 'primary'"
+							:highlight="searchTooShort"
+							class="w-full sm:w-auto sm:min-w-64"
+						/>
+						<span v-if="searchTooShort" class="text-xs text-amber-400">
+							Type at least {{ MIN_SEARCH_LENGTH }} characters
+						</span>
+						<USelect
+							v-model="filters.order"
+							:items="ORDER_ITEMS"
+							class="w-full sm:w-auto sm:min-w-36"
+						/>
+						<UButton
+							v-if="hasActiveFilters"
+							label="Reset"
+							icon="i-lucide-x"
+							color="neutral"
+							variant="ghost"
+							@click="resetFilters();"
+						/>
+					</template>
 
-                <DashboardDataTable
-                    :data="tasks"
-                    :columns="taskColumns"
-                    :loading="loading"
-                    :filters="[
-                        /*{
-                            column: 'message',
-                            type: 'text',
-                            placeholder: 'Search messages...',
-                            icon: 'i-lucide-search',
-                        },*/
-                        {
-                            column: 'status',
-                            type: 'multi-select',
-                            placeholder: 'All Statuses',
-                            icon: 'i-lucide-filter',
-                            options: taskStatusOptions,
-                        },
-                    ]"
-                    empty-title="No tasks"
-                    empty-description="Tasks will appear here when you upload releases or perform other operations."
-                    empty-icon="i-lucide-clipboard-list"
-                    @refresh="refresh()"
-                >
-                    <template #id-cell="{ row }">
-                        <span class="font-mono text-sm">#{{ row.original.id }}</span>
-                    </template>
+					<template #id-cell="{ row }">
+						<NuxtLink
+							:to="`/dashboard/admin/tasks/${row.original.id}`"
+							class="font-mono text-sm text-primary-400 hover:underline"
+						>
+							#{{ row.original.id }}
+						</NuxtLink>
+					</template>
 
-                    <template #status-cell="{ row }">
-                        <UBadge :color="getStatusColor(row.original.status)" variant="soft">
-                            <UIcon
-                                :name="getStatusIcon(row.original.status)"
-                                :class="{ 'animate-spin': row.original.status === 'running' }"
-                                class="mr-1"
-                            />
-                            {{ row.original.status }}
-                        </UBadge>
-                    </template>
+					<template #status-cell="{ row }">
+						<AdminStatusBadge :status="row.original.status" />
+					</template>
 
-                    <template #created-cell="{ row }">
-                        <span class="text-sm text-slate-400">
-                            {{ formatDate(row.original.created_at) }}
-                        </span>
-                    </template>
+					<template #message-cell="{ row }">
+						<span class="line-clamp-1 max-w-md text-slate-400">
+							{{ row.original.message || "—" }}
+						</span>
+					</template>
 
-                    <template #finished-cell="{ row }">
-                        <span class="text-sm text-slate-400">
-                            {{ formatDate(row.original.finished_at) }}
-                        </span>
-                    </template>
+					<template #created_at-cell="{ row }">
+						<span class="whitespace-nowrap text-sm text-slate-400">
+							{{ formatDate(row.original.created_at) }}
+						</span>
+					</template>
 
-                    <template #message-cell="{ row }">
-                        <span class="text-slate-400 line-clamp-1 max-w-xs">
-                            {{ row.original.message || '—' }}
-                        </span>
-                    </template>
+					<template #finished_at-cell="{ row }">
+						<span class="whitespace-nowrap text-sm text-slate-400">
+							{{ formatDate(row.original.finished_at) }}
+						</span>
+					</template>
 
-                </DashboardDataTable>
-            </DashboardPageBody>
-        </template>
-    </UDashboardPanel>
+					<template #duration-cell="{ row }">
+						<span class="font-mono text-sm text-slate-400">{{ duration(row.original) }}</span>
+					</template>
+
+					<template #actions-cell="{ row }">
+						<div class="flex items-center justify-end gap-1">
+							<UTooltip v-if="row.original.storeLogs" text="Has logs">
+								<UIcon name="i-lucide-file-text" class="size-4 text-slate-500" />
+							</UTooltip>
+							<UButton
+								:to="`/dashboard/admin/tasks/${row.original.id}`"
+								icon="i-lucide-eye"
+								color="neutral"
+								variant="ghost"
+								size="xs"
+								aria-label="Open task"
+							/>
+						</div>
+					</template>
+
+					<template #empty-actions>
+						<UButton
+							v-if="hasActiveFilters"
+							label="Reset filters"
+							color="neutral"
+							variant="subtle"
+							@click="resetFilters();"
+						/>
+					</template>
+
+					<template #footer-left>
+						<AdminPageSizeSelect
+							v-model:page-size="pageSize"
+							:page="page"
+							:total="tasksPage?.total ?? 0"
+						/>
+					</template>
+
+					<template #footer-right>
+						<UPagination
+							v-model:page="page"
+							:total="tasksPage?.total ?? 0"
+							:items-per-page="pageSize"
+							:sibling-count="1"
+							show-edges
+						/>
+					</template>
+				</DashboardDataTable>
+			</DashboardPageBody>
+		</template>
+	</UDashboardPanel>
 </template>

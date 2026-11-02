@@ -1,303 +1,309 @@
 <script setup lang="ts">
 import type z from "zod";
-import type { ListReleaseStablePromotionRequestsResponses } from '~/api-client';
+import type { ListReleaseStablePromotionRequestsResponses } from "~/api-client";
 import { zPostPackagesByFullPackageNameReleasesBody } from "~/api-client/zod.gen";
-import DashboardDeleteModal from "~/components/dashboard/DashboardDeleteModal.vue";
 
 const route = useRoute();
 const toast = useToast();
 
 const pkg_data = useSubrouterInjectedData<DevPackage>("package").inject().data;
-const pkg_release = useSubrouterInjectedData<
-    DevPackageRelease,
-    NewDevPackageRelease
->("package_release", true).inject();
+const pkg_release = useSubrouterInjectedData<DevPackageRelease, NewDevPackageRelease>(
+	"package_release",
+	true,
+).inject();
 const pkg_release_data = pkg_release.data;
 const pkg_release_loading = pkg_release.loading;
 
 const headerTexts = computed(() => {
-    if (pkg_release.isNew) {
-        return {
-            title: "Create New Package Release",
-            description: `Create a new package release for the package ${pkg_data.value.name}.`,
-        };
-    }
-    return {
-        title: `Package Release: ${pkg_release_data.value.version_with_leios_patch}`,
-        description: "View and manage the details of the package.",
-    };
+	if (pkg_release.isNew) {
+		return {
+			title: "Create New Package Release",
+			description: `Create a new package release for the package ${pkg_data.value.name}.`,
+		};
+	}
+	return {
+		title: `Package Release: ${pkg_release_data.value.version_with_leios_patch}`,
+		description: "View and manage the details of the package.",
+	};
 });
 
-type StablePromotionRequest = ListReleaseStablePromotionRequestsResponses[200]['data'][number];
+type StablePromotionRequest = ListReleaseStablePromotionRequestsResponses[200]["data"][number];
 
-const { data: stablePromotionRequestData } = await useAPILazyAsyncData<StablePromotionRequest | null>(
-    `release-stable-promotion-request:${pkg_data.value.fullname}:${pkg_release_data.value.version_with_leios_patch}`,
-    async () => {
-        const res = await useAPI((api) => api.listReleaseStablePromotionRequests({
-            path: {
-                fullPackageName: pkg_data.value.fullname,
-                version_with_leios_patch: pkg_release_data.value.version_with_leios_patch
-            }
-        }));
+const { data: stablePromotionRequestData } =
+	await useAPILazyAsyncData<StablePromotionRequest | null>(
+		`release-stable-promotion-request:${pkg_data.value.fullname}:${pkg_release_data.value.version_with_leios_patch}`,
+		async () => {
+			const res = await useAPI((api) =>
+				api.listReleaseStablePromotionRequests({
+					path: {
+						fullPackageName: pkg_data.value.fullname,
+						version_with_leios_patch: pkg_release_data.value.version_with_leios_patch,
+					},
+				}),
+			);
 
-        if (!res.success) return null;
-        return res.data[0] ?? null;
-    }
-);
+			if (!res.success) return null;
+			return res.data[0] ?? null;
+		},
+	);
 
 const stablePromotionRequest = computed(() => stablePromotionRequestData.value);
 
 const hasUploadedPackage = computed(() => {
-    const arch = (pkg_release_data.value as DevPackageRelease)?.architectures || {};
-    return arch.amd64 || arch.arm64 || arch.is_all;
+	const arch = (pkg_release_data.value as DevPackageRelease)?.architectures || {};
+	return arch.amd64 || arch.arm64 || arch.is_all;
 });
 
-const package_release_form_schema =
-    zPostPackagesByFullPackageNameReleasesBody;
+const package_release_form_schema = zPostPackagesByFullPackageNameReleasesBody;
 const package_release_form_state = ref<NewDevPackageRelease>({
-    version_with_leios_patch: pkg_release_data.value.version_with_leios_patch,
-    changelog: pkg_release_data.value.changelog,
+	version_with_leios_patch: pkg_release_data.value.version_with_leios_patch,
+	changelog: pkg_release_data.value.changelog,
 });
 
 const submitting = ref(false);
 
 async function onFormSubmit() {
-    submitting.value = true;
-    try {
-        if (pkg_release.isNew) {
-            const result = await useAPI((api) =>
-                api.postPackagesByFullPackageNameReleases({
-                    path: {
-                        fullPackageName: pkg_data.value.fullname,
-                    },
-                    body: package_release_form_state.value,
-                })
-            );
+	submitting.value = true;
+	try {
+		if (pkg_release.isNew) {
+			const result = await useAPI((api) =>
+				api.postPackagesByFullPackageNameReleases({
+					path: {
+						fullPackageName: pkg_data.value.fullname,
+					},
+					body: package_release_form_state.value,
+				}),
+			);
 
-            if (result.success) {
-                toast.add({
-                    title: "Package Release created",
-                    description: `The Package Release has been successfully created.`,
-                    icon: "i-lucide-check",
-                    color: "success",
-                });
+			if (result.success) {
+				toast.add({
+					title: "Package Release created",
+					description: `The Package Release has been successfully created.`,
+					icon: "i-lucide-check",
+					color: "success",
+				});
 
-                // Redirect to the new package page
-                await navigateTo(
-                    `/dashboard/packages/${pkg_data.value.fullname}/releases/${package_release_form_state.value.version_with_leios_patch}`
-                );
-            } else {
-                throw new Error(
-                    result.message || "Failed to create package release"
-                );
-            }
-        } else {
-            const result = await useAPI((api) =>
-                api.putPackagesByFullPackageNameReleasesByVersionWithLeiosPatch({
-                    path: {
-                        fullPackageName: pkg_data.value.fullname,
-                        version_with_leios_patch:
-                            pkg_release_data.value.version_with_leios_patch,
-                    },
-                    body: {
-                        changelog: package_release_form_state.value.changelog,
-                    },
-                })
-            );
+				// Redirect to the new package page
+				await navigateTo(
+					`/dashboard/packages/${pkg_data.value.fullname}/releases/${package_release_form_state.value.version_with_leios_patch}`,
+				);
+			} else {
+				throw new Error(result.message || "Failed to create package release");
+			}
+		} else {
+			const result = await useAPI((api) =>
+				api.putPackagesByFullPackageNameReleasesByVersionWithLeiosPatch({
+					path: {
+						fullPackageName: pkg_data.value.fullname,
+						version_with_leios_patch: pkg_release_data.value.version_with_leios_patch,
+					},
+					body: {
+						changelog: package_release_form_state.value.changelog,
+					},
+				}),
+			);
 
-            if (result.success) {
-                pkg_release_data.value.changelog =
-                    package_release_form_state.value.changelog;
+			if (result.success) {
+				pkg_release_data.value.changelog = package_release_form_state.value.changelog;
 
-                toast.add({
-                    title: "Package Release updated",
-                    description: `The Package has been successfully updated.`,
-                    icon: "i-lucide-check",
-                    color: "success",
-                });
-            } else {
-                throw new Error(
-                    result.message || "Failed to update package release"
-                );
-            }
-        }
-    } catch (error: any) {
-        toast.add({
-            title: "Error",
-            description: error.message || "An unexpected error occurred.",
-            icon: "i-lucide-x-circle",
-            color: "error",
-        });
-    } finally {
-        submitting.value = false;
-    }
+				toast.add({
+					title: "Package Release updated",
+					description: `The Package has been successfully updated.`,
+					icon: "i-lucide-check",
+					color: "success",
+				});
+			} else {
+				throw new Error(result.message || "Failed to update package release");
+			}
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	} finally {
+		submitting.value = false;
+	}
 }
 
 const deleteConfirmOpen = ref(false);
 
-async function onDeletePackage() {
+async function onDeleteRelease() {
+	const fullname = pkg_data.value.fullname;
+	const version = (pkg_release_data.value as DevPackageRelease).version_with_leios_patch;
 
-    toast.add({
-        title: "Package release deletion is not yet implemented.",
-        description: "This feature is coming soon.",
-        icon: "i-lucide-info",
-        color: "info",
-    });
+	const res = await useAPI((api) =>
+		api.deletePackagesByFullPackageNameReleasesByVersionWithLeiosPatch({
+			path: { fullPackageName: fullname, version_with_leios_patch: version },
+		}),
+	);
 
-    deleteConfirmOpen.value = false;
+	if (!res.success) {
+		toast.add({
+			title: "Failed to delete release",
+			description: res.message,
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(res.message);
+	}
+
+	toast.add({
+		title: "Release deleted",
+		description: `${fullname} ${version} was removed from every repository.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	await navigateTo(`/dashboard/packages/${fullname}/releases`);
 }
 
-function getStatusColor(status: StablePromotionRequest['status']) {
-    switch (status) {
-        case 'approved': return 'success';
-        case 'denied': return 'error';
-        case 'pending': return 'warning';
-        default: return 'neutral';
-    }
+function getStatusColor(status: StablePromotionRequest["status"]) {
+	switch (status) {
+		case "approved":
+			return "success";
+		case "denied":
+			return "error";
+		case "pending":
+			return "warning";
+		default:
+			return "neutral";
+	}
 }
 
-function getStatusIcon(status: StablePromotionRequest['status']) {
-    switch (status) {
-        case 'approved': return 'i-lucide-check-circle';
-        case 'denied': return 'i-lucide-x-circle';
-        case 'pending': return 'i-lucide-clock';
-        default: return 'i-lucide-help-circle';
-    }
+function getStatusIcon(status: StablePromotionRequest["status"]) {
+	switch (status) {
+		case "approved":
+			return "i-lucide-check-circle";
+		case "denied":
+			return "i-lucide-x-circle";
+		case "pending":
+			return "i-lucide-clock";
+		default:
+			return "i-lucide-help-circle";
+	}
 }
 
 // Architecture types
 type Architecture = "amd64" | "arm64";
 
 const architecturesLists: { key: Architecture | "all"; label: string; icon: string }[] = [
-    {
-        key: "amd64",
-        label: "AMD64 (x86_64)",
-        icon: "i-lucide-cpu"
-    },
-    {
-        key: "arm64",
-        label: "ARM64 (aarch64)",
-        icon: "i-lucide-circuit-board",
-    },
-    {
-        key: "all",
-        label: "Universal (All Architectures)",
-        icon: "i-lucide-globe",
-    }
+	{
+		key: "amd64",
+		label: "AMD64 (x86_64)",
+		icon: "i-lucide-cpu",
+	},
+	{
+		key: "arm64",
+		label: "ARM64 (aarch64)",
+		icon: "i-lucide-circuit-board",
+	},
+	{
+		key: "all",
+		label: "Universal (All Architectures)",
+		icon: "i-lucide-globe",
+	},
 ];
 
 // Computed to check which architectures already have uploads
 const uploadedArchitectures = computed(() => {
+	const data = pkg_release_data.value as DevPackageRelease;
 
-    const data = pkg_release_data.value as DevPackageRelease;
+	if (pkg_release.isNew)
+		return {
+			amd64: false,
+			arm64: false,
+			all: false,
+		};
 
-    if (pkg_release.isNew) return {
-        amd64: false,
-        arm64: false,
-        all: false
-    };
-
-    return {
-        amd64: !!data.architectures["amd64"],
-        arm64: !!data.architectures["arm64"],
-        all: !!data.architectures["is_all"]
-    };
+	return {
+		amd64: !!data.architectures["amd64"],
+		arm64: !!data.architectures["arm64"],
+		all: !!data.architectures["is_all"],
+	};
 });
 
 type UploadState = {
-    file: File | null;
-    uploading: boolean;
-    dragOver: boolean;
+	file: File | null;
+	uploading: boolean;
+	dragOver: boolean;
 };
 
 // File upload state per architecture
 const uploadStates = reactive<Record<Architecture | "all", UploadState>>({
-    amd64: { file: null, uploading: false, dragOver: false },
-    arm64: { file: null, uploading: false, dragOver: false },
-    all: { file: null, uploading: false, dragOver: false }
+	amd64: { file: null, uploading: false, dragOver: false },
+	arm64: { file: null, uploading: false, dragOver: false },
+	all: { file: null, uploading: false, dragOver: false },
 });
 
 async function uploadDebFile(arch: Architecture | "all") {
-    const file = uploadStates[arch].file;
-    if (!file) return;
+	const file = uploadStates[arch].file;
+	if (!file) return;
 
-    uploadStates[arch].uploading = true;
+	uploadStates[arch].uploading = true;
 
-    try {
-        const result = await useAPI((api) =>
-            api.postPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArch({
-                path: {
-                    fullPackageName: pkg_data.value.fullname,
-                    version_with_leios_patch:
-                        pkg_release_data.value.version_with_leios_patch,
-                    arch: arch,
-                },
-                body: {
-                    file: file,
-                },
-            })
-        );
+	try {
+		const result = await useAPI((api) =>
+			api.postPackagesByFullPackageNameReleasesByVersionWithLeiosPatchByArch({
+				path: {
+					fullPackageName: pkg_data.value.fullname,
+					version_with_leios_patch: pkg_release_data.value.version_with_leios_patch,
+					arch: arch,
+				},
+				body: {
+					file: file,
+				},
+			}),
+		);
 
-        if (result.success) {
+		if (result.success) {
+			uploadStates[arch].file = null;
 
-            uploadStates[arch].file = null;
+			toast.add({
+				title: "Upload successful",
+				description: `The .deb file for ${arch} has been uploaded successfully.`,
+				icon: "i-lucide-check-circle",
+				color: "success",
+			});
 
-            toast.add({
-                title: "Upload successful",
-                description: `The .deb file for ${arch} has been uploaded successfully.`,
-                icon: "i-lucide-check-circle",
-                color: "success",
-            });
-
-            await pkg_release.refresh();
-
-        } else {
-            throw new Error(result.message || "Failed to upload file");
-        }
-    } catch (error: any) {
-        toast.add({
-            title: "Upload failed",
-            description:
-                error.message || "An unexpected error occurred during upload.",
-            icon: "i-lucide-x-circle",
-            color: "error",
-        });
-    } finally {
-        uploadStates[arch].uploading = false;
-    }
+			await pkg_release.refresh();
+		} else {
+			throw new Error(result.message || "Failed to upload file");
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Upload failed",
+			description: error.message || "An unexpected error occurred during upload.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	} finally {
+		uploadStates[arch].uploading = false;
+	}
 }
 
-function onFileChange(
-    arch: Architecture | "all",
-    files: File | File[] | null | undefined
-) {
-    if (!files) {
-        uploadStates[arch].file = null;
-        return;
-    }
+function onFileChange(arch: Architecture | "all", files: File | File[] | null | undefined) {
+	if (!files) {
+		uploadStates[arch].file = null;
+		return;
+	}
 
-    const file = Array.isArray(files) ? files[0] : files;
+	const file = Array.isArray(files) ? files[0] : files;
 
-    if (file && !file.name.endsWith(".deb")) {
-        toast.add({
-            title: "Invalid file type",
-            description: "Please select a .deb file.",
-            icon: "i-lucide-alert-circle",
-            color: "warning",
-        });
-        uploadStates[arch].file = null;
-        return;
-    }
+	if (file && !file.name.endsWith(".deb")) {
+		toast.add({
+			title: "Invalid file type",
+			description: "Please select a .deb file.",
+			icon: "i-lucide-alert-circle",
+			color: "warning",
+		});
+		uploadStates[arch].file = null;
+		return;
+	}
 
-    uploadStates[arch].file = file || null;
-}
-
-function formatFileSize(bytes: number): string {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+	uploadStates[arch].file = file || null;
 }
 </script>
 
@@ -635,48 +641,36 @@ function formatFileSize(bytes: number): string {
             </div>
         </div>
 
-        <!-- Danger Zone Card -->
-        <div v-if="!pkg_release.isNew"
-            class="rounded-xl border border-red-900/50 bg-red-950/20 backdrop-blur-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-red-900/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                        <UIcon name="i-lucide-alert-triangle" class="w-5 h-5 text-red-400" />
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-red-400">Danger Zone</h3>
-                        <p class="text-sm text-slate-400">
-                            Irreversible and destructive actions
-                        </p>
-                    </div>
+        <!-- Danger Zone -->
+        <DashboardSectionCard
+            v-if="!pkg_release.isNew"
+            title="Danger Zone"
+            description="Irreversible and destructive actions"
+            icon="i-lucide-alert-triangle"
+            tone="danger"
+        >
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex-1">
+                    <h4 class="font-medium text-white">
+                        Delete Package Release
+                    </h4>
+                    <p class="text-sm text-slate-400 mt-1">
+                        Permanently delete this release, its stable promotion request and its
+                        files in the archive, testing and stable repositories.
+                    </p>
                 </div>
+                <UButton label="Delete Package Release" color="error" variant="soft" icon="i-lucide-trash-2"
+                    @click="deleteConfirmOpen = true;" />
             </div>
-
-            <div class="p-6">
-                <div class="flex flex-col md:flex-row md:items-center gap-4">
-                    <div class="flex-1">
-                        <h4 class="font-medium text-white">
-                            Delete Package Release
-                        </h4>
-                        <p class="text-sm text-slate-400 mt-1">
-                            Permanently delete this package release and all
-                            associated data. This action cannot be undone.
-                        </p>
-                    </div>
-                    <UButton label="Delete Package Release" color="error" variant="soft" icon="i-lucide-trash-2"
-                        @click="deleteConfirmOpen = true;" />
-                </div>
-            </div>
-        </div>
+        </DashboardSectionCard>
 
         <!-- Delete Confirmation Modal -->
         <DashboardDeleteModal
             v-if="!pkg_release.isNew"
             title="Delete Package Release"
-            warning-text="All data associated with this package release and related information will be permanently deleted. This action cannot be reversed."
+            warning-text="The release and its files in every repository will be permanently deleted. If it is the current testing or stable version, that architecture has no version until a newer release is uploaded or promoted."
             v-model:open="deleteConfirmOpen"
-            :onDelete="onDeletePackage"
-            :prevent-auto-close=true
+            :on-delete="onDeleteRelease"
         />
     </div>
 </template>

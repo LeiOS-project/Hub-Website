@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { TableColumn } from '#ui/types'
-import type { Publisher, PublisherMember } from '~/utils/types'
+import type { TableColumn } from "#ui/types";
+import type { Publisher, PublisherMember } from "~/utils/types";
 
 definePageMeta({
-    layout: 'dashboard'
+	layout: "dashboard",
 });
 
 const route = useRoute();
@@ -11,200 +11,210 @@ const toast = useToast();
 
 const publisherName = route.params.publisherName as string;
 
-const roleBadgeColor: Record<string, 'info' | 'success' | 'warning' | 'neutral'> = {
-    ADMIN: 'info',
-    MAINTAINER: 'success',
-    DEVELOPER: 'warning',
-    VIEWER: 'neutral',
+const roleBadgeColor: Record<string, "info" | "success" | "warning" | "neutral"> = {
+	ADMIN: "info",
+	MAINTAINER: "success",
+	DEVELOPER: "warning",
+	VIEWER: "neutral",
 };
 
 const roleOptions = [
-    { label: 'ADMIN', value: 'ADMIN' },
-    { label: 'MAINTAINER', value: 'MAINTAINER' },
-    { label: 'DEVELOPER', value: 'DEVELOPER' },
-    { label: 'VIEWER', value: 'VIEWER' },
+	{ label: "ADMIN", value: "ADMIN" },
+	{ label: "MAINTAINER", value: "MAINTAINER" },
+	{ label: "DEVELOPER", value: "DEVELOPER" },
+	{ label: "VIEWER", value: "VIEWER" },
 ];
 
 const membersTableColumns: TableColumn<PublisherMember>[] = [
-    { accessorKey: 'user_username', header: 'Username' },
-    { accessorKey: 'user_display_name', header: 'Display Name' },
-    { accessorKey: 'role', header: 'Role' },
-    { accessorKey: 'added_at', header: 'Added At' },
-    { accessorKey: 'actions', header: '', enableSorting: false, enableHiding: false }
+	{ accessorKey: "user_username", header: "Username" },
+	{ accessorKey: "user_display_name", header: "Display Name" },
+	{ accessorKey: "role", header: "Role" },
+	{ accessorKey: "added_at", header: "Added At" },
+	{ accessorKey: "actions", header: "", enableSorting: false, enableHiding: false },
 ];
 
 const members = await useAPILazyAsyncData<PublisherMember[]>(
-    `/publishers/${publisherName}/members`,
-    async () => {
-        const res = await useAPI((api) => api.getPublishersByPublisherNameMembers({
-            path: { publisherName }
-        }));
-        if (!res.success) {
-            toast.add({ title: 'Failed to load members', description: res.message, color: 'error' });
-            return [];
-        }
-        return res.data;
-    }
+	`/publishers/${publisherName}/members`,
+	async () => {
+		const res = await useAPI((api) =>
+			api.getPublishersByPublisherNameMembers({
+				path: { publisherName },
+			}),
+		);
+		if (!res.success) {
+			toast.add({ title: "Failed to load members", description: res.message, color: "error" });
+			return [];
+		}
+		return res.data;
+	},
 );
 
 // --- Add Member ---
 const showAddModal = ref(false);
 const addMemberState = reactive({
-    user_id: 0 as number,
-    role: 'MAINTAINER' as 'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER',
+	user_id: 0 as number,
+	role: "MAINTAINER" as "ADMIN" | "MAINTAINER" | "DEVELOPER" | "VIEWER",
 });
 const addSubmitting = ref(false);
 
 // --- User Search ---
-const userSearchQuery = ref('');
+const userSearchQuery = ref("");
 const searchResults = ref<Array<{ id: number; username: string; display_name: string | null }>>([]);
 const searchLoading = ref(false);
-const selectedUser = ref<{ id: number; username: string; display_name: string | null } | null>(null);
+const selectedUser = ref<{ id: number; username: string; display_name: string | null } | null>(
+	null,
+);
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
 function onUserSearchInput(value: string) {
-    userSearchQuery.value = value;
-    selectedUser.value = null;
-    addMemberState.user_id = 0;
+	userSearchQuery.value = value;
+	selectedUser.value = null;
+	addMemberState.user_id = 0;
 
-    if (searchTimeout) clearTimeout(searchTimeout);
+	if (searchTimeout) clearTimeout(searchTimeout);
 
-    if (value.length < 2) {
-        searchResults.value = [];
-        return;
-    }
+	if (value.length < 2) {
+		searchResults.value = [];
+		return;
+	}
 
-    searchTimeout = setTimeout(async () => {
-        searchLoading.value = true;
-        try {
-            const res = await useAPI((api) => api.getUsersSearch({
-                query: { q: value, limit: 10 }
-            }));
-            if (res.success) {
-                searchResults.value = res.data ?? [];
-            } else {
-                searchResults.value = [];
-            }
-        } catch {
-            searchResults.value = [];
-        } finally {
-            searchLoading.value = false;
-        }
-    }, 300);
+	searchTimeout = setTimeout(async () => {
+		searchLoading.value = true;
+		try {
+			const res = await useAPI((api) =>
+				api.getUsersSearch({
+					query: { q: value, limit: 10 },
+				}),
+			);
+			if (res.success) {
+				searchResults.value = res.data ?? [];
+			} else {
+				searchResults.value = [];
+			}
+		} catch {
+			searchResults.value = [];
+		} finally {
+			searchLoading.value = false;
+		}
+	}, 300);
 }
 
 function selectUser(user: { id: number; username: string; display_name: string | null }) {
-    selectedUser.value = user;
-    addMemberState.user_id = user.id;
-    userSearchQuery.value = user.display_name || user.username;
-    searchResults.value = [];
+	selectedUser.value = user;
+	addMemberState.user_id = user.id;
+	userSearchQuery.value = user.display_name || user.username;
+	searchResults.value = [];
 }
 
 function resetAddMemberForm() {
-    showAddModal.value = false;
-    addMemberState.user_id = 0;
-    addMemberState.role = 'MAINTAINER';
-    userSearchQuery.value = '';
-    searchResults.value = [];
-    selectedUser.value = null;
+	showAddModal.value = false;
+	addMemberState.user_id = 0;
+	addMemberState.role = "MAINTAINER";
+	userSearchQuery.value = "";
+	searchResults.value = [];
+	selectedUser.value = null;
 }
 
 async function onAddMember() {
-    if (!addMemberState.user_id) {
-        toast.add({ title: 'Error', description: 'Please select a user.', color: 'error' });
-        return;
-    }
+	if (!addMemberState.user_id) {
+		toast.add({ title: "Error", description: "Please select a user.", color: "error" });
+		return;
+	}
 
-    addSubmitting.value = true;
-    try {
-        const res = await useAPI((api) => api.postPublishersByPublisherNameMembers({
-            path: { publisherName },
-            body: {
-                user_id: addMemberState.user_id,
-                role: addMemberState.role,
-            }
-        }));
+	addSubmitting.value = true;
+	try {
+		const res = await useAPI((api) =>
+			api.postPublishersByPublisherNameMembers({
+				path: { publisherName },
+				body: {
+					user_id: addMemberState.user_id,
+					role: addMemberState.role,
+				},
+			}),
+		);
 
-        if (res.success) {
-            toast.add({
-                title: 'Member added',
-                description: 'The member has been added successfully.',
-                icon: 'i-lucide-check',
-                color: 'success',
-            });
-            resetAddMemberForm();
-            await members.refresh();
-        } else {
-            throw new Error(res.message || 'Failed to add member');
-        }
-    } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error',
-        });
-    } finally {
-        addSubmitting.value = false;
-    }
+		if (res.success) {
+			toast.add({
+				title: "Member added",
+				description: "The member has been added successfully.",
+				icon: "i-lucide-check",
+				color: "success",
+			});
+			resetAddMemberForm();
+			await members.refresh();
+		} else {
+			throw new Error(res.message || "Failed to add member");
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	} finally {
+		addSubmitting.value = false;
+	}
 }
 
 // --- Edit Member Role ---
 const showEditModal = ref(false);
 const editMember = ref<{ id: number; userId: number; role: string; username: string } | null>(null);
-const editRole = ref<'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER'>('MAINTAINER');
+const editRole = ref<"ADMIN" | "MAINTAINER" | "DEVELOPER" | "VIEWER">("MAINTAINER");
 const editSubmitting = ref(false);
 
 function openEditRole(member: PublisherMember) {
-    editMember.value = {
-        id: member.id,
-        userId: member.user_id,
-        role: member.role,
-        username: member.user_username,
-    };
-    editRole.value = member.role as 'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER';
-    showEditModal.value = true;
+	editMember.value = {
+		id: member.id,
+		userId: member.user_id,
+		role: member.role,
+		username: member.user_username,
+	};
+	editRole.value = member.role as "ADMIN" | "MAINTAINER" | "DEVELOPER" | "VIEWER";
+	showEditModal.value = true;
 }
 
 async function onEditMemberRole() {
-    if (!editMember.value) return;
-    const target = editMember.value;
+	if (!editMember.value) return;
+	const target = editMember.value;
 
-    editSubmitting.value = true;
-    try {
-        const res = await useAPI((api) => api.putPublishersByPublisherNameMembersByUserId({
-            path: {
-                publisherName,
-                userId: target.userId,
-            },
-            body: {
-                role: editRole.value,
-            }
-        }));
+	editSubmitting.value = true;
+	try {
+		const res = await useAPI((api) =>
+			api.putPublishersByPublisherNameMembersByUserId({
+				path: {
+					publisherName,
+					userId: target.userId,
+				},
+				body: {
+					role: editRole.value,
+				},
+			}),
+		);
 
-        if (res.success) {
-            toast.add({
-                title: 'Role updated',
-                description: `Member's role has been updated to ${editRole.value}.`,
-                icon: 'i-lucide-check',
-                color: 'success',
-            });
-            showEditModal.value = false;
-            editMember.value = null;
-            await members.refresh();
-        } else {
-            throw new Error(res.message || 'Failed to update member role');
-        }
-    } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error',
-        });
-    } finally {
-        editSubmitting.value = false;
-    }
+		if (res.success) {
+			toast.add({
+				title: "Role updated",
+				description: `Member's role has been updated to ${editRole.value}.`,
+				icon: "i-lucide-check",
+				color: "success",
+			});
+			showEditModal.value = false;
+			editMember.value = null;
+			await members.refresh();
+		} else {
+			throw new Error(res.message || "Failed to update member role");
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	} finally {
+		editSubmitting.value = false;
+	}
 }
 
 // --- Remove Member ---
@@ -212,43 +222,42 @@ const deleteConfirmOpen = ref(false);
 const deleteTarget = ref<{ userId: number; username: string } | null>(null);
 
 function openDeleteMember(member: PublisherMember) {
-    deleteTarget.value = { userId: member.user_id, username: member.user_username };
-    deleteConfirmOpen.value = true;
+	deleteTarget.value = { userId: member.user_id, username: member.user_username };
+	deleteConfirmOpen.value = true;
 }
 
 async function onRemoveMember() {
-    if (!deleteTarget.value) return;
-    const target = deleteTarget.value;
+	if (!deleteTarget.value) return;
+	const target = deleteTarget.value;
 
-    try {
-        const res = await useAPI((api) => api.deletePublishersByPublisherNameMembersByUserId({
-            path: {
-                publisherName,
-                userId: target.userId,
-            }
-        }));
+	const res = await useAPI((api) =>
+		api.deletePublishersByPublisherNameMembersByUserId({
+			path: {
+				publisherName,
+				userId: target.userId,
+			},
+		}),
+	);
 
-        if (res.success) {
-            toast.add({
-                title: 'Member removed',
-                description: `"${target.username}" has been removed.`,
-                icon: 'i-lucide-check',
-                color: 'success',
-            });
-            deleteConfirmOpen.value = false;
-            deleteTarget.value = null;
-            await members.refresh();
-        } else {
-            throw new Error(res.message || 'Failed to remove member');
-        }
-    } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error',
-        });
-    }
+	if (!res.success) {
+		toast.add({
+			title: "Failed to remove member",
+			description: res.message || "An unexpected error occurred.",
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(res.message);
+	}
+
+	toast.add({
+		title: "Member removed",
+		description: `"${target.username}" has been removed.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	deleteTarget.value = null;
+	await members.refresh();
 }
 </script>
 
@@ -297,7 +306,7 @@ async function onRemoveMember() {
                     label="Add Member"
                     icon="i-lucide-user-plus"
                     color="primary"
-                    @click="showAddModal = true"
+                    @click="showAddModal = true;"
                 />
             </template>
 
@@ -352,7 +361,7 @@ async function onRemoveMember() {
                 <UButton
                     label="Add Member"
                     color="primary"
-                    @click="showAddModal = true"
+                    @click="showAddModal = true;"
                 />
             </template>
         </DashboardDataTable>
@@ -455,7 +464,7 @@ async function onRemoveMember() {
                     label="Cancel"
                     color="neutral"
                     variant="ghost"
-                    @click="showEditModal = false"
+                    @click="showEditModal = false;"
                 />
                 <UButton
                     label="Save"
@@ -474,6 +483,5 @@ async function onRemoveMember() {
         :warning-text="`Are you sure you want to remove &quot;${deleteTarget?.username || ''}&quot; from this publisher?`"
         v-model:open="deleteConfirmOpen"
         :on-delete="onRemoveMember"
-        :prevent-auto-close="true"
     />
 </template>

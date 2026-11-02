@@ -1,52 +1,56 @@
 <script lang="ts" setup>
-import type { NavigationMenuItem, TableColumn } from '@nuxt/ui';
-import type { GetPackagesByFullPackageNameReleasesResponses, GetPackagesByFullPackageNameResponses } from '~/api-client';
+import type { NavigationMenuItem, TableColumn } from "@nuxt/ui";
+import type {
+	GetPackagesByFullPackageNameReleasesResponses,
+	GetPackagesByFullPackageNameResponses,
+} from "~/api-client";
 
 const toast = useToast();
 
-type DevPackage = GetPackagesByFullPackageNameResponses[200]['data'];
-type Release = GetPackagesByFullPackageNameReleasesResponses[200]['data'][number];
+type DevPackage = GetPackagesByFullPackageNameResponses[200]["data"];
+type Release = GetPackagesByFullPackageNameReleasesResponses[200]["data"][number];
 
 const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 
 const package_releases = await useAPIAsyncData(
-    `/dev/packages/${pkgData.value.fullname}/releases`,
-    async () => {
-        const res = await useAPI((api) => api.getPackagesByFullPackageNameReleases({
-            path: {
-                fullPackageName: pkgData.value.fullname
-            }
-        }));
+	`/dev/packages/${pkgData.value.fullname}/releases`,
+	async () => {
+		const res = await useAPI((api) =>
+			api.getPackagesByFullPackageNameReleases({
+				path: {
+					fullPackageName: pkgData.value.fullname,
+				},
+			}),
+		);
 
-        if (!res.success) {
-            toast.add({
-                title: 'Error',
-                description: `Failed to load releases for package ${pkgData.value.name}: ${res.message}`,
-                color: 'error'
-            });
-            return [];
-        }
+		if (!res.success) {
+			toast.add({
+				title: "Error",
+				description: `Failed to load releases for package ${pkgData.value.name}: ${res.message}`,
+				color: "error",
+			});
+			return [];
+		}
 
-        // // mock data
-        // for (let i = 0; i < 50; i++) {
-        //     res.data.push({
-        //         id: i,
-        //         versionWithLeiosPatch: `1.0.${i}`,
-        //         created_at: Date.now() - i * 1000 * 60 * 60 * 24,
-        //         architectures: ['amd64', 'arm64']
-        //     });
-        // }
+		// // mock data
+		// for (let i = 0; i < 50; i++) {
+		//     res.data.push({
+		//         id: i,
+		//         versionWithLeiosPatch: `1.0.${i}`,
+		//         created_at: Date.now() - i * 1000 * 60 * 60 * 24,
+		//         architectures: ['amd64', 'arm64']
+		//     });
+		// }
 
-        return [...res.data].reverse();
-    }
+		return [...res.data].reverse();
+	},
 );
 
 const packageReleasesTableColumns: TableColumn<Release>[] = [
-    { accessorKey: 'version_with_leios_patch', header: 'Version' },
-    { accessorKey: 'created_at', header: 'Created At' },
-    { accessorKey: 'architectures', header: 'Architectures' }
-]
-
+	{ accessorKey: "version_with_leios_patch", header: "Version" },
+	{ accessorKey: "created_at", header: "Created At" },
+	{ accessorKey: "architectures", header: "Architectures" },
+];
 </script>
 
 <template>

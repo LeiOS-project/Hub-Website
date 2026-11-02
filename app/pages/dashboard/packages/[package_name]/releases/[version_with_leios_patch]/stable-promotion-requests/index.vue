@@ -1,146 +1,163 @@
 <script lang="ts" setup>
 import type {
-    ListReleaseStablePromotionRequestsResponses,
-    CreateReleaseStablePromotionRequestData
-} from '~/api-client';
+	CreateReleaseStablePromotionRequestData,
+	ListReleaseStablePromotionRequestsResponses,
+} from "~/api-client";
 
 const toast = useToast();
 
 const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
-const pkgRelease = useSubrouterInjectedData<DevPackageRelease, NewDevPackageRelease>("package_release", true).inject();
+const pkgRelease = useSubrouterInjectedData<DevPackageRelease, NewDevPackageRelease>(
+	"package_release",
+	true,
+).inject();
 const pkgReleaseData = pkgRelease.data;
 
 const versionWithLeiosPatch = computed(() => pkgReleaseData.value.version_with_leios_patch);
 const fullPackageName = computed(() => pkgData.value.fullname);
 
-type StablePromotionRequest = ListReleaseStablePromotionRequestsResponses[200]['data'][number];
+type StablePromotionRequest = ListReleaseStablePromotionRequestsResponses[200]["data"][number];
 
-const { data: stablePromotionRequestData, refresh } = await useAPIAsyncData<StablePromotionRequest | null>(
-    `/dev/packages/${fullPackageName.value}/releases/${versionWithLeiosPatch.value}/stable-promotion-requests`,
-    async () => {
-        const res = await useAPI((api) => api.listReleaseStablePromotionRequests({
-            path: {
-                fullPackageName: fullPackageName.value,
-                version_with_leios_patch: versionWithLeiosPatch.value
-            }
-        }));
+const { data: stablePromotionRequestData, refresh } =
+	await useAPIAsyncData<StablePromotionRequest | null>(
+		`/dev/packages/${fullPackageName.value}/releases/${versionWithLeiosPatch.value}/stable-promotion-requests`,
+		async () => {
+			const res = await useAPI((api) =>
+				api.listReleaseStablePromotionRequests({
+					path: {
+						fullPackageName: fullPackageName.value,
+						version_with_leios_patch: versionWithLeiosPatch.value,
+					},
+				}),
+			);
 
-        if (!res.success) {
-            toast.add({
-                title: 'Error',
-                description: `Failed to load stable promotion request: ${res.message}`,
-                color: 'error'
-            });
-            return null;
-        }
+			if (!res.success) {
+				toast.add({
+					title: "Error",
+					description: `Failed to load stable promotion request: ${res.message}`,
+					color: "error",
+				});
+				return null;
+			}
 
-        return res.data[0] ?? null;
-    }
-);
+			return res.data[0] ?? null;
+		},
+	);
 
 const stablePromotionRequest = computed(() => stablePromotionRequestData.value);
 const submittingRequest = ref(false);
 
 const hasUploadedPackage = computed(() => {
-    const data = pkgReleaseData.value;
-    if ('architectures' in data) {
-        const arch = data.architectures;
-        return arch.amd64 || arch.arm64 || arch.is_all;
-    }
-    return false;
+	const data = pkgReleaseData.value;
+	if ("architectures" in data) {
+		const arch = data.architectures;
+		return arch.amd64 || arch.arm64 || arch.is_all;
+	}
+	return false;
 });
 
 async function submitNewRequest() {
-    submittingRequest.value = true;
+	submittingRequest.value = true;
 
-    try {
-        const res = await useAPI((api) => api.createReleaseStablePromotionRequest({
-            path: {
-                fullPackageName: fullPackageName.value,
-                version_with_leios_patch: versionWithLeiosPatch.value
-            },
-            body: {}
-        } as CreateReleaseStablePromotionRequestData));
+	try {
+		const res = await useAPI((api) =>
+			api.createReleaseStablePromotionRequest({
+				path: {
+					fullPackageName: fullPackageName.value,
+					version_with_leios_patch: versionWithLeiosPatch.value,
+				},
+				body: {},
+			} as CreateReleaseStablePromotionRequestData),
+		);
 
-        if (res.success) {
-            toast.add({
-                title: 'Success',
-                description: 'Stable promotion request submitted successfully',
-                color: 'success'
-            });
-            await refresh();
-        } else {
-            toast.add({
-                title: 'Error',
-                description: res.message,
-                color: 'error'
-            });
-        }
-    } catch {
-        toast.add({
-            title: 'Error',
-            description: 'An unexpected error occurred.',
-            color: 'error'
-        });
-    } finally {
-        submittingRequest.value = false;
-    }
+		if (res.success) {
+			toast.add({
+				title: "Success",
+				description: "Stable promotion request submitted successfully",
+				color: "success",
+			});
+			await refresh();
+		} else {
+			toast.add({
+				title: "Error",
+				description: res.message,
+				color: "error",
+			});
+		}
+	} catch {
+		toast.add({
+			title: "Error",
+			description: "An unexpected error occurred.",
+			color: "error",
+		});
+	} finally {
+		submittingRequest.value = false;
+	}
 }
 
 async function onDeleteRequest() {
-    if (!stablePromotionRequest.value) return;
+	if (!stablePromotionRequest.value) return;
 
-    const request = stablePromotionRequest.value;
-    if (!request) return;
+	const request = stablePromotionRequest.value;
+	if (!request) return;
 
-    try {
-        const res = await useAPI((api) => api.deleteReleaseStablePromotionRequest({
-            path: {
-                fullPackageName: fullPackageName.value,
-                version_with_leios_patch: versionWithLeiosPatch.value,
-                stablePromotionRequestID: request.id
-            }
-        }));
+	try {
+		const res = await useAPI((api) =>
+			api.deleteReleaseStablePromotionRequest({
+				path: {
+					fullPackageName: fullPackageName.value,
+					version_with_leios_patch: versionWithLeiosPatch.value,
+					stablePromotionRequestID: request.id,
+				},
+			}),
+		);
 
-        if (res.success) {
-            toast.add({
-                title: 'Request deleted',
-                description: 'Stable promotion request deleted successfully.',
-                icon: 'i-lucide-check',
-                color: 'success'
-            });
-            await refresh();
-        } else {
-            throw new Error(res.message || 'Failed to delete stable promotion request');
-        }
-    } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error'
-        });
-    }
+		if (res.success) {
+			toast.add({
+				title: "Request deleted",
+				description: "Stable promotion request deleted successfully.",
+				icon: "i-lucide-check",
+				color: "success",
+			});
+			await refresh();
+		} else {
+			throw new Error(res.message || "Failed to delete stable promotion request");
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	}
 }
 
-function getStatusColor(status: StablePromotionRequest['status']) {
-    switch (status) {
-        case 'approved': return 'success';
-        case 'denied': return 'error';
-        case 'pending': return 'warning';
-        default: return 'neutral';
-    }
+function getStatusColor(status: StablePromotionRequest["status"]) {
+	switch (status) {
+		case "approved":
+			return "success";
+		case "denied":
+			return "error";
+		case "pending":
+			return "warning";
+		default:
+			return "neutral";
+	}
 }
 
-function getStatusIcon(status: StablePromotionRequest['status']) {
-    switch (status) {
-        case 'approved': return 'i-lucide-check-circle';
-        case 'denied': return 'i-lucide-x-circle';
-        case 'pending': return 'i-lucide-clock';
-        default: return 'i-lucide-help-circle';
-    }
+function getStatusIcon(status: StablePromotionRequest["status"]) {
+	switch (status) {
+		case "approved":
+			return "i-lucide-check-circle";
+		case "denied":
+			return "i-lucide-x-circle";
+		case "pending":
+			return "i-lucide-clock";
+		default:
+			return "i-lucide-help-circle";
+	}
 }
-
 </script>
 
 <template>

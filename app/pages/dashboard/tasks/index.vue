@@ -1,5 +1,5 @@
 <script setup lang="ts">
-await navigateTo('/dashboard/admin/tasks')
+await navigateTo("/dashboard/admin/tasks");
 </script>
 
 <template>

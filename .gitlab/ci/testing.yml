@@ -1,11 +1,3 @@
-workflow:
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "push"'
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-
-stages:
-  - test
-
 default:
   image: oven/bun
   interruptible: true
@@ -21,7 +13,12 @@ default:
 
 variables:
   BUN_INSTALL_CACHE_DIR: .bun/install/cache
-  NUXT_TELEMETRY_DISABLED: '1'
+  NUXT_TELEMETRY_DISABLED: "1"
+
+test:lint:
+  stage: test
+  script:
+    - bun run check:ci
 
 test:typecheck:
   stage: test
@@ -31,4 +28,10 @@ test:typecheck:
 test:unit:
   stage: test
   script:
-    - bun test
+    - bun run test:ci
+  # The "All files" row of bun's coverage table; the capture group picks the % Lines column.
+  coverage: '/All files\s*\|\s*[\d.]+\s*\|\s*([\d.]+)/'
+  artifacts:
+    when: always
+    reports:
+      junit: junit.xml

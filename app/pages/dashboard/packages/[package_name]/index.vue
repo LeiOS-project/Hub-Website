@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import type {
-    GetPublishersResponses,
-    GetPackagesResponses,
-    GetPackagesByFullPackageNameResponses,
-    PostPackagesData,
-} from "@/api-client/types.gen";
 import type z from "zod";
-import {
-    zPostPackagesBody,
-    zPutPackagesByFullPackageNameBody,
-} from "~/api-client/zod.gen";
+import type {
+	GetPackagesByFullPackageNameResponses,
+	GetPackagesResponses,
+	GetPublishersResponses,
+	PostPackagesData,
+} from "@/api-client/types.gen";
+import { zPostPackagesBody, zPutPackagesByFullPackageNameBody } from "~/api-client/zod.gen";
+
 type DevPackage = GetPackagesByFullPackageNameResponses[200]["data"];
 type NewDevPackage = NonNullable<PostPackagesData["body"]>;
 
@@ -19,170 +17,208 @@ const pkg = useSubrouterInjectedData<DevPackage, NewDevPackage>("package", true)
 const pkg_data = pkg.data;
 const pkg_loading = pkg.loading;
 
-type Publisher = GetPublishersResponses[200]["data"][number];
+type Publisher = GetPublishersResponses[200]["data"]["items"][number];
 
-const { data: publishers } = await useAPIAsyncData<Publisher[]>(
-    "package-publishers",
-    async () => {
-        if (!pkg.isNew) {
-            return [];
-        }
+const { data: publishers } = await useAPIAsyncData<Publisher[]>("package-publishers", async () => {
+	if (!pkg.isNew) {
+		return [];
+	}
 
-        const result = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
-        if (!result.success) {
-            toast.add({
-                title: "Failed to load publishers",
-                description: result.message,
-                color: "error",
-            });
-            return [];
-        }
+	const result = await useAPI((api) =>
+		api.getPublishers({ query: { onlyMembershipByMe: "true", limit: 100 } }),
+	);
+	if (!result.success) {
+		toast.add({
+			title: "Failed to load publishers",
+			description: result.message,
+			color: "error",
+		});
+		return [];
+	}
 
-        return result.data;
-    }
-);
+	return result.data.items;
+});
 
 const publisherOptions = computed(() =>
-    (publishers.value || []).map((publisher) => ({
-        label: publisher.display_name,
-        value: publisher.id,
-    }))
+	(publishers.value || []).map((publisher) => ({
+		label: publisher.display_name,
+		value: publisher.id,
+	})),
 );
 
 const publisherNameById = computed(() => {
-    const map: Record<number, string> = {};
-    for (const p of (publishers.value || [])) {
-        map[p.id] = p.name;
-    }
-    return map;
+	const map: Record<number, string> = {};
+	for (const p of publishers.value || []) {
+		map[p.id] = p.name;
+	}
+	return map;
 });
 
 const fullPackageNamePreview = computed(() => {
-    if (!pkg.isNew) return null;
-    const publisherName = publisherNameById.value[package_form_state.value.publisher_id];
-    const shortName = package_form_state.value.name;
-    if (!publisherName || !shortName) return null;
-    return `${publisherName}.${shortName}`;
+	if (!pkg.isNew) return null;
+	const publisherName = publisherNameById.value[package_form_state.value.publisher_id];
+	const shortName = package_form_state.value.name;
+	if (!publisherName || !shortName) return null;
+	return `${publisherName}.${shortName}`;
 });
 
 const headerTexts = computed(() => {
-    if (pkg.isNew) {
-        return {
-            title: "Create New Package",
-            description: "Create a new package on LeiOS Hub.",
-        };
-    }
-    return {
-        title: `Package ${(pkg_data as Ref<DevPackage>).value.name}`,
-        description: "View and manage the details of the package.",
-    };
+	if (pkg.isNew) {
+		return {
+			title: "Create New Package",
+			description: "Create a new package on LeiOS Hub.",
+		};
+	}
+	return {
+		title: `Package ${(pkg_data as Ref<DevPackage>).value.name}`,
+		description: "View and manage the details of the package.",
+	};
 });
 
 const package_form_schema = pkg.isNew ? zPostPackagesBody : zPutPackagesByFullPackageNameBody;
 type PackageFormSchema = NonNullable<z.infer<typeof package_form_schema>>;
 const package_form_state = ref<NewDevPackage>(
-    pkg.isNew
-        ? { name: '', display_name: '', description: '', homepage_url: '', requires_patching: false } as unknown as NewDevPackage
-        : {
-            publisher_id: (pkg_data.value as DevPackage).publisher_id,
-            name: (pkg_data.value as DevPackage).name,
-            display_name: (pkg_data.value as DevPackage).display_name,
-            description: (pkg_data.value as DevPackage).description,
-            homepage_url: (pkg_data.value as DevPackage).homepage_url,
-            requires_patching: (pkg_data.value as DevPackage).requires_patching,
-        }
+	pkg.isNew
+		? ({
+				name: "",
+				display_name: "",
+				description: "",
+				homepage_url: "",
+				requires_patching: false,
+			} as unknown as NewDevPackage)
+		: {
+				publisher_id: (pkg_data.value as DevPackage).publisher_id,
+				name: (pkg_data.value as DevPackage).name,
+				display_name: (pkg_data.value as DevPackage).display_name,
+				description: (pkg_data.value as DevPackage).description,
+				homepage_url: (pkg_data.value as DevPackage).homepage_url,
+				requires_patching: (pkg_data.value as DevPackage).requires_patching,
+			},
 );
 
 watchEffect(() => {
-    if (pkg.isNew && !package_form_state.value.publisher_id && publisherOptions.value.length === 1) {
-        package_form_state.value.publisher_id = publisherOptions.value[0]!.value;
-    }
+	if (pkg.isNew && !package_form_state.value.publisher_id && publisherOptions.value.length === 1) {
+		package_form_state.value.publisher_id = publisherOptions.value[0]!.value;
+	}
 });
 
 async function onFormSubmit() {
-    try {
-        if (pkg.isNew) {
-            const result = await useAPI((api) =>
-                api.postPackages({
-                    body: package_form_state.value,
-                })
-            );
+	try {
+		if (pkg.isNew) {
+			const result = await useAPI((api) =>
+				api.postPackages({
+					body: package_form_state.value,
+				}),
+			);
 
-            if (result.success) {
-                const packagesResult = await useAPI((api) => api.getPackages({
-                    query: {
-                        onlyMembershipByMe: true,
-                        publisherID: package_form_state.value.publisher_id,
-                        searchString: package_form_state.value.name,
-                    },
-                }));
+			if (result.success) {
+				const packagesResult = await useAPI((api) =>
+					api.getPackages({
+						query: {
+							onlyMembershipByMe: "true",
+							limit: 100,
+							publisherID: package_form_state.value.publisher_id,
+							searchString: package_form_state.value.name,
+						},
+					}),
+				);
 
-                const packagesData = packagesResult.success
-                    ? (packagesResult.data as GetPackagesResponses["200"]["data"])
-                    : null;
-                const createdPackage = packagesData?.find((candidate) =>
-                    candidate.publisher_id === package_form_state.value.publisher_id &&
-                    candidate.name === package_form_state.value.name
-                ) ?? null;
+				const packagesData = packagesResult.success
+					? (packagesResult.data as GetPackagesResponses["200"]["data"])
+					: null;
+				const createdPackage =
+					packagesData?.items.find(
+						(candidate) =>
+							candidate.publisher_id === package_form_state.value.publisher_id &&
+							candidate.name === package_form_state.value.name,
+					) ?? null;
 
-                toast.add({
-                    title: "Package created",
-                    description: `The Package has been successfully created.`,
-                    icon: "i-lucide-check",
-                    color: "success",
-                });
+				toast.add({
+					title: "Package created",
+					description: `The Package has been successfully created.`,
+					icon: "i-lucide-check",
+					color: "success",
+				});
 
-                // Redirect to the new package page
-                await navigateTo(
-                    `/dashboard/packages/${createdPackage?.fullname || package_form_state.value.name}`
-                );
-            } else {
-                throw new Error(result.message || "Failed to create package");
-            }
-        } else {
-            const result = await useAPI((api) =>
-                api.putPackagesByFullPackageName({
-                    path: {
-                        fullPackageName: (pkg_data.value as DevPackage).fullname,
-                    },
-                    body: {
-                        display_name: package_form_state.value.display_name,
-                        description: package_form_state.value.description,
-                        homepage_url: package_form_state.value.homepage_url,
-                        requires_patching:
-                            package_form_state.value.requires_patching,
-                    },
-                })
-            );
+				// Redirect to the new package page
+				await navigateTo(
+					`/dashboard/packages/${createdPackage?.fullname || package_form_state.value.name}`,
+				);
+			} else {
+				throw new Error(result.message || "Failed to create package");
+			}
+		} else {
+			const result = await useAPI((api) =>
+				api.putPackagesByFullPackageName({
+					path: {
+						fullPackageName: (pkg_data.value as DevPackage).fullname,
+					},
+					body: {
+						display_name: package_form_state.value.display_name,
+						description: package_form_state.value.description,
+						homepage_url: package_form_state.value.homepage_url,
+						requires_patching: package_form_state.value.requires_patching,
+					},
+				}),
+			);
 
-            if (result.success) {
-                pkg_data.value = {
-                    ...pkg_data.value,
-                    ...package_form_state.value,
-                };
+			if (result.success) {
+				pkg_data.value = {
+					...pkg_data.value,
+					...package_form_state.value,
+				};
 
-                toast.add({
-                    title: "Package updated",
-                    description: `The Package has been successfully updated.`,
-                    icon: "i-lucide-check",
-                    color: "success",
-                });
-            } else {
-                throw new Error(result.message || "Failed to update package");
-            }
-        }
-    } catch (error: any) {
-        toast.add({
-            title: "Error",
-            description: error.message || "An unexpected error occurred.",
-            icon: "i-lucide-x-circle",
-            color: "error",
-        });
-    }
+				toast.add({
+					title: "Package updated",
+					description: `The Package has been successfully updated.`,
+					icon: "i-lucide-check",
+					color: "success",
+				});
+			} else {
+				throw new Error(result.message || "Failed to update package");
+			}
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	}
 }
 
+const deleteConfirmOpen = ref(false);
+
+const isSystemManaged = computed(
+	() => !pkg.isNew && (pkg_data.value as DevPackage).flags.includes("SYSTEM-MANAGED"),
+);
+
 async function onDeletePackage() {
-    console.warn("Package deletion is not yet implemented.");
+	const fullname = (pkg_data.value as DevPackage).fullname;
+
+	const res = await useAPI((api) =>
+		api.deletePackagesByFullPackageName({ path: { fullPackageName: fullname } }),
+	);
+
+	if (!res.success) {
+		toast.add({
+			title: "Failed to delete package",
+			description: res.message,
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(res.message);
+	}
+
+	toast.add({
+		title: "Package deleted",
+		description: `${fullname} and all its releases were removed.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	await navigateTo("/dashboard/packages");
 }
 </script>
 
@@ -375,53 +411,47 @@ async function onDeletePackage() {
             </div>
         </div>
 
-        <!-- Danger Zone Card -->
-        <div
+        <!-- Danger Zone -->
+        <DashboardSectionCard
             v-if="!pkg.isNew"
-            class="rounded-xl border border-red-900/50 bg-red-950/20 backdrop-blur-sm overflow-hidden"
+            title="Danger Zone"
+            description="Irreversible and destructive actions"
+            icon="i-lucide-alert-triangle"
+            tone="danger"
         >
-            <div class="px-6 py-4 border-b border-red-900/50">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center"
-                    >
-                        <UIcon
-                            name="i-lucide-alert-triangle"
-                            class="w-5 h-5 text-red-400"
-                        />
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-red-400">Danger Zone</h3>
-                        <p class="text-sm text-slate-400">
-                            Irreversible and destructive actions
-                        </p>
-                    </div>
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex-1">
+                    <h4 class="font-medium text-white">
+                        Delete Package
+                    </h4>
+                    <p class="text-sm text-slate-400 mt-1">
+                        Permanently delete this package and all its releases, including the
+                        published files in the archive, testing and stable repositories.
+                    </p>
                 </div>
+                <UTooltip
+                    :text="isSystemManaged ? 'System-managed packages cannot be deleted' : undefined"
+                    :disabled="!isSystemManaged"
+                >
+                    <UButton
+                        label="Delete Package"
+                        color="error"
+                        variant="soft"
+                        icon="i-lucide-trash-2"
+                        :disabled="isSystemManaged"
+                        @click="deleteConfirmOpen = true;"
+                    />
+                </UTooltip>
             </div>
+        </DashboardSectionCard>
 
-            <div class="p-6">
-                <div class="flex flex-col md:flex-row md:items-center gap-4">
-                    <div class="flex-1">
-                        <h4 class="font-medium text-white">
-                            Delete Package
-                        </h4>
-                        <p class="text-sm text-slate-400 mt-1">
-                            Permanently delete this package and all
-                            associated data. This action cannot be undone.
-                        </p>
-                    </div>
-                    <UTooltip text="Coming soon — deletion is not yet implemented">
-                        <UButton
-                            label="Delete Package"
-                            color="error"
-                            variant="soft"
-                            icon="i-lucide-trash-2"
-                            disabled
-                        />
-                    </UTooltip>
-                </div>
-            </div>
-        </div>
+        <DashboardDeleteModal
+            v-if="!pkg.isNew"
+            v-model:open="deleteConfirmOpen"
+            title="Delete Package"
+            warning-text="The package, all its releases and their files in every repository will be permanently deleted. Users who installed it keep their installed copy but get no updates."
+            :on-delete="onDeletePackage"
+        />
 
     </div>
 </template>

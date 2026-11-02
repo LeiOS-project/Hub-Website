@@ -1,257 +1,304 @@
 <script setup lang="ts">
-import type { TableColumn } from '#ui/types'
-import type { Row } from '@tanstack/vue-table'
-import type { PackageRoleAssignment, PublisherMember } from '~/utils/types'
+import type { Row } from "@tanstack/vue-table";
+import type { TableColumn } from "#ui/types";
+import type { PackageRoleAssignment, PublisherMember } from "~/utils/types";
 
 interface FilterConfig {
-    column: keyof MemberWithOverride;
-    type?: 'text' | 'select' | 'multi-select';
-    placeholder?: string;
-    icon?: string;
-    class?: string;
-    options?: { label: string; value: string }[];
-    filterFn?: (row: Row<any>, columnId: string, filterValue: any) => boolean;
+	column: keyof MemberWithOverride;
+	type?: "text" | "select" | "multi-select";
+	placeholder?: string;
+	icon?: string;
+	class?: string;
+	options?: { label: string; value: string }[];
+	filterFn?: (row: Row<any>, columnId: string, filterValue: any) => boolean;
 }
 
 definePageMeta({
-    layout: 'dashboard'
+	layout: "dashboard",
 });
 
 const route = useRoute();
 const toast = useToast();
 
 const fullPackageName = route.params.package_name as string;
-const publisherName = fullPackageName.split('.')[0]!;
+const publisherName = fullPackageName.split(".")[0]!;
 
-const roleBadgeColor: Record<string, 'info' | 'success' | 'warning' | 'neutral'> = {
-    ADMIN: 'info',
-    MAINTAINER: 'success',
-    DEVELOPER: 'warning',
-    VIEWER: 'neutral',
+const roleBadgeColor: Record<string, "info" | "success" | "warning" | "neutral"> = {
+	ADMIN: "info",
+	MAINTAINER: "success",
+	DEVELOPER: "warning",
+	VIEWER: "neutral",
 };
 
 const roleOptions = [
-    { label: 'ADMIN', value: 'ADMIN' },
-    { label: 'MAINTAINER', value: 'MAINTAINER' },
-    { label: 'DEVELOPER', value: 'DEVELOPER' },
-    { label: 'VIEWER', value: 'VIEWER' },
+	{ label: "ADMIN", value: "ADMIN" },
+	{ label: "MAINTAINER", value: "MAINTAINER" },
+	{ label: "DEVELOPER", value: "DEVELOPER" },
+	{ label: "VIEWER", value: "VIEWER" },
 ];
 
 const roleHierarchy: Record<string, number> = {
-    VIEWER: 1,
-    DEVELOPER: 2,
-    MAINTAINER: 3,
-    ADMIN: 4,
+	VIEWER: 1,
+	DEVELOPER: 2,
+	MAINTAINER: 3,
+	ADMIN: 4,
 };
 
 function roleOptionsAbove(publisherRole: string | null): typeof roleOptions {
-    if (!publisherRole) return roleOptions;
-    const minLevel = roleHierarchy[publisherRole] ?? 0;
-    return roleOptions.filter(r => (roleHierarchy[r.value] ?? 0) > minLevel);
+	if (!publisherRole) return roleOptions;
+	const minLevel = roleHierarchy[publisherRole] ?? 0;
+	return roleOptions.filter((r) => (roleHierarchy[r.value] ?? 0) > minLevel);
 }
 
 // ---- Data: publisher members + role overrides ----
 
 interface MemberWithOverride {
-    user_id: number;
-    user_username: string;
-    user_display_name: string | null;
-    publisher_role: string;
-    /** The package-level override role, or the *current* assignment's role if one exists */
-    override_role: string | null;
-    /** The role-assignment DB id (if an override exists) */
-    override_id: number | null;
+	user_id: number;
+	user_username: string;
+	user_display_name: string | null;
+	publisher_role: string;
+	/** The package-level override role, or the *current* assignment's role if one exists */
+	override_role: string | null;
+	/** The role-assignment DB id (if an override exists) */
+	override_id: number | null;
 }
 
 const membersData = ref<MemberWithOverride[]>([]);
 const loading = ref(true);
 
-
 async function loadData() {
-    loading.value = true;
-    try {
-        const [membersRes, overridesRes] = await Promise.all([
-            useAPI((api) => api.getPublishersByPublisherNameMembers({ path: { publisherName } })),
-            useAPI((api) => api.getPackagesByFullPackageNameRoleAssignments({ path: { fullPackageName } })),
-        ]);
+	loading.value = true;
+	try {
+		const [membersRes, overridesRes] = await Promise.all([
+			useAPI((api) => api.getPublishersByPublisherNameMembers({ path: { publisherName } })),
+			useAPI((api) => api.getPackagesByFullPackageNameRoleAssignments({ path: { fullPackageName } })),
+		]);
 
-        const members: PublisherMember[] = membersRes.success ? (membersRes.data ?? []) : [];
-        const overrides: PackageRoleAssignment[] = overridesRes.success ? (overridesRes.data ?? []) : [];
+		const members: PublisherMember[] = membersRes.success ? (membersRes.data ?? []) : [];
+		const overrides: PackageRoleAssignment[] = overridesRes.success ? (overridesRes.data ?? []) : [];
 
-        // Build a lookup from the overrides
-        const overrideByUserId = new Map<number, PackageRoleAssignment>();
-        for (const o of overrides) {
-            overrideByUserId.set(o.user_id, o);
-        }
+		// Build a lookup from the overrides
+		const overrideByUserId = new Map<number, PackageRoleAssignment>();
+		for (const o of overrides) {
+			overrideByUserId.set(o.user_id, o);
+		}
 
-        // Merge: every member gets a row, enriched with override info if present
-        membersData.value = members.map(m => {
-            const override = overrideByUserId.get(m.user_id);
-            return {
-                user_id: m.user_id,
-                user_username: m.user_username,
-                user_display_name: m.user_display_name ?? null,
-                publisher_role: m.role,
-                override_role: override?.role ?? null,
-                override_id: override?.id ?? null,
-            };
-        });
+		// Merge: every member gets a row, enriched with override info if present
+		membersData.value = members.map((m) => {
+			const override = overrideByUserId.get(m.user_id);
+			return {
+				user_id: m.user_id,
+				user_username: m.user_username,
+				user_display_name: m.user_display_name ?? null,
+				publisher_role: m.role,
+				override_role: override?.role ?? null,
+				override_id: override?.id ?? null,
+			};
+		});
 
-        // Also add any override-only users (non-members who have a package override)
-        for (const o of overrides) {
-            if (!membersData.value.some(m => m.user_id === o.user_id)) {
-                membersData.value.push({
-                    user_id: o.user_id,
-                    user_username: o.user_username,
-                    user_display_name: o.user_display_name ?? null,
-                    publisher_role: o.publisher_role ?? '(not a member)',
-                    override_role: o.role,
-                    override_id: o.id,
-                });
-            }
-        }
-    } catch (err: any) {
-        toast.add({ title: 'Failed to load data', description: err.message || 'Unexpected error', color: 'error' });
-    } finally {
-        loading.value = false;
-    }
+		// Also add any override-only users (non-members who have a package override)
+		for (const o of overrides) {
+			if (!membersData.value.some((m) => m.user_id === o.user_id)) {
+				membersData.value.push({
+					user_id: o.user_id,
+					user_username: o.user_username,
+					user_display_name: o.user_display_name ?? null,
+					publisher_role: o.publisher_role ?? "(not a member)",
+					override_role: o.role,
+					override_id: o.id,
+				});
+			}
+		}
+	} catch (err: any) {
+		toast.add({
+			title: "Failed to load data",
+			description: err.message || "Unexpected error",
+			color: "error",
+		});
+	} finally {
+		loading.value = false;
+	}
 }
 
 await loadData();
 
 const tableColumns: TableColumn<MemberWithOverride>[] = [
-    { accessorKey: 'user_username', header: 'Username' },
-    { accessorKey: 'user_display_name', header: 'Display Name' },
-    { accessorKey: 'publisher_role', header: 'Publisher Role' },
-    { accessorKey: 'override_role', header: 'Package Override' },
-    { accessorKey: 'actions', header: '', enableSorting: false, enableHiding: false }
+	{ accessorKey: "user_username", header: "Username" },
+	{ accessorKey: "user_display_name", header: "Display Name" },
+	{ accessorKey: "publisher_role", header: "Publisher Role" },
+	{ accessorKey: "override_role", header: "Package Override" },
+	{ accessorKey: "actions", header: "", enableSorting: false, enableHiding: false },
 ];
 
 // ---- User Search for Add Override ----
-const userSearchQuery = ref('');
+const userSearchQuery = ref("");
 const searchResults = ref<Array<{ id: number; username: string; display_name: string | null }>>([]);
 const searchLoading = ref(false);
-const selectedUser = ref<{ id: number; username: string; display_name: string | null } | null>(null);
+const selectedUser = ref<{ id: number; username: string; display_name: string | null } | null>(
+	null,
+);
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
 function onUserSearchInput(value: string) {
-    userSearchQuery.value = value;
-    selectedUser.value = null;
-    addState.user_id = 0;
+	userSearchQuery.value = value;
+	selectedUser.value = null;
+	addState.user_id = 0;
 
-    if (searchTimeout) clearTimeout(searchTimeout);
-    if (value.length < 2) { searchResults.value = []; return; }
+	if (searchTimeout) clearTimeout(searchTimeout);
+	if (value.length < 2) {
+		searchResults.value = [];
+		return;
+	}
 
-    searchTimeout = setTimeout(async () => {
-        searchLoading.value = true;
-        try {
-            const res = await useAPI((api) => api.getUsersSearch({ query: { q: value, limit: 10 } }));
-            searchResults.value = res.success ? (res.data ?? []) : [];
-        } catch {
-            searchResults.value = [];
-        } finally {
-            searchLoading.value = false;
-        }
-    }, 300);
+	searchTimeout = setTimeout(async () => {
+		searchLoading.value = true;
+		try {
+			const res = await useAPI((api) => api.getUsersSearch({ query: { q: value, limit: 10 } }));
+			searchResults.value = res.success ? (res.data ?? []) : [];
+		} catch {
+			searchResults.value = [];
+		} finally {
+			searchLoading.value = false;
+		}
+	}, 300);
 }
 
 function selectUser(user: { id: number; username: string; display_name: string | null }) {
-    selectedUser.value = user;
-    addState.user_id = user.id;
-    // Look up their publisher role from our merged data, or from publisher members
-    const existing = membersData.value.find(m => m.user_id === user.id);
-    addStatePublisherRole.value = existing?.publisher_role ?? null;
-    const available = roleOptionsAbove(addStatePublisherRole.value);
-    addState.role = (available[0]?.value ?? 'MAINTAINER') as 'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER';
-    userSearchQuery.value = user.display_name || user.username;
-    searchResults.value = [];
+	selectedUser.value = user;
+	addState.user_id = user.id;
+	// Look up their publisher role from our merged data, or from publisher members
+	const existing = membersData.value.find((m) => m.user_id === user.id);
+	addStatePublisherRole.value = existing?.publisher_role ?? null;
+	const available = roleOptionsAbove(addStatePublisherRole.value);
+	addState.role = (available[0]?.value ?? "MAINTAINER") as
+		| "ADMIN"
+		| "MAINTAINER"
+		| "DEVELOPER"
+		| "VIEWER";
+	userSearchQuery.value = user.display_name || user.username;
+	searchResults.value = [];
 }
 
 // ---- Add Override ----
 const showAddModal = ref(false);
 const addState = reactive({
-    user_id: 0 as number,
-    role: 'MAINTAINER' as 'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER',
+	user_id: 0 as number,
+	role: "MAINTAINER" as "ADMIN" | "MAINTAINER" | "DEVELOPER" | "VIEWER",
 });
 const addStatePublisherRole = ref<string | null>(null);
 const addSubmitting = ref(false);
 const addAvailableRoles = computed(() => roleOptionsAbove(addStatePublisherRole.value));
 
 function resetAddForm() {
-    showAddModal.value = false;
-    addState.user_id = 0;
-    addState.role = 'MAINTAINER';
-    addStatePublisherRole.value = null;
-    userSearchQuery.value = '';
-    searchResults.value = [];
-    selectedUser.value = null;
+	showAddModal.value = false;
+	addState.user_id = 0;
+	addState.role = "MAINTAINER";
+	addStatePublisherRole.value = null;
+	userSearchQuery.value = "";
+	searchResults.value = [];
+	selectedUser.value = null;
 }
 
 async function onAddOverride() {
-    if (!addState.user_id) {
-        toast.add({ title: 'Error', description: 'Please select a user.', color: 'error' });
-        return;
-    }
-    addSubmitting.value = true;
-    try {
-        const res = await useAPI((api) => api.postPackagesByFullPackageNameRoleAssignments({
-            path: { fullPackageName },
-            body: { user_id: addState.user_id, role: addState.role },
-        }));
-        if (res.success) {
-            toast.add({ title: 'Override added', description: `Package role set to ${addState.role}.`, icon: 'i-lucide-check', color: 'success' });
-            resetAddForm();
-            await loadData();
-        } else {
-            throw new Error(res.message || 'Failed to add override');
-        }
-    } catch (error: any) {
-        toast.add({ title: 'Error', description: error.message || 'An unexpected error occurred.', icon: 'i-lucide-x-circle', color: 'error' });
-    } finally {
-        addSubmitting.value = false;
-    }
+	if (!addState.user_id) {
+		toast.add({ title: "Error", description: "Please select a user.", color: "error" });
+		return;
+	}
+	addSubmitting.value = true;
+	try {
+		const res = await useAPI((api) =>
+			api.postPackagesByFullPackageNameRoleAssignments({
+				path: { fullPackageName },
+				body: { user_id: addState.user_id, role: addState.role },
+			}),
+		);
+		if (res.success) {
+			toast.add({
+				title: "Override added",
+				description: `Package role set to ${addState.role}.`,
+				icon: "i-lucide-check",
+				color: "success",
+			});
+			resetAddForm();
+			await loadData();
+		} else {
+			throw new Error(res.message || "Failed to add override");
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	} finally {
+		addSubmitting.value = false;
+	}
 }
 
 // ---- Edit Override ----
 const showEditModal = ref(false);
-const editTarget = ref<{ userId: number; currentRole: string; publisherRole: string | null; username: string } | null>(null);
-const editRole = ref<'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER'>('MAINTAINER');
+const editTarget = ref<{
+	userId: number;
+	currentRole: string;
+	publisherRole: string | null;
+	username: string;
+} | null>(null);
+const editRole = ref<"ADMIN" | "MAINTAINER" | "DEVELOPER" | "VIEWER">("MAINTAINER");
 const editSubmitting = ref(false);
-const editAvailableRoles = computed(() => roleOptionsAbove(editTarget.value?.publisherRole ?? null));
+const editAvailableRoles = computed(() =>
+	roleOptionsAbove(editTarget.value?.publisherRole ?? null),
+);
 
 function openEditOverride(member: MemberWithOverride) {
-    editTarget.value = {
-        userId: member.user_id,
-        currentRole: member.override_role ?? member.publisher_role,
-        publisherRole: member.publisher_role === '(not a member)' ? null : member.publisher_role,
-        username: member.user_username,
-    };
-    editRole.value = (member.override_role ?? member.publisher_role) as 'ADMIN' | 'MAINTAINER' | 'DEVELOPER' | 'VIEWER';
-    showEditModal.value = true;
+	editTarget.value = {
+		userId: member.user_id,
+		currentRole: member.override_role ?? member.publisher_role,
+		publisherRole: member.publisher_role === "(not a member)" ? null : member.publisher_role,
+		username: member.user_username,
+	};
+	editRole.value = (member.override_role ?? member.publisher_role) as
+		| "ADMIN"
+		| "MAINTAINER"
+		| "DEVELOPER"
+		| "VIEWER";
+	showEditModal.value = true;
 }
 
 async function onEditOverride() {
-    if (!editTarget.value) return;
-    const target = editTarget.value;
-    editSubmitting.value = true;
-    try {
-        const res = await useAPI((api) => api.putPackagesByFullPackageNameRoleAssignmentsByUserId({
-            path: { fullPackageName, userId: target.userId },
-            body: { role: editRole.value },
-        }));
-        if (res.success) {
-            toast.add({ title: 'Override updated', description: `Role changed to ${editRole.value}.`, icon: 'i-lucide-check', color: 'success' });
-            showEditModal.value = false;
-            editTarget.value = null;
-            await loadData();
-        } else {
-            throw new Error(res.message || 'Failed to update override');
-        }
-    } catch (error: any) {
-        toast.add({ title: 'Error', description: error.message || 'An unexpected error occurred.', icon: 'i-lucide-x-circle', color: 'error' });
-    } finally {
-        editSubmitting.value = false;
-    }
+	if (!editTarget.value) return;
+	const target = editTarget.value;
+	editSubmitting.value = true;
+	try {
+		const res = await useAPI((api) =>
+			api.putPackagesByFullPackageNameRoleAssignmentsByUserId({
+				path: { fullPackageName, userId: target.userId },
+				body: { role: editRole.value },
+			}),
+		);
+		if (res.success) {
+			toast.add({
+				title: "Override updated",
+				description: `Role changed to ${editRole.value}.`,
+				icon: "i-lucide-check",
+				color: "success",
+			});
+			showEditModal.value = false;
+			editTarget.value = null;
+			await loadData();
+		} else {
+			throw new Error(res.message || "Failed to update override");
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	} finally {
+		editSubmitting.value = false;
+	}
 }
 
 // ---- Remove Override ----
@@ -259,28 +306,37 @@ const deleteConfirmOpen = ref(false);
 const deleteTarget = ref<{ userId: number; username: string } | null>(null);
 
 function openRemoveOverride(member: MemberWithOverride) {
-    deleteTarget.value = { userId: member.user_id, username: member.user_username };
-    deleteConfirmOpen.value = true;
+	deleteTarget.value = { userId: member.user_id, username: member.user_username };
+	deleteConfirmOpen.value = true;
 }
 
 async function onRemoveOverride() {
-    if (!deleteTarget.value) return;
-    const target = deleteTarget.value;
-    try {
-        const res = await useAPI((api) => api.deletePackagesByFullPackageNameRoleAssignmentsByUserId({
-            path: { fullPackageName, userId: target.userId },
-        }));
-        if (res.success) {
-            toast.add({ title: 'Override removed', description: `Reverted to publisher-level role for ${target.username}.`, icon: 'i-lucide-check', color: 'success' });
-            deleteConfirmOpen.value = false;
-            deleteTarget.value = null;
-            await loadData();
-        } else {
-            throw new Error(res.message || 'Failed to remove override');
-        }
-    } catch (error: any) {
-        toast.add({ title: 'Error', description: error.message || 'An unexpected error occurred.', icon: 'i-lucide-x-circle', color: 'error' });
-    }
+	if (!deleteTarget.value) return;
+	const target = deleteTarget.value;
+	const res = await useAPI((api) =>
+		api.deletePackagesByFullPackageNameRoleAssignmentsByUserId({
+			path: { fullPackageName, userId: target.userId },
+		}),
+	);
+	if (!res.success) {
+		toast.add({
+			title: "Failed to remove override",
+			description: res.message || "An unexpected error occurred.",
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(res.message);
+	}
+
+	toast.add({
+		title: "Override removed",
+		description: `Reverted to publisher-level role for ${target.username}.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	deleteTarget.value = null;
+	await loadData();
 }
 </script>
 
@@ -516,7 +572,7 @@ async function onRemoveOverride() {
             </UFormField>
 
             <div class="flex justify-end gap-2 pt-4">
-                <UButton label="Cancel" color="neutral" variant="ghost" @click="showEditModal = false" />
+                <UButton label="Cancel" color="neutral" variant="ghost" @click="showEditModal = false;" />
                 <UButton label="Save" color="primary" :loading="editSubmitting" icon="i-lucide-save" @click="onEditOverride" />
             </div>
         </div>
@@ -528,6 +584,5 @@ async function onRemoveOverride() {
         :warning-text="`Remove the override for &quot;${deleteTarget?.username || ''}&quot;? They will revert to their publisher-level role for this package.`"
         v-model:open="deleteConfirmOpen"
         :on-delete="onRemoveOverride"
-        :prevent-auto-close="true"
     />
 </template>

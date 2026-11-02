@@ -1,0 +1,5 @@
+# Mechanical formatting commits, skipped by `git blame` (GitLab and GitHub read this file;
+# locally: git config blame.ignoreRevsFile .git-blame-ignore-revs).
+
+# style: format the codebase with biome
+b6d6f7eb8daf0edcc72a18fd7dfe6508da639b45

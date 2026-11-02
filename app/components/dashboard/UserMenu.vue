@@ -3,132 +3,109 @@ import type { DropdownMenuItem } from "@nuxt/ui";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
 defineProps<{
-    collapsed?: boolean;
+	collapsed?: boolean;
 }>();
 
 const toast = useToast();
 
-const userinfoStore = await useUserInfoStore();
-const userinfo = await userinfoStore.use();
-if (!userinfoStore.isValid(userinfo)) {
-    throw new Error("User not authenticated but should be to access UserMenu");
-}
+const userInfoStore = useUserInfoStore();
+const userInfo = await userInfoStore.use();
+
+const isAdmin = computed(() => userInfo.value?.role === "admin");
 
 const user = computed(() => {
-    if (!userinfo.value) {
-        return {
-            name: "Unknown User",
-            avatar: {
-                alt: "Unknown User",
-            },
-        };
-    }
-    return {
-        name: userinfo.value.display_name,
-        avatar: {
-            alt: userinfo.value.display_name,
-        },
-    };
+	const name = userInfo.value?.display_name ?? "Unknown User";
+	return {
+		name,
+		avatar: {
+			alt: name,
+		},
+	};
 });
 
 async function logout() {
-    let logoutError: unknown = null;
+	const result = await useAPI((api) => api.postAuthLogout({}), true);
 
-    try {
-        const result = await useAPI((api) => {
-            return api.postAuthLogout({});
-        });
+	// Clear local state regardless of the API result.
+	await userInfoStore.clear();
+	useAppCookies().sessionToken.set(null);
 
-        if (!result.success) {
-            logoutError = new Error(result.message || "Server logout failed");
-        }
-    } catch (error) {
-        logoutError = error;
-    } finally {
-        // Clear local state regardless of API result
-        await userinfoStore.clear();
-        useAppCookies().sessionToken.get()!.value = null;
-    }
+	if (!result.success) {
+		toast.add({
+			title: "Logged out",
+			description: "Your local session was cleared, but the server logout failed.",
+			icon: "i-lucide-alert-circle",
+			color: "warning",
+		});
+	} else {
+		toast.add({
+			title: "Logged out",
+			description: "You have been successfully logged out.",
+			icon: "i-lucide-check",
+			color: "success",
+		});
+	}
 
-    if (logoutError) {
-        toast.add({
-            title: "Logged out",
-            description: "An unexpected error occurred during logout.",
-            icon: "i-lucide-alert-circle",
-            color: "error",
-        });
-    } else {
-        toast.add({
-            title: "Logged out",
-            description: "You have been successfully logged out.",
-            icon: "i-lucide-check",
-            color: "success",
-        });
-    }
-
-    await navigateTo("/auth/login");
+	await navigateTo("/auth/login");
 }
 
 const items = computed<DropdownMenuItem[][]>(() => [
-    [
-        {
-            type: "label",
-            label: user.value.name,
-            avatar: user.value.avatar,
-        },
-    ],
-    [
-        {
-            label: "Settings",
-            icon: "i-lucide-settings",
-            to: "/dashboard/settings",
-        },
-    ],
-    [
-        {
-            label: "Log out",
-            icon: "i-lucide-log-out",
-            onSelect: logout,
-        },
-    ],
+	[
+		{
+			type: "label",
+			label: user.value.name,
+			avatar: user.value.avatar,
+		},
+	],
+	[
+		{
+			label: "Settings",
+			icon: "i-lucide-settings",
+			to: "/dashboard/settings",
+		},
+		...(isAdmin.value
+			? [
+					{
+						label: "Manage Users",
+						icon: "i-lucide-users",
+						to: "/dashboard/admin/users",
+					},
+				]
+			: []),
+	],
+	[
+		{
+			label: "Log out",
+			icon: "i-lucide-log-out",
+			onSelect: logout,
+		},
+	],
 ]);
 </script>
 
 <template>
-    <UDropdownMenu
-        :items="items"
-        :content="{ align: 'center', collisionPadding: 12 }"
-        :ui="{
+	<UDropdownMenu
+		:items="items"
+		:content="{ align: 'center', collisionPadding: 12 }"
+		:ui="{
 			viewport: 'main-bg-color',
-            content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)',
-        }"
-    >
-        <UButton
-            v-bind="{
-                ...user,
-                label: collapsed ? undefined : user?.name,
-                trailingIcon: collapsed
-                    ? undefined
-                    : 'i-lucide-chevrons-up-down',
-            }"
-            color="neutral"
-            variant="ghost"
-            block
-            :square="collapsed"
-            class="data-[state=open]:bg-elevated/50 hover:bg-elevated/50"
-            :ui="{
-                trailingIcon: 'text-dimmed',
-            }"
-        />
-		<template #chip-leading="{ item }">
-			<div class="inline-flex items-center justify-center shrink-0 size-5">
-				<span class="rounded-full ring ring-bg bg-(--chip-light) dark:bg-(--chip-dark) size-2" :style="{
-					'--chip-light': `var(--color-${(item as any).chip}-500)`,
-					'--chip-dark': `var(--color-${(item as any).chip}-400)`
-				}" />
-			</div>
-		</template>
-
-
-    </UDropdownMenu>
+			content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)',
+		}"
+	>
+		<UButton
+			v-bind="{
+				...user,
+				label: collapsed ? undefined : user.name,
+				trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
+			}"
+			color="neutral"
+			variant="ghost"
+			block
+			:square="collapsed"
+			class="data-[state=open]:bg-elevated/50 hover:bg-elevated/50"
+			:ui="{
+				trailingIcon: 'text-dimmed',
+			}"
+		/>
+	</UDropdownMenu>
 </template>

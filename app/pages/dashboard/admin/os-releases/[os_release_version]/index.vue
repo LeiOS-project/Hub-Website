@@ -1,14 +1,13 @@
 <script lang="ts" setup>
-import type { FormError, NavigationMenuItem } from '@nuxt/ui';
-import z from 'zod';
-import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from '~/api-client';
-import { zPostAdminOsReleasesBody, zPutAdminOsReleasesByVersionBody } from '~/api-client/zod.gen';
-import DashboardDeleteModal from '~/components/dashboard/DashboardDeleteModal.vue';
+import type { FormError, NavigationMenuItem } from "@nuxt/ui";
+import type z from "zod";
+import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from "~/api-client";
+import { zPostAdminOsReleasesBody, zPutAdminOsReleasesByVersionBody } from "~/api-client/zod.gen";
 
 const toast = useToast();
 const route = useRoute();
 
-type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
+type OSRelease = GetAdminOsReleasesResponses["200"]["data"]["items"][number];
 type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
 
 // const os_release = inject<Ref<OSRelease | NewOSRelease>>('os_release_data');
@@ -16,160 +15,122 @@ type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
 // const os_release_pending = inject<Ref<boolean>>('os_release_pending');
 // const os_release_is_new = inject<boolean>('os_release_is_new');
 
-const os_release = useSubrouterInjectedData<OSRelease, NewOSRelease>('os_release', true).inject();
-console.log('os_release:', os_release);
+const os_release = useSubrouterInjectedData<OSRelease, NewOSRelease>("os_release", true).inject();
 const os_release_data = os_release.data;
 const os_release_loading = os_release.loading;
 
-function getPublishingStatusColor(status: OSRelease['publishing_status']) {
-    switch (status) {
-        case 'pending':
-            return 'warning'
-        case 'paused':
-            return 'warning'
-        case 'completed':
-            return 'success'
-        case 'failed':
-            return 'error'
-        case 'running':
-            return 'info'
-    }
+function getPublishingStatusColor(status: OSRelease["publishing_status"]) {
+	switch (status) {
+		case "pending":
+			return "warning";
+		case "paused":
+			return "warning";
+		case "completed":
+			return "success";
+		case "failed":
+			return "error";
+		case "running":
+			return "info";
+	}
 }
 
-const os_release_form_schema = os_release.isNew ? zPostAdminOsReleasesBody : zPutAdminOsReleasesByVersionBody;
+const os_release_form_schema = os_release.isNew
+	? zPostAdminOsReleasesBody
+	: zPutAdminOsReleasesByVersionBody;
 type OSReleaseFormState = NonNullable<z.infer<typeof os_release_form_schema>>;
 const os_release_form_state = ref<NewOSRelease>({
 	changelog: os_release_data.value.changelog,
 });
 
 async function onFormSubmit() {
-
 	os_release_loading.value = true;
 
 	try {
-
 		if (os_release.isNew) {
-			const result = await useAPI((api) => api.postAdminOsReleases({
-				body: {
-					changelog: os_release_form_state.value.changelog,
-				}
-			}));
+			const result = await useAPI((api) =>
+				api.postAdminOsReleases({
+					body: {
+						changelog: os_release_form_state.value.changelog,
+					},
+				}),
+			);
 
 			if (result.success) {
 				toast.add({
-					title: 'OS Release created',
-					description: 'The OS Release has been successfully created.',
-					icon: 'i-lucide-check',
-					color: 'success'
-				})
+					title: "OS Release created",
+					description: "The OS Release has been successfully created.",
+					icon: "i-lucide-check",
+					color: "success",
+				});
 
 				// Redirect to the newly created OS Release page
 				navigateTo(`/dashboard/admin/os-releases/${result.data?.version}`);
 			} else {
-				throw new Error(result.message || 'Failed to create OS Release');
+				throw new Error(result.message || "Failed to create OS Release");
 			}
-
 		} else {
-			
-			const result = await useAPI((api) => api.putAdminOsReleasesByVersion({
-				path: {
-					version: (os_release_data as Ref<OSRelease>).value.version
-				},
-				body: {
-					changelog: os_release_form_state.value.changelog
-				}
-			}));
+			const result = await useAPI((api) =>
+				api.putAdminOsReleasesByVersion({
+					path: {
+						version: (os_release_data as Ref<OSRelease>).value.version,
+					},
+					body: {
+						changelog: os_release_form_state.value.changelog,
+					},
+				}),
+			);
 
 			if (result.success) {
 				os_release_data.value.changelog = os_release_form_state.value.changelog as string;
 
 				toast.add({
-					title: 'OS Release updated',
-					description: 'The OS Release has been successfully updated.',
-					icon: 'i-lucide-check',
-					color: 'success'
-				})
+					title: "OS Release updated",
+					description: "The OS Release has been successfully updated.",
+					icon: "i-lucide-check",
+					color: "success",
+				});
 			} else {
-				throw new Error(result.message || 'Failed to update OS Release');
+				throw new Error(result.message || "Failed to update OS Release");
 			}
-
 		}
 	} catch (error: any) {
 		toast.add({
-			title: 'Error',
-			description: error.message || 'An unexpected error occurred.',
-			icon: 'i-lucide-alert-circle',
-			color: 'error'
-		})
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
 	} finally {
-		os_release_loading.value = false
+		os_release_loading.value = false;
 	}
-	
 }
-
 
 const deleteConfirmOpen = ref(false);
 
 async function onDeleteOSRelease() {
+	toast.add({
+		title: "OS Release deletion not implemented",
+		description: "The deletion of OS Releases is not yet implemented.",
+		icon: "i-lucide-alert-triangle",
+		color: "warning",
+	});
 
-
-    toast.add({
-        title: 'OS Release deletion not implemented',
-        description: 'The deletion of OS Releases is not yet implemented.',
-        icon: 'i-lucide-alert-triangle',
-        color: 'warning'
-    });
-
+	// The API has no endpoint for deleting OS releases yet.
 	deleteConfirmOpen.value = false;
-
-	// try {
-	// 	// const result = await useAPI((api) => api.deleteOSRelease({}))
-
-	// 	if (result.success) {
-	// 		toast.add({
-	// 			title: 'OS Release deleted',
-	// 			description: 'The OS Release has been permanently deleted.',
-	// 			icon: 'i-lucide-check',
-	// 			color: 'success'
-	// 		})
-
-	// 		await useUserInfoStore().clear();
-	// 		useCookie("leioshub_session_token").value = null
-	// 		navigateTo('/')
-	// 	} else {
-	// 		toast.add({
-	// 			title: 'Error',
-	// 			description: result.message || 'An error occurred while deleting the OS Release.',
-	// 			icon: 'i-lucide-alert-circle',
-	// 			color: 'error'
-	// 		})
-	// 	}
-	// } catch (error) {
-	// 	toast.add({
-	// 		title: 'Error',
-	// 		description: 'An unexpected error occurred.',
-	// 		icon: 'i-lucide-alert-circle',
-	// 		color: 'error'
-	// 	})
-	// } finally {
-	// 	deleteLoading.value = false
-	// 	deleteConfirmOpen.value = false
-	// }
 }
 
 const headerTexts = computed(() => {
 	if (os_release.isNew) {
 		return {
-			title: 'New OS Release',
-			description: 'Create a new OS Release for LeiOS.'
-		}
+			title: "New OS Release",
+			description: "Create a new OS Release for LeiOS.",
+		};
 	}
 	return {
 		title: `OS Release ${(os_release_data as Ref<OSRelease>).value.version}`,
-		description: 'View and manage the details of this OS Release.'
-	}
+		description: "View and manage the details of this OS Release.",
+	};
 });
-
 </script>
 
 <template>
@@ -287,38 +248,30 @@ const headerTexts = computed(() => {
 			</div>
 		</div>
 
-        <!-- Danger Zone Card -->
-		<div v-if="!os_release.isNew" class="rounded-xl border border-red-900/50 bg-red-950/20 backdrop-blur-sm overflow-hidden">
-			<div class="px-6 py-4 border-b border-red-900/50">
-				<div class="flex items-center gap-3">
-					<div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-						<UIcon name="i-lucide-alert-triangle" class="w-5 h-5 text-red-400" />
-					</div>
-					<div>
-						<h3 class="font-medium text-red-400">Danger Zone</h3>
-						<p class="text-sm text-slate-400">Irreversible and destructive actions</p>
-					</div>
+		<!-- Danger Zone -->
+		<DashboardSectionCard
+			v-if="!os_release.isNew"
+			title="Danger Zone"
+			description="Irreversible and destructive actions"
+			icon="i-lucide-alert-triangle"
+			tone="danger"
+		>
+			<div class="flex flex-col md:flex-row md:items-center gap-4">
+				<div class="flex-1">
+					<h4 class="font-medium text-white">Delete OS Release</h4>
+					<p class="text-sm text-slate-400 mt-1">
+						Permanently delete this OS Release and all associated data. This action cannot be undone.
+					</p>
 				</div>
+				<UButton 
+					label="Delete OS Release" 
+					color="error" 
+					variant="soft"
+					icon="i-lucide-trash-2"
+					@click="deleteConfirmOpen = true;"
+				/>
 			</div>
-			
-			<div class="p-6">
-				<div class="flex flex-col md:flex-row md:items-center gap-4">
-					<div class="flex-1">
-						<h4 class="font-medium text-white">Delete OS Release</h4>
-						<p class="text-sm text-slate-400 mt-1">
-							Permanently delete this OS Release and all associated data. This action cannot be undone.
-						</p>
-					</div>
-					<UButton 
-						label="Delete OS Release" 
-						color="error" 
-						variant="soft"
-						icon="i-lucide-trash-2"
-						@click="deleteConfirmOpen = true"
-					/>
-				</div>
-			</div>
-		</div>
+		</DashboardSectionCard>
 
 		<!-- Delete Confirmation Modal -->
 		<DashboardDeleteModal

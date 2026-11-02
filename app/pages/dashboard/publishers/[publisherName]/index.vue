@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { Publisher, NewPublisher } from "~/utils/types";
-import { zPostPublishersBody, zPutPublishersByPublisherNameBody } from "~/api-client/zod.gen";
 import type z from "zod";
+import { zPostPublishersBody, zPutPublishersByPublisherNameBody } from "~/api-client/zod.gen";
+import type { UserSearchResult } from "~/components/form/UserSearch.vue";
+import type { NewPublisher, Publisher } from "~/utils/types";
 
 definePageMeta({
-    layout: 'dashboard'
+	layout: "dashboard",
 });
 
 const route = useRoute();
@@ -15,145 +16,185 @@ const pub_data = pub.data;
 const pub_loading = pub.loading;
 
 const headerTexts = computed(() => {
-    if (pub.isNew) {
-        return {
-            title: 'Create New Publisher',
-            description: 'Create a new publisher on LeiOS Hub.',
-        };
-    }
-    return {
-        title: `Publisher: ${pub_data.value.name}`,
-        description: 'View and manage the details of the publisher.',
-    };
+	if (pub.isNew) {
+		return {
+			title: "Create New Publisher",
+			description: "Create a new publisher on LeiOS Hub.",
+		};
+	}
+	return {
+		title: `Publisher: ${pub_data.value.name}`,
+		description: "View and manage the details of the publisher.",
+	};
 });
+
+// URL placeholders live in <script>: vue-tsc 3.3.14 mangles `//` inside component attribute
+// strings in its generated code, which breaks type-checking of the rest of the template.
+const homepageUrlPlaceholder = "https://...";
 
 const publisher_form_schema = pub.isNew ? zPostPublishersBody : zPutPublishersByPublisherNameBody;
 const publisher_form_state = ref<NewPublisher>({
-    name: pub_data.value.name || '',
-    display_name: pub_data.value.display_name || '',
-    description: pub_data.value.description || '',
-    homepage_url: pub_data.value.homepage_url || '',
-    maintainer_contact_name: pub_data.value.maintainer_contact_name || '',
-    maintainer_contact_email: pub_data.value.maintainer_contact_email || '',
+	name: pub_data.value.name || "",
+	display_name: pub_data.value.display_name || "",
+	description: pub_data.value.description || "",
+	homepage_url: pub_data.value.homepage_url || "",
+	maintainer_contact_name: pub_data.value.maintainer_contact_name || "",
+	maintainer_contact_email: pub_data.value.maintainer_contact_email || "",
 });
 
 const submitting = ref(false);
 
 async function onFormSubmit() {
-    submitting.value = true;
-    try {
-        if (pub.isNew) {
-            const result = await useAPI((api) =>
-                api.postPublishers({
-                    body: {
-                        name: publisher_form_state.value.name,
-                        display_name: publisher_form_state.value.display_name,
-                        description: publisher_form_state.value.description,
-                        homepage_url: publisher_form_state.value.homepage_url,
-                        maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
-                        maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
-                    }
-                })
-            );
+	submitting.value = true;
+	try {
+		if (pub.isNew) {
+			const result = await useAPI((api) =>
+				api.postPublishers({
+					body: {
+						name: publisher_form_state.value.name,
+						display_name: publisher_form_state.value.display_name,
+						description: publisher_form_state.value.description,
+						homepage_url: publisher_form_state.value.homepage_url,
+						maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
+						maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
+					},
+				}),
+			);
 
-            if (result.success) {
-                toast.add({
-                    title: 'Publisher created',
-                    description: `The publisher "${publisher_form_state.value.name}" has been created.`,
-                    icon: 'i-lucide-check',
-                    color: 'success',
-                });
+			if (result.success) {
+				toast.add({
+					title: "Publisher created",
+					description: `The publisher "${publisher_form_state.value.name}" has been created.`,
+					icon: "i-lucide-check",
+					color: "success",
+				});
 
-                await navigateTo(`/dashboard/publishers/${publisher_form_state.value.name}`);
-            } else {
-                throw new Error(result.message || 'Failed to create publisher');
-            }
-        } else {
-            const result = await useAPI((api) =>
-                api.putPublishersByPublisherName({
-                    path: {
-                        publisherName: pub_data.value.name,
-                    },
-                    body: {
-                        display_name: publisher_form_state.value.display_name,
-                        description: publisher_form_state.value.description,
-                        homepage_url: publisher_form_state.value.homepage_url,
-                        maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
-                        maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
-                    }
-                })
-            );
+				await navigateTo(`/dashboard/publishers/${publisher_form_state.value.name}`);
+			} else {
+				throw new Error(result.message || "Failed to create publisher");
+			}
+		} else {
+			const result = await useAPI((api) =>
+				api.putPublishersByPublisherName({
+					path: {
+						publisherName: pub_data.value.name,
+					},
+					body: {
+						display_name: publisher_form_state.value.display_name,
+						description: publisher_form_state.value.description,
+						homepage_url: publisher_form_state.value.homepage_url,
+						maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
+						maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
+					},
+				}),
+			);
 
-            if (result.success) {
-                pub_data.value = {
-                    ...pub_data.value,
-                    display_name: publisher_form_state.value.display_name,
-                    description: publisher_form_state.value.description,
-                    homepage_url: publisher_form_state.value.homepage_url,
-                    maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
-                    maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
-                };
+			if (result.success) {
+				pub_data.value = {
+					...pub_data.value,
+					display_name: publisher_form_state.value.display_name,
+					description: publisher_form_state.value.description,
+					homepage_url: publisher_form_state.value.homepage_url,
+					maintainer_contact_name: publisher_form_state.value.maintainer_contact_name,
+					maintainer_contact_email: publisher_form_state.value.maintainer_contact_email,
+				};
 
-                toast.add({
-                    title: 'Publisher updated',
-                    description: `The publisher has been successfully updated.`,
-                    icon: 'i-lucide-check',
-                    color: 'success',
-                });
-            } else {
-                throw new Error(result.message || 'Failed to update publisher');
-            }
-        }
-    } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error',
-        });
-    } finally {
-        submitting.value = false;
-    }
+				toast.add({
+					title: "Publisher updated",
+					description: `The publisher has been successfully updated.`,
+					icon: "i-lucide-check",
+					color: "success",
+				});
+			} else {
+				throw new Error(result.message || "Failed to update publisher");
+			}
+		}
+	} catch (error: any) {
+		toast.add({
+			title: "Error",
+			description: error.message || "An unexpected error occurred.",
+			icon: "i-lucide-x-circle",
+			color: "error",
+		});
+	} finally {
+		submitting.value = false;
+	}
 }
 
 const deleteConfirmOpen = ref(false);
 
 async function onDeletePublisher() {
-    try {
-        const result = await useAPI((api) =>
-            api.deletePublishersByPublisherName({
-                path: { publisherName: pub_data.value.name }
-            })
-        );
+	const publisherName = pub_data.value.name;
+	const result = await useAPI((api) =>
+		api.deletePublishersByPublisherName({
+			path: { publisherName },
+		}),
+	);
 
-        if (result.success) {
-            toast.add({
-                title: 'Publisher deleted',
-                description: `The publisher "${pub_data.value.name}" has been deleted.`,
-                icon: 'i-lucide-check',
-                color: 'success',
-            });
+	if (!result.success) {
+		toast.add({
+			title: "Failed to delete publisher",
+			description: result.message || "An unexpected error occurred.",
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+		// Throwing keeps the delete modal open (see DashboardDeleteModal).
+		throw new Error(result.message);
+	}
 
-            await navigateTo('/dashboard/publishers');
-        } else {
-            throw new Error(result.message || 'Failed to delete publisher');
-        }
-    } catch (error: any) {
-        toast.add({
-            title: 'Error',
-            description: error.message || 'An unexpected error occurred.',
-            icon: 'i-lucide-x-circle',
-            color: 'error',
-        });
-        deleteConfirmOpen.value = false;
-    }
+	toast.add({
+		title: "Publisher deleted",
+		description: `The publisher "${publisherName}" has been deleted.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	await navigateTo("/dashboard/publishers");
+}
+
+// --- Ownership transfer ---
+const transferOpen = ref(false);
+const transferTarget = ref<UserSearchResult | null>(null);
+const transferring = ref(false);
+
+async function onTransferOwnership() {
+	if (!transferTarget.value) return;
+
+	transferring.value = true;
+	const target = transferTarget.value;
+	const result = await useAPI((api) =>
+		api.postPublishersByPublisherNameTransferOwnership({
+			path: { publisherName: pub_data.value.name },
+			body: { new_owner_user_id: target.id },
+		}),
+	);
+	transferring.value = false;
+
+	if (!result.success) {
+		toast.add({
+			title: "Could not transfer ownership",
+			description: result.message,
+			icon: "i-lucide-alert-circle",
+			color: "error",
+		});
+		return;
+	}
+
+	transferOpen.value = false;
+	transferTarget.value = null;
+	toast.add({
+		title: "Ownership transferred",
+		description: `${target.username} now owns ${pub_data.value.display_name}. You stay a member.`,
+		icon: "i-lucide-check",
+		color: "success",
+	});
+	await pub.refresh();
 }
 
 // Pre-fill empty homepage_url so the input doesn't error on empty URL fields
 watchEffect(() => {
-    if (!publisher_form_state.value.homepage_url) {
-        publisher_form_state.value.homepage_url = 'https://';
-    }
+	if (!publisher_form_state.value.homepage_url) {
+		publisher_form_state.value.homepage_url = "https://";
+	}
 });
 </script>
 
@@ -245,7 +286,7 @@ watchEffect(() => {
                     >
                         <UInput
                             v-model="publisher_form_state.homepage_url"
-                            placeholder="https://..."
+                            :placeholder="homepageUrlPlaceholder"
                             class="w-full sm:w-96"
                         />
                     </UFormField>
@@ -301,41 +342,47 @@ watchEffect(() => {
             </div>
         </div>
 
-        <!-- Danger Zone Card -->
-        <div
+        <!-- Danger Zone -->
+        <DashboardSectionCard
             v-if="!pub.isNew"
-            class="rounded-xl border border-red-900/50 bg-red-950/20 backdrop-blur-sm overflow-hidden"
+            title="Danger Zone"
+            description="Irreversible and destructive actions"
+            icon="i-lucide-alert-triangle"
+            tone="danger"
         >
-            <div class="px-6 py-4 border-b border-red-900/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                        <UIcon name="i-lucide-alert-triangle" class="w-5 h-5 text-red-400" />
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-red-400">Danger Zone</h3>
-                        <p class="text-sm text-slate-400">Irreversible and destructive actions</p>
-                    </div>
+            <div class="flex flex-col gap-4 border-b border-red-900/50 pb-4 md:flex-row md:items-center">
+                <div class="flex-1">
+                    <h4 class="font-medium text-white">Transfer Ownership</h4>
+                    <p class="text-sm text-slate-400 mt-1">
+                        Make another user the owner of this publisher. Only the current owner or a
+                        site admin can do this; the new owner also becomes a publisher admin.
+                    </p>
                 </div>
+                <UButton
+                    label="Transfer Ownership"
+                    color="error"
+                    variant="soft"
+                    icon="i-lucide-arrow-right-left"
+                    @click="transferOpen = true;"
+                />
             </div>
 
-            <div class="p-6">
-                <div class="flex flex-col md:flex-row md:items-center gap-4">
-                    <div class="flex-1">
-                        <h4 class="font-medium text-white">Delete Publisher</h4>
-                        <p class="text-sm text-slate-400 mt-1">
-                            Permanently delete this publisher. This will fail if the publisher still has packages.
-                        </p>
-                    </div>
-                    <UButton
-                        label="Delete Publisher"
-                        color="error"
-                        variant="soft"
-                        icon="i-lucide-trash-2"
-                        @click="deleteConfirmOpen = true"
-                    />
+            <div class="flex flex-col md:flex-row md:items-center gap-4 pt-4">
+                <div class="flex-1">
+                    <h4 class="font-medium text-white">Delete Publisher</h4>
+                    <p class="text-sm text-slate-400 mt-1">
+                        Permanently delete this publisher. This will fail if the publisher still has packages.
+                    </p>
                 </div>
+                <UButton
+                    label="Delete Publisher"
+                    color="error"
+                    variant="soft"
+                    icon="i-lucide-trash-2"
+                    @click="deleteConfirmOpen = true;"
+                />
             </div>
-        </div>
+        </DashboardSectionCard>
 
         <!-- Delete Confirmation Modal -->
         <DashboardDeleteModal
@@ -344,7 +391,34 @@ watchEffect(() => {
             warning-text="All data associated with this publisher will be permanently deleted. This action cannot be reversed. Note: publishers with existing packages cannot be deleted."
             v-model:open="deleteConfirmOpen"
             :on-delete="onDeletePublisher"
-            :prevent-auto-close="true"
         />
+
+        <DashboardModal
+            v-if="!pub.isNew"
+            v-model:open="transferOpen"
+            title="Transfer Ownership"
+            description="The new owner gets full control of this publisher, including deleting it."
+            icon="i-lucide-arrow-right-left"
+            icon-color="amber"
+        >
+            <FormUserSearch v-model="transferTarget" placeholder="Search for the new owner..." />
+
+            <template #footer>
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="transferOpen = false;"
+                />
+                <UButton
+                    label="Transfer Ownership"
+                    color="error"
+                    icon="i-lucide-arrow-right-left"
+                    :disabled="!transferTarget"
+                    :loading="transferring"
+                    @click="onTransferOwnership();"
+                />
+            </template>
+        </DashboardModal>
     </div>
 </template>

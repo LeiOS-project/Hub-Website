@@ -1,42 +1,45 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
+import type { NavigationMenuItem } from "@nuxt/ui";
 
 definePageMeta({
-    layout: 'dashboard'
-})
+	layout: "dashboard",
+});
 
 useSeoMeta({
-    title: 'Settings | LeiOS Hub',
-    description: 'Manage your account settings'
-})
+	title: "Settings | LeiOS Hub",
+	description: "Manage your account settings",
+});
 
-const links = [[{
-	label: 'General',
-	icon: 'i-lucide-user',
-	to: '/dashboard/settings',
-	exact: true
-}, {
-	label: 'Security',
-	icon: 'i-lucide-shield',
-	to: '/dashboard/settings/security'
-}]] satisfies NavigationMenuItem[][]
-
+const links = [
+	[
+		{
+			label: "General",
+			icon: "i-lucide-user",
+			to: "/dashboard/settings",
+			exact: true,
+		},
+		{
+			label: "Security",
+			icon: "i-lucide-shield",
+			to: "/dashboard/settings/security",
+		},
+	],
+] satisfies NavigationMenuItem[][];
 </script>
 
 <template>
 	<UDashboardPanel id="settings" :ui="{ body: 'lg:py-12' }">
 		<template #header>
-			<UDashboardNavbar title="Settings" icon="i-lucide-settings">
-            </UDashboardNavbar>
+			<DashboardPageHeader title="Settings" icon="i-lucide-settings" />
 
 			<UDashboardToolbar>
-				<!-- NOTE: The `-mx-1` class is used to align with the `DashboardSidebarCollapse` button here. -->
+				<!-- `-mx-1` aligns the menu with the sidebar collapse button. -->
 				<UNavigationMenu :items="links" highlight class="-mx-1 flex-1" />
 			</UDashboardToolbar>
 		</template>
 
 		<template #body>
-			<div class="flex flex-col gap-4 sm:gap-6 lg:gap-12 w-full lg:max-w-3xl mx-auto">
+			<div class="mx-auto flex w-full flex-col gap-4 sm:gap-6 lg:max-w-3xl lg:gap-12">
 				<NuxtPage />
 			</div>
 		</template>

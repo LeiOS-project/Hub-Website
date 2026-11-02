@@ -1,38 +1,37 @@
 <script setup lang="ts">
-import type { TableColumn } from '#ui/types'
-import type { Publisher } from '~/utils/types'
+import type { TableColumn } from "#ui/types";
+import type { Publisher } from "~/utils/types";
 
 definePageMeta({
-    layout: 'dashboard',
+	layout: "dashboard",
 });
 
 useSeoMeta({
-    title: 'Publishers | LeiOS Hub',
-    description: 'Manage your publishers'
+	title: "Publishers | LeiOS Hub",
+	description: "Manage your publishers",
 });
 
 const toast = useToast();
 
 const publisherTableColumns: TableColumn<Publisher>[] = [
-    { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'display_name', header: 'Display Name' },
-    { accessorKey: 'description', header: 'Description' },
-    { accessorKey: 'maintainer_contact_name', header: 'Maintainer' },
-    { accessorKey: 'created_at', header: 'Created At' },
-    { id: 'actions', header: '', enableSorting: false, enableHiding: false }
+	{ accessorKey: "name", header: "Name" },
+	{ accessorKey: "display_name", header: "Display Name" },
+	{ accessorKey: "description", header: "Description" },
+	{ accessorKey: "maintainer_contact_name", header: "Maintainer" },
+	{ accessorKey: "created_at", header: "Created At" },
+	{ id: "actions", header: "", enableSorting: false, enableHiding: false },
 ];
 
-const publishers = await useAPILazyAsyncData<Publisher[]>(
-    '/dashboard/publishers',
-    async () => {
-        const res = await useAPI((api) => api.getPublishers({ query: { onlyMembershipByMe: true } }));
-        if (!res.success) {
-            toast.add({ title: 'Failed to load publishers', description: res.message, color: 'error' });
-            return [];
-        }
-        return res.data;
-    }
-);
+const publishers = await useAPILazyAsyncData<Publisher[]>("/dashboard/publishers", async () => {
+	const res = await useAPI((api) =>
+		api.getPublishers({ query: { onlyMembershipByMe: "true", limit: 100 } }),
+	);
+	if (!res.success) {
+		toast.add({ title: "Failed to load publishers", description: res.message, color: "error" });
+		return [];
+	}
+	return res.data.items;
+});
 </script>
 
 <template>
@@ -47,6 +46,10 @@ const publishers = await useAPILazyAsyncData<Publisher[]>(
 
         <template #body>
             <DashboardPageBody>
+                <DashboardEmailVerificationNotice
+                    reason="You need a confirmed address to create a publisher."
+                />
+
                 <DashboardDataTable
                     :data="publishers.data"
                     :columns="publisherTableColumns"

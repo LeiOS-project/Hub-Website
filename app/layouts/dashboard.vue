@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from "@nuxt/ui";
-import UserMenu from "~/components/dashboard/UserMenu.vue";
-import LeiOSLogo from "~/components/img/LeiOSLogo.vue";
-import LeiOSIcon from "~/components/img/LeiOSIcon.vue";
 import { useUserInfoStore } from "~/composables/stores/useUserStore";
 
 const userInfoStore = useUserInfoStore();
@@ -11,128 +8,144 @@ const user = await userInfoStore.use();
 const isAdmin = computed(() => user.value?.role === "admin");
 
 const sidebarItems = computed(() => {
-    const devItems: NavigationMenuItem[] = [
-        {
-            label: "Overview",
-            icon: "i-lucide-layout-dashboard",
-            to: "/dashboard",
-        },
-        {
-            label: "Packages",
-            icon: "i-lucide-package",
-            to: "/dashboard/packages",
-        },
-        {
-            label: "Publishers",
-            icon: "i-lucide-building",
-            to: "/dashboard/publishers",
-        },
-        {
-            label: "API Keys",
-            icon: "i-lucide-key",
-            to: "/dashboard/apikeys",
-        },
-    ];
+	const devItems: NavigationMenuItem[] = [
+		{
+			label: "Overview",
+			icon: "i-lucide-layout-dashboard",
+			to: "/dashboard",
+			exact: true,
+		},
+		{
+			label: "Packages",
+			icon: "i-lucide-package",
+			to: "/dashboard/packages",
+		},
+		{
+			label: "Publishers",
+			icon: "i-lucide-building",
+			to: "/dashboard/publishers",
+		},
+		{
+			label: "API Keys",
+			icon: "i-lucide-key",
+			to: "/dashboard/apikeys",
+		},
+	];
 
-    const adminItems: NavigationMenuItem[] = [
-        {
-            label: "Admin",
-            icon: "i-lucide-shield",
-            type: "label",
-            // defaultOpen: route.path.startsWith("/dashboard/admin"),
-            // children: [
-            //     {
-            //         label: "Stable Promotion Requests",
-            //         to: "/dashboard/admin/stable-promotion-requests",
-            //     },
-            //     {
-            //         label: "Users",
-            //         to: "/dashboard/admin/users",
-            //     },
-            //     {
-            //         label: "All Packages",
-            //         to: "/dashboard/admin/packages",
-            //     },
-            // ],
-        },
-        {
-            label: "Users",
-            icon: "i-lucide-users",
-            to: "/dashboard/admin/users",
-        },
-        {
-            label: "All Packages",
-            icon: "i-lucide-package-search",
-            to: "/dashboard/admin/packages",
-        },
-        {
-            label: "Stable Promotion Requests",
-            icon: "i-lucide-git-pull-request",
-            to: "/dashboard/admin/stable-promotion-requests",
-        },
-        {
-            label: "OS Releases",
-            icon: "i-lucide-rocket",
-            to: "/dashboard/admin/os-releases",
-        },
-        {
-            label: "Tasks",
-            icon: "i-lucide-list-checks",
-            to: "/dashboard/admin/tasks",
-        }
-    ];
+	const adminItems: NavigationMenuItem[] = [
+		{
+			label: "Admin",
+			icon: "i-lucide-shield",
+			type: "label",
+			// defaultOpen: route.path.startsWith("/dashboard/admin"),
+			// children: [
+			//     {
+			//         label: "Stable Promotion Requests",
+			//         to: "/dashboard/admin/stable-promotion-requests",
+			//     },
+			//     {
+			//         label: "Users",
+			//         to: "/dashboard/admin/users",
+			//     },
+			//     {
+			//         label: "All Packages",
+			//         to: "/dashboard/admin/packages",
+			//     },
+			// ],
+		},
+		{
+			label: "Overview",
+			icon: "i-lucide-gauge",
+			to: "/dashboard/admin",
+			exact: true,
+		},
+		{
+			label: "Users",
+			icon: "i-lucide-users",
+			to: "/dashboard/admin/users",
+		},
+		{
+			label: "Publishers",
+			icon: "i-lucide-building-2",
+			to: "/dashboard/admin/publishers",
+		},
+		{
+			label: "All Packages",
+			icon: "i-lucide-package-search",
+			to: "/dashboard/admin/packages",
+		},
+		{
+			label: "Reports",
+			icon: "i-lucide-flag",
+			to: "/dashboard/admin/reports",
+		},
+		{
+			label: "Stable Promotion Requests",
+			icon: "i-lucide-git-pull-request",
+			to: "/dashboard/admin/stable-promotion-requests",
+		},
+		{
+			label: "OS Releases",
+			icon: "i-lucide-rocket",
+			to: "/dashboard/admin/os-releases",
+		},
+		{
+			label: "Tasks",
+			icon: "i-lucide-list-checks",
+			to: "/dashboard/admin/tasks",
+		},
+		{
+			label: "Audit Log",
+			icon: "i-lucide-scroll-text",
+			to: "/dashboard/admin/audit-log",
+		},
+	];
 
+	const settings: NavigationMenuItem[] = [
+		{
+			label: "Settings",
+			icon: "i-lucide-settings",
+			type: "label",
+		},
+		{
+			label: "General",
+			icon: "i-lucide-user",
+			to: "/dashboard/settings",
+			exact: true,
+		},
+		{
+			label: "Security",
+			icon: "i-lucide-shield",
+			to: "/dashboard/settings/security",
+		},
+	];
 
-    const settings: NavigationMenuItem[] = [
-        {
-            label: "Settings",
-            icon: "i-lucide-settings",
-            type: "label",
-        },
-        {
-            label: "General",
-            icon: "i-lucide-user",
-            to: "/dashboard/settings",
-            exact: true,
-        },
-        {
-            label: "Security",
-            icon: "i-lucide-shield",
-            to: "/dashboard/settings/security",
-        },
-    ];
+	const footerItems: NavigationMenuItem[] = [
+		{
+			label: "Explorer",
+			icon: "i-lucide-compass",
+			to: "/explore",
+		},
+		{
+			label: "Back to Home",
+			icon: "i-lucide-home",
+			to: "/",
+		},
+	];
 
-    const footerItems: NavigationMenuItem[] = [
-        {
-            label: "Explorer",
-            icon: "i-lucide-compass",
-            to: "/explore",
-        },
-        {
-            label: "Back to Home",
-            icon: "i-lucide-home",
-            to: "/",
-        },
-    ];
-
-    return {
-        dev: devItems,
-        settings: settings,
-        admin: adminItems,
-        footer: footerItems,
-    }
+	return {
+		dev: devItems,
+		settings: settings,
+		admin: adminItems,
+		footer: footerItems,
+	};
 });
-
-
 </script>
 
 <template>
-    <NuxtLoadingIndicator
-        color="#00bcff"
-        position="top"
-    />
+    <NuxtLoadingIndicator color="var(--ui-primary)" position="top" />
 
-    <UDashboardGroup class="app-layout-dashboard main-bg-color">
+    <UDashboardGroup class="main-bg-color text-slate-100">
         <UDashboardSidebar
             collapsible
             resizable
@@ -148,10 +161,10 @@ const sidebarItems = computed(() => {
         >
             <template #header="{ collapsed }">
                 <NuxtLink to="/" :class="`${!collapsed ? 'ms-2.5' : ''} flex items-center gap-1.5`">
-                    <LeiOSLogo v-if="!collapsed" class="h-6 w-auto flex-none" />
+                    <ImgLeiOSLogo v-if="!collapsed" class="h-6 w-auto flex-none" />
                     <span v-if="!collapsed" class="text-lg font-semibold">/</span>
                     <span v-if="!collapsed" class="text-lg font-semibold">Hub</span>
-                    <LeiOSIcon v-else class="h-8 w-8" />
+                    <ImgLeiOSIcon v-else class="h-8 w-8" />
                 </NuxtLink>
             </template>
 
@@ -184,7 +197,7 @@ const sidebarItems = computed(() => {
             </template>
 
             <template #footer="{ collapsed }">
-                <UserMenu :collapsed="collapsed"></UserMenu>
+                <DashboardUserMenu :collapsed="collapsed" />
             </template>
         </UDashboardSidebar>
 
@@ -192,8 +205,3 @@ const sidebarItems = computed(() => {
     </UDashboardGroup>
 </template>
 
-<style scoped>
-.app-layout-dashboard {
-    color: rgb(241 245 249);
-}
-</style>

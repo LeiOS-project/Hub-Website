@@ -1,0 +1,15 @@
+# Build context for docker/Dockerfile — the image only copies the prebuilt .output/.
+node_modules
+.git
+.nuxt
+.nitro
+.cache
+.data
+.bun
+coverage
+junit.xml
+tmp-data-*
+data
+config
+.env
+.env.*
