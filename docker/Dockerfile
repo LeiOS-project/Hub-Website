@@ -3,7 +3,7 @@
 # Layout: /opt/leios/hub (LeiOS is a standalone product: no org level in the path).
 # This shape is stateless: no volumes, and the HEALTHCHECK probes `/` — there is no dedicated
 # health route.
-# Runtime config comes from the prefixed env, e.g. `-e LEIOS_HUB_API_URL=https://api.leios.dev` —
+# Runtime config comes from the prefixed env, e.g. `-e LEIOS_API_URL=https://api.leios.dev` —
 # the Nitro banner in nuxt.config.ts maps LEIOS_HUB_* onto NUXT_PUBLIC_* at server start.
 FROM oven/bun:1-slim
 

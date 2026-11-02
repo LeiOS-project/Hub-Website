@@ -32,7 +32,7 @@ Follow the LeiCraftMC Style Guide: https://git.leicraftmc.de/LeiCraftMC/Style-Gu
 - **Ports:** the Hub runs on **12153** (dev and prod); the API-Server on **12151**.
 - **Env vars** (`example.env`; the Nitro banner in `nuxt.config.ts` maps them onto `NUXT_PUBLIC_*`
   at server start, so a built `.output/` is configured at runtime):
-  - `LEIOS_HUB_API_URL` — API-Server origin **without** `/v1` (default `http://localhost:12151`;
+  - `LEIOS_API_URL` — API-Server origin **without** `/v1` (default `http://localhost:12151`;
     `updateAPIClient` appends `/v1`).
   - `LEIOS_HUB_APP_URL` — public URL of the Hub (default `http://localhost:12153`).
 - **Signup** has no Hub switch: the Hub reads `signup_enabled` from the API's `GET /v1/meta`

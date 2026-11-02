@@ -11,8 +11,6 @@ import { client } from "@/api-client/client.gen";
 import { useRuntimeAppConfigs } from "./useRuntimeAppConfigs";
 
 export function updateAPIClient(token: string | null) {
-	const apiUrl = useRuntimeAppConfigs().apiUrl.replace(/\/$/, "");
-	const apiURL = `${apiUrl}/v1`;
 
 	client.setConfig({
 		baseURL: apiURL,

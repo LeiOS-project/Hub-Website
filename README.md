@@ -37,7 +37,7 @@ The code follows the [LeiCraftMC Style Guide](https://git.leicraftmc.de/LeiCraft
 
 2. Environment variables — copy `example.env` to `.env` and adjust as needed:
 
-   - `LEIOS_HUB_API_URL` — origin of the LeiOS API-Server, without `/v1` (default `http://localhost:12151`)
+   - `LEIOS_API_URL` — origin of the LeiOS API-Server, without `/v1` (default `http://localhost:12151`)
    - `LEIOS_HUB_APP_URL` — public URL of the Hub (default `http://localhost:12153`)
 
    Signup is switched on in the API-Server (`LRA_SIGNUP_ENABLED` plus SMTP); the Hub reads it from
@@ -77,7 +77,7 @@ The code follows the [LeiCraftMC Style Guide](https://git.leicraftmc.de/LeiCraft
 
 CI (`.gitlab-ci.yml`) runs lint, typecheck and tests on every push and merge request; on the
 default branch it builds `.output/` and pushes the Docker image (`docker/Dockerfile`). Run it with
-`docker/docker-compose.yml`, setting `LEIOS_HUB_API_URL` and `LEIOS_HUB_APP_URL` for the
+`docker/docker-compose.yml`, setting `LEIOS_API_URL` and `LEIOS_HUB_APP_URL` for the
 deployment.
 
 ## AI tooling

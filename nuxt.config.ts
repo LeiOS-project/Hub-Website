@@ -18,7 +18,7 @@ export default defineNuxtConfig({
 				// built .output/ (e.g. the Docker image) is configured through LEIOS_HUB_* at runtime.
 				banner: (() => {
 					const mappings = {
-						LEIOS_HUB_API_URL: "API_URL",
+						LEIOS_API_URL: "API_URL",
 						LEIOS_HUB_APP_URL: "APP_URL",
 					};
 
@@ -49,7 +49,7 @@ export default defineNuxtConfig({
 	runtimeConfig: {
 		public: {
 			// Origin of the LeiOS API-Server, without `/v1` (updateAPIClient appends it).
-			apiUrl: process.env.LEIOS_HUB_API_URL || "http://localhost:12151",
+			apiUrl: process.env.LEIOS_API_URL || "http://localhost:12151",
 			appUrl: process.env.LEIOS_HUB_APP_URL || "http://localhost:12153",
 		},
 	},
