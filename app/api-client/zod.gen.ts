@@ -18,6 +18,7 @@ export const zPostAuthLoginResponse = z.object({
         user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         user_role: z.enum([
             'admin',
+            'moderator',
             'developer',
             'user'
         ]),
@@ -38,6 +39,7 @@ export const zGetAuthSessionResponse = z.object({
         user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         user_role: z.enum([
             'admin',
+            'moderator',
             'developer',
             'user'
         ]),
@@ -160,6 +162,7 @@ export const zGetAccountResponse = z.object({
         email: z.string(),
         role: z.enum([
             'admin',
+            'moderator',
             'developer',
             'user'
         ]),
@@ -319,7 +322,7 @@ export const zGetPublishersResponse = z.object({
 export const zPostPublishersBody = z.object({
     name: z.string().min(2).max(50).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
     display_name: z.string().min(1).max(200),
-    description: z.string().min(1).max(500),
+    description: z.string().min(1).max(5000),
     homepage_url: z.url().max(500),
     maintainer_contact_name: z.string().min(1).max(254),
     maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/)
@@ -377,7 +380,7 @@ export const zGetPublishersByPublisherNameResponse = z.object({
 
 export const zPutPublishersByPublisherNameBody = z.object({
     display_name: z.string().min(1).max(200).optional(),
-    description: z.string().min(1).max(500).optional(),
+    description: z.string().min(1).max(5000).optional(),
     homepage_url: z.url().max(500).optional(),
     maintainer_contact_name: z.string().min(1).max(254).optional(),
     maintainer_contact_email: z.email().max(254).regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/).optional()
@@ -602,7 +605,7 @@ export const zPostPackagesBody = z.object({
     publisher_id: z.int().gte(-9007199254740991).lte(9007199254740991),
     name: z.string().min(2).max(200).regex(/^[a-z0-9][a-z0-9.-]*[a-z0-9]$/),
     display_name: z.string().min(1).max(200),
-    description: z.string().min(1).max(500),
+    description: z.string().min(1).max(5000),
     homepage_url: z.url().max(500),
     requires_patching: z.boolean().optional().default(false)
 });
@@ -675,7 +678,7 @@ export const zGetPackagesByFullPackageNameResponse = z.object({
 
 export const zPutPackagesByFullPackageNameBody = z.object({
     display_name: z.string().min(1).max(200).optional(),
-    description: z.string().min(1).max(500).optional(),
+    description: z.string().min(1).max(5000).optional(),
     homepage_url: z.url().max(500).optional(),
     requires_patching: z.boolean().optional().default(false)
 });
@@ -714,7 +717,17 @@ export const zGetPackagesByFullPackageNameReleasesResponse = z.object({
             is_all: z.boolean()
         }),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        changelog: z.string()
+        changelog: z.string(),
+        stable_promotion: z.object({
+            request_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.enum([
+                'pending',
+                'queued',
+                'released',
+                'denied'
+            ]),
+            os_release_version: z.string().nullable()
+        }).nullable()
     }))
 });
 
@@ -745,7 +758,8 @@ export const zListReleaseStablePromotionRequestsPath = z.object({
 export const zListReleaseStablePromotionRequestsQuery = z.object({
     status: z.enum([
         'pending',
-        'approved',
+        'queued',
+        'released',
         'denied'
     ]).optional()
 });
@@ -757,41 +771,30 @@ export const zListReleaseStablePromotionRequestsResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Stable promotion requests retrieved successfully'),
-    data: z.array(z.union([
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('pending'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.null(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        }),
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('approved'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string().nullable(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        }),
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('denied'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string().nullable(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        })
-    ]))
+    data: z.array(z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        status: z.enum([
+            'pending',
+            'queued',
+            'released',
+            'denied'
+        ]),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        status_changed_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        os_release_version: z.string().nullable(),
+        package_name: z.string(),
+        package_fullname: z.string(),
+        package_release_version: z.string(),
+        comment_count: z.int().gte(-9007199254740991).lte(9007199254740991),
+        last_message_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable()
+    }))
 });
 
-export const zCreateReleaseStablePromotionRequestBody = z.record(z.string(), z.never());
+export const zCreateReleaseStablePromotionRequestBody = z.object({
+    message: z.string().min(1).max(10000).optional()
+});
 
 export const zCreateReleaseStablePromotionRequestPath = z.object({
     fullPackageName: z.string(),
@@ -839,38 +842,84 @@ export const zGetReleaseStablePromotionRequestResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Stable promotion request retrieved successfully'),
-    data: z.union([
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('pending'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.null(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        }),
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('approved'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string().nullable(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        }),
-        z.object({
-            id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-            status: z.literal('denied'),
-            created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string().nullable(),
-            package_name: z.string(),
-            package_release_version: z.string()
-        })
-    ])
+    data: z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        status: z.enum([
+            'pending',
+            'queued',
+            'released',
+            'denied'
+        ]),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        status_changed_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        os_release_version: z.string().nullable(),
+        package_name: z.string(),
+        package_fullname: z.string(),
+        package_release_version: z.string(),
+        comment_count: z.int().gte(-9007199254740991).lte(9007199254740991),
+        last_message_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable()
+    })
+});
+
+export const zListReleaseStablePromotionRequestMessagesPath = z.object({
+    fullPackageName: z.string(),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/),
+    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Messages retrieved successfully
+ */
+export const zListReleaseStablePromotionRequestMessagesResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Messages retrieved successfully'),
+    data: z.array(z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        request_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        kind: z.enum(['comment', 'status_change']),
+        status: z.enum([
+            'pending',
+            'queued',
+            'released',
+            'denied'
+        ]).nullable(),
+        body: z.string(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        author_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        author_username: z.string().nullable(),
+        author_display_name: z.string().nullable(),
+        author_role: z.enum([
+            'admin',
+            'moderator',
+            'developer',
+            'user'
+        ]).nullable()
+    }))
+});
+
+export const zCreateReleaseStablePromotionRequestMessageBody = z.object({
+    body: z.string().min(1).max(10000)
+});
+
+export const zCreateReleaseStablePromotionRequestMessagePath = z.object({
+    fullPackageName: z.string(),
+    version_with_leios_patch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~-]*)$/),
+    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Message added
+ */
+export const zCreateReleaseStablePromotionRequestMessageResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(201),
+    message: z.literal('Message added'),
+    data: z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991)
+    })
 });
 
 export const zDeletePackagesByFullPackageNameReleasesByVersionWithLeiosPatchPath = z.object({
@@ -909,7 +958,17 @@ export const zGetPackagesByFullPackageNameReleasesByVersionWithLeiosPatchRespons
             is_all: z.boolean()
         }),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        changelog: z.string()
+        changelog: z.string(),
+        stable_promotion: z.object({
+            request_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            status: z.enum([
+                'pending',
+                'queued',
+                'released',
+                'denied'
+            ]),
+            os_release_version: z.string().nullable()
+        }).nullable()
     })
 });
 
@@ -1050,6 +1109,7 @@ export const zPutPackagesByFullPackageNameRoleAssignmentsByUserIdResponse = z.ob
 export const zGetAdminUsersQuery = z.object({
     role: z.enum([
         'admin',
+        'moderator',
         'developer',
         'user'
     ]).optional(),
@@ -1075,6 +1135,7 @@ export const zGetAdminUsersResponse = z.object({
             email: z.string(),
             role: z.enum([
                 'admin',
+                'moderator',
                 'developer',
                 'user'
             ]),
@@ -1094,6 +1155,7 @@ export const zPostAdminUsersBody = z.object({
     email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/),
     role: z.enum([
         'admin',
+        'moderator',
         'developer',
         'user'
     ]).optional(),
@@ -1114,6 +1176,7 @@ export const zPostAdminUsersResponse = z.object({
         email: z.string(),
         role: z.enum([
             'admin',
+            'moderator',
             'developer',
             'user'
         ]),
@@ -1157,6 +1220,7 @@ export const zGetAdminUsersByUserIdResponse = z.object({
         email: z.string(),
         role: z.enum([
             'admin',
+            'moderator',
             'developer',
             'user'
         ]),
@@ -1174,6 +1238,7 @@ export const zPutAdminUsersByUserIdBody = z.object({
     email: z.email().regex(/^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/).optional(),
     role: z.enum([
         'admin',
+        'moderator',
         'developer',
         'user'
     ]).optional()
@@ -1197,6 +1262,7 @@ export const zPutAdminUsersByUserIdResponse = z.object({
         email: z.string(),
         role: z.enum([
             'admin',
+            'moderator',
             'developer',
             'user'
         ]),
@@ -1351,7 +1417,7 @@ export const zGetAdminOsReleasesResponse = z.object({
         items: z.array(z.object({
             id: z.int().gte(-9007199254740991).lte(9007199254740991),
             version: z.string(),
-            changelog: z.string(),
+            changelog: z.string().min(1).max(10000),
             created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
             published_at: z.number().nullable(),
             publishing_status: z.enum([
@@ -1360,14 +1426,16 @@ export const zGetAdminOsReleasesResponse = z.object({
                 'paused',
                 'failed',
                 'completed'
-            ])
+            ]),
+            package_count: z.int().gte(-9007199254740991).lte(9007199254740991)
         })),
         total: z.int().gte(0).lte(9007199254740991)
     })
 });
 
 export const zPostAdminOsReleasesBody = z.object({
-    changelog: z.string().min(1).max(10000)
+    changelog: z.string().min(1).max(10000),
+    stable_promotion_request_ids: z.array(z.int().gt(0).lte(9007199254740991)).max(1000)
 });
 
 /**
@@ -1380,7 +1448,7 @@ export const zPostAdminOsReleasesResponse = z.object({
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         version: z.string(),
-        changelog: z.string(),
+        changelog: z.string().min(1).max(10000),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         published_at: z.number().nullable(),
         publishing_status: z.enum([
@@ -1389,7 +1457,30 @@ export const zPostAdminOsReleasesResponse = z.object({
             'paused',
             'failed',
             'completed'
-        ])
+        ]),
+        package_count: z.int().gte(-9007199254740991).lte(9007199254740991),
+        packages: z.array(z.object({
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            package_fullname: z.string(),
+            version_with_leios_patch: z.string()
+        }))
+    })
+});
+
+export const zPostAdminOsReleasesGenerateChangelogBody = z.object({
+    stable_promotion_request_ids: z.array(z.int().gt(0).lte(9007199254740991)).max(1000)
+});
+
+/**
+ * Release notes generated
+ */
+export const zPostAdminOsReleasesGenerateChangelogResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Release notes generated'),
+    data: z.object({
+        version: z.string(),
+        changelog: z.string()
     })
 });
 
@@ -1407,7 +1498,7 @@ export const zGetAdminOsReleasesByVersionResponse = z.object({
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         version: z.string(),
-        changelog: z.string(),
+        changelog: z.string().min(1).max(10000),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
         published_at: z.number().nullable(),
         publishing_status: z.enum([
@@ -1416,7 +1507,13 @@ export const zGetAdminOsReleasesByVersionResponse = z.object({
             'paused',
             'failed',
             'completed'
-        ])
+        ]),
+        package_count: z.int().gte(-9007199254740991).lte(9007199254740991),
+        packages: z.array(z.object({
+            package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            package_fullname: z.string(),
+            version_with_leios_patch: z.string()
+        }))
     })
 });
 
@@ -1561,9 +1658,11 @@ export const zGetAdminStablePromotionRequestsQuery = z.object({
     order: z.enum(['newest', 'oldest']).optional().default('newest'),
     status: z.enum([
         'pending',
-        'approved',
+        'queued',
+        'released',
         'denied'
-    ]).optional()
+    ]).optional(),
+    search: z.string().min(1).max(100).optional()
 });
 
 /**
@@ -1580,14 +1679,34 @@ export const zGetAdminStablePromotionRequestsResponse = z.object({
             package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
             status: z.enum([
                 'pending',
-                'approved',
+                'queued',
+                'released',
                 'denied'
             ]),
             created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-            admin_note: z.string().nullable(),
+            status_changed_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            os_release_version: z.string().nullable(),
             package_name: z.string(),
             package_fullname: z.string(),
-            package_release_version: z.string()
+            package_release_version: z.string(),
+            comment_count: z.int().gte(-9007199254740991).lte(9007199254740991),
+            last_message_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            publisher_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+            package_display_name: z.string(),
+            package_latest_stable_release: z.object({
+                amd64: z.string().nullable(),
+                arm64: z.string().nullable()
+            }),
+            package_release_architectures: z.object({
+                amd64: z.boolean(),
+                arm64: z.boolean(),
+                is_all: z.boolean()
+            }),
+            package_release_created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+            requested_by_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            requested_by_username: z.string().nullable(),
+            status_changed_by_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+            status_changed_by_username: z.string().nullable()
         })),
         total: z.int().gte(0).lte(9007199254740991)
     })
@@ -1610,34 +1729,113 @@ export const zGetAdminStablePromotionRequestsByStablePromotionRequestIdResponse 
         package_release_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         status: z.enum([
             'pending',
-            'approved',
+            'queued',
+            'released',
             'denied'
         ]),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        admin_note: z.string().nullable(),
+        status_changed_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        os_release_version: z.string().nullable(),
         package_name: z.string(),
         package_fullname: z.string(),
-        package_release_version: z.string()
+        package_release_version: z.string(),
+        comment_count: z.int().gte(-9007199254740991).lte(9007199254740991),
+        last_message_at: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        publisher_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        package_display_name: z.string(),
+        package_latest_stable_release: z.object({
+            amd64: z.string().nullable(),
+            arm64: z.string().nullable()
+        }),
+        package_release_architectures: z.object({
+            amd64: z.boolean(),
+            arm64: z.boolean(),
+            is_all: z.boolean()
+        }),
+        package_release_created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        requested_by_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        requested_by_username: z.string().nullable(),
+        status_changed_by_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        status_changed_by_username: z.string().nullable()
     })
 });
 
-export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdDecideBody = z.object({
-    status: z.enum(['approved', 'denied']),
-    admin_note: z.string()
+export const zPutAdminStablePromotionRequestsByStablePromotionRequestIdStatusBody = z.object({
+    status: z.enum([
+        'pending',
+        'queued',
+        'denied'
+    ]),
+    message: z.string().min(1).max(10000).optional()
 });
 
-export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdDecidePath = z.object({
+export const zPutAdminStablePromotionRequestsByStablePromotionRequestIdStatusPath = z.object({
     stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
 });
 
 /**
- * Decided on stable promotion request successfully
+ * Status changed successfully
  */
-export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdDecideResponse = z.object({
+export const zPutAdminStablePromotionRequestsByStablePromotionRequestIdStatusResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
-    message: z.literal('Decided on stable promotion request successfully'),
+    message: z.literal('Status changed successfully'),
     data: z.null()
+});
+
+export const zGetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesPath = z.object({
+    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Messages retrieved successfully
+ */
+export const zGetAdminStablePromotionRequestsByStablePromotionRequestIdMessagesResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(200),
+    message: z.literal('Messages retrieved successfully'),
+    data: z.array(z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        request_id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        kind: z.enum(['comment', 'status_change']),
+        status: z.enum([
+            'pending',
+            'queued',
+            'released',
+            'denied'
+        ]).nullable(),
+        body: z.string(),
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        author_user_id: z.int().gte(-9007199254740991).lte(9007199254740991).nullable(),
+        author_username: z.string().nullable(),
+        author_display_name: z.string().nullable(),
+        author_role: z.enum([
+            'admin',
+            'moderator',
+            'developer',
+            'user'
+        ]).nullable()
+    }))
+});
+
+export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesBody = z.object({
+    body: z.string().min(1).max(10000)
+});
+
+export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesPath = z.object({
+    stablePromotionRequestID: z.int().gt(0).lte(9007199254740991)
+});
+
+/**
+ * Message added
+ */
+export const zPostAdminStablePromotionRequestsByStablePromotionRequestIdMessagesResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(201),
+    message: z.literal('Message added'),
+    data: z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991)
+    })
 });
 
 export const zGetAdminPublishersQuery = z.object({
@@ -1908,6 +2106,7 @@ export const zGetAdminStatsResponse = z.object({
         }),
         releases: z.int().gte(-9007199254740991).lte(9007199254740991),
         stable_promotion_requests_pending: z.int().gte(-9007199254740991).lte(9007199254740991),
+        stable_queue: z.int().gte(-9007199254740991).lte(9007199254740991),
         reports_open: z.int().gte(-9007199254740991).lte(9007199254740991),
         tasks: z.object({
             running: z.int().gte(-9007199254740991).lte(9007199254740991),

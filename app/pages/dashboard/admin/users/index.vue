@@ -25,6 +25,7 @@ const currentUserId = computed(() => currentUser.value?.id);
 const ROLE_ITEMS: { label: string; value: AdminUserRole | "all" }[] = [
 	{ label: "All roles", value: "all" },
 	{ label: "Admin", value: "admin" },
+	{ label: "Moderator", value: "moderator" },
 	{ label: "Developer", value: "developer" },
 	{ label: "User", value: "user" },
 ];
@@ -129,14 +130,21 @@ const columns: TableColumn<AdminUser>[] = [
 	{ id: "actions", header: "", enableSorting: false, enableHiding: false },
 ];
 
+// Moderators can look users up (and suspend regular ones on the details page); creating, editing
+// and deleting accounts is for admins.
+const isAdmin = computed(() => currentUser.value?.role === "admin");
+
 function getRowActions(user: AdminUser): DropdownMenuItem[][] {
+	const open: DropdownMenuItem = {
+		label: "Open details",
+		icon: "i-lucide-user-round-search",
+		to: `/dashboard/admin/users/${user.id}`,
+	};
+	if (!isAdmin.value) return [[open]];
+
 	return [
 		[
-			{
-				label: "Open details",
-				icon: "i-lucide-user-round-search",
-				to: `/dashboard/admin/users/${user.id}`,
-			},
+			open,
 			{
 				label: "Edit",
 				icon: "i-lucide-pencil",
@@ -250,6 +258,7 @@ async function onDeleteUser() {
 			<DashboardPageHeader title="Users" icon="i-lucide-users" description="Manage users">
 				<template #right>
 					<UButton
+						v-if="isAdmin"
 						label="New User"
 						icon="i-lucide-user-plus"
 						color="primary"
@@ -393,7 +402,7 @@ async function onDeleteUser() {
 							@click="resetFilters();"
 						/>
 						<UButton
-							v-else
+							v-else-if="isAdmin"
 							label="Create User"
 							color="primary"
 							@click="showCreateModal = true;"

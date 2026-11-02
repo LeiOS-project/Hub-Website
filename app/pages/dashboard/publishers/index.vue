@@ -93,7 +93,7 @@ const publishers = await useAPILazyAsyncData<Publisher[]>("/dashboard/publishers
 
                     <template #description-cell="{ row }">
                         <span class="text-slate-400 line-clamp-1 max-w-xs">
-                            {{ row.original.description || '—' }}
+                            {{ markdownToPlainText(row.original.description, 140) || '—' }}
                         </span>
                     </template>
 

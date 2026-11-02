@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * Status pill for admin lists and detail pages: tasks and OS releases (pending, running, paused,
- * completed, failed), stable promotion requests (pending, approved, denied), reports (open,
+ * completed, failed), stable promotion requests (pending, queued, released, denied), reports (open,
  * resolved, dismissed) and accounts (active, suspended).
  */
 type BadgeColor = "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral";
@@ -31,7 +31,8 @@ const STATUS_STYLES: Record<string, StatusStyle> = {
 	paused: { color: "warning", icon: "i-lucide-circle-pause" },
 	completed: { color: "success", icon: "i-lucide-circle-check" },
 	failed: { color: "error", icon: "i-lucide-circle-x" },
-	approved: { color: "success", icon: "i-lucide-circle-check" },
+	queued: { color: "info", icon: "i-lucide-list-ordered" },
+	released: { color: "success", icon: "i-lucide-circle-check" },
 	denied: { color: "error", icon: "i-lucide-circle-x" },
 	open: { color: "warning", icon: "i-lucide-flag" },
 	resolved: { color: "success", icon: "i-lucide-circle-check" },

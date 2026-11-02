@@ -120,12 +120,13 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 usePageSeo({
 	title: `${title} | Publishers | LeiOS Hub`,
-	description: publisher.description || `Packages published for LeiOS by ${title}.`,
+	description:
+		markdownToPlainText(publisher.description, 300) || `Packages published for LeiOS by ${title}.`,
 	jsonLd: {
 		"@context": "https://schema.org",
 		"@type": "Organization",
 		name: title,
-		description: publisher.description || undefined,
+		description: markdownToPlainText(publisher.description, 300) || undefined,
 		url: publisher.homepage_url || undefined,
 	},
 });
@@ -167,9 +168,12 @@ usePageSeo({
 			<div class="grid gap-6 lg:grid-cols-3">
 				<div class="min-w-0 space-y-6 lg:col-span-2">
 					<DashboardSectionCard title="About" icon="i-lucide-info">
-						<p class="leading-relaxed whitespace-pre-line text-slate-300">
-							{{ publisher.description || "No description provided." }}
-						</p>
+						<MarkdownContent
+							v-if="publisher.description"
+							:value="publisher.description"
+							class="text-slate-300"
+						/>
+						<p v-else class="text-slate-500">No description provided.</p>
 					</DashboardSectionCard>
 
 					<section id="packages" class="scroll-mt-24 space-y-4">

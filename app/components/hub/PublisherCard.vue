@@ -45,7 +45,7 @@ const homepageHost = computed(() => {
 		</div>
 
 		<p class="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-400">
-			{{ publisher.description || "No description provided." }}
+			{{ markdownToPlainText(publisher.description) || "No description provided." }}
 		</p>
 
 		<p v-if="homepageHost" class="mt-4 flex items-center gap-1.5 truncate text-xs text-slate-500">

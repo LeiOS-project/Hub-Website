@@ -1,12 +1,18 @@
 <script setup lang="ts">
+/**
+ * One stable promotion request for reviewers: the release and what it replaces in stable, the
+ * conversation with the publisher, and the status actions (queue, deny, back to review).
+ */
 import type { BreadcrumbItem } from "@nuxt/ui";
 import type { AdminPackageRelease, AdminStableRequest } from "~/utils/adminTypes";
+import { STABLE_STATUS_META, type StableRequestMessage } from "~/utils/stablePromotion";
 
 definePageMeta({
 	layout: "dashboard",
 });
 
 const route = useRoute();
+const toast = useToast();
 
 const requestId = Number(route.params.stable_promotion_request_id);
 if (!Number.isInteger(requestId) || requestId <= 0) {
@@ -15,7 +21,7 @@ if (!Number.isInteger(requestId) || requestId <= 0) {
 
 useSeoMeta({
 	title: `Request #${requestId} | Stable Promotion Requests | LeiOS Hub`,
-	description: "Review stable promotion request details",
+	description: "Review a stable promotion request",
 });
 
 const breadcrumbItems: BreadcrumbItem[] = [
@@ -50,9 +56,6 @@ const error = computed(() => {
 	});
 });
 
-const packageLink = computed(() =>
-	request.value ? `/dashboard/packages/${request.value.package_fullname}` : "",
-);
 const releaseLink = computed(() =>
 	request.value
 		? `/dashboard/packages/${request.value.package_fullname}/releases/${request.value.package_release_version}`
@@ -79,13 +82,9 @@ const {
 const release = computed<AdminPackageRelease | null>(() =>
 	releaseResult.value?.success ? releaseResult.value.data : null,
 );
-const releaseError = computed(() => {
-	const res = releaseResult.value;
-	return res && !res.success ? res.message || "Failed to load the release" : null;
-});
 
 const architectures = computed(() => {
-	const archs = release.value?.architectures;
+	const archs = request.value?.package_release_architectures;
 	if (!archs) return [];
 	if (archs.is_all) return [{ label: "all", description: "Architecture-independent" }];
 	return [
@@ -94,19 +93,72 @@ const architectures = computed(() => {
 	];
 });
 
-// Decision
-const decisionModalOpen = ref(false);
-const initialDecision = ref<"approved" | "denied">("approved");
+/** What is in stable now, per architecture ("–" for none). */
+const currentStable = computed(() => {
+	const stable = request.value?.package_latest_stable_release;
+	if (!stable) return "–";
+	if (stable.amd64 === stable.arm64) return stable.amd64 ?? "Not in stable yet";
+	return `amd64 ${stable.amd64 ?? "–"} · arm64 ${stable.arm64 ?? "–"}`;
+});
 
-function openDecision(decision: "approved" | "denied") {
-	initialDecision.value = decision;
-	decisionModalOpen.value = true;
+// Conversation
+const {
+	data: messages,
+	loading: messagesLoading,
+	refresh: refreshMessages,
+} = await useAPILazyAsyncData<StableRequestMessage[]>(
+	`admin-stable-promotion-request:${requestId}:messages`,
+	async () => {
+		const res = await useAPI((api) =>
+			api.getAdminStablePromotionRequestsByStablePromotionRequestIdMessages({
+				path: { stablePromotionRequestID: requestId },
+			}),
+		);
+		return res.success ? res.data : [];
+	},
+);
+
+async function sendMessage(body: string) {
+	const res = await useAPI((api) =>
+		api.postAdminStablePromotionRequestsByStablePromotionRequestIdMessages({
+			path: { stablePromotionRequestID: requestId },
+			body: { body },
+		}),
+	);
+	if (!res.success) {
+		toast.add({
+			title: "Failed to send the reply",
+			description: res.message,
+			icon: "i-lucide-circle-alert",
+			color: "error",
+		});
+		return false;
+	}
+	await refreshMessages();
+	return true;
+}
+
+// Status changes
+const statusModalOpen = ref(false);
+const initialStatus = ref<"pending" | "queued" | "denied">("queued");
+
+function openStatusChange(status: "pending" | "queued" | "denied") {
+	initialStatus.value = status;
+	statusModalOpen.value = true;
 }
 
 async function refreshAll() {
-	await refresh();
-	await refreshRelease();
+	await Promise.all([refresh(), refreshRelease(), refreshMessages()]);
 }
+
+const STATUS_HINTS = {
+	pending: "Waiting for review. Queue the release for stable or deny the request.",
+	queued:
+		"Queued: the next OS release can include it. An administrator picks the releases when creating one.",
+	released: "This release went into stable with an OS release. The request is closed.",
+	denied:
+		"Denied: the release stays out of stable. You can reopen the request or queue it after all.",
+} as const;
 </script>
 
 <template>
@@ -120,7 +172,7 @@ async function refreshAll() {
 						variant="subtle"
 						aria-label="Refresh"
 						:loading="loading"
-						@click="refreshAll();"
+						@click="refreshAll()"
 					/>
 				</template>
 			</DashboardPageHeader>
@@ -131,41 +183,69 @@ async function refreshAll() {
 
 			<DashboardPageBody v-else-if="request">
 				<div class="mx-auto w-full max-w-4xl space-y-6">
-					<!-- Request -->
-					<DashboardSectionCard
-						:title="`Request #${request.id}`"
-						:description="`Stable promotion of ${request.package_fullname} ${request.package_release_version}`"
-						icon="i-lucide-git-pull-request"
+					<!-- Status and actions -->
+					<div
+						class="flex flex-col gap-4 rounded-xl border border-slate-800 bg-slate-900/60 p-4 sm:flex-row sm:items-center"
 					>
-						<template #actions>
-							<AdminStatusBadge :status="request.status" size="lg" />
-						</template>
-
-						<div class="divide-y divide-slate-800">
-							<AdminDetailRow label="Package">
-								<NuxtLink :to="packageLink" class="font-medium text-primary-400 hover:underline">
-									{{ request.package_fullname }}
-								</NuxtLink>
-							</AdminDetailRow>
-							<AdminDetailRow label="Release">
-								<NuxtLink :to="releaseLink" class="font-mono text-primary-400 hover:underline">
-									{{ request.package_release_version }}
-								</NuxtLink>
-							</AdminDetailRow>
-							<AdminDetailRow label="Requested">
-								{{ formatDate(request.created_at) }}
-							</AdminDetailRow>
-							<AdminDetailRow label="Admin note">
-								<span v-if="request.admin_note" class="whitespace-pre-wrap">{{ request.admin_note }}</span>
-								<span v-else class="italic text-slate-500">None</span>
-							</AdminDetailRow>
+						<div class="flex flex-1 items-start gap-3">
+							<UIcon
+								:name="STABLE_STATUS_META[request.status].icon"
+								:class="['mt-0.5 size-5 shrink-0', STABLE_STATUS_META[request.status].textClass]"
+							/>
+							<div class="space-y-1 text-sm">
+								<HubStableStatusBadge
+									:status="request.status"
+									:os-release-version="request.os_release_version"
+									size="md"
+								/>
+								<p class="text-slate-400">{{ STATUS_HINTS[request.status] }}</p>
+								<p v-if="request.status_changed_at" class="text-xs text-slate-500">
+									Last change {{ formatDate(request.status_changed_at) }}
+									<template v-if="request.status_changed_by_username">
+										by @{{ request.status_changed_by_username }}
+									</template>
+								</p>
+							</div>
 						</div>
-					</DashboardSectionCard>
+						<div v-if="request.status !== 'released'" class="flex shrink-0 flex-wrap gap-2">
+							<UButton
+								v-if="request.status === 'queued'"
+								label="Take out of queue"
+								icon="i-lucide-list-minus"
+								color="warning"
+								variant="soft"
+								@click="openStatusChange('pending')"
+							/>
+							<UButton
+								v-if="request.status === 'denied'"
+								label="Reopen"
+								icon="i-lucide-rotate-ccw"
+								color="warning"
+								variant="soft"
+								@click="openStatusChange('pending')"
+							/>
+							<UButton
+								v-if="request.status !== 'denied'"
+								label="Deny"
+								icon="i-lucide-x"
+								color="error"
+								variant="soft"
+								@click="openStatusChange('denied')"
+							/>
+							<UButton
+								v-if="request.status !== 'queued'"
+								label="Queue for stable"
+								icon="i-lucide-list-plus"
+								color="info"
+								@click="openStatusChange('queued')"
+							/>
+						</div>
+					</div>
 
 					<!-- Release -->
 					<DashboardSectionCard
-						title="Release"
-						description="What would move into the stable repository"
+						:title="`${request.package_display_name} ${request.package_release_version}`"
+						:description="request.package_fullname"
 						icon="i-lucide-tag"
 					>
 						<template #actions>
@@ -179,33 +259,22 @@ async function refreshAll() {
 							/>
 						</template>
 
-						<div v-if="releaseLoading && !releaseResult" class="flex justify-center py-6">
-							<UIcon name="i-lucide-loader-2" class="animate-spin text-2xl text-slate-400" />
-						</div>
-
-						<UAlert
-							v-else-if="releaseError"
-							color="error"
-							variant="subtle"
-							icon="i-lucide-circle-alert"
-							title="Failed to load the release"
-							:description="releaseError"
-						>
-							<template #actions>
-								<UButton
-									label="Retry"
-									color="neutral"
-									variant="subtle"
-									size="sm"
-									@click="refreshRelease();"
-								/>
-							</template>
-						</UAlert>
-
-						<div v-else-if="release" class="space-y-4">
+						<div class="space-y-4">
 							<div class="divide-y divide-slate-800">
+								<AdminDetailRow label="Requested">
+									{{ formatDate(request.created_at) }}
+									<template v-if="request.requested_by_username">
+										by
+										<NuxtLink
+											:to="`/dashboard/admin/users/${request.requested_by_user_id}`"
+											class="text-primary-400 hover:underline"
+										>
+											@{{ request.requested_by_username }}
+										</NuxtLink>
+									</template>
+								</AdminDetailRow>
 								<AdminDetailRow label="Uploaded">
-									{{ formatDate(release.created_at) }}
+									{{ formatDate(request.package_release_created_at) }}
 								</AdminDetailRow>
 								<AdminDetailRow label="Architectures">
 									<div v-if="architectures.length" class="flex flex-wrap gap-1 sm:justify-end">
@@ -215,72 +284,54 @@ async function refreshAll() {
 									</div>
 									<span v-else class="text-amber-400">No files uploaded yet</span>
 								</AdminDetailRow>
+								<AdminDetailRow label="In stable now">
+									<span class="font-mono">{{ currentStable }}</span>
+								</AdminDetailRow>
+								<AdminDetailRow v-if="request.os_release_version" label="Released with">
+									<NuxtLink
+										:to="`/dashboard/admin/os-releases/${request.os_release_version}`"
+										class="font-mono text-primary-400 hover:underline"
+									>
+										LeiOS {{ request.os_release_version }}
+									</NuxtLink>
+								</AdminDetailRow>
 							</div>
 
 							<div>
 								<p class="mb-2 text-sm font-medium text-slate-300">Changelog</p>
-								<pre
-									v-if="release.changelog"
-									class="max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-slate-800 bg-slate-950/40 p-4 font-mono text-xs text-slate-200"
-								>{{ release.changelog }}</pre>
-								<div v-else class="rounded-lg border border-slate-800 bg-slate-950/40 p-4">
-									<p class="text-sm italic text-slate-500">No changelog provided.</p>
+								<div class="rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+									<USkeleton v-if="releaseLoading && !releaseResult" class="h-12 w-full" />
+									<MarkdownContent
+										v-else-if="release?.changelog"
+										:value="release.changelog"
+										compact
+									/>
+									<p v-else class="text-sm italic text-slate-500">No changelog provided.</p>
 								</div>
 							</div>
 						</div>
 					</DashboardSectionCard>
 
-					<!-- Decision -->
-					<div
-						v-if="request.status === 'pending'"
-						class="flex flex-col gap-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 sm:flex-row sm:items-center"
+					<!-- Conversation -->
+					<DashboardSectionCard
+						title="Conversation"
+						description="Talk with the publisher's members. They see every message here."
+						icon="i-lucide-messages-square"
 					>
-						<div class="flex flex-1 gap-3">
-							<UIcon name="i-lucide-triangle-alert" class="mt-0.5 shrink-0 text-amber-400" />
-							<div class="text-sm">
-								<p class="font-medium text-amber-300">Pending review</p>
-								<p class="text-amber-300/70">
-									Approved releases move into the stable repository with the next OS release.
-								</p>
-							</div>
-						</div>
-						<div class="flex shrink-0 gap-2">
-							<UButton
-								label="Deny"
-								icon="i-lucide-x"
-								color="error"
-								variant="soft"
-								@click="openDecision('denied');"
-							/>
-							<UButton
-								label="Approve"
-								icon="i-lucide-check"
-								color="success"
-								@click="openDecision('approved');"
-							/>
-						</div>
-					</div>
-
-					<UAlert
-						v-else-if="request.status === 'approved'"
-						color="success"
-						variant="subtle"
-						icon="i-lucide-circle-check"
-						title="Request approved"
-						description="The release moves into the stable repository with the next OS release (or already has)."
-					/>
-
-					<UAlert
-						v-else
-						color="error"
-						variant="subtle"
-						icon="i-lucide-circle-x"
-						title="Request denied"
-						description="The release stays out of stable. The admin note explains why."
-					/>
+						<StableConversation
+							:messages="messages ?? []"
+							:loading="messagesLoading"
+							:send="sendMessage"
+							:closed-text="
+								request.status === 'released'
+									? 'This request was released; its conversation is closed.'
+									: null
+							"
+						/>
+					</DashboardSectionCard>
 
 					<UButton
-						label="Back to Requests"
+						label="Back to requests"
 						icon="i-lucide-arrow-left"
 						color="neutral"
 						variant="soft"
@@ -291,10 +342,10 @@ async function refreshAll() {
 		</template>
 	</UDashboardPanel>
 
-	<AdminStableRequestDecisionModal
-		v-model:open="decisionModalOpen"
+	<AdminStableRequestStatusModal
+		v-model:open="statusModalOpen"
 		:request="request"
-		:initial-decision="initialDecision"
-		@decided="refresh()"
+		:initial-status="initialStatus"
+		@changed="refreshAll()"
 	/>
 </template>

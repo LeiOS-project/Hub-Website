@@ -11,7 +11,7 @@ const toast = useToast();
 const userInfoStore = useUserInfoStore();
 const userInfo = await userInfoStore.use();
 
-const isAdmin = computed(() => userInfo.value?.role === "admin");
+const isStaff = computed(() => isStaffRole(userInfo.value?.role));
 
 const user = computed(() => {
 	const name = userInfo.value?.display_name ?? "Unknown User";
@@ -63,7 +63,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
 			icon: "i-lucide-settings",
 			to: "/dashboard/settings",
 		},
-		...(isAdmin.value
+		...(isStaff.value
 			? [
 					{
 						label: "Manage Users",

@@ -268,12 +268,9 @@ watchEffect(() => {
                         class="flex justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
                         :ui="{ container: 'w-full' }"
                     >
-                        <UTextarea
+                        <MarkdownEditor
                             v-model="publisher_form_state.description"
-                            placeholder="No description provided."
-                            :rows="5"
-                            autoresize
-                            class="w-full"
+                            placeholder="Who you are and what you publish. Markdown works too."
                         />
                     </UFormField>
 

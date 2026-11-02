@@ -134,12 +134,11 @@ const total = computed(() => result.value?.total ?? 0);
 								</div>
 							</header>
 							<div class="p-6">
-								<p
+								<MarkdownContent
 									v-if="release.changelog"
-									class="text-sm leading-relaxed whitespace-pre-line text-slate-300"
-								>
-									{{ release.changelog }}
-								</p>
+									:value="release.changelog"
+									class="text-slate-300"
+								/>
 								<p v-else class="text-sm text-slate-500">No changelog provided.</p>
 							</div>
 						</article>

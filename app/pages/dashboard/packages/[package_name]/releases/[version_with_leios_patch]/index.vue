@@ -2,6 +2,7 @@
 import type z from "zod";
 import type { ListReleaseStablePromotionRequestsResponses } from "~/api-client";
 import { zPostPackagesByFullPackageNameReleasesBody } from "~/api-client/zod.gen";
+import { STABLE_STATUS_META } from "~/utils/stablePromotion";
 
 const route = useRoute();
 const toast = useToast();
@@ -158,32 +159,6 @@ async function onDeleteRelease() {
 		color: "success",
 	});
 	await navigateTo(`/dashboard/packages/${fullname}/releases`);
-}
-
-function getStatusColor(status: StablePromotionRequest["status"]) {
-	switch (status) {
-		case "approved":
-			return "success";
-		case "denied":
-			return "error";
-		case "pending":
-			return "warning";
-		default:
-			return "neutral";
-	}
-}
-
-function getStatusIcon(status: StablePromotionRequest["status"]) {
-	switch (status) {
-		case "approved":
-			return "i-lucide-check-circle";
-		case "denied":
-			return "i-lucide-x-circle";
-		case "pending":
-			return "i-lucide-clock";
-		default:
-			return "i-lucide-help-circle";
-	}
 }
 
 // Architecture types
@@ -373,8 +348,8 @@ function onFileChange(arch: Architecture | "all", files: File | File[] | null | 
                         class="flex justify-between items-start gap-4 py-4 first:pt-0 last:pb-0" :ui="{
                             container: 'w-full',
                         }">
-                        <UTextarea v-model="package_release_form_state.changelog" placeholder="No changelog provided."
-                            :rows="5" autoresize class="w-full" />
+                        <MarkdownEditor v-model="package_release_form_state.changelog"
+                            placeholder="What changed in this release? Markdown works too." />
                     </UFormField>
 
                     <div class="pt-4">
@@ -603,21 +578,22 @@ function onFileChange(arch: Architecture | "all", files: File | File[] | null | 
                             </p>
                         </div>
                         <div v-else class="space-y-1">
-                            <div class="flex items-center gap-2">
-                                <UIcon :name="getStatusIcon(stablePromotionRequest.status)" :class="{
-                                    'text-amber-400': stablePromotionRequest.status === 'pending',
-                                    'text-green-400': stablePromotionRequest.status === 'approved',
-                                    'text-red-400': stablePromotionRequest.status === 'denied'
-                                }" />
+                            <div class="flex flex-wrap items-center gap-2">
                                 <h4 class="font-medium text-white">
                                     Request #{{ stablePromotionRequest.id }}
                                 </h4>
-                                <UBadge :color="getStatusColor(stablePromotionRequest.status)" variant="soft" size="sm">
-                                    {{ stablePromotionRequest.status }}
-                                </UBadge>
+                                <HubStableStatusBadge
+                                    :status="stablePromotionRequest.status"
+                                    :os-release-version="stablePromotionRequest.os_release_version"
+                                />
                             </div>
                             <p class="text-sm text-slate-400">
-                                Created {{ new Date(stablePromotionRequest.created_at).toLocaleString() }}.
+                                {{ STABLE_STATUS_META[stablePromotionRequest.status].description }}
+                                <template v-if="stablePromotionRequest.comment_count">
+                                    {{ stablePromotionRequest.comment_count }}
+                                    {{ stablePromotionRequest.comment_count === 1 ? "message" : "messages" }} in the
+                                    conversation.
+                                </template>
                             </p>
                         </div>
                     </div>
@@ -631,7 +607,7 @@ function onFileChange(arch: Architecture | "all", files: File | File[] | null | 
                     />
                     <UButton
                         v-else
-                        label="View Request"
+                        label="Open request"
                         icon="i-lucide-eye"
                         color="neutral"
                         variant="soft"

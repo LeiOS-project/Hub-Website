@@ -123,11 +123,19 @@ const statTiles = computed<StatTile[]>(() => {
 			to: "/dashboard/admin/packages",
 		},
 		{
-			label: "Pending Stable Requests",
+			label: "Stable Requests to Review",
 			value: s?.stable_promotion_requests_pending ?? 0,
 			icon: "i-lucide-git-pull-request",
 			iconColor: s?.stable_promotion_requests_pending ? "amber" : "emerald",
 			to: "/dashboard/admin/stable-promotion-requests",
+		},
+		{
+			label: "Stable Queue",
+			value: s?.stable_queue ?? 0,
+			hint: "Waiting for the next OS release",
+			icon: "i-lucide-list-ordered",
+			iconColor: "primary",
+			to: "/dashboard/admin/stable-promotion-requests?status=queued",
 		},
 		{
 			label: "Open Reports",

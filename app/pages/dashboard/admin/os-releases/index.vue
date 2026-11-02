@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
+import { useUserInfoStore } from "~/composables/stores/useUserStore";
 import type { AdminListOrder, AdminOSRelease, AdminPage } from "~/utils/adminTypes";
 
 definePageMeta({
@@ -68,11 +69,26 @@ watch([pageSize, order], reloadFromFirstPage);
 
 const columns: TableColumn<AdminOSRelease>[] = [
 	{ accessorKey: "version", header: "Version" },
+	{ accessorKey: "package_count", header: "Packages" },
 	{ accessorKey: "created_at", header: "Created At" },
 	{ accessorKey: "publishing_status", header: "Publishing Status" },
 	{ accessorKey: "published_at", header: "Published At" },
 	{ id: "actions", header: "", enableSorting: false, enableHiding: false },
 ];
+
+const user = await useUserInfoStore().use();
+const isAdmin = computed(() => user.value?.role === "admin");
+
+// How many releases wait in the stable queue for the next OS release.
+const { data: queuedCount } = await useAPILazyAsyncData(
+	"admin-os-releases-queue-count",
+	async () => {
+		const res = await useAPI((api) =>
+			api.getAdminStablePromotionRequests({ query: { status: "queued", limit: 1 } }),
+		);
+		return res.success ? res.data.total : 0;
+	},
+);
 </script>
 
 <template>
@@ -81,10 +97,11 @@ const columns: TableColumn<AdminOSRelease>[] = [
 			<DashboardPageHeader
 				title="OS Releases"
 				icon="i-lucide-rocket"
-				description="Manage all OS releases"
+				description="LeiOS releases move queued packages into stable"
 			>
 				<template #right>
 					<UButton
+						v-if="isAdmin"
 						label="New Release"
 						icon="i-lucide-plus"
 						color="primary"
@@ -96,6 +113,26 @@ const columns: TableColumn<AdminOSRelease>[] = [
 
 		<template #body>
 			<DashboardPageBody>
+				<UAlert
+					v-if="queuedCount"
+					color="info"
+					variant="subtle"
+					icon="i-lucide-list-ordered"
+					:title="`${queuedCount} ${queuedCount === 1 ? 'release is' : 'releases are'} queued for stable`"
+					description="The next OS release can include them."
+					:actions="[
+						{
+							label: 'View the queue',
+							color: 'neutral',
+							variant: 'outline',
+							to: '/dashboard/admin/stable-promotion-requests?status=queued',
+						},
+						...(isAdmin
+							? [{ label: 'Create OS release', icon: 'i-lucide-rocket', to: '/dashboard/admin/os-releases/new' }]
+							: []),
+					]"
+				/>
+
 				<DashboardDataTable
 					:data="osReleasesPage?.items ?? []"
 					:columns="columns"
@@ -117,6 +154,10 @@ const columns: TableColumn<AdminOSRelease>[] = [
 						>
 							{{ row.original.version }}
 						</NuxtLink>
+					</template>
+
+					<template #package_count-cell="{ row }">
+						<span class="text-sm text-slate-300">{{ row.original.package_count }}</span>
 					</template>
 
 					<template #created_at-cell="{ row }">
@@ -155,7 +196,12 @@ const columns: TableColumn<AdminOSRelease>[] = [
 					</template>
 
 					<template #empty-actions>
-						<UButton label="Create Release" color="primary" to="/dashboard/admin/os-releases/new" />
+						<UButton
+							v-if="isAdmin"
+							label="Create Release"
+							color="primary"
+							to="/dashboard/admin/os-releases/new"
+						/>
 					</template>
 
 					<template #footer-left>
